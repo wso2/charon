@@ -1,0 +1,143 @@
+<!--
+  ~  Licensed to the Apache Software Foundation (ASF) under one
+  ~  or more contributor license agreements.  See the NOTICE file
+  ~  distributed with this work for additional information
+  ~  regarding copyright ownership.  The ASF licenses this file
+  ~  to you under the Apache License, Version 2.0 (the
+  ~  "License"); you may not use this file except in compliance
+  ~  with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~   * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+        "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+    <title>Welcome to WSO2 Charon Milestone 1!</title>
+    <link href="css/is-docs.css" rel="stylesheet"/>
+</head>
+
+<body>
+<h1>WSO2 Charon Milestone 1 Released..!!!</h1>
+<p>The WSO2 team is pleased to announce the M1 release of WSO2 Charon.</p>
+<p>WSO2 Charon is an open source implementation of Simple Cloud Identity Management (SCIM) specification,
+   which is made available under Apache 2.0 License.</p>
+
+<p>The API provided by WSO2 Charon will be used in adding SCIM based identity
+   provisioning support for <a href="http://wso2.com/products/identity-server/">WSO2 Identity Server</a> which is an
+   open source Identity and Entitlement Management Solution.</p>
+
+<h2>Main modules of WSO2 Charon:</h2>
+
+<ul>
+    <li>Charon-Core:
+        <br/>The API implements of SCIM specification. It provides API for both server
+        side and consumer side
+        such that a SCIM Service Provider or a SCIM Consumer can be developed based on Charon-Core.
+    </li>
+    <li>Charon-Deployment:
+        <br/>A reference implementation of SCIM service provider.
+        It is a Apache Wink based webapp that can be deployed in an application server and make the
+        SCIM service provider be exposed.
+    </li>
+    <li>Charon-Samples:
+        <br/>
+        This contains a set of samples illustrating the SCIM Consumer side use cases which
+        can be run against a SCIM server.
+    </li>
+    <li>Charon-Utils:
+        <br/>
+        This contains a set of default implementations for the extension points made
+        available in Charon-Core.
+    </li>
+</ul>
+
+<h2>SCIM Features in this M1 Release:</h2>
+<ul>
+    <li>Charon-Core:</li>
+    <ul>
+        <li>User operations:</li>
+        <ul>
+            <li>Create(POST)</li>
+            <li>Retrieve(GET)</li>
+            <li>Update(PUT)</li>
+            <li>Delete(DELETE)</li>
+            <li>List(GET)</li>
+        </ul>
+        <li>User Schema.</li>
+        <li>Group operations:</li>
+        <ul>
+            <li>Create(POST)</li>
+            <li>Retrieve(GET)</li>
+            <li>Update(PUT)</li>
+            <li>Delete(DELETE)</li>
+            <li>List(GET)</li>
+        </ul>
+        <li>Group Schema</li>
+        <li>Representation : JSON</li>
+        <li>SCIM Client API</li>
+        <li>Response Codes</li>
+    </ul>
+    <li>Charon-Deployment and Charon-Utils:</li>
+    <ul>
+        <li>Authentication : HTTP Basic Auth</li>
+        <li>SCIM Resource endpoints exposed as JAX-RS based REST resources using Apache Wink</li>
+        <li>In Memory User Store</li>
+        <li>JAX-RS Response handling</li>
+    </ul>
+    <li>Charon-Samples:</li>
+    <ul>
+        <li>SCIM consumer side samples to perform above mentioned User, Group operations.</li>
+    </ul>
+</ul>
+
+<h2>Road Map:</h2>
+<ul>
+    <li>1.0 Release:</li>
+    <ul>
+        <li>Bulk Resource Endpoint</li>
+        <li>Service Provider Configuration Schema</li>
+        <li>Resource Schema</li>
+    </ul>
+    <li>Integration with WSO2 Identity Server 4.0.0:</li>
+</ul>
+
+<h2>Download:</h2>
+<ul>
+    <li>
+        <p>You can download the WSO2 Charon M1 distribution from : <a href="https://svn.wso2.org/repos/wso2/people/hasinig/charon/M1">https://svn.wso2.org/repos/wso2/people/hasinig/charon_m1_release</a></p>
+    </li>
+    <li>
+        <p>You can checkout the source code including SCIM client samples from : <a href="https://svn.wso2.org/repos/wso2/branches/commons/charon">https://svn.wso2.org/repos/wso2/branches/commons/charon</a></p>
+    </li>
+</ul>
+
+
+<h2>SCIM Endpoint:</h2>
+
+<p>SCIM Service Provider implementation provided by WSO2 Charon is hosted at: <a href="http://people.wso2.com:8080/charonDemoApp/">http://people.wso2.com:8080/charonDemoApp/</a></p>
+<p>Following SCIM endpoints are made avialable with above:</p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+
+<h2>Reporting Issues:</h2>
+
+<p>Issues can be reported using the public JIRA available at
+    <a
+            href="https://wso2.org/jira/browse/COMMONS">https://wso2.org/jira/browse/COMMONS
+    </a>
+</p>
+
+<p>Copyright 2012 WSO2 Inc.</p>
+</body>
+</html>

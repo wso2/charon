@@ -1,0 +1,62 @@
+<CharonConfig>
+    <!--<AuthenticationHandler class="org.wso2.charon.utils.authentication.BasicAuthHandler"/>-->
+    <Authenticators>
+        <Authenticator>
+            <Property name="type">httpbasic</Property>
+            <Property name="class">org.wso2.charon.utils.authentication.BasicAuthHandler</Property>
+            <Property name="priority">1</Property>
+        </Authenticator>
+    </Authenticators>
+    <TenantManager class="org.wso2.charon.utils.storage.InMemoryTenantManager"/>
+    <UserManager class="org.wso2.charon.utils.storage.InMemroyUserManager"/>
+    <Encoders>
+        <Encoder class="org.wso2.charon.core.encoder.json.JSONEncoder" format="json"/>
+    </Encoders>
+    <Decoders>
+        <Decoder class="org.wso2.charon.core.encoder.json.JSONDecoder" format="json"/>
+    </Decoders>`
+    <ServiceProviderConfiguration>
+        <schemas>
+            <schema name="urn:scim:schemas:core:1.0"/>
+        </schemas>
+        <documentationURL>http://example.com/help/scim.html</documentationURL>
+        <bulk supported="false" maxOperations="" maxPayloadSize=""/>
+        <filter supported="false" maxResults=""/>
+        <changePassword supported="false"/>
+        <sort supported="false"/>
+        <etag supproted="false"/>
+        <xmlDataFormat supported="false"/>
+        <authenticationSchemes>
+            <authenticationScheme>
+                <Property name="name">OAuth Bearer Token</Property>
+
+            </authenticationScheme>
+        </authenticationSchemes>
+    </ServiceProviderConfiguration>
+    <ResourceEndpoints>
+        <UserResourceEndpoint>https://example.com/v1/Users/</UserResourceEndpoint>
+        <GroupResourceEndpoint>https://example.com/v1/Groups/</GroupResourceEndpoint>
+    </ResourceEndpoints>
+    <!--<UserManager class="">
+        <Property name="ConnectionURL">ldap://localhost:10389</Property>
+        <Property name="ConnectionName">uid=admin,ou=system</Property>
+        <Property name="ConnectionPassword">admin</Property>
+        <Property name="passwordHashMethod">SHA</Property>
+        <Property name="UserNameListFilter">(objectClass=person)</Property>
+        <Property name="UserEntryObjectClass">wso2Person</Property>
+        <Property name="UserSearchBase">ou=Users,dc=wso2,dc=org</Property>
+        <Property name="UserNameSearchFilter">(&amp;(objectClass=person)(uid=?))</Property>
+        <Property name="UserNameAttribute">uid</Property>
+        <Property name="PasswordJavaScriptRegEx">[\\S]{5,30}</Property>
+        <Property name="UsernameJavaScriptRegEx">[\\S]{3,30}</Property>
+        <Property name="UsernameJavaRegEx">^[^~!@#$;%^*+={}\\|\\\\&lt;&gt;]{3,30}$</Property>
+        <Property name="RolenameJavaScriptRegEx">[\\S]{3,30}</Property>
+        <Property name="RolenameJavaRegEx">^[^~!@#$;%^*+={}\\|\\\\&lt;&gt;]{3,30}$</Property>
+        <Property name="GroupSearchBase">ou=Groups,dc=wso2,dc=org</Property>
+        <Property name="GroupNameListFilter">(objectClass=groupOfNames)</Property>
+        <Property name="GroupEntryObjectClass">groupOfNames</Property>
+        <Property name="GroupNameSearchFilter">(&amp;(objectClass=groupOfNames)(cn=?))</Property>
+        <Property name="GroupNameAttribute">cn</Property>
+        <Property name="MembershipAttribute">member</Property>
+    </UserManager>-->
+</CharonConfig>
