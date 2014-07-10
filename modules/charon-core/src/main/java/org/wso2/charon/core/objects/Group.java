@@ -168,6 +168,56 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * If operation type is equal to null this method return user list requested for adding, if operation type is equal to delete then it returns user list requested for deleting
+     * @param operationType
+     * @return
+     */
+    public List<String> getMembersWithDisplayNameAndOperationType(String operationType) {
+        if (isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute) attributeList.get(SCIMConstants.GroupSchemaConstants.MEMBERS);
+            List<String> displayNames = new ArrayList<String>();
+            List<Map<String, Object>> values = members.getComplexValues();
+            for (Map<String, Object> value : values) {
+                if (operationType == null) {
+                    boolean isOperationPresent = false;
+                    for (Map.Entry<String, Object> entry : value.entrySet()) {
+                        if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey())) {
+                            isOperationPresent = true;
+                        }
+                    }
+                    if (isOperationPresent == false) {
+                        for (Map.Entry<String, Object> entry : value.entrySet()) {
+                            if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entry.getKey())) {
+                                //add display name to the list
+                                displayNames.add((String) entry.getValue());
+                            }
+                        }
+                    }
+                } else {
+                    for (Map.Entry<String, Object> entry : value.entrySet()) {
+                        if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey()) && entry.getValue() != null && (entry.getValue()).equals(operationType)) {
+                            for (Map.Entry<String, Object> entryTemp : value.entrySet()) {
+                                if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entryTemp.getKey())) {
+                                    //add display name to the list
+                                    displayNames.add((String) entryTemp.getValue());
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            if (!displayNames.isEmpty()) {
+                return displayNames;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
     //get user members with display name - return Map<ID,DisplayName>
 
     //get group members with display name - Map<ID,DisplayName>

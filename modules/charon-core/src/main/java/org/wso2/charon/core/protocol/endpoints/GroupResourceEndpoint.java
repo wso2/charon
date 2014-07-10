@@ -530,6 +530,101 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
         }
     }
 
+    @Override
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,String inputFormat, String outputFormat, UserManager userManager) {
+        // needs to validate the incoming object. eg: id can not be set by the consumer.
+
+        Encoder encoder = null;
+        Decoder decoder = null;
+
+        try {
+            // obtain the encoder matching the requested output format.
+            encoder = getEncoder(SCIMConstants.identifyFormat(outputFormat));
+            // obtain the decoder matching the submitted format.
+            decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
+
+            // decode the SCIM Group object, encoded in the submitted payload.
+            Group group = (Group) decoder.decodeResource(scimObjectString,
+                    SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, new Group());
+            Group patchedGroup = null;
+            if (userManager != null) {
+                // retrieve the old object
+                Group oldGroup = userManager.getGroup(existingId);
+                if (oldGroup != null) {
+                    Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(
+                            oldGroup, group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA);
+                    patchedGroup = userManager.patchGroup(oldGroup, validatedGroup);
+
+                } else {
+                    String error = "No group exists with the given id: " + existingId;
+                    // log the error as well.
+                    // throw internal server error.
+                    throw new ResourceNotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided User manager handler is null.";
+                // log the error as well.
+                // throw internal server error.
+                throw new InternalServerException(error);
+            }
+            // encode the newly created SCIM group object and add id attribute to Location header.
+            String encodedGroup;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (patchedGroup != null) {
+
+                encodedGroup = encoder.encodeSCIMObject(patchedGroup);
+                // add location header
+                httpHeaders.put(
+                        SCIMConstants.LOCATION_HEADER,
+                        getResourceEndpointURL(SCIMConstants.USER_ENDPOINT) + "/"
+                                + patchedGroup.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
+
+            } else {
+                // TODO:log the error
+                String error = "Updated User resource is null..";
+                throw new InternalServerException(error);
+            }
+
+            // put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+
+        } catch (FormatNotSupportedException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+            // if the submitted format not supported, encode exception and set it in the response.
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (CharonException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+            // we have charon exceptions also, instead of having only internal server error
+            // exceptions,
+            // because inside API code throws CharonException.
+            if (e.getCode() == -1) {
+                e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
+            }
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (BadRequestException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (InternalServerException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (ResourceNotFoundException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(e.getMessage(), e);
+            }
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        }
+    }
+
     public ListedResource createListedResource(List<Group> groups)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();

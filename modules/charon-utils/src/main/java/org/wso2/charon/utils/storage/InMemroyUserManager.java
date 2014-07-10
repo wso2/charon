@@ -292,6 +292,36 @@ public class InMemroyUserManager implements UserManager {
     }
 
     @Override
+    public Group patchGroup(Group oldGroup, Group group) throws CharonException {
+        if (!inMemoryGroupList.isEmpty()) {
+            if (inMemoryGroupList.containsKey(group.getId())) {
+                if (group.getExternalId() != null) {
+                    for (Group group1 : inMemoryGroupList.values()) {
+                        if ((group.getExternalId().equals(group1.getExternalId())) &&
+                                !(group.getId().equals(group1.getId()))) {
+                            String error = "Group already exist in the system.";
+                            //TODO:log error
+                            throw new CharonException(error);
+                        }
+                    }
+                }
+                validateMembersOnGroupUpdate(group);
+                inMemoryGroupList.remove(group.getId());
+                inMemoryGroupList.put(group.getId(), group);
+            } else {
+                String error = "Updating user with the id does not exist in the user store..";
+                //TODO:log error
+                throw new CharonException(error);
+            }
+        } else {
+            String error = "No users exist in the user store..";
+            //TODO:log error
+            throw new CharonException(error);
+        }
+        return group;
+    }
+
+    @Override
     public Group updateGroup(List<Attribute> attributes) throws CharonException {
         //TODO:should set last modified date
         return null;
