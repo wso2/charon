@@ -173,7 +173,7 @@ public class Group extends AbstractSCIMObject {
      * @param operationType
      * @return
      */
-    public List<String> getMembersWithDisplayNameAndOperationType(String operationType) {
+    public List<String> getMembersWithDisplayName(String operationType) {
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
             MultiValuedAttribute members = (MultiValuedAttribute) attributeList.get(SCIMConstants.GroupSchemaConstants.MEMBERS);
             List<String> displayNames = new ArrayList<String>();
