@@ -341,6 +341,9 @@ public class SCIMConstants {
     public static final int DELETE = 3;
     public static final int PUT = 4;
 
+    public static final String UPDATE_WITH_PATCH = "updateWithPatch";
+    public static final String UPDATE_WITH_PUT = "updateWithPut";
+
 
     /*Attribute URIs for attributes defined in scim-core schema spec.
     * NOTE: No URI for parent attribute of complex attributes.*/

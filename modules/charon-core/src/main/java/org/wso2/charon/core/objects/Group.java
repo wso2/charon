@@ -145,10 +145,10 @@ public class Group extends AbstractSCIMObject {
     //get members with is and display name - return Map<ID,DisplayName>
 
     public List<String> getMembersWithDisplayName() {
+        List<String> displayNames = new ArrayList<String>();
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
             MultiValuedAttribute members = (MultiValuedAttribute) attributeList.get(
                     SCIMConstants.GroupSchemaConstants.MEMBERS);
-            List<String> displayNames = new ArrayList<String>();
             List<Map<String, Object>> values = members.getComplexValues();
             for (Map<String, Object> value : values) {
                 for (Map.Entry<String, Object> entry : value.entrySet()) {
@@ -158,14 +158,8 @@ public class Group extends AbstractSCIMObject {
                     }
                 }
             }
-            if (!displayNames.isEmpty()) {
-                return displayNames;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
         }
+        return displayNames;
     }
 
     /**
@@ -177,10 +171,10 @@ public class Group extends AbstractSCIMObject {
      * @return
      */
     public List<String> getMembersWithDisplayName(String operationType) {
+        List<String> displayNames = new ArrayList<String>();
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
             MultiValuedAttribute members =
                                            (MultiValuedAttribute) attributeList.get(SCIMConstants.GroupSchemaConstants.MEMBERS);
-            List<String> displayNames = new ArrayList<String>();
             List<Map<String, Object>> values = members.getComplexValues();
             for (Map<String, Object> value : values) {
                 if (operationType == null) {
@@ -213,14 +207,8 @@ public class Group extends AbstractSCIMObject {
                     }
                 }
             }
-            if (!displayNames.isEmpty()) {
-                return displayNames;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
         }
+        return displayNames;
     }
 
     //get user members with display name - return Map<ID,DisplayName>
