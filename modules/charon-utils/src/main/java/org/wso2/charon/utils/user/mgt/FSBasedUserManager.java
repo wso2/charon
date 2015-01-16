@@ -160,6 +160,11 @@ public class FSBasedUserManager implements UserManager {
     }
 
     @Override
+    public Group patchGroup(Group oldGroup, Group group) throws CharonException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public void deleteGroup(String groupId) throws NotFoundException {
 
     }

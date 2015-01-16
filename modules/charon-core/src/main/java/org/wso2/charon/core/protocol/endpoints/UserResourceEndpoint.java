@@ -532,6 +532,10 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         }
     }
 
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
+        return null;
+    }
+
     public ListedResource createListedResource(List<User> users)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();

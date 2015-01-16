@@ -92,6 +92,15 @@ public interface UserManager extends Storage {
 
     public Group getGroup(String groupId) throws CharonException;
 
+    /**
+     *
+     * @param oldGroup
+     * @param newGroup
+     * @return
+     * @throws CharonException
+     */
+    public Group patchGroup(Group oldGroup, Group newGroup) throws CharonException;
+
     public List<Group> listGroups() throws CharonException;
 
     public List<Group> listGroupsByAttribute(Attribute attribute) throws CharonException;
