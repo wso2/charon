@@ -111,6 +111,11 @@ public class FSBasedUserManager implements UserManager {
         return null;
     }
 
+    @Override public User createUser(User user, boolean isBulkUserAdd)
+            throws CharonException, DuplicateResourceException {
+        return null;
+    }
+
     /**
      * ****************Group manipulation operations*******************
      */

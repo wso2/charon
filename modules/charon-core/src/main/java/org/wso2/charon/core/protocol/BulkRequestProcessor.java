@@ -135,11 +135,21 @@ public class BulkRequestProcessor {
     private List<BulkResponseContent> processUserCreatingRequests(
             List<BulkRequestContent> userCreatingRequests) {
         List<BulkResponseContent> scimResponses = new ArrayList<BulkResponseContent>();
-        for (BulkRequestContent userRequest : userCreatingRequests) {
+        for (int i = 0; i < userCreatingRequests.size(); i++) {
+            BulkRequestContent userRequest = userCreatingRequests.get(i);
             BulkResponseContent bulkResponseContent = new BulkResponseContent();
+            SCIMResponse response = null;
             //TODO: have to check the "failOnError" and "errors", if reached the failOnError limit we have to exit
-            SCIMResponse response = userResourceEndpoint.create(
-                    userRequest.getData(), inputFormat, outputFormat, userManager);
+            //since this is bulk user add bulk flag set to true, for the last element bulk user add flag set to false to
+            //indicate last element of bulk user add so that provisioning component can reset
+            // ThreadLocalProvisioningServiceProvider for the last element
+            if (i < (userCreatingRequests.size() - 1)) {
+                response = userResourceEndpoint
+                        .create(userRequest.getData(), inputFormat, outputFormat, userManager, true);
+            } else {
+                response = userResourceEndpoint
+                        .create(userRequest.getData(), inputFormat, outputFormat, userManager, false);
+            }
             bulkResponseContent.setBulkID(userRequest.getBulkID());
             bulkResponseContent.setScimResponse(response);
             bulkResponseContent.setDescription(response.getResponseMessage());

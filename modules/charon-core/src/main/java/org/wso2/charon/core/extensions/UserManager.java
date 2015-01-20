@@ -42,6 +42,7 @@ public interface UserManager extends Storage {
      */
     public User createUser(User user) throws CharonException, DuplicateResourceException;
 
+    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, DuplicateResourceException;
     /**
      * Obtains the user given the id.
      *

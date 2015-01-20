@@ -179,6 +179,32 @@ public class InMemroyUserManager implements UserManager {
     }
 
     /**
+     * Create user with the given user object.
+     *
+     * @param user
+     *  @param isBulkUserAdd - indicate bulk user add
+     */
+    @Override
+    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, DuplicateResourceException {
+
+        if (!inMemoryUserList.isEmpty()) {
+            /*if (user.getExternalId() != null) {
+                for (Map.Entry<String, User> userEntry : inMemoryUserList.entrySet()) {
+                    if (user.getUserName().equals(userEntry.getValue().getUserName())) {
+                        String error = "User already exist in the system.";
+                        //TODO:log error
+                        throw new CharonException(error);
+                    }
+                }
+            }*/
+            inMemoryUserList.put(user.getId(), user);
+        } else {
+            inMemoryUserList.put(user.getId(), user);
+        }
+        return user;
+    }
+
+    /**
      * ****************Group manipulation operations*******************
      */
     @Override
