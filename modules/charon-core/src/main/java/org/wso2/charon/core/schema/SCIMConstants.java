@@ -40,9 +40,9 @@ public class SCIMConstants {
      * @return
      */
     public static String identifyFormat(String format) {
-        if (format.equals(APPLICATION_JSON)) {
+        if (format.contains(APPLICATION_JSON)) {
             return SCIMConstants.JSON;
-        } else if (format.equals(APPLICATION_XML)) {
+        } else if (format.contains(APPLICATION_XML)) {
             return SCIMConstants.XML;
         } else {
             return null;
