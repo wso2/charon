@@ -120,7 +120,7 @@ public class JSONDecoderTest {
                                   "      \"type\": \"thumbnail\"\n" +
                                   "    }\n" +
                                   "  ],\n" +
-                                  "  \"userType\": \"Employee\",\n" +
+                                  "  \"userType\": \"\",\n" +
                                   "  \"title\": \"Tour Guide\",\n" +
                                   "  \"preferredLanguage\":\"en_US\",\n" +
                                   "  \"locale\": \"en_US\",\n" +
@@ -189,7 +189,7 @@ public class JSONDecoderTest {
             Assert.assertEquals("555-555-5555", decodedUser.getPhoneNumbers("work").get(0));
             Assert.assertEquals("555-555-4444", decodedUser.getPhoneNumbers("mobile").get(0));
             Assert.assertEquals("someaimhandle", decodedUser.getIMs("aim").get(0));
-            Assert.assertEquals("Employee", decodedUser.getUserType());
+            Assert.assertNull("Since the value of user type was empty, this should not be returned from storage",decodedUser.getUserType());
             Assert.assertEquals("Tour Guide", decodedUser.getTitle());
             Assert.assertEquals("en_US", decodedUser.getPreferredLanguage());
             Assert.assertEquals("en_US", decodedUser.getLocale());
