@@ -111,6 +111,11 @@ public class FSBasedUserManager implements UserManager {
         return null;
     }
 
+    @Override public User createUser(User user, boolean isBulkUserAdd)
+            throws CharonException, DuplicateResourceException {
+        return null;
+    }
+
     /**
      * ****************Group manipulation operations*******************
      */
@@ -156,6 +161,11 @@ public class FSBasedUserManager implements UserManager {
 
     @Override
     public Group updateGroup(List<Attribute> attributes) throws CharonException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Group patchGroup(Group oldGroup, Group group) throws CharonException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

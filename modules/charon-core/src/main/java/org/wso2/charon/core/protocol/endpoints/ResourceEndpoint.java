@@ -120,5 +120,18 @@ public interface ResourceEndpoint {
                                       String outputFormat,
                                       UserManager userManager);
 
+    /**
+     * @param existingId
+     * @param scimObjectString
+     * @param inputFormat
+     * @param outputFormat
+     * @param userManager
+     * @return
+     */
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,
+                                        String inputFormat,
+                                        String outputFormat,
+                                        UserManager userManager);
+
 
 }

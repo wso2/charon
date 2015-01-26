@@ -42,6 +42,7 @@ public interface UserManager extends Storage {
      */
     public User createUser(User user) throws CharonException, DuplicateResourceException;
 
+    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, DuplicateResourceException;
     /**
      * Obtains the user given the id.
      *
@@ -91,6 +92,15 @@ public interface UserManager extends Storage {
     public Group createGroup(Group group) throws CharonException, DuplicateResourceException;
 
     public Group getGroup(String groupId) throws CharonException;
+
+    /**
+     *
+     * @param oldGroup
+     * @param newGroup
+     * @return
+     * @throws CharonException
+     */
+    public Group patchGroup(Group oldGroup, Group newGroup) throws CharonException;
 
     public List<Group> listGroups() throws CharonException;
 

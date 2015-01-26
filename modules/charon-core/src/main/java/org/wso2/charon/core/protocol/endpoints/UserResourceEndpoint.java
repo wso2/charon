@@ -120,10 +120,11 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
      * @param inputFormat      - format of the submitted content
      * @param outputFormat     - format mentioned in HTTP Accept header.
      * @param userManager
+     * @param isBulkUserAdd    - Indicate bulk user add
      * @return
      */
     public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat,
-                               UserManager userManager) {
+                               UserManager userManager, boolean isBulkUserAdd) {
 
         //needs to validate the incoming object. eg: id can not be set by the consumer.
 
@@ -136,7 +137,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             Decoder decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
 
             SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-            
+
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
@@ -144,7 +145,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
-            User createdUser = userManager.createUser(user);
+            User createdUser = userManager.createUser(user, isBulkUserAdd);
 
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
@@ -198,6 +199,22 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
 
+    }
+
+    /**
+     * Create User in the service provider given the submitted payload that contains the SCIM user
+     * resource, format and the handler to storage.
+     *
+     * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
+     * @param inputFormat      - format of the submitted content
+     * @param outputFormat     - format mentioned in HTTP Accept header.
+     * @param userManager
+     * @return
+     */
+    public SCIMResponse create(String scimObjectString, String inputFormat, String outputFormat,
+                               UserManager userManager) {
+
+        return create(scimObjectString, inputFormat, outputFormat, userManager, false);
     }
 
     /**
@@ -530,6 +547,10 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             e.printStackTrace();
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
+    }
+
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
+        return null;
     }
 
     public ListedResource createListedResource(List<User> users)

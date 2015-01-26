@@ -179,6 +179,32 @@ public class InMemroyUserManager implements UserManager {
     }
 
     /**
+     * Create user with the given user object.
+     *
+     * @param user
+     *  @param isBulkUserAdd - indicate bulk user add
+     */
+    @Override
+    public User createUser(User user, boolean isBulkUserAdd) throws CharonException, DuplicateResourceException {
+
+        if (!inMemoryUserList.isEmpty()) {
+            /*if (user.getExternalId() != null) {
+                for (Map.Entry<String, User> userEntry : inMemoryUserList.entrySet()) {
+                    if (user.getUserName().equals(userEntry.getValue().getUserName())) {
+                        String error = "User already exist in the system.";
+                        //TODO:log error
+                        throw new CharonException(error);
+                    }
+                }
+            }*/
+            inMemoryUserList.put(user.getId(), user);
+        } else {
+            inMemoryUserList.put(user.getId(), user);
+        }
+        return user;
+    }
+
+    /**
      * ****************Group manipulation operations*******************
      */
     @Override
@@ -323,6 +349,36 @@ public class InMemroyUserManager implements UserManager {
         checkForValidMembers(group);
         updateUserMembers(group);
         updateGroupMembers(group);
+    }
+
+    @Override
+    public Group patchGroup(Group oldGroup, Group group) throws CharonException {
+        if (!inMemoryGroupList.isEmpty()) {
+            if (inMemoryGroupList.containsKey(group.getId())) {
+                if (group.getExternalId() != null) {
+                    for (Group group1 : inMemoryGroupList.values()) {
+                        if ((group.getExternalId().equals(group1.getExternalId())) &&
+                                !(group.getId().equals(group1.getId()))) {
+                            String error = "Group already exist in the system.";
+                            //TODO:log error
+                            throw new CharonException(error);
+                        }
+                    }
+                }
+                validateMembersOnGroupUpdate(group);
+                inMemoryGroupList.remove(group.getId());
+                inMemoryGroupList.put(group.getId(), group);
+            } else {
+                String error = "Updating user with the id does not exist in the user store..";
+                //TODO:log error
+                throw new CharonException(error);
+            }
+        } else {
+            String error = "No users exist in the user store..";
+            //TODO:log error
+            throw new CharonException(error);
+        }
+        return group;
     }
 
     private void validateMembersOnGroupUpdate(Group group) throws CharonException {

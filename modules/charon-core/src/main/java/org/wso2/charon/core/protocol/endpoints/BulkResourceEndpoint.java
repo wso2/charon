@@ -150,4 +150,10 @@ public class BulkResourceEndpoint extends AbstractResourceEndpoint implements Re
                                       UserManager userManager) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,
+                                        String inputFormat, String outputFormat, UserManager userManager) {
+        return null;
+    }
 }

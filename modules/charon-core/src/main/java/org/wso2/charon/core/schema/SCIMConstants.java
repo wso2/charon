@@ -79,6 +79,7 @@ public class SCIMConstants {
 
         public static final String DISPLAY = "display";
         public static final String OPERATION = "operation";
+        public static final String OPERATION_DELETE = "delete";
         public static final String VALUE = "value";
 
         //need bulk operations
@@ -339,6 +340,9 @@ public class SCIMConstants {
     public static final int POST = 2;
     public static final int DELETE = 3;
     public static final int PUT = 4;
+
+    public static final String UPDATE_WITH_PATCH = "updateWithPatch";
+    public static final String UPDATE_WITH_PUT = "updateWithPut";
 
 
     /*Attribute URIs for attributes defined in scim-core schema spec.
