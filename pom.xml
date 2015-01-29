@@ -17,9 +17,9 @@
     <url>http://wso2.com</url>
 
     <scm>
-        <connection>scm:git:https://github.com/wso2/charon</connection>
-        <developerConnection>scm:git:https://github.com/wso2/charon</developerConnection>
-        <url>https://github.com/wso2/charon</url>
+        <connection>scm:git:https://github.com/wso2/charon.git</connection>
+        <developerConnection>scm:git:https://github.com/wso2/charon.git</developerConnection>
+        <url>https://github.com/wso2/charon.git</url>
         <tag>HEAD</tag>
     </scm>
 
