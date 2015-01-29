@@ -10,7 +10,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.charon</groupId>
     <artifactId>org.wso2.charon.samples</artifactId>
     <packaging>jar</packaging>
     <name>WSO2 Charon - Samples</name>
