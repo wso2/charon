@@ -46,6 +46,7 @@ import org.wso2.charon.core.util.CopyUtil;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -284,23 +285,13 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             encoder = getEncoder(SCIMConstants.identifyFormat(format));
             String trimmedFilter = filterString.trim();
             //verify filter string. We currently support only equal operation
-            if (!(trimmedFilter.contains("eq") || trimmedFilter.contains("Eq"))) {
+            int eqIndex = trimmedFilter.toLowerCase(Locale.US).indexOf("eq");
+            if (eqIndex <= 0) {
                 throw new BadRequestException("Given filter operation is not supported.");
             }
-            String[] filterParts = null;
-            if (trimmedFilter.contains("eq")) {
-                filterParts = trimmedFilter.split("eq");
-            } else if (trimmedFilter.contains("Eq")) {
-                filterParts = trimmedFilter.split("Eq");
-            }
-            if (filterParts == null || filterParts.length != 2) {
-                //filter query param is not properly splitted. Hence Throwing unsupported operation exception:400
-                throw new BadRequestException("Filter operation is not recognized.");
-            }
-
-            String filterAttribute = filterParts[0];
+            String filterAttribute = trimmedFilter.substring(0, eqIndex);
+            String filterValue = trimmedFilter.substring(eqIndex + 2);
             String filterOperation = "eq";
-            String filterValue = filterParts[1];
 
             //obtain attributeURI given the attribute name
             String filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
