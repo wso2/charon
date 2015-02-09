@@ -80,6 +80,10 @@ public class JSONDecoder implements Decoder {
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
 
                 if (attributeValObj instanceof String) {
+                    //If an attribute is passed without a value, no need to save it.
+                    if (((String) attributeValObj).isEmpty()) {
+                        continue;
+                    }
                     //if the corresponding json value object is String, it is a SimpleAttribute.
                     scimObject.setAttribute(buildSimpleAttribute(attributeSchema, attributeValObj));
                     
@@ -242,6 +246,9 @@ public class JSONDecoder implements Decoder {
                 Object attributeValue = attributeValues.get(i);
 
                 if (attributeValue instanceof String) {
+                    if (((String) attributeValue).isEmpty()) {
+                        continue;
+                    }
                     simpleAttributeValues.add((String) attributeValues.get(i));
                 } else if (attributeValue instanceof JSONObject) {
                     JSONObject complexAttributeValue = (JSONObject) attributeValue;
@@ -392,7 +399,10 @@ public class JSONDecoder implements Decoder {
 					attributesMap.put(simpleAttribute.getName(), simpleAttribute);
 				}
 				if (subAttributeValue instanceof String) {
-					SimpleAttribute simpleAttribute =
+                    if (((String) subAttributeValue).isEmpty()) {
+                        continue;
+                    }
+                    SimpleAttribute simpleAttribute =
 					                                  buildSimpleAttribute(attribSchema, subAttributeValue);
 					attributesMap.put(simpleAttribute.getName(), simpleAttribute);
 				} else if (subAttributeValue instanceof Boolean) {
@@ -435,6 +445,9 @@ public class JSONDecoder implements Decoder {
 
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
             if (subAttributeValue instanceof String) {
+                if (((String) subAttributeValue).isEmpty()) {
+                    continue;
+                }
                 SimpleAttribute simpleAttribute =
                         buildSimpleAttribute(subAttributeSchema, subAttributeValue);
                 //set the URI of value according to the type if present
