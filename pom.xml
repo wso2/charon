@@ -33,22 +33,22 @@
           <dependency>
             <groupId>org.wso2.charon</groupId>
             <artifactId>org.wso2.charon.core</artifactId>
-            <version>${project.version}</version>
+            <version>${charon.parent.version}</version>
           </dependency>
           <dependency>
             <groupId>org.wso2.charon</groupId>
             <artifactId>org.wso2.charon.utils</artifactId>
-            <version>${project.version}</version>
+            <version>${charon.parent.version}</version>
           </dependency>
           <dependency>
             <groupId>org.wso2.charon</groupId>
             <artifactId>org.wso2.charon.impl</artifactId>
-            <version>${project.version}</version>
+            <version>${charon.parent.version}</version>
           </dependency>
           <dependency>
             <groupId>org.wso2.charon</groupId>
             <artifactId>org.wso2.charon.samples</artifactId>
-            <version>${project.version}</version>
+            <version>${charon.parent.version}</version>
           </dependency>
         </dependencies>
     </dependencyManagement>
@@ -131,6 +131,7 @@
     </build>
 
     <properties>
+      <charon.parent.version>2.0.0-wso2v4-SNAPSHOT</charon.parent.version>
       <json.version>20090211</json.version>
       <commons.logging.version>1.1.1</commons.logging.version>
       <axiom.api.version>1.2.11</axiom.api.version>
