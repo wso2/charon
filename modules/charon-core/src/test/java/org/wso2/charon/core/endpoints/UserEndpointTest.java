@@ -17,10 +17,10 @@
 */
 package org.wso2.charon.core.endpoints;
 
-import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.junit.Assert;
 import org.junit.Test;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
@@ -195,22 +195,22 @@ public class UserEndpointTest {
             SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
             //Assert the response message
             Assert.assertEquals("{\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"ims\":[{\"value\":\"someaimhandle\"," +
-                    "\"type\":\"aim\"}],\"locale\":\"en_US\",\"phoneNumbers\":[{\"value\":\"555-555-5555\"," +
-                    "\"type\":\"work\"},{\"value\":\"555-555-4444\",\"type\":\"mobile\"}],\"emails\":[{\"value\":\"bjensen@example.com\"," +
-                    "\"type\":\"work\"},{\"value\":\"babs@jensen.org\",\"type\":\"home\"}],\"externalId\":\""+externalId+"\"," +
-                    "\"preferredLanguage\":\"en_US\",\"meta\":{\"lastModified\":\""+sdf.format(user.getLastModified())+"\"," +
-                    "\"location\":\"null/"+user.getId()+"\",\"created\":\""+sdf.format(user.getCreatedDate())+"\"}," +
-                    "\"userType\":\"Employee\",\"photos\":[{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/F\"," +
-                    "\"type\":\"photo\"},{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/T\"," +
-                    "\"type\":\"thumbnail\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bcFLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}]," +
-                    "\"id\":\""+user.getId()+"\",\"title\":\"Tour Guide\",\"timezone\":\"America/Los_Angeles\"," +
-                    "\"profileUrl\":\"https://login.example.com/bjensen\",\"nickName\":\"Babs\",\"name\":{\"middleName\":\"Jane\"," +
-                    "\"formatted\":\"Ms. Barbara J Jensen III\",\"honorificPrefix\":\"Ms.\",\"familyName\":\"Jensen\",\"givenName\":\"Barbara\"," +
-                    "\"honorificSuffix\":\"III\"},\"userName\":\""+externalId+"\",\"addresses\":[{\"region\":\"CA\",\"streetAddress\":\"100 Universal City Plaza\"," +
-                    "\"formatted\":\"100 Universal City Plaza\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\"," +
-                    "\"type\":\"work\",\"country\":\"USA\"},{\"region\":\"CA\",\"streetAddress\":\"456 Hollywood Blvd\"," +
-                    "\"formatted\":\"456 Hollywood Blvd\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\",\"type\":\"home\"," +
-                    "\"country\":\"USA\"}],\"displayName\":\"Babs Jensen\"}",scimResponse.getResponseMessage());
+                                "\"type\":\"aim\"}],\"locale\":\"en_US\",\"emails\":[{\"value\":\"bjensen@example.com\"," +
+                                "\"type\":\"work\"},{\"value\":\"babs@jensen.org\",\"type\":\"home\"}],\"phoneNumbers\":[{\"value\":\"555-555-5555\"," +
+                                "\"type\":\"work\"},{\"value\":\"555-555-4444\",\"type\":\"mobile\"}],\"externalId\":\""+externalId+"\"," +
+                                "\"preferredLanguage\":\"en_US\",\"meta\":{\"lastModified\":\""+sdf.format(user.getLastModified())+"\"," +
+                                "\"location\":\"null/"+user.getId()+"\",\"created\":\""+sdf.format(user.getCreatedDate())+"\"}," +
+                                "\"userType\":\"Employee\",\"photos\":[{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/F\"," +
+                                "\"type\":\"photo\"},{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/T\"," +
+                                "\"type\":\"thumbnail\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bcFLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}]," +
+                                "\"id\":\""+user.getId()+"\",\"title\":\"Tour Guide\",\"timezone\":\"America/Los_Angeles\"," +
+                                "\"profileUrl\":\"https://login.example.com/bjensen\",\"nickName\":\"Babs\",\"name\":{\"middleName\":\"Jane\"," +
+                                "\"formatted\":\"Ms. Barbara J Jensen III\",\"honorificPrefix\":\"Ms.\",\"familyName\":\"Jensen\",\"givenName\":\"Barbara\"," +
+                                "\"honorificSuffix\":\"III\"},\"userName\":\""+externalId+"\",\"addresses\":[{\"region\":\"CA\",\"streetAddress\":\"100 Universal City Plaza\"," +
+                                "\"formatted\":\"100 Universal City Plaza\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\"," +
+                                "\"type\":\"work\",\"country\":\"USA\"},{\"region\":\"CA\",\"streetAddress\":\"456 Hollywood Blvd\"," +
+                                "\"formatted\":\"456 Hollywood Blvd\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\",\"type\":\"home\"," +
+                                "\"country\":\"USA\"}],\"displayName\":\"Babs Jensen\"}",scimResponse.getResponseMessage());
 
         } catch (BadRequestException e) {
             Assert.fail(e.getDescription());
