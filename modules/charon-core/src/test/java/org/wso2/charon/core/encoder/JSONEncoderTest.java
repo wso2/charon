@@ -135,10 +135,19 @@ public class JSONEncoderTest {
                     ((MultiValuedAttribute) testGroup.getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS)), jsonObject);
 
             //Assert encoded string
-            Assert.assertEquals("{\"members\":[{\"value\":\"" + group1Value + "\",\"display\":\"eng\"," +
-                                "\"type\":\"Group\"},{\"value\":\"" + group2Value + "\",\"display\":\"qa\",\"type\":\"Group\"}," +
-                                "{\"value\":\"" + user1Value + "\",\"display\":\"hasini\",\"type\":\"User\"}," +
-                                "{\"value\":\"" + user2Value + "\",\"display\":\"umesha\",\"type\":\"User\"}]}", jsonObject.toString());
+            String encodedJson = jsonObject.toString();
+            Assert.assertEquals(336, encodedJson.length());
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"members\":"));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"display\":\"eng\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"display\":\"qa\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"display\":\"hasini\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"display\":\"umesha\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"type\":\"Group\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"type\":\"User\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"value\":\"" + group1Value + "\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"value\":\"" + group2Value + "\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"value\":\"" + user1Value + "\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"value\":\"" + user2Value + "\""));
 
             JSONObject decodedObject = new JSONObject(new JSONTokener(jsonObject.toString()));
             JSONArray membersAttribute = (JSONArray) decodedObject.opt(SCIMConstants.GroupSchemaConstants.MEMBERS);
@@ -205,10 +214,18 @@ public class JSONEncoderTest {
             jsonEncoder.encodeComplexAttribute(metaAttribute, encodedObject);
 
             //Assert encoded sting
-            Assert.assertEquals("{\"meta\":{\"lastModified\":\"" + sdf.format(lastModified) + "\"," +
-                                "\"created\":\"" + sdf.format(createdDate) + "\"," +
-                                "\"location\":\"http://appserver.stratoslive.wso2.com/t/charon.com/webapps/charonDemoApp/scim/Users/\"," +
-                                "\"attributes\":[\"displayName\",\"userName\"],\"version\":\"v1\"}}", encodedObject.toString());
+            String encodedJson = encodedObject.toString();
+            Assert.assertEquals(232, encodedJson.length());
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"meta\":{"));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"location\":\"http://appserver.stratoslive.wso2" +
+                                                                ".com/t/charon.com/webapps/charonDemoApp/scim/Users/\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"attributes\":[\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"displayName\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"userName\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"version\":\"v1\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"lastModified\":\"" + sdf.format(lastModified) +
+                                                                "\""));
+            Assert.assertTrue(encodedJson, encodedJson.contains("\"created\":\"" + sdf.format(createdDate)));
 
             JSONObject decodedObject = new JSONObject(new JSONTokener(encodedObject.toString()));
             JSONObject metaObject = decodedObject.optJSONObject(SCIMConstants.CommonSchemaConstants.META);
@@ -281,13 +298,24 @@ public class JSONEncoderTest {
 
             SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
             //Assert encoded string
-            Assert.assertEquals("{\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"totalResults\":2," +
-                                "\"Resources\":[{\"id\":\"" + user1ID + "\",\"active\":false,\"externalId\":\"hasini\"," +
-                                "\"meta\":{\"lastModified\":\"" + sdf.format(user1LastModified) + "\",\"created\":\"" + sdf.format(user1CreatedDate) + "\"," +
-                                "\"location\":\"http://10.200.3.120:9763/charonDemoApp/scim/Users/\",\"version\":\"v1\"}}," +
-                                "{\"id\":\"" + user2ID + "\",\"active\":true,\"externalId\":\"umesha\"," +
-                                "\"meta\":{\"lastModified\":\"" + sdf.format(user2LastModified) + "\",\"created\":\"" + sdf.format(user2LastModified) + "\"," +
-                                "\"location\":\"http://10.200.3.120:9763/charonDemoApp/scim/Users/\",\"version\":\"v1\"}}]}", encodedString);
+            Assert.assertEquals(551, encodedString.length());
+            Assert.assertTrue(encodedString, encodedString.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"Resources\":[{"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"totalResults\":2"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"version\":\"v1\""));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"id\":\"" + user1ID));
+            Assert.assertTrue(encodedString, encodedString.contains("\"lastModified\":\"" + sdf.format(user1LastModified) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"created\":\"" + sdf.format(user1CreatedDate) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"location\":\"http://10.200.3" +
+                                                                    ".120:9763/charonDemoApp/scim/Users/\""));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"id\":\"" + user2ID));
+            Assert.assertTrue(encodedString, encodedString.contains("\"lastModified\":\"" + sdf.format(user2LastModified) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"created\":\"" + sdf.format(user2CreatedDate) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"location\":\"http://10.200.3" +
+                                                                    ".120:9763/charonDemoApp/scim/Users/\""));
+
 
         } catch (CharonException e) {
             Assert.fail(e.getDescription());
@@ -364,24 +392,40 @@ public class JSONEncoderTest {
 
             SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
             String encodedString = jsonEncoder.encodeBulkData(bulkData);
-            String response = "{\"failOnErrors\":2,\"schemas\":[\"urn:scim:schemas:core:1.0\"]," +
-                              "\"Operations\":[{\"data\":{\"id\":\"" + user1ID + "\"," +
-                              "\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"path\":\"/Users\",\"active\":false," +
-                              "\"method\":\"POST\",\"externalId\":\"Hasini\",\"meta\":{\"lastModified\":\"" + sdf.format(user1LastModified) + "\"," +
-                              "\"created\":\"" + sdf.format(user1CreatedDate) + "\",\"location\":\"http://10.200.3.120:9763/charonDemoApp/scim/Users/\"," +
-                              "\"version\":\"v1\"},\"bulkId\":\"asbv23\"},\"path\":\"/Users\",\"method\":\"POST\"," +
-                              "\"bulkId\":\"asbv23\"},{\"data\":{\"id\":\"" + user2ID + "\"," +
-                              "\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"path\":\"/Users\",\"active\":true," +
-                              "\"method\":\"POST\",\"externalId\":\"Prabath\",\"meta\":{\"lastModified\":\"" + sdf.format(user2LastModified) + "\"," +
-                              "\"created\":\"" + sdf.format(user2CreatedDate) + "\",\"location\":\"http://10.200.3.120:9763/charonDemoApp/scim/Users/\"," +
-                              "\"version\":\"v1\"},\"bulkId\":\"scdgs\"},\"path\":\"/Users\",\"method\":\"POST\"," +
-                              "\"bulkId\":\"scdgs\"},{\"data\":{\"id\":\"" + user3ID + "\"," +
-                              "\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"path\":\"/Users\",\"active\":true," +
-                              "\"method\":\"POST\",\"externalId\":\"Dinuka\",\"meta\":{\"lastModified\":\"" + sdf.format(user3LastModified) + "\"," +
-                              "\"created\":\"" + sdf.format(user3CreatedDate) + "\",\"location\":\"http://10.200.3.120:9763/charonDemoApp/scim/Users/\"," +
-                              "\"version\":\"v1\"},\"bulkId\":\"123\"},\"path\":\"/Users\",\"method\":\"POST\",\"bulkId\":\"123\"}]}";
 
-            Assert.assertEquals(response, encodedString);
+            Assert.assertEquals(1231, encodedString.length());
+            Assert.assertTrue(encodedString, encodedString.contains("\"failOnErrors\":2"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"Operations\":[{"));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"path\":\"/Users\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"active\":false"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"active\":true"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"method\":\"POST"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"bulkId\":\"123"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"bulkId\":\"asbv23"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"bulkId\":\"scdgs"));
+            Assert.assertTrue(encodedString, encodedString.contains("\"externalId\":\"Hasini\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"externalId\":\"Prabath\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"externalId\":\"Dinuka\""));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"id\":\"" + user1ID));
+            Assert.assertTrue(encodedString, encodedString.contains("\"lastModified\":\"" + sdf.format(user1LastModified) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"created\":\"" + sdf.format(user1CreatedDate) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"location\":\"http://10.200.3" +
+                                                                    ".120:9763/charonDemoApp/scim/Users/\""));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"id\":\"" + user2ID));
+            Assert.assertTrue(encodedString, encodedString.contains("\"lastModified\":\"" + sdf.format(user2LastModified) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"created\":\"" + sdf.format(user2CreatedDate) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"location\":\"http://10.200.3" +
+                                                                    ".120:9763/charonDemoApp/scim/Users/\""));
+
+            Assert.assertTrue(encodedString, encodedString.contains("\"id\":\"" + user3ID));
+            Assert.assertTrue(encodedString, encodedString.contains("\"lastModified\":\"" + sdf.format(user3LastModified) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"created\":\"" + sdf.format(user3CreatedDate) + "\""));
+            Assert.assertTrue(encodedString, encodedString.contains("\"location\":\"http://10.200.3" +
+                                                                    ".120:9763/charonDemoApp/scim/Users/\""));
 
         } catch (CharonException e) {
             Assert.fail(e.getDescription());
