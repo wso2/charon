@@ -279,7 +279,7 @@ public class UserEndpointTest {
             Assert.assertTrue(responseMessage, responseMessage.contains("\"lastModified\":\""
                                                                         + sdf.format(user.getLastModified()) + "\""));
             Assert.assertTrue(responseMessage, responseMessage.contains("\"created\":\""
-                                                                        + sdf.format(user.getCreatedDate()) + "\""))
+                                                                        + sdf.format(user.getCreatedDate()) + "\""));
         } catch (BadRequestException e) {
             Assert.fail(e.getDescription());
         } catch (CharonException e) {
