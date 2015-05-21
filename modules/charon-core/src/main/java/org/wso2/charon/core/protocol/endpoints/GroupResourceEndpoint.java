@@ -219,9 +219,12 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
                 throw new BadRequestException(message);
             }
 
-            String filterAttribute = filterParts[0];
+            String filterAttribute = filterParts[0].trim();
             String filterOperation = "eq";
-            String filterValue = filterParts[1];
+            String filterValue = filterParts[1].trim();
+            if (filterValue.charAt(0) == '\"') {
+                filterValue = filterValue.substring(1, filterValue.length() - 1);
+            }
 
             //obtain attributeURI given the attribute name
             String filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
