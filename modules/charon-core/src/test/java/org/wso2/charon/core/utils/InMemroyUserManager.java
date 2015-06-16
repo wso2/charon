@@ -122,6 +122,11 @@ public class InMemroyUserManager implements UserManager {
         return null;
     }
 
+    @Override
+    public User patchUser(User newUser, User oldUser, String[] metaAttributes) {
+        return null;
+    }
+
     /**
      * Update the user partially only with updated attributes.
      *
