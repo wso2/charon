@@ -83,7 +83,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 //TODO:log the error.
                 throw new ResourceNotFoundException(error);
             }
-            
+
             SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //perform service provider side validation.
             ServerSideValidator.validateRetrievedSCIMObject(user, schema);
@@ -321,7 +321,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
                 returnedUsers = userManager.listUsersByFilter(filterAttributeURI, filterOperation,
-                                                              filterValue);
+                        filterValue);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
@@ -482,7 +482,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             encoder = getEncoder(SCIMConstants.identifyFormat(outputFormat));
             //obtain the decoder matching the submitted format.
             decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
-            
+
             SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //decode the SCIM User object, encoded in the submitted payload.
@@ -492,9 +492,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 //retrieve the old object
                 User oldUser = userManager.getUser(existingId);
                 if (oldUser != null) {
-					User validatedUser =
-					                     (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
-					                                                                          schema);
+                    User validatedUser =
+                            (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
+                                    schema);
                     updatedUser = userManager.updateUser(validatedUser);
 
                 } else {
@@ -557,6 +557,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         }
     }
 
+    @Override
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
         //needs to validate the incoming object. eg: id can not be set by the consumer.
 
@@ -598,7 +599,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                     User validatedUser =
                             (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
                                     schema);
-                    updatedUser = userManager.patchUser(user, oldUser, metaAttributeIds);
+                    updatedUser = userManager.patchUser(validatedUser, oldUser, metaAttributeIds);
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;
