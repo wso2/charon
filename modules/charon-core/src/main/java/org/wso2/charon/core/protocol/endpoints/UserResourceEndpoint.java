@@ -602,15 +602,13 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
                 } else {
                     String error = "No user exists with the given id: " + existingId;
-                    //log the error as well.
-                    //throw internal server error.
+                    logger.error(error);
                     throw new ResourceNotFoundException(error);
                 }
 
             } else {
                 String error = "Provided user manager handler is null.";
-                //log the error as well.
-                //throw internal server error.
+                logger.error(error);
                 throw new InternalServerException(error);
             }
             //encode the newly created SCIM user object and add id attribute to Location header.
@@ -632,44 +630,29 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 throw new InternalServerException(error);
             }
 
-            //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Input format is not supported.", e);
-            }
+            logger.error("Input format is not supported.", e);
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Charon couldn't update user.", e);
-            }
-            //we have charon exceptions also, instead of having only internal server error exceptions,
-            //because inside API code throws CharonException.
+            logger.error("Charon couldn't update user.", e);
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Bad Request.", e);
-            }
+            logger.error("Bad Request.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Internal Server error while updating user.", e);
-            }
+            logger.error("Internal Server error while updating user.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Couldn't find the requested resource.", e);
-            }
+            logger.error("Couldn't find the requested resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (JSONException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Error while parsing JSOn.", e);
-            }
+            logger.error("Error while parsing JSOn.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, new BadRequestException());
         }
     }
