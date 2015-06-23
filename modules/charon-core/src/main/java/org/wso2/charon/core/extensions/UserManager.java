@@ -70,6 +70,8 @@ public interface UserManager extends Storage {
      */
     public User updateUser(User user) throws CharonException;
 
+    public User patchUser(User newUser, User oldUser, String[] metaAttributes) throws CharonException;
+
     /**
      * Update the user partially only with updated attributes.
      *
