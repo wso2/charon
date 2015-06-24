@@ -340,6 +340,7 @@ public class SCIMConstants {
     public static final int POST = 2;
     public static final int DELETE = 3;
     public static final int PUT = 4;
+    public static final int PATCH = 5;
 
     public static final String UPDATE_WITH_PATCH = "updateWithPatch";
     public static final String UPDATE_WITH_PUT = "updateWithPut";
