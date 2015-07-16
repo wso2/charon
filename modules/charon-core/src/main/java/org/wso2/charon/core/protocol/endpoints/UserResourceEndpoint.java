@@ -106,7 +106,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't found the resource.", e);
+            logger.error("Couldn't find the resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -189,7 +189,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Internal server error while creating new resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (DuplicateResourceException e) {
-            logger.error("Duplicate resource exist in user store.", e);
+            logger.error("Duplicate resource exists in user store.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
 
@@ -244,7 +244,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
             if(logger.isDebugEnabled()){
-                logger.debug("Couldn't Found Specified Resource.", e);
+                logger.debug("Couldn't find Specified Resource.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (FormatNotSupportedException e) {
@@ -362,7 +362,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Internal server error while retrieving user list.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't found resource.", e);
+            logger.error("Couldn't find resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
             logger.error("Error while creating listed resource.", e);
@@ -448,7 +448,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Internal server error.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't found resource.", e);
+            logger.error("Couldn't find resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
             logger.error("Error while creating listed resource.", e);
@@ -553,7 +553,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         } catch (ResourceNotFoundException e) {
 
             if(logger.isDebugEnabled()){
-                logger.debug("Couldn't found user resource.", e);
+                logger.debug("Couldn't find user resource.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
