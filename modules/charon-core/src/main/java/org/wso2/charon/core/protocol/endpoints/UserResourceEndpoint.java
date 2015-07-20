@@ -308,6 +308,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             if (filterValue.charAt(0) == '\"') {
                 filterValue = filterValue.substring(1, filterValue.length() - 1);
             }
+            filterValue = filterValue.replace("\\\\","\\");
 
 
             //obtain attributeURI given the attribute name
