@@ -150,11 +150,13 @@ public class Group extends AbstractSCIMObject {
             MultiValuedAttribute members = (MultiValuedAttribute) attributeList.get(
                     SCIMConstants.GroupSchemaConstants.MEMBERS);
             List<Map<String, Object>> values = members.getComplexValues();
-            for (Map<String, Object> value : values) {
-                for (Map.Entry<String, Object> entry : value.entrySet()) {
-                    if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entry.getKey())) {
-                        //add display name to the list
-                        displayNames.add((String) entry.getValue());
+            if (values != null) {
+                for (Map<String, Object> value : values) {
+                    for (Map.Entry<String, Object> entry : value.entrySet()) {
+                        if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entry.getKey())) {
+                            //add display name to the list
+                            displayNames.add((String) entry.getValue());
+                        }
                     }
                 }
             }
@@ -176,33 +178,35 @@ public class Group extends AbstractSCIMObject {
             MultiValuedAttribute members =
                                            (MultiValuedAttribute) attributeList.get(SCIMConstants.GroupSchemaConstants.MEMBERS);
             List<Map<String, Object>> values = members.getComplexValues();
-            for (Map<String, Object> value : values) {
-                if (operationType == null) {
-                    boolean isOperationPresent = false;
-                    for (Map.Entry<String, Object> entry : value.entrySet()) {
-                        if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey())) {
-                            isOperationPresent = true;
-                        }
-                    }
-                    if (isOperationPresent == false) {
+            if (values != null) {
+                for (Map<String, Object> value : values) {
+                    if (operationType == null) {
+                        boolean isOperationPresent = false;
                         for (Map.Entry<String, Object> entry : value.entrySet()) {
-                            if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entry.getKey())) {
-                                // add display name to the list
-                                displayNames.add((String) entry.getValue());
+                            if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey())) {
+                                isOperationPresent = true;
                             }
                         }
-                    }
-                } else {
-                    for (Map.Entry<String, Object> entry : value.entrySet()) {
-                        if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey()) &&
-                            entry.getValue() != null && (entry.getValue()).equals(operationType)) {
-                            for (Map.Entry<String, Object> entryTemp : value.entrySet()) {
-                                if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entryTemp.getKey())) {
+                        if (isOperationPresent == false) {
+                            for (Map.Entry<String, Object> entry : value.entrySet()) {
+                                if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entry.getKey())) {
                                     // add display name to the list
-                                    displayNames.add((String) entryTemp.getValue());
+                                    displayNames.add((String) entry.getValue());
                                 }
                             }
+                        }
+                    } else {
+                        for (Map.Entry<String, Object> entry : value.entrySet()) {
+                            if ((SCIMConstants.CommonSchemaConstants.OPERATION).equals(entry.getKey()) &&
+                                entry.getValue() != null && (entry.getValue()).equals(operationType)) {
+                                for (Map.Entry<String, Object> entryTemp : value.entrySet()) {
+                                    if ((SCIMConstants.CommonSchemaConstants.DISPLAY).equals(entryTemp.getKey())) {
+                                        // add display name to the list
+                                        displayNames.add((String) entryTemp.getValue());
+                                    }
+                                }
 
+                            }
                         }
                     }
                 }
