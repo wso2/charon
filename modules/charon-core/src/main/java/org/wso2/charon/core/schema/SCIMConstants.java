@@ -277,7 +277,7 @@ public class SCIMConstants {
     public static final String NICK_NAME_DESC = "The casual way to address the user in real life. " +
                                                 "This attribute SHOULD NOT be used to represent a User's username";
     public static final String PROFILE_URL_DESC = "A fully qualified URL to a page representing the User's online profile.";
-    public static final String TITLE_DESC = "The user’s title, such as \"Vice President.\"";
+    public static final String TITLE_DESC = "The user's title, such as \"Vice President.\"";
     public static final String USER_TYPE_DESC = "Used to identify the organization to user relationship.";
     public static final String PREFERRED_LANGUAGE_DESC = "Indicates the User's preferred written or spoken language.";
     public static final String LOCALE_DESC = "Used to indicate the User's default location.";
