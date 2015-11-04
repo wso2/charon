@@ -17,6 +17,7 @@
 */
 package org.wso2.charon.core.schema;
 
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 
@@ -29,7 +30,7 @@ public class ClientSideValidator extends AbstractValidator {
 
     public static void validateRetrievedSCIMObject(AbstractSCIMObject scimObject,
                                                    SCIMResourceSchema schema)
-            throws CharonException {
+            throws CharonException, BadRequestException {
         validateSCIMObjectForRequiredAttributes(scimObject, schema);
         validateSchemaList(scimObject, schema);
     }

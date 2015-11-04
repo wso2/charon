@@ -108,6 +108,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
         } catch (ResourceNotFoundException e) {
             logger.error("Couldn't find the resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (BadRequestException e) {
+            logger.error("Bad request error.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
 
