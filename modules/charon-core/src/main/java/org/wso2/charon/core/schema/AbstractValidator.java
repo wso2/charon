@@ -21,6 +21,7 @@ import org.wso2.charon.core.attributes.AbstractAttribute;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
 
@@ -43,7 +44,7 @@ public abstract class AbstractValidator /*implements SchemaValidator*/ {
      */
     public static void validateSCIMObjectForRequiredAttributes(AbstractSCIMObject scimObject,
                                                                ResourceSchema resourceSchema)
-            throws CharonException {
+            throws BadRequestException, CharonException {
         //get attributes from schema.
         List<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
         //get attribute list from scim object.
@@ -53,7 +54,7 @@ public abstract class AbstractValidator /*implements SchemaValidator*/ {
             if (attributeSchema.getRequired()) {
                 if (!attributeList.containsKey(attributeSchema.getName())) {
                     String error = "Required attribute " + attributeSchema.getName() + " is missing in the SCIM Object.";
-                    throw new CharonException(error);
+                    throw new BadRequestException(error);
                 }
             }
             //check for required sub attributes.
@@ -70,7 +71,7 @@ public abstract class AbstractValidator /*implements SchemaValidator*/ {
                                 if (attribute.getSubAttribute(subAttributeSchema.getName()) == null) {
                                     String error = "Required sub attribute: " + subAttributeSchema.getName()
                                                    + " is missing in the SCIM Attribute: " + attribute.getName();
-                                    throw new CharonException(error);
+                                    throw new BadRequestException(error);
                                 }
                             } else if (attribute instanceof MultiValuedAttribute) {
                                 List<Attribute> values =
@@ -80,7 +81,7 @@ public abstract class AbstractValidator /*implements SchemaValidator*/ {
                                         if (value.getSubAttribute(subAttributeSchema.getName()) == null) {
                                             String error = "Required sub attribute: " + subAttributeSchema.getName()
                                                            + " is missing in the SCIM Attribute: " + attribute.getName();
-                                            throw new CharonException(error);
+                                            throw new BadRequestException(error);
                                         }
                                     }
                                 }
