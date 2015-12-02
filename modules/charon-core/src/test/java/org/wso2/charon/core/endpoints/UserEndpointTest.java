@@ -413,7 +413,7 @@ public class UserEndpointTest {
     //@Test
     public void testFilterUsers(String userName) {
         UserResourceEndpoint userREP = new UserResourceEndpoint();
-        SCIMResponse scimResponse = userREP.listByFilter("userNameEq" + userName,
+        SCIMResponse scimResponse = userREP.listByFilter("userName Eq " + userName,
                                                          inMemroyUserManager, SCIMConstants.APPLICATION_JSON);
         Assert.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseCode());
         //decode listed resource
