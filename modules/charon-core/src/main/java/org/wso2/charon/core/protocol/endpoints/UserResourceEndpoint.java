@@ -289,15 +289,15 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             encoder = getEncoder(SCIMConstants.identifyFormat(format));
             String trimmedFilter = filterString.trim();
             //verify filter string. We currently support only equal operation
-            if (!(trimmedFilter.contains("eq") || trimmedFilter.contains("Eq"))) {
+            if (!(trimmedFilter.contains(" eq ") || trimmedFilter.contains(" Eq "))) {
                 String message = "Given filter operation is not supported.";
                 throw new BadRequestException(message);
             }
             String[] filterParts = null;
-            if (trimmedFilter.contains("eq")) {
-                filterParts = trimmedFilter.split("eq");
-            } else if (trimmedFilter.contains("Eq")) {
-                filterParts = trimmedFilter.split("Eq");
+            if (trimmedFilter.contains(" eq ")) {
+                filterParts = trimmedFilter.split(" eq ");
+            } else if (trimmedFilter.contains(" Eq ")) {
+                filterParts = trimmedFilter.split(" Eq ");
             }
             if (filterParts == null || filterParts.length != 2) {
                 //filter query param is not properly splitted. Hence Throwing unsupported operation exception:400
@@ -306,7 +306,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
 
             String filterAttribute = filterParts[0].trim();
-            String filterOperation = "eq";
+            String filterOperation = " eq ";
             String filterValue = filterParts[1].trim();
             if (filterValue.charAt(0) == '\"') {
                 filterValue = filterValue.substring(1, filterValue.length() - 1);
