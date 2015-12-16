@@ -193,7 +193,13 @@ public class JSONDecoder implements Decoder {
             Object resources = decodedJsonObj.opt(SCIMConstants.ListedResourcesConstants.RESOURCES);
             List<SCIMObject> scimObjects = new ArrayList<SCIMObject>();
             for (int i = 0; i < (((JSONArray) resources).length()); i++) {
-                String scimResourceString = ((JSONArray) resources).getString(i);
+                Object object = ((JSONArray) resources).get(i);
+                String scimResourceString = null;
+                if(object instanceof String) {
+                    scimResourceString = ((JSONArray) resources).getString(i);
+                } else if (object instanceof JSONObject) {
+                    scimResourceString = ((JSONArray) resources).getJSONObject(i).toString();
+                }
                 SCIMObject scimObject = this.decodeResource(scimResourceString, resourceSchemaOfListedResource,
                                                             scimObjectOfListedResource);
                 scimObjects.add(scimObject);
