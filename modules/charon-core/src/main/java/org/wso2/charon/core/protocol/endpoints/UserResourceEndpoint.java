@@ -56,6 +56,8 @@ import java.util.Map;
  * based on the HTTP requests received by SCIM Client.
  */
 public class UserResourceEndpoint extends AbstractResourceEndpoint {
+    private static final String INPUT_PARAMETER_META = "meta";
+    private static final String INPUT_PARAMETER_ATTRIBUTES = "attributes";
     private Log logger = LogFactory.getLog(UserResourceEndpoint.class);
 
     /**
@@ -484,9 +486,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 //retrieve the old object
                 User oldUser = userManager.getUser(existingId);
                 if (oldUser != null) {
-                    User validatedUser =
-                            (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
-                                    schema);
+                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
                     updatedUser = userManager.updateUser(validatedUser);
 
                 } else {
@@ -580,18 +580,18 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimObjectString));
 
-            Object metaAttributeValueObject = decodedJsonObj.opt("meta");
+            Object metaAttributeValueObject = decodedJsonObj.opt(INPUT_PARAMETER_META);
             String[] metaAttributeIds = new String[0];
 
             if (metaAttributeValueObject != null) {
-                String metaAttributeVal = decodedJsonObj.opt("meta").toString();
+                String metaAttributeVal = decodedJsonObj.opt(INPUT_PARAMETER_META).toString();
                 JSONObject attributeObject = new JSONObject(new JSONTokener(metaAttributeVal));
-                JSONArray attributes = (JSONArray) attributeObject.opt("attributes");
+                JSONArray attributes = (JSONArray) attributeObject.opt(INPUT_PARAMETER_ATTRIBUTES);
                 metaAttributeIds = new String[attributes.length()];
                 for (int i = 0; i < attributes.length(); i++) {
                     metaAttributeIds[i] = attributes.getString(i);
                 }
-                decodedJsonObj.remove("meta");
+                decodedJsonObj.remove(INPUT_PARAMETER_META);
                 scimObjectString = decodedJsonObj.toString();
 
             }
@@ -605,9 +605,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                     user.setDisplayName(oldUser.getDisplayName());
                 }
                 if (oldUser != null) {
-                    User validatedUser =
-                            (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
-                                    schema);
+                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
                     updatedUser = userManager.patchUser(validatedUser, oldUser, metaAttributeIds);
 
                 } else {
@@ -662,7 +660,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Couldn't find the requested resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (JSONException e) {
-            logger.error("Error while parsing JSOn.", e);
+            logger.error("Error while parsing JSON.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, new BadRequestException());
         }
     }
