@@ -150,6 +150,10 @@ public class BulkRequestProcessor {
                 response = userResourceEndpoint
                         .create(userRequest.getData(), inputFormat, outputFormat, userManager, false);
             }
+            if (response.getResponseCode() != ResponseCodeConstants.CODE_CREATED) {
+                //user is not created. Response should not be added to bulkReponse object.
+                continue;
+            }
             bulkResponseContent.setBulkID(userRequest.getBulkID());
             bulkResponseContent.setScimResponse(response);
             bulkResponseContent.setDescription(response.getResponseMessage());
@@ -169,6 +173,10 @@ public class BulkRequestProcessor {
             //TODO: have to check the "failOnError" and "errors", if reached the failOnError limit we have to exit
             SCIMResponse response = groupResourceEndpoint.create(
                     groupRequest.getData(), inputFormat, outputFormat, userManager);
+            if (response.getResponseCode() != ResponseCodeConstants.CODE_CREATED) {
+                //Group is not created. Response should not be added to bulkReponse object.
+                continue;
+            }
             bulkResponseContent.setBulkID(groupRequest.getBulkID());
             bulkResponseContent.setScimResponse(response);
             bulkResponseContent.setDescription(response.getResponseMessage());
