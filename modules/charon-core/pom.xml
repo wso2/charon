@@ -18,27 +18,22 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>${json.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>${commons.logging.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
-            <version>${axiom.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
-            <version>${axiom.impl.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -67,13 +62,11 @@
                             org.wso2.charon.core.*;version="${charon.parent.package.export.version}"
                         </Export-Package>
                         <Import-Package>
-                            !org.wso2.charon.core.*;
-                            org.json.*;
-                            org.apache.commons.logging.*;
-                            org.apache.axiom.om.*;
-                            javax.xml.namespace.*;
-                            javax.xml.stream.*;
-                            resolution:=optional
+                            org.json.*,
+                            org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
+                            org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
+                            javax.xml.namespace.*,
+                            javax.xml.stream.*,
                         </Import-Package>
                     </instructions>
                 </configuration>

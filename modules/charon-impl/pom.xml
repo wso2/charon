@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.wso2.charon</groupId>
         <artifactId>charon-parent</artifactId>
@@ -26,12 +27,10 @@
         <dependency>
             <groupId>org.apache.wink</groupId>
             <artifactId>wink-server</artifactId>
-            <version>${wink.server.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>${servlet.api.version}</version>
         </dependency>
 
     </dependencies>
@@ -79,9 +78,6 @@
                     </webResources>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
-
 </project>

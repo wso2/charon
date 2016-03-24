@@ -26,7 +26,6 @@
         <dependency>
             <groupId>org.apache.wink</groupId>
             <artifactId>wink-client</artifactId>
-            <version>${wink.client.version}</version>
         </dependency>
     </dependencies>
 
