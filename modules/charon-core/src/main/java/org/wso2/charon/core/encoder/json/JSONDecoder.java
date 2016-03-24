@@ -80,6 +80,10 @@ public class JSONDecoder implements Decoder {
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
 
                 if (attributeValObj instanceof String) {
+                    //If an attribute is passed without a value, no need to save it.
+                    if(((String) attributeValObj).isEmpty()){
+                        continue;
+                    }
                     //if the corresponding json value object is String, it is a SimpleAttribute.
                     scimObject.setAttribute(buildSimpleAttribute(attributeSchema, attributeValObj));
                     
@@ -189,7 +193,13 @@ public class JSONDecoder implements Decoder {
             Object resources = decodedJsonObj.opt(SCIMConstants.ListedResourcesConstants.RESOURCES);
             List<SCIMObject> scimObjects = new ArrayList<SCIMObject>();
             for (int i = 0; i < (((JSONArray) resources).length()); i++) {
-                String scimResourceString = ((JSONArray) resources).getString(i);
+                Object object = ((JSONArray) resources).get(i);
+                String scimResourceString = null;
+                if(object instanceof String) {
+                    scimResourceString = ((JSONArray) resources).getString(i);
+                } else if (object instanceof JSONObject) {
+                    scimResourceString = ((JSONArray) resources).getJSONObject(i).toString();
+                }
                 SCIMObject scimObject = this.decodeResource(scimResourceString, resourceSchemaOfListedResource,
                                                             scimObjectOfListedResource);
                 scimObjects.add(scimObject);
@@ -242,6 +252,9 @@ public class JSONDecoder implements Decoder {
                 Object attributeValue = attributeValues.get(i);
 
                 if (attributeValue instanceof String) {
+                    if(((String) attributeValue).isEmpty()){
+                        continue;
+                    }
                     simpleAttributeValues.add((String) attributeValues.get(i));
                 } else if (attributeValue instanceof JSONObject) {
                     JSONObject complexAttributeValue = (JSONObject) attributeValue;
@@ -353,6 +366,9 @@ public class JSONDecoder implements Decoder {
 					attributesMap.put(subAttributeSchema.getName(), simpleAttribute);
 				}
 				if (subAttributeValue instanceof String) {
+                    if(((String) subAttributeValue).isEmpty()){
+                        continue;
+                    }
 					SimpleAttribute simpleAttribute =
 					                                  buildSimpleAttribute(subAttributeSchema,
 					                                                       subAttributeValue);
@@ -392,6 +408,9 @@ public class JSONDecoder implements Decoder {
 					attributesMap.put(simpleAttribute.getName(), simpleAttribute);
 				}
 				if (subAttributeValue instanceof String) {
+                    if(((String) subAttributeValue).isEmpty()){
+                        continue;
+                    }
 					SimpleAttribute simpleAttribute =
 					                                  buildSimpleAttribute(attribSchema, subAttributeValue);
 					attributesMap.put(simpleAttribute.getName(), simpleAttribute);

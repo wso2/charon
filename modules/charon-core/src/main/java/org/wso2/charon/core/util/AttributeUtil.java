@@ -125,7 +125,7 @@ public class AttributeUtil {
 
 		while (attributeSchemas.hasNext()) {
 			AttributeSchema attributeSchema = attributeSchemas.next();
-			if (attributeSchema.getName().equals(attributeName)) {
+			if (attributeSchema.getName().equalsIgnoreCase(attributeName)) {
 				return attributeSchema.getURI();
 			}
 			// check in sub attributes
@@ -161,7 +161,7 @@ public class AttributeUtil {
 
 			while (attribIterator.hasNext()) {
 				SCIMAttributeSchema attributeSchema = attribIterator.next();
-				if (attributeSchema.getName().equals(attributeName)) {
+				if (attributeSchema.getName().equalsIgnoreCase(attributeName)) {
 					return attributeSchema.getURI();
 				}
 				// check in sub attributes
@@ -195,7 +195,7 @@ public class AttributeUtil {
     		
 			while(subsIterator.hasNext()) {
 				SCIMSubAttributeSchema subAttribSchema = subsIterator.next();
-				if(subAttribSchema.getName().equals(attributeName)) {
+				if(subAttribSchema.getName().equalsIgnoreCase(attributeName)) {
 					return subAttribSchema.getURI();
 				}
 			}

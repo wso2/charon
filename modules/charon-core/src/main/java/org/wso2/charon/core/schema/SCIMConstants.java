@@ -40,9 +40,9 @@ public class SCIMConstants {
      * @return
      */
     public static String identifyFormat(String format) {
-        if (format.equals(APPLICATION_JSON)) {
+        if (format.contains(APPLICATION_JSON)) {
             return SCIMConstants.JSON;
-        } else if (format.equals(APPLICATION_XML)) {
+        } else if (format.contains(APPLICATION_XML)) {
             return SCIMConstants.XML;
         } else {
             return null;
@@ -277,7 +277,7 @@ public class SCIMConstants {
     public static final String NICK_NAME_DESC = "The casual way to address the user in real life. " +
                                                 "This attribute SHOULD NOT be used to represent a User's username";
     public static final String PROFILE_URL_DESC = "A fully qualified URL to a page representing the User's online profile.";
-    public static final String TITLE_DESC = "The user’s title, such as \"Vice President.\"";
+    public static final String TITLE_DESC = "The user's title, such as \"Vice President.\"";
     public static final String USER_TYPE_DESC = "Used to identify the organization to user relationship.";
     public static final String PREFERRED_LANGUAGE_DESC = "Indicates the User's preferred written or spoken language.";
     public static final String LOCALE_DESC = "Used to indicate the User's default location.";
@@ -340,6 +340,7 @@ public class SCIMConstants {
     public static final int POST = 2;
     public static final int DELETE = 3;
     public static final int PUT = 4;
+    public static final int PATCH = 5;
 
     public static final String UPDATE_WITH_PATCH = "updateWithPatch";
     public static final String UPDATE_WITH_PUT = "updateWithPut";

@@ -21,6 +21,7 @@ import org.wso2.charon.core.attributes.AbstractAttribute;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
+import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.objects.AbstractSCIMObject;
@@ -53,7 +54,7 @@ public class ServerSideValidator extends AbstractValidator {
      */
     public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject,
                                                  SCIMResourceSchema resourceSchema)
-            throws CharonException {
+            throws CharonException, BadRequestException {
         //check if read-only attributes are set, if so put a debug level log and remove them.
         removeAnyReadOnlyAttributes(scimObject, resourceSchema);
         //add created and last modified dates
@@ -92,7 +93,7 @@ public class ServerSideValidator extends AbstractValidator {
     public static AbstractSCIMObject validateUpdatedSCIMObject(AbstractSCIMObject oldObject,
                                                                AbstractSCIMObject newObject,
                                                                SCIMResourceSchema resourceSchema)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         AbstractSCIMObject validatedObject = null;
         try {
@@ -123,7 +124,7 @@ public class ServerSideValidator extends AbstractValidator {
      */
     public static void validateRetrievedSCIMObject(AbstractSCIMObject scimObject,
                                                    SCIMResourceSchema resourceSchema)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         //if user object, remove password before returning.
         if (SCIMConstants.USER.equals(resourceSchema.getName())) {

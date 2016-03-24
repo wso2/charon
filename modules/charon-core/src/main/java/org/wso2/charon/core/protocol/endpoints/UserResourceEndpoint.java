@@ -17,6 +17,10 @@
 */
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.encoder.Decoder;
 import org.wso2.charon.core.encoder.Encoder;
@@ -35,7 +39,6 @@ import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMResourceSchema;
 import org.wso2.charon.core.schema.SCIMResourceSchemaManager;
-import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.schema.ServerSideValidator;
 
 import org.apache.commons.logging.LogFactory;
@@ -43,7 +46,6 @@ import org.apache.commons.logging.Log;
 import org.wso2.charon.core.util.AttributeUtil;
 import org.wso2.charon.core.util.CopyUtil;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +83,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 //TODO:log the error.
                 throw new ResourceNotFoundException(error);
             }
-            
+
             SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
             //perform service provider side validation.
             ServerSideValidator.validateRetrievedSCIMObject(user, schema);
@@ -93,21 +95,21 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Format not supported.", e);
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Internal Server error whlie retrieving user.", e);
             //Inside API code throws CharonException.
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Couldn't find the resource.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (BadRequestException e) {
+            logger.error("Bad request error.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -172,13 +174,11 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Format not found exception.", e);
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            logger.error(e.getDescription(), e.getCause());
-            //e.printStackTrace();
+            logger.error("Internal server error while creating new resource.", e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getCode() == -1) {
@@ -186,16 +186,13 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Bad request error.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Internal server error while creating new resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (DuplicateResourceException e) {
-            logger.error(e.getDescription());
-            e.printStackTrace();
+            logger.error("Duplicate resource exists in user store.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
 
@@ -244,18 +241,26 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //on successful deletion SCIMResponse only has 200 OK status code.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, null, null);
         } catch (InternalServerException e) {
-            e.printStackTrace();
+            if(logger.isDebugEnabled()){
+                logger.debug("Internal Server Error while deleting User", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            e.printStackTrace();
+            if(logger.isDebugEnabled()){
+                logger.debug("Couldn't find Specified Resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (FormatNotSupportedException e) {
-            e.printStackTrace();
+            if(logger.isDebugEnabled()){
+                logger.debug("Format Not Supported.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            e.printStackTrace();
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
+            if(logger.isDebugEnabled()){
+                logger.debug("Internal Server Error while deleting User", e);
+            }
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
@@ -284,23 +289,29 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             encoder = getEncoder(SCIMConstants.identifyFormat(format));
             String trimmedFilter = filterString.trim();
             //verify filter string. We currently support only equal operation
-            if (!(trimmedFilter.contains("eq") || trimmedFilter.contains("Eq"))) {
-                throw new BadRequestException("Given filter operation is not supported.");
+            if (!(trimmedFilter.contains(" eq ") || trimmedFilter.contains(" Eq "))) {
+                String message = "Given filter operation is not supported.";
+                throw new BadRequestException(message);
             }
             String[] filterParts = null;
-            if (trimmedFilter.contains("eq")) {
-                filterParts = trimmedFilter.split("eq");
-            } else if (trimmedFilter.contains("Eq")) {
-                filterParts = trimmedFilter.split("Eq");
+            if (trimmedFilter.contains(" eq ")) {
+                filterParts = trimmedFilter.split(" eq ");
+            } else if (trimmedFilter.contains(" Eq ")) {
+                filterParts = trimmedFilter.split(" Eq ");
             }
             if (filterParts == null || filterParts.length != 2) {
                 //filter query param is not properly splitted. Hence Throwing unsupported operation exception:400
-                throw new BadRequestException("Filter operation is not recognized.");
+                String message = "Filter operation is not recognized";
+                throw new BadRequestException(message);
             }
 
-            String filterAttribute = filterParts[0];
-            String filterOperation = "eq";
-            String filterValue = filterParts[1];
+            String filterAttribute = filterParts[0].trim();
+            String filterOperation = " eq ";
+            String filterValue = filterParts[1].trim();
+            if (filterValue.charAt(0) == '\"') {
+                filterValue = filterValue.substring(1, filterValue.length() - 1);
+            }
+
 
             //obtain attributeURI given the attribute name
             String filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
@@ -313,7 +324,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
                 returnedUsers = userManager.listUsersByFilter(filterAttributeURI, filterOperation,
-                                                              filterValue);
+                        filterValue);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {
@@ -339,13 +350,11 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
 
         } catch (FormatNotSupportedException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Format not supported.", e);
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Internal server error while retrieving user list.", e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getCode() == -1) {
@@ -353,20 +362,16 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Internal server error while retrieving user list.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Couldn't find resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Error while creating listed resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Bad request.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -431,13 +436,11 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
 
         } catch (FormatNotSupportedException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Format not supported.", e);
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Internal server error.", e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getCode() == -1) {
@@ -445,16 +448,13 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Internal server error.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Couldn't find resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error("Error while creating listed resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -474,7 +474,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             encoder = getEncoder(SCIMConstants.identifyFormat(outputFormat));
             //obtain the decoder matching the submitted format.
             decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
-            
+
             SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
             //decode the SCIM User object, encoded in the submitted payload.
@@ -484,9 +484,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 //retrieve the old object
                 User oldUser = userManager.getUser(existingId);
                 if (oldUser != null) {
-					User validatedUser =
-					                     (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
-					                                                                          schema);
+                    User validatedUser =
+                            (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
+                                    schema);
                     updatedUser = userManager.updateUser(validatedUser);
 
                 } else {
@@ -526,31 +526,145 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            e.printStackTrace();
             //if the submitted format not supported, encode exception and set it in the response.
+            if(logger.isDebugEnabled()){
+                logger.debug("Submitted Format not supported.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            e.printStackTrace();
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
+            if(logger.isDebugEnabled()){
+                logger.debug("Internal Server Error while updating User", e);
+            }
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            e.printStackTrace();
+
+            if(logger.isDebugEnabled()){
+                logger.debug("Bad Request.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
-            e.printStackTrace();
+
+            if(logger.isDebugEnabled()){
+                logger.debug("Internal Server Error while updating User", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            e.printStackTrace();
+
+            if(logger.isDebugEnabled()){
+                logger.debug("Couldn't find user resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
 
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String outputFormat, UserManager userManager) {
-        return null;
+    @Override
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String inputFormat, String
+            outputFormat, UserManager userManager) {
+        //needs to validate the incoming object. eg: id can not be set by the consumer.
+
+        Encoder encoder = null;
+        Decoder decoder = null;
+
+        try {
+            //obtain the encoder matching the requested output format.
+            encoder = getEncoder(SCIMConstants.identifyFormat(outputFormat));
+            //obtain the decoder matching the submitted format.
+            decoder = getDecoder(SCIMConstants.identifyFormat(inputFormat));
+
+            SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimObjectString));
+
+            Object metaAttributeValueObject = decodedJsonObj.opt("meta");
+            String[] metaAttributeIds = new String[0];
+
+            if (metaAttributeValueObject != null) {
+                String metaAttributeVal = decodedJsonObj.opt("meta").toString();
+                JSONObject attributeObject = new JSONObject(new JSONTokener(metaAttributeVal));
+                JSONArray attributes = (JSONArray) attributeObject.opt("attributes");
+                metaAttributeIds = new String[attributes.length()];
+                for (int i = 0; i < attributes.length(); i++) {
+                    metaAttributeIds[i] = attributes.getString(i);
+                }
+                decodedJsonObj.remove("meta");
+                scimObjectString = decodedJsonObj.toString();
+
+            }
+            //decode the SCIM User object, encoded in the submitted payload.
+            User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+            User updatedUser = null;
+            if (userManager != null) {
+                //retrieve the old object
+                User oldUser = userManager.getUser(existingId);
+                if (user.getDisplayName() == null) {
+                    user.setDisplayName(oldUser.getDisplayName());
+                }
+                if (oldUser != null) {
+                    User validatedUser =
+                            (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user,
+                                    schema);
+                    updatedUser = userManager.patchUser(validatedUser, oldUser, metaAttributeIds);
+
+                } else {
+                    String error = "No user exists with the given id: " + existingId;
+                    logger.error(error);
+                    throw new ResourceNotFoundException(error);
+                }
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                logger.error(error);
+                throw new InternalServerException(error);
+            }
+            //encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedUser;
+            Map<String, String> httpHeaders = new HashMap<String, String>();
+            if (updatedUser != null) {
+                //create a deep copy of the user object since we are going to change it.
+                User copiedUser = (User) CopyUtil.deepCopy(userManager.getUser(existingId));
+                //need to remove password before returning
+                ServerSideValidator.removePasswordOnReturn(copiedUser);
+                encodedUser = encoder.encodeSCIMObject(copiedUser);
+                //add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.USER_ENDPOINT) + "/" + updatedUser.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
+
+            } else {
+                String error = "Updated User resource is null..";
+                throw new InternalServerException(error);
+            }
+
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
+
+        } catch (FormatNotSupportedException e) {
+            logger.error("Input format is not supported.", e);
+            //if the submitted format not supported, encode exception and set it in the response.
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (CharonException e) {
+            logger.error("Charon couldn't update user.", e);
+            if (e.getCode() == -1) {
+                e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
+            }
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (BadRequestException e) {
+            logger.error("Bad Request.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (InternalServerException e) {
+            logger.error("Internal Server error while updating user.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (ResourceNotFoundException e) {
+            logger.error("Couldn't find the requested resource.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
+        } catch (JSONException e) {
+            logger.error("Error while parsing JSOn.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, new BadRequestException());
+        }
     }
 
     public ListedResource createListedResource(List<User> users)

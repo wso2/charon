@@ -109,7 +109,8 @@ public class UserEndpointTest {
                                         "      \"region\": \"CA\",\n" +
                                         "      \"postalCode\": \"91608\",\n" +
                                         "      \"country\": \"USA\",\n" +
-                                        "      \"formatted\": \"100 Universal City Plaza\\nHollywood, CA 91608 USA\",\n" +
+                                        "      \"formatted\": \"100 Universal City Plaza\\nHollywood," +
+                                        " CA 91608 USA\",\n" +
                                         "      \"primary\": true\n" +
                                         "    },\n" +
                                         "    {\n" +
@@ -140,11 +141,13 @@ public class UserEndpointTest {
                                         "  ],\n" +
                                         "  \"photos\": [\n" +
                                         "    {\n" +
-                                        "      \"value\": \"https://photos.example.com/profilephoto/72930000000Ccne/F\",\n" +
+                                        "      \"value\": \"https://photos.example.com/profilephoto/72930000000Ccne" +
+                                        "/F\",\n" +
                                         "      \"type\": \"photo\"\n" +
                                         "    },\n" +
                                         "    {\n" +
-                                        "      \"value\": \"https://photos.example.com/profilephoto/72930000000Ccne/T\",\n" +
+                                        "      \"value\": \"https://photos.example.com/profilephoto/72930000000Ccne" +
+                                        "/T\",\n" +
                                         "      \"type\": \"thumbnail\"\n" +
                                         "    }\n" +
                                         "  ],\n" +
@@ -170,14 +173,31 @@ public class UserEndpointTest {
                                         "  ],\n" +
                                         "  \"x509Certificates\": [\n" +
                                         "    {\n" +
-                                        "      \"value\": \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bcFLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"\n" +
+                                        "      \"value\": \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMA" +
+                                        "kGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29" +
+                                        "tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0" +
+                                        "MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleG" +
+                                        "FtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZ" +
+                                        "IhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A" +
+                                        "MIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bcFLgzdLI8auoR+cC9/" +
+                                        "Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3Hg" +
+                                        "llEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1O" +
+                                        "s7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5" +
+                                        "jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GP" +
+                                        "e1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmV" +
+                                        "yYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYD" +
+                                        "VR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81Ss" +
+                                        "FnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz" +
+                                        "1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFi" +
+                                        "BZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"\n" +
                                         "    }\n" +
                                         "  ],\n" +
                                         "  \"meta\": {\n" +
                                         "    \"created\": \"2010-01-23T04:56:22Z\",\n" +
                                         "    \"lastModified\": \"2011-05-13T04:42:34Z\",\n" +
                                         "    \"version\": \"W\\/\\\"a330bc54f0671c9\\\"\",\n" +
-                                        "    \"location\": \"https://example.com/v1/Users/2819c223-7f76-453a-919d-413861904646\"\n" +
+                                        "    \"location\": \"https://example.com/v1/Users/2819c223-7f76-453a-91" +
+                                        "9d-413861904646\"\n" +
                                         "  }\n" +
                                         "}";
             UserResourceEndpoint userREP = new UserResourceEndpoint();
@@ -193,25 +213,73 @@ public class UserEndpointTest {
             id = user.getId();
 
             SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
-            //Assert the response message
-            Assert.assertEquals("{\"schemas\":[\"urn:scim:schemas:core:1.0\"],\"ims\":[{\"value\":\"someaimhandle\"," +
-                    "\"type\":\"aim\"}],\"locale\":\"en_US\",\"phoneNumbers\":[{\"value\":\"555-555-5555\"," +
-                    "\"type\":\"work\"},{\"value\":\"555-555-4444\",\"type\":\"mobile\"}],\"emails\":[{\"value\":\"bjensen@example.com\"," +
-                    "\"type\":\"work\"},{\"value\":\"babs@jensen.org\",\"type\":\"home\"}],\"externalId\":\""+externalId+"\"," +
-                    "\"preferredLanguage\":\"en_US\",\"meta\":{\"lastModified\":\""+sdf.format(user.getLastModified())+"\"," +
-                    "\"location\":\"null/"+user.getId()+"\",\"created\":\""+sdf.format(user.getCreatedDate())+"\"}," +
-                    "\"userType\":\"Employee\",\"photos\":[{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/F\"," +
-                    "\"type\":\"photo\"},{\"value\":\"https://photos.example.com/profilephoto/72930000000Ccne/T\"," +
-                    "\"type\":\"thumbnail\"}],\"x509Certificates\":[{\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bcFLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"}]," +
-                    "\"id\":\""+user.getId()+"\",\"title\":\"Tour Guide\",\"timezone\":\"America/Los_Angeles\"," +
-                    "\"profileUrl\":\"https://login.example.com/bjensen\",\"nickName\":\"Babs\",\"name\":{\"middleName\":\"Jane\"," +
-                    "\"formatted\":\"Ms. Barbara J Jensen III\",\"honorificPrefix\":\"Ms.\",\"familyName\":\"Jensen\",\"givenName\":\"Barbara\"," +
-                    "\"honorificSuffix\":\"III\"},\"userName\":\""+externalId+"\",\"addresses\":[{\"region\":\"CA\",\"streetAddress\":\"100 Universal City Plaza\"," +
-                    "\"formatted\":\"100 Universal City Plaza\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\"," +
-                    "\"type\":\"work\",\"country\":\"USA\"},{\"region\":\"CA\",\"streetAddress\":\"456 Hollywood Blvd\"," +
-                    "\"formatted\":\"456 Hollywood Blvd\\nHollywood, CA 91608 USA\",\"postalCode\":\"91608\",\"locality\":\"Hollywood\",\"type\":\"home\"," +
-                    "\"country\":\"USA\"}],\"displayName\":\"Babs Jensen\"}",scimResponse.getResponseMessage());
 
+            String responseMessage = scimResponse.getResponseMessage();
+            Assert.assertEquals(2607, responseMessage.length());
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"ims\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"emails\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"phoneNumbers\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"x509Certificates\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"addresses\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"photos\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"addresses\":[{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"meta\":{"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"name\":{"));
+
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"someaimhandle\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"babs@jensen.org\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"bjensen@example.com\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"555-555-5555\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"555-555-4444\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"https://photos.example" +
+                                                                        ".com/profilephoto/72930000000Ccne/T\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains
+                    ("\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCk" +
+                     "NhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0M" +
+                     "zFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtc" +
+                     "GxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIwIAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4" +
+                     "YW1wbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56A" +
+                     "K02bcFLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5ixO8SL7I7SDhcBVJhqVqr3Hg" +
+                     "llEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZzidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLr" +
+                     "T51ikSQG3DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDrSGTMYn4lRc2HgHO4DqB/" +
+                     "bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyY" +
+                     "XRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAUdGeKitcaF7gnz" +
+                     "sNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1Z" +
+                     "gI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ" +
+                     "+GNF/cAYKcMtGcrs2i97ZkJMo=\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"work\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"aim\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"home\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"mobile\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"photo\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"thumbnail\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"preferredLanguage\":\"en_US\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"userType\":\"Employee\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"title\":\"Tour Guide\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"nickName\":\"Babs\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"middleName\":\"Jane\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"formatted\":\"Ms. Barbara J Jensen III\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"formatted\":\"100 Universal City " +
+                                                                        "Plaza\\nHollywood, CA 91608 USA"));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"timezone\":\"America/Los_Angeles\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"region\":\"CA\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"streetAddress\":\"100 Universal City " +
+                                                                        "Plaza\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"postalCode\":\"91608\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"locality\":\"Hollywood\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"country\":\"USA\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"displayName\":\"Babs Jensen\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"profileUrl\":\"https://login.example" +
+                                                                        ".com/bjensen\""));
+
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"location\":\"null/" + user.getId()));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"externalId\":\"" + externalId));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"userName\":\"" + externalId));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"lastModified\":\""
+                                                                        + sdf.format(user.getLastModified()) + "\""));
+            Assert.assertTrue(responseMessage, responseMessage.contains("\"created\":\""
+                                                                        + sdf.format(user.getCreatedDate()) + "\""));
         } catch (BadRequestException e) {
             Assert.fail(e.getDescription());
         } catch (CharonException e) {
@@ -262,8 +330,8 @@ public class UserEndpointTest {
             JSONEncoder jsonEncoder = new JSONEncoder();
             String encodedUser = jsonEncoder.encodeSCIMObject(user);
             UserResourceEndpoint userREP = new UserResourceEndpoint();
-            SCIMResponse response = userREP.create(encodedUser, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON,
-                                                   inMemroyUserManager);
+            SCIMResponse response = userREP.create(encodedUser, SCIMConstants.APPLICATION_JSON
+                    , SCIMConstants.APPLICATION_JSON, inMemroyUserManager);
             if ((ResponseCodeConstants.CODE_CREATED) == response.getResponseCode()) {
                 JSONDecoder jsonDecoder = new JSONDecoder();
                 User decoderUser = new User();
@@ -345,7 +413,7 @@ public class UserEndpointTest {
     //@Test
     public void testFilterUsers(String userName) {
         UserResourceEndpoint userREP = new UserResourceEndpoint();
-        SCIMResponse scimResponse = userREP.listByFilter("userNameEq" + userName,
+        SCIMResponse scimResponse = userREP.listByFilter("userName Eq " + userName,
                                                          inMemroyUserManager, SCIMConstants.APPLICATION_JSON);
         Assert.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseCode());
         //decode listed resource

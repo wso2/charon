@@ -219,9 +219,12 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
                 throw new BadRequestException(message);
             }
 
-            String filterAttribute = filterParts[0];
+            String filterAttribute = filterParts[0].trim();
             String filterOperation = "eq";
-            String filterValue = filterParts[1];
+            String filterValue = filterParts[1].trim();
+            if (filterValue.charAt(0) == '\"') {
+                filterValue = filterValue.substring(1, filterValue.length() - 1);
+            }
 
             //obtain attributeURI given the attribute name
             String filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
@@ -377,6 +380,9 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
             if (userManager != null) {
                 // retrieve the old object
                 Group oldGroup = userManager.getGroup(existingId);
+                if (group.getDisplayName() == null) {
+                    group.setDisplayName(oldGroup.getDisplayName());
+                }
                 if (oldGroup != null) {
                     Group validatedGroup = (Group) ServerSideValidator.
                             validateUpdatedSCIMObject(oldGroup, group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA);
