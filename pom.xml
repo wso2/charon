@@ -9,7 +9,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.6-SNAPSHOT</version>
+    <version>2.0.6</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -18,7 +18,7 @@
         <connection>scm:git:https://github.com/wso2/charon</connection>
         <developerConnection>scm:git:https://github.com/wso2/charon</developerConnection>
         <url>https://github.com/wso2/charon</url>
-        <tag>HEAD</tag>
+        <tag>v2.0.6</tag>
     </scm>
 
     <modules>
@@ -217,7 +217,7 @@
     </build>
 
     <properties>
-        <charon.parent.version>2.0.6-SNAPSHOT</charon.parent.version>
+        <charon.parent.version>2.0.6</charon.parent.version>
         <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
