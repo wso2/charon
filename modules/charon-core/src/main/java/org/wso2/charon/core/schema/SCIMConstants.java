@@ -381,7 +381,7 @@ public class SCIMConstants {
     public static final String TITLE_URI = "urn:scim:schemas:core:1.0:title";
     public static final String USER_TYPE_URI = "urn:scim:schemas:core:1.0:userType";
     public static final String PREFERRED_LANGUAGE_URI = "urn:scim:schemas:core:1.0:preferredLanguage";
-    public static final String LOCAL_URI = "urn:scim:schemas:core:1.0:local";
+    public static final String LOCALE_URI = "urn:scim:schemas:core:1.0:locale";
     public static final String TIMEZONE_URI = "urn:scim:schemas:core:1.0:timeZone";
     public static final String ACTIVE_URI = "urn:scim:schemas:core:1.0:active";
     public static final String PASSWORD_URI = "urn:scim:schemas:core:1.0:password";

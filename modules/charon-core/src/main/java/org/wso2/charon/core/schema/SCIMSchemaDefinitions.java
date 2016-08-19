@@ -299,7 +299,7 @@ public class SCIMSchemaDefinitions {
                                                           SCIMConstants.PREFERRED_LANGUAGE_DESC,
                                                           SCIMConstants.CORE_SCHEMA_URI, false, false, false, null);
     public static final SCIMAttributeSchema LOCALE =
-            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.LOCAL_URI,
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.LOCALE_URI,
                                                           SCIMConstants.UserSchemaConstants.LOCALE,
                                                           DataType.STRING, false, null, SCIMConstants.LOCALE_DESC,
                                                           SCIMConstants.CORE_SCHEMA_URI, false, false, false, null);
