@@ -70,7 +70,7 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
     public Encoder getEncoder(String format)
             throws FormatNotSupportedException, CharonException {
         //if the requested format not supported, return an error.
-        if (!encoderMap.containsKey(format)) {
+        if (format == null || !encoderMap.containsKey(format)) {
             //Error is logged by the caller.
             throw new FormatNotSupportedException();
         }
@@ -81,7 +81,7 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
             throws FormatNotSupportedException, CharonException {
 
         //if the requested format not supported, return an error.
-        if ((format == null) && (!decoderMap.containsKey(format))) {
+        if (format == null || !decoderMap.containsKey(format)) {
             //Error is logged by the caller.
             throw new FormatNotSupportedException();
         }
@@ -96,7 +96,12 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
      * @param encoder
      */
     public static void registerEncoder(String format, Encoder encoder) throws CharonException {
-        if (encoderMap.containsKey(format)) {
+
+        if (format == null) {
+            //log a warn message.
+            String warnMessage = "Format cannot be null. Unable to register encoder for provided format.";
+            log.warn(warnMessage);
+        }else if (encoderMap.containsKey(format)) {
             //log a warn message.
             String warnMessage = "Encoder for the given format is already registered.";
             log.warn(warnMessage);
@@ -113,7 +118,12 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
      * @throws CharonException
      */
     public static void registerDecoder(String format, Decoder decoder) throws CharonException {
-        if (decoderMap.containsKey(format)) {
+
+        if (format == null) {
+            //log a warn message.
+            String warnMessage = "Format cannot be null. Unable to register decoder for provided format.";
+            log.warn(warnMessage);
+        }else if (decoderMap.containsKey(format)) {
             //log a warn message.
             String warnMessage = "Decoder for the given format is already registered.";
             log.warn(warnMessage);
