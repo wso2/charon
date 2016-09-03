@@ -77,17 +77,14 @@ public class BulkResourceEndpoint extends AbstractResourceEndpoint implements Re
             //careate SCIM response message
             response.setResponseMessage(finalEncodedResponse);
         } catch (BadRequestException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error(e.getDescription(), e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (FormatNotSupportedException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error(e.getDescription(), e);
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            e.printStackTrace();
-            logger.error(e.getDescription());
+            logger.error(e.getDescription(), e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getCode() == -1) {
