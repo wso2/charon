@@ -9,7 +9,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.7-SNAPSHOT</version>
+    <version>3.0.0</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -23,9 +23,6 @@
 
     <modules>
         <module>modules/charon-core</module>
-        <module>modules/charon-utils</module>
-        <module>modules/charon-samples</module>
-        <module>modules/charon-impl</module>
     </modules>
 
     <dependencyManagement>
