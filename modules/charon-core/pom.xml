@@ -8,9 +8,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.charon.core.v2</artifactId>
+    <artifactId>org.wso2.charon.core</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Charon - Core - V2</name>
+    <name>WSO2 Charon - Core</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
 
@@ -57,9 +57,6 @@
                         <Import-Package>
                             org.json.*,
                             org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
-                            <!--org.apache.axiom.om.*; version="${axiom.osgi.version.range}",-->
-                            <!--javax.xml.namespace.*,-->
-                            <!--javax.xml.stream.*;version=0.0.0-->
                         </Import-Package>
                     </instructions>
                 </configuration>
