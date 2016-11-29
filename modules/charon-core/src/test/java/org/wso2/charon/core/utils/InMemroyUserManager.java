@@ -85,6 +85,13 @@ public class InMemroyUserManager implements UserManager {
     }
 
     @Override
+    public List<User> listFilteredUsersWithAttributes(List<String> attributeURIs, String filterAttributeName,
+                                                      String filterOperation, String filterValue) throws CharonException {
+
+        return listUsersByFilter(filterAttributeName, filterOperation, filterValue);
+    }
+
+    @Override
     public List<User> listUsersByFilter(String filter, String operation, String value)
             throws CharonException {
         List<User> returnedUsers = new ArrayList<User>();

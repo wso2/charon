@@ -46,6 +46,7 @@ import org.apache.commons.logging.Log;
 import org.wso2.charon.core.util.AttributeUtil;
 import org.wso2.charon.core.util.CopyUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -285,48 +286,79 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
 
     public SCIMResponse listByFilter(String filterString, UserManager userManager, String format) {
+
+        return listByFilterAndAttribute(filterString, null, userManager, format);
+    }
+
+    public SCIMResponse listByFilterAndAttribute(String filterString, String searchAttribute, UserManager userManager,
+                                                 String format) {
+
         Encoder encoder = null;
         try {
             //obtain the correct encoder according to the format requested.
             encoder = getEncoder(SCIMConstants.identifyFormat(format));
-            String trimmedFilter = filterString.trim();
-            //verify filter string. We currently support only equal operation
-            if (!(trimmedFilter.contains(" eq ") || trimmedFilter.contains(" Eq "))) {
-                String message = "Given filter operation is not supported.";
-                throw new BadRequestException(message);
-            }
-            String[] filterParts = null;
-            if (trimmedFilter.contains(" eq ")) {
-                filterParts = trimmedFilter.split(" eq ");
-            } else if (trimmedFilter.contains(" Eq ")) {
-                filterParts = trimmedFilter.split(" Eq ");
-            }
-            if (filterParts == null || filterParts.length != 2) {
-                //filter query param is not properly splitted. Hence Throwing unsupported operation exception:400
-                String message = "Filter operation is not recognized";
-                throw new BadRequestException(message);
+            String filterAttributeURI = null;
+            String filterOperation = null;
+            String filterValue = null;
+            List<String> claimURIsList = new ArrayList<>();
+
+            if (filterString != null) {
+                String trimmedFilter = filterString.trim();
+                //verify filter string. We currently support only equal operation
+                if (!(trimmedFilter.contains(" eq ") || trimmedFilter.contains(" Eq "))) {
+                    String message = "Given filter operation is not supported.";
+                    throw new BadRequestException(message);
+                }
+                String[] filterParts = null;
+                if (trimmedFilter.contains(" eq ")) {
+                    filterParts = trimmedFilter.split(" eq ");
+                } else if (trimmedFilter.contains(" Eq ")) {
+                    filterParts = trimmedFilter.split(" Eq ");
+                }
+                if (filterParts == null || filterParts.length != 2) {
+                    //filter query param is not properly splitted. Hence Throwing unsupported operation exception:400
+                    String message = "Filter operation is not recognized";
+                    throw new BadRequestException(message);
+                }
+
+                String filterAttribute = filterParts[0].trim();
+                filterOperation = " eq ";
+                filterValue = filterParts[1].trim();
+                if (filterValue.charAt(0) == '\"') {
+                    filterValue = filterValue.substring(1, filterValue.length() - 1);
+                }
+                //obtain attributeURI given the attribute name
+                filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
+
+                if (filterAttributeURI == null) {
+                    throw new BadRequestException("Filter attribute is not supported..");
+                }
             }
 
-            String filterAttribute = filterParts[0].trim();
-            String filterOperation = " eq ";
-            String filterValue = filterParts[1].trim();
-            if (filterValue.charAt(0) == '\"') {
-                filterValue = filterValue.substring(1, filterValue.length() - 1);
+            if (searchAttribute != null) {
+                String[] attribs;
+                if (searchAttribute.contains(",")) {
+                    attribs = searchAttribute.split(",");
+                } else {
+                    attribs = new String[]{searchAttribute};
+                }
+
+
+                for (String attrib : attribs) {
+                    String attributeURI = AttributeUtil.getAttributeURI(attrib.trim());
+                    if (attributeURI != null) {
+                        claimURIsList.add(attributeURI);
+                    }
+                }
+
             }
 
-
-            //obtain attributeURI given the attribute name
-            String filterAttributeURI = AttributeUtil.getAttributeURI(filterAttribute);
-
-            if (filterAttributeURI == null) {
-                throw new BadRequestException("Filter attribute is not supported..");
-            }
 
             List<User> returnedUsers;
             //API user should pass a UserManager storage to UserResourceEndpoint.
             if (userManager != null) {
-                returnedUsers = userManager.listUsersByFilter(filterAttributeURI, filterOperation,
-                        filterValue);
+                returnedUsers = userManager.listFilteredUsersWithAttributes(claimURIsList, filterAttributeURI,
+                        filterOperation, filterValue);
 
                 //if user not found, return an error in relevant format.
                 if (returnedUsers == null || returnedUsers.isEmpty()) {

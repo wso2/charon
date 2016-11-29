@@ -238,14 +238,13 @@ public class UsersResource {
             //create charon-SCIM user endpoint and hand-over the request.
             UserResourceEndpoint userResourceEndpoint = new UserResourceEndpoint();
             SCIMResponse scimResponse = null;
-            if (searchAttribute != null) {
-                scimResponse = userResourceEndpoint.listByAttribute(searchAttribute, userManager, format);
-            } else if (filter != null) {
-                scimResponse = userResourceEndpoint.listByFilter(filter, userManager, format);
+            if (filter != null || searchAttribute != null) {
+                scimResponse = userResourceEndpoint.listByFilterAndAttribute(filter, searchAttribute, userManager,
+                        format);
             } else if (startIndex != null && count != null) {
                 scimResponse = userResourceEndpoint.listWithPagination(Integer.valueOf(startIndex),
-                                                                       Integer.valueOf(count),
-                                                                       userManager, format);
+                        Integer.valueOf(count),
+                        userManager, format);
             } else if (sortBy != null) {
                 scimResponse = userResourceEndpoint.listBySort(sortBy, sortOrder, userManager, format);
             } else if (searchAttribute == null && filter == null && startIndex == null &&
