@@ -121,31 +121,19 @@ public class AttributeUtil {
 	public static String getAttributeURI(String attributeName) {
 
 		SCIMResourceSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-		Iterator<AttributeSchema> attributeSchemas = schema.getAttributesList().iterator();
+        String searchAttribute = attributeName;
+        String subAttribute = null;
 
-		while (attributeSchemas.hasNext()) {
-			AttributeSchema attributeSchema = attributeSchemas.next();
-			if (attributeSchema.getName().equalsIgnoreCase(attributeName)) {
-				return attributeSchema.getURI();
-			}
-			// check in sub attributes
-			String subAttributeURI =
-			                         checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributes(),
-			                                                   attributeName);
-			if (subAttributeURI != null) {
-				return subAttributeURI;
-			}
-			// check in attributes
-			String attributeURI =
-			                      checkSCIMAttributeURIs(((SCIMAttributeSchema) attributeSchema).getAttributes(),
-			                                             attributeName);
-			if (attributeURI != null) {
-				return attributeURI;
-			}
-		}
+        //Following section is to support multivalued attributes (eg. 'email.work')
+        if (attributeName.contains(".")) {
+            String[] splittedString = attributeName.split("\\.", 2);
+            searchAttribute = splittedString[0];
+            subAttribute = splittedString[1];
+        }
 
-		return null;
-	}
+        //Logic was a duplicate of #checkSCIMAttributeURIs(), hence moved
+        return checkSCIMAttributeURIs(schema.getAttributesList(), searchAttribute, subAttribute);
+    }
     
 	/**
 	 * Will iterate through <code>{@code SCIMAttributeSchema}</code> objects
@@ -154,31 +142,42 @@ public class AttributeUtil {
 	 * @param attributeName
 	 * @return
 	 */
-	private static String checkSCIMAttributeURIs(List<SCIMAttributeSchema> attributeSchemas,
-	                                             String attributeName) {
-		if (attributeSchemas != null) {
-			Iterator<SCIMAttributeSchema> attribIterator = attributeSchemas.iterator();
+    private static String checkSCIMAttributeURIs(List<? extends AttributeSchema> attributeSchemas,
+                                                 String attributeName, String subAttribute) {
+
+        if (attributeSchemas != null) {
+            Iterator<? extends AttributeSchema> attribIterator = attributeSchemas.iterator();
 
 			while (attribIterator.hasNext()) {
-				SCIMAttributeSchema attributeSchema = attribIterator.next();
-				if (attributeSchema.getName().equalsIgnoreCase(attributeName)) {
-					return attributeSchema.getURI();
-				}
-				// check in sub attributes
-				String subAttributeURI =
-				                         checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributes(),
-				                                                   attributeName);
-				if (subAttributeURI != null) {
-					return subAttributeURI;
-				}
-				// check in attributes
-				String attributeURI =
-				                      checkSCIMAttributeURIs(((SCIMAttributeSchema) attributeSchema).getAttributes(),
-				                                             attributeName);
-				if (attributeURI != null) {
-					return attributeURI;
-				}
-			}
+                AttributeSchema attributeSchema = attribIterator.next();
+                if (attributeSchema.getName().equalsIgnoreCase(attributeName)) {
+                    if (subAttribute == null || attributeSchema.getMultiValued()) {
+                        String uri = attributeSchema.getURI();
+                        if (subAttribute != null) {
+                            uri += "." + subAttribute;
+                        }
+                        return uri;
+                    }
+                }
+
+                if (attributeSchema instanceof SCIMAttributeSchema) {
+                    // check in sub attributes
+                    String subAttributeURI =
+                            checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributes(),
+                                    attributeName);
+                    if (subAttributeURI != null) {
+                        return subAttributeURI;
+                    }
+                    // check in attributes
+                    String attributeURI =
+                            checkSCIMAttributeURIs(((SCIMAttributeSchema) attributeSchema).getAttributes(),
+                                    attributeName, subAttribute);
+                    if (attributeURI != null) {
+                        return attributeURI;
+                    }
+                }
+
+            }
 		}
 		return null;
 	}

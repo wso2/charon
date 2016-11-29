@@ -55,6 +55,20 @@ public interface UserManager extends Storage {
 
     public List<User> listUsersByAttribute(Attribute attribute);
 
+    /**
+     * Gets the user list with given attribute list present in the request. User list will also be filtered based on
+     * the filter arguments
+     *
+     * @param attributeURIs       List of user attributes to be present in the response in addition to meta attributes
+     * @param filterAttributeName Name of the attribute to be filtered
+     * @param filterOperation     The filter operation (currently supported 'eq' only)
+     * @param filterValue         Value of the attribute
+     * @return
+     * @throws CharonException
+     */
+    public List<User> listFilteredUsersWithAttributes(List<String> attributeURIs, String filterAttributeName, String
+            filterOperation, String filterValue) throws CharonException;
+
     public List<User> listUsersByFilter(String filter, String operation, String value)
             throws CharonException;
 
