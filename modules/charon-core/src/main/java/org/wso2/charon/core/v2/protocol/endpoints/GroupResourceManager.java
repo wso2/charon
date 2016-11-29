@@ -1,19 +1,17 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon.core.v2.protocol.endpoints;
 
@@ -30,7 +28,6 @@ import org.wso2.charon.core.v2.exceptions.NotImplementedException;
 import org.wso2.charon.core.v2.extensions.UserManager;
 import org.wso2.charon.core.v2.objects.Group;
 import org.wso2.charon.core.v2.objects.ListedResource;
-import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.v2.protocol.SCIMResponse;
 import org.wso2.charon.core.v2.schema.SCIMConstants;
@@ -39,10 +36,10 @@ import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.v2.schema.ServerSideValidator;
 import org.wso2.charon.core.v2.utils.CopyUtil;
+import org.wso2.charon.core.v2.utils.ResourceManagerUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
 import org.wso2.charon.core.v2.utils.codeutils.SearchRequest;
-
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -75,8 +72,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                    (SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
             //API user should pass a UserManager storage to GroupResourceEndpoint.
             //retrieve the group from the provided storage.
@@ -130,8 +128,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             // returns core-group schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                    (SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
             //decode the SCIM group object, encoded in the submitted payload.
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
             //validate decoded group
@@ -157,7 +156,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 throw new InternalErrorException(message);
             }
 
-            //put the URI of the Group object in the response header parameter.
+            //put the uri of the Group object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedGroup, httpHeaders);
 
         } catch (InternalErrorException e) {
@@ -174,6 +173,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         }
     }
+
     /*
      * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
@@ -210,6 +210,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     /**
      * Method to list the groups at the /Groups endpoint
+     *
      * @param userManager
      * @param filter
      * @param startIndex
@@ -230,30 +231,31 @@ public class GroupResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             //A value less than one shall be interpreted as 1
-            if(startIndex < 1) {
+            if (startIndex < 1) {
                 startIndex = 1;
             }
             //If count is not set, server default should be taken
-            if(count == 0) {
+            if (count == 0) {
                 count = CharonConfiguration.getInstance().getCountValueForPagination();
             }
 
             //check whether provided sortOrder is valid or not
-            if(sortOrder != null ){
-                if(!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+            if (sortOrder != null) {
+                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
-            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
-            if(sortOrder == null && sortBy != null){
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (sortOrder == null && sortBy != null) {
                 sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
             }
 
             // unless configured returns core-user schema or else returns extended user schema)
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-            if(filter != null){
+            if (filter != null) {
                 filterTreeManager = new FilterTreeManager(filter, schema);
                 rootNode = filterTreeManager.buildTree();
             }
@@ -262,8 +264,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             encoder = getEncoder();
 
             //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema),attributes, excludeAttributes);
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                    (SCIMResourceTypeSchema)
+                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
             List<Object> returnedGroups;
             int totalResults = 0;
@@ -277,15 +280,16 @@ public class GroupResourceManager extends AbstractResourceManager {
                 returnedGroups = tempList;
 
                 //if groups not found, return an error in relevant format.
-                if (returnedGroups == null || returnedGroups.isEmpty()) {
+                if (returnedGroups.isEmpty()) {
                     String error = "Groups not found in the user store.";
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
 
-                for (Object group: returnedGroups){
+                for (Object group : returnedGroups) {
                     //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions
+                                    .SCIM_GROUP_SCHEMA,
                             attributes, excludeAttributes);
                 }
                 //create a listed resource object out of the returned groups list.
@@ -293,9 +297,9 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
-                Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+                Map<String, String> responseHeaders = new HashMap<String, String>();
+                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
 
             } else {
                 String error = "Provided user manager handler is null.";
@@ -315,7 +319,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (IOException e) {
             String error = "Error in tokenization of the input filter";
-            CharonException charonException =new CharonException(error);
+            CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
         }
     }
@@ -343,35 +347,39 @@ public class GroupResourceManager extends AbstractResourceManager {
             //create the search request object
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
-            if(searchRequest.getSchema() != null && !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI )){
-                throw new BadRequestException("Provided schema is invalid",ResponseCodeConstants.INVALID_VALUE);
+            if (searchRequest.getSchema() != null && !searchRequest.getSchema().equals(SCIMConstants
+                    .SEARCH_SCHEMA_URI)) {
+                throw new BadRequestException("Provided schema is invalid", ResponseCodeConstants.INVALID_VALUE);
             }
 
             //A value less than one shall be interpreted as 1
-            if(searchRequest.getStartIndex() < 1) {
+            if (searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
             }
             //If count is not set, server default should be taken
-            if(searchRequest.getCount() == 0) {
+            if (searchRequest.getCount() == 0) {
                 searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
             }
 
             //check whether provided sortOrder is valid or not
-            if(searchRequest.getSortOder() != null ){
-                if(!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))){
+            if (searchRequest.getSortOder() != null) {
+                if (!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
+                        || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants
+                        .DESCENDING))) {
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
-            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to ascending.
-            if(searchRequest.getSortOder() == null && searchRequest.getSortBy() != null){
+            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (searchRequest.getSortOder() == null && searchRequest.getSortBy() != null) {
                 searchRequest.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
             }
 
             //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                    (SCIMResourceTypeSchema)
+                            CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
                     searchRequest.getExcludedAttributesAsString());
 
             List<Object> returnedGroups;
@@ -386,13 +394,13 @@ public class GroupResourceManager extends AbstractResourceManager {
                 returnedGroups = tempList;
 
                 //if user not found, return an error in relevant format.
-                if (returnedGroups == null || returnedGroups.isEmpty()) {
+                if (returnedGroups.isEmpty()) {
                     String error = "No resulted users are found in the user store.";
                     //throw resource not found.
                     throw new NotFoundException(error);
                 }
 
-                for(Object group : returnedGroups){
+                for (Object group : returnedGroups) {
                     //perform service provider side validation.
                     ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, schema,
                             searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
@@ -403,9 +411,9 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
-                Map<String, String> ResponseHeaders = new HashMap<String, String>();
-                ResponseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, ResponseHeaders);
+                Map<String, String> responseHeaders = new HashMap<String, String>();
+                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
 
             } else {
                 String error = "Provided user manager handler is null.";
@@ -450,7 +458,8 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                    (SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), attributes, excludeAttributes);
             //decode the SCIM User object, encoded in the submitted payload.
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
@@ -478,7 +487,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //create a deep copy of the user object since we are going to change it.
                 Group copiedGroup = (Group) CopyUtil.deepCopy(updatedGroup);
                 //need to remove password before returning
-                ServerSideValidator.ValidateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
+                ServerSideValidator.validateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
                 encodedGroup = encoder.encodeSCIMObject(copiedGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
@@ -490,7 +499,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 throw new InternalErrorException(error);
             }
 
-            //put the URI of the User object in the response header parameter.
+            //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
 
         } catch (NotFoundException e) {
@@ -527,12 +536,11 @@ public class GroupResourceManager extends AbstractResourceManager {
         listedResource.setStartIndex(startIndex);
         listedResource.setItemsPerPage(groups.size());
         for (Object group : groups) {
-            Map<String, Attribute> userAttributes = ((Group)group).getAttributeList();
+            Map<String, Attribute> userAttributes = ((Group) group).getAttributeList();
             listedResource.setResources(userAttributes);
         }
         return listedResource;
     }
-
 
 
 }

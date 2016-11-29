@@ -1,19 +1,17 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon.core.v2.config;
 
@@ -25,7 +23,6 @@ import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,6 +31,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * This class is to build the extension user schema though the config file.
@@ -49,7 +47,7 @@ public class SCIMUserSchemaExtensionBuilder {
     // built schema map
     private static Map<String, SCIMAttributeSchema> attributeSchemas = new HashMap<String, SCIMAttributeSchema>();
     // extension root attribute schema
-    private static SCIMAttributeSchema extensionSchema = null;
+    private SCIMAttributeSchema extensionSchema = null;
 
     public static SCIMUserSchemaExtensionBuilder getInstance() {
         return configReader;
@@ -58,6 +56,7 @@ public class SCIMUserSchemaExtensionBuilder {
     public SCIMAttributeSchema getExtensionSchema() {
         return extensionSchema;
     }
+
     /*
      * Logic goes here
      * @throws CharonException
@@ -93,7 +92,8 @@ public class SCIMUserSchemaExtensionBuilder {
         File provisioningConfig = new File(configFilePath);
         try {
             InputStream inputStream = new FileInputStream(provisioningConfig);
-            java.util.Scanner scanner = new java.util.Scanner(inputStream).useDelimiter("\\A");
+            //Scanner scanner = new Scanner(new FileInputStream(provisioningConfig));
+            Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
             String jsonString = scanner.hasNext() ? scanner.next() : "";
 
             JSONArray attributeConfigArray = new JSONArray(jsonString);
@@ -199,15 +199,15 @@ public class SCIMUserSchemaExtensionBuilder {
 
         return SCIMAttributeSchema.createSCIMAttributeSchema
                 (attribute.getURI(), attribute.getName(), attribute.getType(),
-                attribute.getMultiValued(), attribute.description, attribute.required, attribute.caseExact,
-                attribute.mutability, attribute.returned, attribute.uniqueness,
-                attribute.canonicalValues, attribute.referenceTypes, subAttributeList);
+                        attribute.getMultiValued(), attribute.description, attribute.required, attribute.caseExact,
+                        attribute.mutability, attribute.returned, attribute.uniqueness,
+                        attribute.canonicalValues, attribute.referenceTypes, subAttributeList);
     }
 
 
-    class ExtensionAttributeSchemaConfig {
+    static class ExtensionAttributeSchemaConfig {
         //unique identifier for the attribute
-        private String URI;
+        private String uri;
         //name of the attribute
         private String name;
         //data type of the attribute
@@ -239,11 +239,11 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         public String getURI() {
-            return URI;
+            return uri;
         }
 
-        public void setURI(String URI) {
-            this.URI = URI;
+        public void setURI(String uri) {
+            this.uri = uri;
         }
 
         public String getName() {
@@ -333,7 +333,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
         public ExtensionAttributeSchemaConfig(JSONObject attributeConfigJSON) throws CharonException {
             try {
-                URI = attributeConfigJSON.getString(SCIMConfigConstants.ATTRIBUTE_URI);
+                uri = attributeConfigJSON.getString(SCIMConfigConstants.ATTRIBUTE_URI);
                 name = attributeConfigJSON.getString(SCIMConfigConstants.ATTRIBUTE_NAME);
                 type = getDefinedDataType(attributeConfigJSON.getString(SCIMConfigConstants.DATA_TYPE));
                 multiValued = attributeConfigJSON.getBoolean(SCIMConfigConstants.MULTIVALUED);
@@ -441,24 +441,6 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /*
-         * this builds the relevant sub attributes according to what has configured in config file
-         * @param input
-         * @return
-         * @throws CharonException
-         */
-        private ArrayList<ExtensionAttributeSchemaConfig> setSubAttributes(JSONArray input)
-                throws CharonException, JSONException {
-            ArrayList<ExtensionAttributeSchemaConfig> subAttributes = new ArrayList<ExtensionAttributeSchemaConfig>();
-            JSONArray subAttributeList = input;
-            for (int index = 0; index < subAttributeList.length(); ++index) {
-                ExtensionAttributeSchemaConfig extensionAttributeSchemaConfig =
-                        new ExtensionAttributeSchemaConfig((JSONObject) subAttributeList.get(index));
-                subAttributes.add(extensionAttributeSchemaConfig);
-            }
-            return subAttributes;
-        }
-
-        /*
          * this builds the relevant canonical values according to what has configured in config file
          * @param input
          * @return
@@ -496,7 +478,7 @@ public class SCIMUserSchemaExtensionBuilder {
             }
             return referenceTypes;
         }
-        }
-
     }
+
+}
 

@@ -1,28 +1,26 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon.core.v2.encoder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.DefaultAttributeFactory;
@@ -34,7 +32,13 @@ import org.wso2.charon.core.v2.exceptions.InternalErrorException;
 import org.wso2.charon.core.v2.objects.AbstractSCIMObject;
 import org.wso2.charon.core.v2.objects.SCIMObject;
 import org.wso2.charon.core.v2.protocol.ResponseCodeConstants;
-import org.wso2.charon.core.v2.schema.*;
+import org.wso2.charon.core.v2.schema.AttributeSchema;
+import org.wso2.charon.core.v2.schema.ResourceTypeSchema;
+import org.wso2.charon.core.v2.schema.SCIMAttributeSchema;
+import org.wso2.charon.core.v2.schema.SCIMConstants;
+import org.wso2.charon.core.v2.schema.SCIMDefinitions;
+import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
+import org.wso2.charon.core.v2.schema.SCIMResourceTypeSchema;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
 import org.wso2.charon.core.v2.utils.codeutils.FilterTreeManager;
 import org.wso2.charon.core.v2.utils.codeutils.Node;
@@ -46,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.BOOLEAN;
 import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.COMPLEX;
@@ -62,10 +67,11 @@ import static org.wso2.charon.core.v2.schema.SCIMDefinitions.DataType.STRING;
 
 public class JSONDecoder {
 
-    private Log logger;
+    private static final Logger logger = LoggerFactory.getLogger(JSONDecoder.class);
+
 
     public JSONDecoder() {
-        logger = LogFactory.getLog(JSONDecoder.class);
+
     }
 
     /**
@@ -94,7 +100,7 @@ public class JSONDecoder {
                 //obtain the user defined value for given key- attribute schema name
                 Object attributeValObj = decodedJsonObj.opt(attributeSchema.getName());
                 if (attributeValObj == null) {
-                    //user may define the attribute by its fully qualified URI
+                    //user may define the attribute by its fully qualified uri
                     attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
                 }
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
@@ -193,7 +199,7 @@ public class JSONDecoder {
      * @return MultiValuedAttribute
      */
     private MultiValuedAttribute buildComplexMultiValuedAttribute
-                                    (AttributeSchema attributeSchema, JSONArray attributeValues)
+    (AttributeSchema attributeSchema, JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
             MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
@@ -442,18 +448,15 @@ public class JSONDecoder {
             }
             if (subAttributeValue != null) {
                 if (subAttributeSchema.getMultiValued()) {
-                    if (subAttributeValue instanceof JSONArray || subAttributeValue == null) {
-                        //If an attribute is passed without a value, no need to save it.
-                        if (subAttributeValue == null) {
-                            continue;
-                        }
+                    if (subAttributeValue instanceof JSONArray) {
+
                         MultiValuedAttribute multiValuedAttribute =
                                 buildPrimitiveMultiValuedAttribute(subAttributeSchema, (JSONArray) subAttributeValue);
                         //let the attribute factory to set the sub attribute of a complex
                         // attribute to detect schema violations.
                         multiValuedAttribute = (MultiValuedAttribute)
                                 DefaultAttributeFactory.createAttribute(subAttributeSchema,
-                                multiValuedAttribute);
+                                        multiValuedAttribute);
                         subAttributesMap.put(subAttributeSchema.getName(), multiValuedAttribute);
 
                     } else {
@@ -461,11 +464,8 @@ public class JSONDecoder {
                     }
                 } else {
                     if (subAttributeValue instanceof String || subAttributeValue instanceof Boolean ||
-                            subAttributeValue instanceof Integer || subAttributeValue == null) {
-                        //If an attribute is passed without a value, no need to save it.
-                        if (subAttributeValue == null) {
-                            continue;
-                        }
+                            subAttributeValue instanceof Integer) {
+
                         SimpleAttribute simpleAttribute =
                                 buildSimpleAttribute(subAttributeSchema, subAttributeValue);
                         //let the attribute factory to set the sub attribute of a complex
@@ -515,7 +515,7 @@ public class JSONDecoder {
             logger.error("json error in decoding the request");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
-        return  operationList;
+        return operationList;
     }
 
     /*
@@ -543,21 +543,21 @@ public class JSONDecoder {
             JSONArray schemas = (JSONArray)
                     decodedJsonObj.opt(SCIMConstants.CommonSchemaConstants.SCHEMAS);
 
-            if(schemas.length() != 1){
-                throw new BadRequestException( "Schema is invalid", ResponseCodeConstants.INVALID_VALUE);
+            if (schemas.length() != 1) {
+                throw new BadRequestException("Schema is invalid", ResponseCodeConstants.INVALID_VALUE);
             }
-            if(attributesValues != null){
-                for(int i = 0; i < attributesValues.length(); i++ ){
+            if (attributesValues != null) {
+                for (int i = 0; i < attributesValues.length(); i++) {
                     attributes.add((String) attributesValues.get(i));
                 }
             }
-            if(excludedAttributesValues != null){
-                for(int i = 0; i < excludedAttributesValues.length(); i++ ){
+            if (excludedAttributesValues != null) {
+                for (int i = 0; i < excludedAttributesValues.length(); i++) {
                     excludedAttributes.add((String) excludedAttributesValues.get(i));
                 }
             }
 
-            if(decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER) != null){
+            if (decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER) != null) {
                 filterTreeManager = new FilterTreeManager(
                         decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER), schema);
                 rootNode = filterTreeManager.buildTree();
@@ -568,10 +568,10 @@ public class JSONDecoder {
             searchRequest.setCount(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.COUNT));
             searchRequest.setStartIndex(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.START_INDEX));
             searchRequest.setFilter(rootNode);
-            if(!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")){
+            if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")) {
                 searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
             }
-            if(!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER).equals("")){
+            if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER).equals("")) {
                 searchRequest.setSortOder(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_ORDER));
             }
             return searchRequest;

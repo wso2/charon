@@ -1,19 +1,17 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon.core.v2.schema;
 
@@ -26,11 +24,15 @@ import org.wso2.charon.core.v2.objects.User;
 import org.wso2.charon.core.v2.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
 
-import java.util.*;
+import java.util.Date;
+import java.util.UUID;
 
-public class ServerSideValidator extends AbstractValidator{
+/**
+ * Server Side Validator.
+ */
+public class ServerSideValidator extends AbstractValidator {
 
-    /**
+    /*
      * Validate created SCIMObject according to the spec
      *
      * @param scimObject
@@ -42,12 +44,12 @@ public class ServerSideValidator extends AbstractValidator{
     public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema)
             throws CharonException, BadRequestException, NotFoundException {
 
-        if(scimObject instanceof User){
+        if (scimObject instanceof User) {
             //set display names for complex multivalued attributes
-            setDisplayNameInComplexMultiValuedAttributes(scimObject,resourceSchema);
+            setDisplayNameInComplexMultiValuedAttributes(scimObject, resourceSchema);
         }
         //remove any read only attributes
-        removeAnyReadOnlyAttributes(scimObject,resourceSchema);
+        removeAnyReadOnlyAttributes(scimObject, resourceSchema);
         //add created and last modified dates
         String id = UUID.randomUUID().toString();
         scimObject.setId(id);
@@ -57,7 +59,7 @@ public class ServerSideValidator extends AbstractValidator{
         //creates date and the last modified are the same if not updated.
         scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
         //set location and resourceType
-        if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)){
+        if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.USER_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);
@@ -73,8 +75,9 @@ public class ServerSideValidator extends AbstractValidator{
         validateSchemaList(scimObject, resourceSchema);
     }
 
-    /**
+    /*
      * create location header from location and resourceID
+     *
      * @param location
      * @param resourceID
      * @return
@@ -84,8 +87,9 @@ public class ServerSideValidator extends AbstractValidator{
         return locationString;
     }
 
-    /**
+    /*
      * validate Retrieved SCIM Object in List
+     *
      * @param scimObject
      * @param resourceSchema
      * @param reuqestedAttributes
@@ -94,15 +98,17 @@ public class ServerSideValidator extends AbstractValidator{
      * @throws CharonException
      */
     public static void validateRetrievedSCIMObjectInList(AbstractSCIMObject scimObject,
-                                                         SCIMResourceTypeSchema resourceSchema, String reuqestedAttributes,
+                                                         SCIMResourceTypeSchema resourceSchema, String
+                                                                 reuqestedAttributes,
                                                          String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
-        ValidateReturnedAttributes(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        validateReturnedAttributes(scimObject, reuqestedAttributes, requestedExcludingAttributes);
     }
 
-    /**
+    /*
      * validate Retrieved SCIM Object
+     *
      * @param scimObject
      * @param resourceSchema
      * @param reuqestedAttributes
@@ -111,16 +117,16 @@ public class ServerSideValidator extends AbstractValidator{
      * @throws CharonException
      */
     public static void validateRetrievedSCIMObject(AbstractSCIMObject scimObject,
-                                                   SCIMResourceTypeSchema resourceSchema,String reuqestedAttributes,
+                                                   SCIMResourceTypeSchema resourceSchema, String reuqestedAttributes,
                                                    String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
-        ValidateReturnedAttributes(scimObject,reuqestedAttributes,requestedExcludingAttributes);
+        validateReturnedAttributes(scimObject, reuqestedAttributes, requestedExcludingAttributes);
         validateSchemaList(scimObject, resourceSchema);
     }
 
 
-    /**
+    /*
      * Perform validation on SCIM Object update on service provider side
      *
      * @param oldObject
@@ -134,30 +140,31 @@ public class ServerSideValidator extends AbstractValidator{
                                                                SCIMResourceTypeSchema resourceSchema)
             throws CharonException, BadRequestException {
 
-            AbstractSCIMObject validatedObject = null;
-            if(newObject instanceof User){
-                //set display names for complex multivalued attributes
-                setDisplayNameInComplexMultiValuedAttributes(newObject,resourceSchema);
-            }
-            //check for read only and immutable attributes
-            validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
-            //copy meta attribute from old to new
-            validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
-            //copy id attribute to new group object
-            validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
-            //edit last modified date
-            Date date = new Date();
-            validatedObject.setLastModified(date);
-            //check for required attributes.
-            validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
-            //check for schema list
-            validateSchemaList(validatedObject, resourceSchema);
+        AbstractSCIMObject validatedObject = null;
+        if (newObject instanceof User) {
+            //set display names for complex multivalued attributes
+            setDisplayNameInComplexMultiValuedAttributes(newObject, resourceSchema);
+        }
+        //check for read only and immutable attributes
+        validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
+        //copy meta attribute from old to new
+        validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
+        //copy id attribute to new group object
+        validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
+        //edit last modified date
+        Date date = new Date();
+        validatedObject.setLastModified(date);
+        //check for required attributes.
+        validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
+        //check for schema list
+        validateSchemaList(validatedObject, resourceSchema);
 
         return validatedObject;
     }
 
-    /**
+    /*
      * This method is to add meta data to the resource type resource
+     *
      * @param scimObject
      * @return
      * @throws NotFoundException
@@ -166,10 +173,10 @@ public class ServerSideValidator extends AbstractValidator{
      */
     public static AbstractSCIMObject validateResourceTypeSCIMObject(AbstractSCIMObject scimObject)
             throws NotFoundException, BadRequestException, CharonException {
-        String endpoint = (String)(((SimpleAttribute)(scimObject.getAttribute
+        String endpoint = (String) (((SimpleAttribute) (scimObject.getAttribute
                 (SCIMConstants.ResourceTypeSchemaConstants.NAME))).getValue());
         String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
-                SCIMConstants.RESOURCE_TYPE_ENDPOINT),endpoint);
+                SCIMConstants.RESOURCE_TYPE_ENDPOINT), endpoint);
         scimObject.setLocation(location);
         scimObject.setResourceType(SCIMConstants.RESOURCE_TYPE);
         return scimObject;

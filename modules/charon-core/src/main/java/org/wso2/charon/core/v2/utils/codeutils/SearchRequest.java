@@ -1,22 +1,37 @@
+/*
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.wso2.charon.core.v2.utils.codeutils;
 
 import java.util.ArrayList;
 
 /**
  * this corresponds to the /.search request object
- *
+ * <p>
  * Clients MAY execute queries without passing parameters on the URL by
- using the HTTP POST verb combined with the "/.search" path extension.
- The inclusion of "/.search" on the end of a valid SCIM endpoint SHALL
- be used to indicate that the HTTP POST verb is intended to be a query
- operation.
-
+ * using the HTTP POST verb combined with the "/.search" path extension.
+ * The inclusion of "/.search" on the end of a valid SCIM endpoint SHALL
+ * be used to indicate that the HTTP POST verb is intended to be a query
+ * operation.
  */
 public class SearchRequest {
 
     private String schema;
-    private ArrayList<String> attributes;
-    private ArrayList<String> excludedAttributes;
+    private ArrayList<String> attributes = null;
+    private ArrayList<String> excludedAttributes = null;
     private int count;
     private int startIndex;
     private Node filter;
@@ -87,19 +102,23 @@ public class SearchRequest {
         this.sortOder = sortOder;
     }
 
-    public String getAttributesAsString(){
+    public String getAttributesAsString() {
         String attributes = null;
-        for (String attributeValue : this.attributes){
-            attributes = attributes + "," + attributeValue;
+        StringBuffer str = new StringBuffer();
+        for (String attributeValue : this.attributes) {
+            str.append(",").append(attributeValue);
         }
-        return  attributes;
+        attributes = str.toString();
+        return attributes;
     }
 
-    public String getExcludedAttributesAsString(){
+    public String getExcludedAttributesAsString() {
         String excludedAttributes = null;
-        for (String attributeValue : this.excludedAttributes){
-            excludedAttributes = excludedAttributes + "," + attributeValue;
+        StringBuffer str = new StringBuffer();
+        for (String attributeValue : this.excludedAttributes) {
+             str.append(",").append(attributeValue);
         }
-        return  excludedAttributes;
+        excludedAttributes = str.toString();
+        return excludedAttributes;
     }
 }

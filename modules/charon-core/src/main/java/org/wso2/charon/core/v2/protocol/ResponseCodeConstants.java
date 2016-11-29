@@ -1,21 +1,21 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package org.wso2.charon.core.v2.protocol;
+
 /**
  * SCIM Protocol uses the response status codes defined in HTTP to indicate
  * operation success or failure. This class includes those code and relevant description as constants.
@@ -24,8 +24,8 @@ public class ResponseCodeConstants {
 
     public static final String ERROR_RESPONSE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:Error";
 
-    public static final String ERRORS="errors";
-    public static final String SCHEMAS="schemas";
+    public static final String ERRORS = "errors";
+    public static final String SCHEMAS = "schemas";
     public static final String STATUS = "status";
     public static final String DETAIL = "detail";
     public static final String SCIM_TYPE = "scimType";
@@ -35,20 +35,25 @@ public class ResponseCodeConstants {
     public static final int CODE_NO_CONTENT = 204;
 
     public static final int CODE_TEMPORARY_REDIRECT = 307;
-    public static final String DESC_TEMPORARY_REDIRECT = "The client is directed to repeat the same HTTP request at the " +
-            "location identified. The client SHOULD NOT use the location provided in the response as a permanent reference to the " +
-            "resource and SHOULD continue to use the original request URI.";
+    public static final String DESC_TEMPORARY_REDIRECT = "The client is directed to repeat the same HTTP request at " +
+            "the " +
+            "location identified. The client SHOULD NOT use the location provided in the response as a permanent " +
+            "reference to the " +
+            "resource and SHOULD continue to use the original request uri.";
 
     public static final int CODE_PERMANENT_REDIRECT = 308;
-    public static final String DESC_PERMANENT_REDIRECT = "The client is directed to repeat the same HTTP request at the " +
-            "location identified. The client SHOULD use the location provided in the response as a permanent reference to the " +
+    public static final String DESC_PERMANENT_REDIRECT = "The client is directed to repeat the same HTTP request at " +
+            "the " +
+            "location identified. The client SHOULD use the location provided in the response as a permanent " +
+            "reference to the " +
             "resource.";
 
     public static final int CODE_BAD_REQUEST = 400;
     public static final String DESC_BAD_REQUEST = "Request is unparsable, syntactically incorrect, or violates schema.";
 
     public static final int CODE_UNAUTHORIZED = 401;
-    public static final String DESC_UNAUTHORIZED = "Authorization failure. The authorization header is invalid or missing.";
+    public static final String DESC_UNAUTHORIZED = "Authorization failure. The authorization header is invalid or " +
+            "missing.";
 
     public static final int CODE_FORBIDDEN = 403;
     public static final String DESC_FORBIDDEN = "Operation is not permitted based on the supplied authorization.";
@@ -82,8 +87,8 @@ public class ResponseCodeConstants {
     public static final String UNIQUENESS = "uniqueness";
     public static final String MUTABILITY = "mutability";
     public static final String INVALID_SYNTAX = "invalidSyntax";
-    public static final String INVALID_PATH= "invalidPath";
-    public static final String NO_TARGET= "noTarget";
+    public static final String INVALID_PATH = "invalidPath";
+    public static final String NO_TARGET = "noTarget";
     public static final String INVALID_VALUE = "invalidValue";
     public static final String INVALID_VERS = "invalidVers";
     public static final String SENSITIVE = "sensitive";

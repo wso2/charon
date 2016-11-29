@@ -1,27 +1,25 @@
 /*
- * Copyright (c) 2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon.core.v2.encoder;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon.core.v2.attributes.Attribute;
 import org.wso2.charon.core.v2.attributes.ComplexAttribute;
 import org.wso2.charon.core.v2.attributes.MultiValuedAttribute;
@@ -36,6 +34,7 @@ import org.wso2.charon.core.v2.schema.SCIMConstants;
 import org.wso2.charon.core.v2.schema.SCIMDefinitions;
 import org.wso2.charon.core.v2.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.v2.utils.AttributeUtil;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ import java.util.Map;
 public class JSONEncoder {
 
     private String format;
-    private Log logger = LogFactory.getLog(JSONEncoder.class);
+    private static final Logger logger = LoggerFactory.getLogger(JSONEncoder.class);
 
     public JSONEncoder() {
         format = SCIMConstants.JSON;
@@ -67,7 +66,7 @@ public class JSONEncoder {
      */
     public String encodeSCIMObject(SCIMObject scimObject) throws CharonException {
         //root json object containing the encoded SCIM Object.
-        JSONObject rootObject = new JSONObject();
+        JSONObject rootObject;
         rootObject = this.getSCIMObjectAsJSONObject(scimObject);
         return rootObject.toString();
     }
@@ -371,20 +370,20 @@ public class JSONEncoder {
      * @return
      */
     public String buildUserResourceTypeJsonBody() throws JSONException {
-        JSONObject UserResourceTypeObject = new JSONObject();
+        JSONObject userResourceTypeObject = new JSONObject();
 
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.USER);
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.USER);
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.USER_ENDPOINT);
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
                 SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT);
-        UserResourceTypeObject.put(
+        userResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
 
         if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
@@ -396,11 +395,11 @@ public class JSONEncoder {
             extensionSchemaObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
                     SCIMResourceSchemaManager.getInstance().getExtensionRequired());
-            UserResourceTypeObject.put(
+            userResourceTypeObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
         }
 
-        return UserResourceTypeObject.toString();
+        return userResourceTypeObject.toString();
     }
 
     /**
@@ -408,22 +407,22 @@ public class JSONEncoder {
      * @return
      */
     public String buildGroupResourceTypeJsonBody() throws JSONException {
-        JSONObject GroupResourceTypeObject = new JSONObject();
+        JSONObject groupResourceTypeObject = new JSONObject();
 
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.GROUP);
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.GROUP);
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.GROUP_ENDPOINT);
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
                 SCIMConstants.ResourceTypeSchemaConstants.GROUP);
-        GroupResourceTypeObject.put(
+        groupResourceTypeObject.put(
                 SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.GROUP_CORE_SCHEMA_URI);
-        return GroupResourceTypeObject.toString();
+        return groupResourceTypeObject.toString();
     }
 
 }
