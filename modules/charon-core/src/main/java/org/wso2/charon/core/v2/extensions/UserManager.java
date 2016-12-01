@@ -41,7 +41,7 @@ public interface UserManager {
             throws CharonException, ConflictException, BadRequestException;
 
     public User getUser(String id, Map<String, Boolean> requiredAttributes)
-            throws CharonException, BadRequestException;
+            throws CharonException, BadRequestException, NotFoundException;
 
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
@@ -54,7 +54,7 @@ public interface UserManager {
             throws CharonException, NotImplementedException, BadRequestException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
 
     public User getMe(String userName, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
