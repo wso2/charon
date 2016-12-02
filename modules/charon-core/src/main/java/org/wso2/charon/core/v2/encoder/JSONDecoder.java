@@ -557,9 +557,9 @@ public class JSONDecoder {
                 }
             }
 
-            if (decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER) != null) {
+            if (decodedJsonObj.opt(SCIMConstants.OperationalConstants.FILTER) != null) {
                 filterTreeManager = new FilterTreeManager(
-                        decodedJsonObj.optString(SCIMConstants.OperationalConstants.FILTER), schema);
+                        (String) decodedJsonObj.opt(SCIMConstants.OperationalConstants.FILTER), schema);
                 rootNode = filterTreeManager.buildTree();
             }
             searchRequest.setAttributes(attributes);

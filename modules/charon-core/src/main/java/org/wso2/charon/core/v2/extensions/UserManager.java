@@ -75,7 +75,7 @@ public interface UserManager {
             throws CharonException, ConflictException, NotImplementedException, BadRequestException;
 
     public Group getGroup(String id, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
