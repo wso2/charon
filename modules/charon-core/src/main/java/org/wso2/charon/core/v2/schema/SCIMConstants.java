@@ -27,7 +27,7 @@ public class SCIMConstants {
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI =
             "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
-    public static final String RESOURCE_TYPE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE";
+    public static final String RESOURCE_TYPE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType";
     public static final String SEARCH_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:SearchRequest";
 
 
@@ -41,7 +41,7 @@ public class SCIMConstants {
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";
     public static final String GROUP = "Group";
-    public static final String RESOURCE_TYPE = "RESOURCE_TYPE";
+    public static final String RESOURCE_TYPE = "ResourceType";
 
     /*Resource endpoints relative to the base SCIM URL*/
     public static final String USER_ENDPOINT = "/Users";
