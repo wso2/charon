@@ -109,6 +109,9 @@ public class SearchRequest {
             str.append(",").append(attributeValue);
         }
         attributes = str.toString();
+        if (attributes.equals("")) {
+            return null;
+        }
         return attributes;
     }
 
@@ -119,6 +122,9 @@ public class SearchRequest {
              str.append(",").append(attributeValue);
         }
         excludedAttributes = str.toString();
+        if (excludedAttributes.equals("")) {
+            return null;
+        }
         return excludedAttributes;
     }
 }

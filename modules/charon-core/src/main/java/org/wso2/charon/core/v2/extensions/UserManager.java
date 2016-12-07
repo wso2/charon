@@ -66,7 +66,7 @@ public interface UserManager {
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
     public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
 
 
    /* ****************Group manipulation operations.********************/
@@ -85,7 +85,7 @@ public interface UserManager {
             throws CharonException, NotImplementedException, BadRequestException;
 
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;;
