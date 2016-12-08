@@ -254,7 +254,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             }
 
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             if (filter != null) {
                 filterTreeManager = new FilterTreeManager(filter, schema);
                 rootNode = filterTreeManager.buildTree();
