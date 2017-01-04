@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>5</version>
     </parent>
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.0</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
