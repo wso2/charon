@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.wso2.charon3.utils.Utils;
+package org.wso2.charon3.utils.supportutils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.exceptions.CharonException;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * This is to create a deep copy of the object using java serialization.
  */
 public class CopyUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(CopyUtil.class);
 
     public static Object deepCopy(Object oldObject) throws CharonException {
         ObjectOutputStream objOutPutStream;
@@ -45,7 +52,7 @@ public class CopyUtil {
             newObject = objInputStream.readObject();
 
         } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error occurred in CopyUtil");
         }
         return newObject;
     }

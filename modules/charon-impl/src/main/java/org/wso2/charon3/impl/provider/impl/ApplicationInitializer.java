@@ -32,7 +32,7 @@ public class ApplicationInitializer {
     public static void main(String[] args) {
         logger.info("SCIM micro service is starting up.....");
 
-        new MicroservicesRunner().deploy(new UserResource(),new GroupResource()).start();
+        new MicroservicesRunner().deploy(new UserResource(), new GroupResource()).start();
 
         logger.info("SCIM micro service is successfully started.");
     }

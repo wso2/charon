@@ -44,6 +44,10 @@
             <artifactId>org.wso2.charon3.core</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

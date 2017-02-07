@@ -1,7 +1,9 @@
 package org.wso2.charon3.samples.user.sample04;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -13,7 +15,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * SCIM update user sample.
+ */
 public class UpdateUserSample {
+
+    private static final Logger logger = LoggerFactory.getLogger(UpdateUserSample.class);
 
     private static String updateRequestBody = "{\n" +
             "  \"schemas\":\n" +
@@ -90,7 +97,7 @@ public class UpdateUserSample {
             "        \"https://photos.example.com/profilephoto/72930000000Ccne/T\",\n" +
             "      \"type\": \"thumbnail\"\n" +
             "    }\n" +
-            "  ],\n"+
+            "  ],\n" +
             " \"userType\": \"Employee\",\n" +
             "  \"title\": \"Tour Guide\",\n" +
             "  \"preferredLanguage\": \"en-US\",\n" +
@@ -118,7 +125,18 @@ public class UpdateUserSample {
             "  \"x509Certificates\": [\n" +
             "    {\n" +
             "      \"value\":\n" +
-            "       \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaMH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtl eGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhcmJhcmEgSiBKZW5zZW4gSUlJMSIw IAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0B AQEFAAOCAQ8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc 1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5PhVbXIPMB5vAPKpzz5i PSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZ zidPl8HZ7DhXkZIRtJwBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3 DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbLJ4zJQBmDr SGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNV HRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZp Y2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAU dGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJt Ng5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1ZgI8rAbOkNngX8+pKfTiDz1R C4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF/cAYKcMtGcrs2i97ZkJMo=\"\n" +
+            "       \"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWEx" +
+            "FDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0MzFaFw0xMjEwMDQwNjI0MzFaM" +
+            "H8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtl eGFtcGxlLmNvbTEhMB8GA1UEAwwYTXMuIEJhc" +
+            "mJhcmEgSiBKZW5zZW4gSUlJMSIw IAYJKoZIhvcNAQkBFhNiamVuc2VuQGV4YW1wbGUuY29tMIIBIjANBgkqhkiG9w0B AQEFAAOCA" +
+            "Q8AMIIBCgKCAQEA7Kr+Dcds/JQ5GwejJFcBIP682X3xpjis56AK02bc 1FLgzdLI8auoR+cC9/Vrh5t66HkQIOdA4unHh0AaZ4xL5P" +
+            "hVbXIPMB5vAPKpzz5i PSi8xO8SL7I7SDhcBVJhqVqr3HgllEG6UClDdHO7nkLuwXq8HcISKkbT5WFTVfFZ zidPl8HZ7DhXkZIRtJ" +
+            "wBweq4bvm3hM1Os7UQH05ZS6cVDgweKNwdLLrT51ikSQG3 DYrl+ft781UQRIqxgwqCfXEuDiinPh0kkvIi5jivVu1Z9QiwlYEdRbL" +
+            "J4zJQBmDr SGTMYn4lRc2HgHO4DqB/bnMVorHB0CC6AV1QoFK4GPe1LwIDAQABo3sweTAJBgNV HRMEAjAAMCwGCWCGSAGG+EIBDQQ" +
+            "fFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZp Y2F0ZTAdBgNVHQ4EFgQU8pD0U0vsZIsaA16lL8En8bx0F/gwHwYDVR0jBBgwFoAU" +
+            " dGeKitcaF7gnzsNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJt Ng5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3" +
+            "J7j1ZgI8rAbOkNngX8+pKfTiDz1R C4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1+GFiBZ+GNF" +
+            "/cAYKcMtGcrs2i97ZkJMo=\"\n" +
             "    }\n" +
             "  ],\n" +
             "}";
@@ -126,9 +144,9 @@ public class UpdateUserSample {
 
 
     public static void main(String[] args) {
-
+        BasicConfigurator.configure();
         //get the id of the user
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        Scanner reader = new Scanner(System.in, "UTF-8");  // Reading from System.in
         System.out.print("Enter the user ID : ");
         String id = reader.next();
         try {
@@ -143,20 +161,26 @@ public class UpdateUserSample {
 
             // Send post request
             con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(updateRequestBody);
-            wr.flush();
-            wr.close();
+            DataOutputStream wr = null;
+
+            try {
+                wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(updateRequestBody);
+                wr.flush();
+                wr.close();
+            } finally {
+                wr.close();
+            }
 
             int responseCode = con.getResponseCode();
 
             BufferedReader in;
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
                 in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
+                        con.getInputStream(), "UTF-8"));
             } else {
                 in = new BufferedReader(new InputStreamReader(
-                        con.getErrorStream()));
+                        con.getErrorStream(), "UTF-8"));
             }
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -168,17 +192,17 @@ public class UpdateUserSample {
 
 
             //printing result from response
-            System.out.println("Response Code : " + responseCode);
-            System.out.println("Response Message : " + con.getResponseMessage());
-            System.out.println("Response Content : " + response.toString());
+            logger.info("Response Code : " + responseCode);
+            logger.info("Response Message : " + con.getResponseMessage());
+            logger.info("Response Content : " + response.toString());
 
 
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

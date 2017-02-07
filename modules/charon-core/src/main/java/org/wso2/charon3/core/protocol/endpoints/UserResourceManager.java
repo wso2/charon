@@ -70,7 +70,7 @@ public class UserResourceManager extends AbstractResourceManager {
      * Retrieves a user resource given an unique user id. Mapped to HTTP GET request.
      *
      * @param id          - unique resource id
-     * @param userManager - userManager instance defined by the external implementor of charon
+     * @param usermanager - usermanager instance defined by the external implementor of charon
      * @return SCIM response to be returned.
      */
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
@@ -88,7 +88,7 @@ public class UserResourceManager extends AbstractResourceManager {
                     (SCIMResourceTypeSchema)
                             CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-            /*API user should pass a UserManager impl to UserResourceEndpoint.
+            /*API user should pass a usermanager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
             User user = ((UserManager) userManager).getUser(id, requiredAttributes);
 
@@ -121,7 +121,7 @@ public class UserResourceManager extends AbstractResourceManager {
      * Returns SCIMResponse based on the sucess or failure of the create user operation
      *
      * @param scimObjectString -raw string containing user info
-     * @return userManager - userManager instance defined by the external implementor of charon
+     * @return usermanager - usermanager instance defined by the external implementor of charon
      */
     public SCIMResponse create(String scimObjectString, UserManager userManager,
                                String attributes, String excludeAttributes) {
@@ -148,7 +148,7 @@ public class UserResourceManager extends AbstractResourceManager {
             User createdUser;
 
             if (userManager != null) {
-            /*handover the SCIM User object to the user UserManager provided by the SP.
+            /*handover the SCIM User object to the user usermanager provided by the SP.
             need to send back the newly created user in the response payload*/
                 createdUser = userManager.createUser(user, requiredAttributes);
             } else {
@@ -202,7 +202,7 @@ public class UserResourceManager extends AbstractResourceManager {
      * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
      * @param id          - unique resource id
-     * @param userManager - userManager instance defined by the external implementor of charon
+     * @param usermanager - usermanager instance defined by the external implementor of charon
      * @return
      */
 
@@ -210,7 +210,7 @@ public class UserResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             if (userManager != null) {
-            /*handover the SCIM User object to the user UserManager provided by the SP for the delete operation*/
+            /*handover the SCIM User object to the user usermanager provided by the SP for the delete operation*/
                 userManager.deleteUser(id);
                 //on successful deletion SCIMResponse only has 204 No Content status code.
                 return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
@@ -236,7 +236,7 @@ public class UserResourceManager extends AbstractResourceManager {
     /*
      * To list all the resources of resource endpoint.
      *
-     * @param userManager
+     * @param usermanager
      * @param filter
      * @param startIndex
      * @param count
@@ -295,7 +295,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             List<Object> returnedUsers;
             int totalResults = 0;
-            //API user should pass a UserManager UserManager to UserResourceEndpoint.
+            //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, requiredAttributes);
@@ -351,7 +351,7 @@ public class UserResourceManager extends AbstractResourceManager {
     /*
      * this facilitates the querying using HTTP POST
      * @param resourceString
-     * @param userManager
+     * @param usermanager
      * @return
      */
 
@@ -401,7 +401,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             List<Object> returnedUsers;
             int totalResults = 0;
-            //API user should pass a UserManager UserManager to UserResourceEndpoint.
+            //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listUsersWithPost(searchRequest, requiredAttributes);
 
@@ -455,7 +455,7 @@ public class UserResourceManager extends AbstractResourceManager {
      *
      * @param existingId
      * @param scimObjectString
-     * @param userManager
+     * @param usermanager
      * @return
      */
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager,
@@ -546,10 +546,12 @@ public class UserResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
                                         String attributes, String excludeAttributes) {
         try {
+            if (userManager == null) {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
             //obtain the json decoder.
             JSONDecoder decoder = getDecoder();
-            //obtain the json encoder.
-            JSONEncoder encoder = getEncoder();
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
@@ -611,21 +613,11 @@ public class UserResourceManager extends AbstractResourceManager {
                     ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                             CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-            if (userManager != null) {
-                if (oldUser != null) {
-                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
-                            (originalUser, newUser, schema);
-                    newUser = userManager.updateUser(validatedUser, requiredAttributes);
 
-                } else {
-                    String error = "No user exists with the given id: " + existingId;
-                    throw new NotFoundException(error);
-                }
+            User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
+                    (originalUser, newUser, schema);
+            newUser = userManager.updateUser(validatedUser, requiredAttributes);
 
-            } else {
-                String error = "Provided user manager handler is null.";
-                throw new InternalErrorException(error);
-            }
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
             Map<String, String> httpHeaders = new HashMap<String, String>();
@@ -656,7 +648,7 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
             return AbstractResourceManager.encodeSCIMException(e1);
         }

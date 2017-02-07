@@ -1,7 +1,9 @@
 package org.wso2.charon3.samples.group.sample06;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,12 +14,17 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * SCIM delete group sample.
+ */
 public class DeleteGroupSample {
 
-    public static void main(String[] args) {
+    private static final Logger logger = LoggerFactory.getLogger(DeleteGroupSample.class);
 
+    public static void main(String[] args) {
+        BasicConfigurator.configure();
         //get the id of the user
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        Scanner reader = new Scanner(System.in, "UTF-8");  // Reading from System.in
         System.out.print("Enter the group ID : ");
         String id = reader.next();
         try {
@@ -38,10 +45,10 @@ public class DeleteGroupSample {
             BufferedReader in;
             if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) { // success
                 in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
+                        con.getInputStream(), "UTF-8"));
             } else {
                 in = new BufferedReader(new InputStreamReader(
-                        con.getErrorStream()));
+                        con.getErrorStream(), "UTF-8"));
             }
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -53,19 +60,19 @@ public class DeleteGroupSample {
 
 
             //printing result from response
-            System.out.println("Response Code : " + responseCode);
-            System.out.println("Response Message : " + con.getResponseMessage());
+            logger.info("Response Code : " + responseCode);
+            logger.info("Response Message : " + con.getResponseMessage());
             if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) { // success
-                System.out.println("Response Content : " + response.toString());
+                logger.info("Response Content : " + response.toString());
 
             }
 
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

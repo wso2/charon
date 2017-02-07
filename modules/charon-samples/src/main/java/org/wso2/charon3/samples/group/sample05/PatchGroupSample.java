@@ -1,8 +1,9 @@
 package org.wso2.charon3.samples.group.sample05;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,7 +14,12 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * SCIM patch group sample.
+ */
 public class PatchGroupSample {
+
+    private static final Logger logger = LoggerFactory.getLogger(PatchGroupSample.class);
 
     private static String patchRequestBody = "{ \"schemas\":\n" +
             "      [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\n" +
@@ -27,9 +33,9 @@ public class PatchGroupSample {
             "   }";
 
     public static void main(String[] args) {
-
+        BasicConfigurator.configure();
         //get the id of the user
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        Scanner reader = new Scanner(System.in, "UTF-8");  // Reading from System.in
         System.out.print("Enter the group ID : ");
         String id = reader.next();
         try {
@@ -44,20 +50,26 @@ public class PatchGroupSample {
 
             // Send post request
             con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(patchRequestBody);
-            wr.flush();
-            wr.close();
+            DataOutputStream wr = null;
+
+            try {
+                wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(patchRequestBody);
+                wr.flush();
+                wr.close();
+            } finally {
+                wr.close();
+            }
 
             int responseCode = con.getResponseCode();
 
             BufferedReader in;
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
                 in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
+                        con.getInputStream(), "UTF-8"));
             } else {
                 in = new BufferedReader(new InputStreamReader(
-                        con.getErrorStream()));
+                        con.getErrorStream(), "UTF-8"));
             }
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -67,19 +79,17 @@ public class PatchGroupSample {
             }
             in.close();
 
-
             //printing result from response
-            System.out.println("Response Code : " + responseCode);
-            System.out.println("Response Message : " + con.getResponseMessage());
-            System.out.println("Response Content : " + response.toString());
-
+            logger.info("Response Code : " + responseCode);
+            logger.info("Response Message : " + con.getResponseMessage());
+            logger.info("Response Content : " + response.toString());
 
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

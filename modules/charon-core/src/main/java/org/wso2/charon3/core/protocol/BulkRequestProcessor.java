@@ -191,7 +191,7 @@ public class BulkRequestProcessor {
 
     private void errorsCheck(SCIMResponse response) {
         if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
-                response.getResponseStatus() != 204 ) {
+                response.getResponseStatus() != 204) {
             errors++;
         }
     }

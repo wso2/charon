@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is the interface for UserManager extension.
+ * This is the interface for usermanager extension.
  * An implementation can plugin their own user manager-(either LDAP based, DB based etc)
  * by implementing this interface and mentioning it in configuration.
  */

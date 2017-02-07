@@ -24,23 +24,23 @@ import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
-import org.wso2.charon3.utils.UserManager.InMemroyUserManager;
+import org.wso2.charon3.utils.usermanager.InMemoryUserManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This illustrates what are the core tasks an implementation should take care of,
- * according to their specific implementation, and how the extension points and utils
+ * according to their specific implementation, and how the extension points and supportutils
  * implementation provided by charon can be initialized/utilized here.
  */
 public class DefaultCharonManager {
 
     private static volatile DefaultCharonManager defaultCharonManager;
     private static Map<String, String> endpointURLs = new HashMap<String, String>();
-    private static UserManager userManager = null;
-    private static JSONDecoder jsonDecoder = null;
-    private static JSONEncoder jsonEncoder = null;
+    private static UserManager userManager = new InMemoryUserManager();
+    private static JSONDecoder jsonDecoder = new JSONDecoder();
+    private static JSONEncoder jsonEncoder = new JSONEncoder();
 
     private static final String USERS_URL = "http://localhost:8080/scim/Users";
     private static final String GROUPS_URL = "http://localhost:8080/scim/Groups";
@@ -54,8 +54,6 @@ public class DefaultCharonManager {
         endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, GROUPS_URL);
         //register endpoint URLs in AbstractResourceEndpoint since they are called with in the API
         registerEndpointURLs();
-        //register a default user manager
-        userManager = new InMemroyUserManager();
     }
 
     private DefaultCharonManager() throws CharonException {
@@ -89,12 +87,7 @@ public class DefaultCharonManager {
      * @return
      */
     public JSONDecoder getDecoder() throws FormatNotSupportedException {
-        if (jsonDecoder == null) {
-            jsonDecoder = new JSONDecoder();
-            return  jsonDecoder;
-        } else {
-            return jsonDecoder;
-        }
+        return jsonDecoder;
     }
 
     /**
@@ -103,15 +96,8 @@ public class DefaultCharonManager {
      * @return
      */
     public JSONEncoder getEncoder() throws FormatNotSupportedException {
-        if (jsonEncoder == null) {
-            jsonEncoder = new JSONEncoder();
-            return  jsonEncoder;
-        } else {
-            return jsonEncoder;
-        }
+        return jsonEncoder;
     }
-
-
 
     public UserManager getUserManager() throws CharonException {
         return userManager;

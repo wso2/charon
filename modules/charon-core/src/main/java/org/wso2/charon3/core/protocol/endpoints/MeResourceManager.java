@@ -66,7 +66,7 @@ public class MeResourceManager extends AbstractResourceManager {
                     (SCIMResourceTypeSchema)
                     CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-            /*API user should pass a UserManager impl to UserResourceEndpoint.
+            /*API user should pass a usermanager impl to UserResourceEndpoint.
             retrieve the user from the provided UM handler.*/
             User user = ((UserManager) userManager).getMe(userName, requiredAttributes);
 
@@ -121,7 +121,7 @@ public class MeResourceManager extends AbstractResourceManager {
             User createdUser;
 
             if (userManager != null) {
-            /*handover the SCIM User object to the user UserManager provided by the SP.
+            /*handover the SCIM User object to the user usermanager provided by the SP.
             need to send back the newly created user in the response payload*/
                 createdUser = userManager.createMe(user, requiredAttributes);
             } else {
@@ -171,7 +171,7 @@ public class MeResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
         try {
             if (userManager != null) {
-            /*handover the SCIM User object to the user UserManager provided by the SP for the delete operation*/
+            /*handover the SCIM User object to the user usermanager provided by the SP for the delete operation*/
                 userManager.deleteMe(userName);
                 //on successful deletion SCIMResponse only has 204 No Content status code.
                 return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
@@ -295,10 +295,12 @@ public class MeResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
                                         String attributes, String excludeAttributes) {
         try {
+            if (userManager == null) {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
             //obtain the json decoder.
             JSONDecoder decoder = getDecoder();
-            //obtain the json encoder.
-            JSONEncoder encoder = getEncoder();
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
@@ -360,21 +362,11 @@ public class MeResourceManager extends AbstractResourceManager {
                     ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
                             CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-            if (userManager != null) {
-                if (oldUser != null) {
-                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
-                            (originalUser, newUser, schema);
-                    newUser = userManager.updateMe(validatedUser, requiredAttributes);
 
-                } else {
-                    String error = "No user exists with the given id: " + existingId;
-                    throw new NotFoundException(error);
-                }
+            User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
+                    (originalUser, newUser, schema);
+            newUser = userManager.updateMe(validatedUser, requiredAttributes);
 
-            } else {
-                String error = "Provided user manager handler is null.";
-                throw new InternalErrorException(error);
-            }
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
             Map<String, String> httpHeaders = new HashMap<String, String>();
@@ -406,7 +398,7 @@ public class MeResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (InternalErrorException e) {
             return encodeSCIMException(e);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
             return encodeSCIMException(e1);
         }

@@ -27,8 +27,7 @@ and Group create, get, update, patch and list.
 
 **User create**
 ```
-curl -v --data '{"schemas":[],"name"{"familyName":"jayawardana","givenName":"vindula"},"userName":"vindula","password":"vindula","emails:[{"primary":true,"value":"vindula_home.com","type":"home"},{"value":"vindula_work.com","type":"work"}]}' --header "Content-Type:application/scim+json" http://localhost:8080/scim/v2/Users
-```
+curl -v --data '{"schemas":[],"name":{"familyName":"jayawardana","givenName":"vindula"},"userName":"vindula","password":"vindula","emails":[{"value":"vindula@work.com","type":"work"}]}' --h```
 
 **User get**
 ```

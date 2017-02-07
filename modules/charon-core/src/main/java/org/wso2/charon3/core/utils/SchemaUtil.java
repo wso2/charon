@@ -28,7 +28,7 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import java.util.List;
 
 /**
- * Attribute schema related utils can be found here.
+ * Attribute schema related supportutils can be found here.
  */
 public class SchemaUtil {
 

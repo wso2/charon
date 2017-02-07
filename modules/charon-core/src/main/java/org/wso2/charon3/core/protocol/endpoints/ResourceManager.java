@@ -27,7 +27,7 @@ public interface ResourceManager {
      * Method of resource endpoint which is mapped to HTTP GET request.
      *
      * @param id          - unique resource id
-     * @param userManager
+     * @param usermanager
      * @return SCIMResponse
      */
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes);
@@ -36,7 +36,7 @@ public interface ResourceManager {
      * Method of resource endpoint which is mapped to HTTP POST request.
      *
      * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
-     * @param userManager
+     * @param usermanager
      * @return SCIMResponse -
      * From Spec: {Since the server is free to alter and/or ignore POSTed content,
      * returning the full representation can be useful to the client, enabling it to correlate the
@@ -50,7 +50,7 @@ public interface ResourceManager {
      * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
      * @param id
-     * @param userManager
+     * @param usermanager
      * @return
      */
     public SCIMResponse delete(String id, UserManager userManager);
@@ -58,7 +58,7 @@ public interface ResourceManager {
     /*
      * get resources
      *
-     * @param userManager
+     * @param usermanager
      * @param filter
      * @param startIndex
      * @param count
@@ -76,7 +76,7 @@ public interface ResourceManager {
      * query resources
      *
      * @param resourceString
-     * @param userManager
+     * @param usermanager
      * @return
      */
     public SCIMResponse listWithPOST(String resourceString, UserManager userManager);
@@ -86,7 +86,7 @@ public interface ResourceManager {
      *
      * @param existingId
      * @param scimObjectString
-     * @param userManager
+     * @param usermanager
      * @param attributes
      * @param excludeAttributes
      * @return
@@ -98,7 +98,7 @@ public interface ResourceManager {
     /*
      * @param existingId
      * @param scimObjectString
-     * @param userManager
+     * @param usermanager
      * @return
      */
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,

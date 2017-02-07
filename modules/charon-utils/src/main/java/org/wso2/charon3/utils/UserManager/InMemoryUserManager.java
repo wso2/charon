@@ -15,10 +15,17 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.charon3.utils.UserManager;
+package org.wso2.charon3.utils.usermanager;
 
 
-import org.wso2.charon3.core.exceptions.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.NotFoundException;
+import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
@@ -31,8 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemroyUserManager implements UserManager {
-
+/**
+ * This is a sample dynamic user store.
+ */
+public class InMemoryUserManager implements UserManager {
+    private static final Logger logger = LoggerFactory.getLogger(InMemoryUserManager.class);
     //in memory user manager stores users
     ConcurrentHashMap<String, User> inMemoryUserList = new ConcurrentHashMap<String, User>();
     ConcurrentHashMap<String, Group> inMemoryGroupList = new ConcurrentHashMap<String, Group>();
@@ -73,11 +83,11 @@ public class InMemroyUserManager implements UserManager {
     public List<Object> listUsersWithGET(Node rootNode, int startIndex, int count, String sortBy,
                                          String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
-        if(sortBy != null || sortOrder != null) {
+        if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
-        }  else if(startIndex != 1){
+        }  else if (startIndex != 1) {
             throw new NotImplementedException("Pagination is not supported");
-        } else if(rootNode != null) {
+        } else if (rootNode != null) {
             throw new NotImplementedException("Filtering is not supported");
         } else {
             return listUsers(requiredAttributes);
@@ -91,11 +101,11 @@ public class InMemroyUserManager implements UserManager {
         for (Map.Entry<String, User> entry : inMemoryUserList.entrySet()) {
             userList.add(entry.getValue());
         }
-        userList.set(0, userList.size()-1);
+        userList.set(0, userList.size() - 1);
         try {
             return (List<Object>) CopyUtil.deepCopy(userList);
         } catch (CharonException e) {
-            e.printStackTrace();
+            logger.error("Error in listing users");
             return  null;
         }
 
@@ -174,11 +184,11 @@ public class InMemroyUserManager implements UserManager {
     public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy,
                                           String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
-        if(sortBy != null || sortOrder != null) {
+        if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
-        }  else if(startIndex != 1){
+        }  else if (startIndex != 1) {
             throw new NotImplementedException("Pagination is not supported");
-        } else if(rootNode != null) {
+        } else if (rootNode != null) {
             throw new NotImplementedException("Filtering is not supported");
         } else {
             return listGroups(requiredAttributes);
@@ -187,16 +197,16 @@ public class InMemroyUserManager implements UserManager {
 
     private List<Object> listGroups(Map<String, Boolean> requiredAttributes) {
         List<Object> groupList = new ArrayList<>();
-        groupList.add(0,0);
+        groupList.add(0, 0);
         for (Group group : inMemoryGroupList.values()) {
             groupList.add(group);
         }
-        groupList.set(0, groupList.size()-1);
+        groupList.set(0, groupList.size() - 1);
         try {
             return (List<Object>) CopyUtil.deepCopy(groupList);
         } catch (CharonException e) {
-            e.printStackTrace();
-            return null;
+            logger.error("Error in listing groups");
+            return  null;
         }
 
     }

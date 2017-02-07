@@ -1,10 +1,11 @@
 package org.wso2.charon3.samples.user.sample02;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.BasicConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -13,12 +14,17 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
+/**
+ * SCIM get user sample.
+ */
 public class GetUserSample {
 
+    private static final Logger logger = LoggerFactory.getLogger(GetUserSample.class);
     public static void main(String[] args) {
 
+        BasicConfigurator.configure();
         //get the id of the user
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
+        Scanner reader = new Scanner(System.in, "UTF-8");  // Reading from System.in
         System.out.print("Enter the user ID : ");
         String id = reader.next();
         try {
@@ -35,10 +41,10 @@ public class GetUserSample {
             BufferedReader in;
             if (responseCode == HttpURLConnection.HTTP_OK) { // success
                 in = new BufferedReader(new InputStreamReader(
-                        con.getInputStream()));
+                        con.getInputStream(), "UTF-8"));
             } else {
                 in = new BufferedReader(new InputStreamReader(
-                        con.getErrorStream()));
+                        con.getErrorStream(), "UTF-8"));
             }
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -49,16 +55,17 @@ public class GetUserSample {
             in.close();
 
             //printing result from response
-            System.out.println("Response Code : " + responseCode);
-            System.out.println("Response Message : " + con.getResponseMessage());
-            System.out.println("Response Content : " + response.toString());
+            logger.info("Response Code : " + responseCode);
+            logger.info("Response Message : " + con.getResponseMessage());
+            logger.info("Response Content : " + response.toString());
+
 
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 }

@@ -18,12 +18,12 @@ package org.wso2.charon3.impl.provider.resources;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
+import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.msf4j.Microservice;
 import java.util.Map;
 import javax.ws.rs.core.Response;

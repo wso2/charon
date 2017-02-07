@@ -428,7 +428,7 @@ public class JSONEncoder {
         return groupResourceTypeObject.toString();
     }
 
-    /**
+    /*
      * Encode given bulkResponseData object and return the encoded string
      *
      * @param bulkResponseData
