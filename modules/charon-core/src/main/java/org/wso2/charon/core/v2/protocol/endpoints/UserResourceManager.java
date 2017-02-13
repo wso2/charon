@@ -304,7 +304,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 tempList.remove(0);
                 returnedUsers = tempList;
 
-                //if user not found retirn status 200 (follow spec https://tools.ietf.org/html/rfc7644#section-3.4.2 )
+                //if user not found return status 200 (follow spec https://tools.ietf.org/html/rfc7644#section-3.4.2 )
                 if (returnedUsers.isEmpty()) {
                     ListedResource emptyListedResource = createListedResource(returnedUsers, startIndex, totalResults);
                     String encodedEmptyListedResource = encoder.encodeSCIMObject(emptyListedResource);
