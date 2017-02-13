@@ -251,6 +251,8 @@ public class UserResourceManager extends AbstractResourceManager {
         FilterTreeManager filterTreeManager = null;
         Node rootNode = null;
         JSONEncoder encoder = null;
+        Map<String, String> responseHeaders = new HashMap<String, String>();
+        responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         try {
             //A value less than one shall be interpreted as 1
             if (startIndex < 1) {
@@ -302,11 +304,11 @@ public class UserResourceManager extends AbstractResourceManager {
                 tempList.remove(0);
                 returnedUsers = tempList;
 
-                //if user not found, return an error in relevant format.
+                //if user not found retirn status 200 (follow spec https://tools.ietf.org/html/rfc7644#section-3.4.2 )
                 if (returnedUsers.isEmpty()) {
-                    String error = "No resulted users found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
+                    ListedResource emptyListedResource = createListedResource(returnedUsers, startIndex, totalResults);
+                    String encodedEmptyListedResource = encoder.encodeSCIMObject(emptyListedResource);
+                    return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedEmptyListedResource, responseHeaders);
                 }
 
                 for (Object user : returnedUsers) {
@@ -319,8 +321,6 @@ public class UserResourceManager extends AbstractResourceManager {
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
-                Map<String, String> responseHeaders = new HashMap<String, String>();
-                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
                 return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
 
             } else {
