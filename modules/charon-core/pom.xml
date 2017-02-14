@@ -14,7 +14,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.wso2.charon</groupId>
@@ -24,9 +23,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>org.wso2.charon.core.v2</artifactId>
+    <artifactId>org.wso2.charon3.core</artifactId>
     <packaging>bundle</packaging>
-    <name>WSO2 Charon - Core</name>
+    <name>WSO2 Charon - Core </name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
 
@@ -55,6 +54,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
         </dependency>
     </dependencies>
     <build>
@@ -63,16 +63,28 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${project.artifactId}</Bundle-Name>
+                        <Export-Package>
+                            org.wso2.charon3.core.*;version=3.0.0-SNAPSHOT
+                        </Export-Package>
+                        <Import-Package>
+                            org.json.*,
+                            org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
+                            org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
+                            javax.xml.namespace.*,
+                            javax.xml.stream.*,
+                            org.slf4j.*,
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-    <properties>
-        <slf4j.logging.package.import.version.range>[1.7.1, 2.0.0)</slf4j.logging.package.import.version.range>
-        <export.package>
-            org.wso2.charon.core.*;version=3.0.0-SNAPSHOT
-        </export.package>
-        <import.package>
-            org.json.*,
-            org.slf4j.*;version="${slf4j.logging.package.import.version.range}",
-        </import.package>
-    </properties>
 </project>
