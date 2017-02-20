@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.wso2</groupId>
         <artifactId>wso2</artifactId>
-        <version>1</version>
+        <version>5</version>
     </parent>
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -24,22 +24,12 @@
     <modules>
         <module>modules/charon-core</module>
         <module>modules/charon-utils</module>
-        <module>modules/charon-samples</module>
         <module>modules/charon-impl</module>
+        <module>modules/charon-samples</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.wso2.charon</groupId>
-                <artifactId>org.wso2.charon.core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wso2.charon</groupId>
-                <artifactId>org.wso2.charon.utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
@@ -66,16 +56,6 @@
                 <version>${junit.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.wink</groupId>
-                <artifactId>wink-server</artifactId>
-                <version>${wink.server.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.wink</groupId>
-                <artifactId>wink-client</artifactId>
-                <version>${wink.client.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${servlet.api.version}</version>
@@ -85,6 +65,42 @@
                 <artifactId>jsr311-api</artifactId>
                 <version>${jsr311.api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.msf4j</groupId>
+                <artifactId>msf4j-swagger</artifactId>
+                <version>${msf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.msf4j</groupId>
+                <artifactId>msf4j-core</artifactId>
+                <version>${msf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.charon</groupId>
+                <artifactId>org.wso2.charon3.core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.charon</groupId>
+                <artifactId>org.wso2.charon3.utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -94,11 +110,13 @@
             <name>WSO2 Nexus Release Repository</name>
             <url>http://maven.wso2.org/nexus/service/local/staging/deploy/maven2/</url>
         </repository>
+<!--
         <snapshotRepository>
             <id>wso2.snapshots</id>
             <name>Internal Releases</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
+-->
     </distributionManagement>
 
     <repositories>
@@ -127,7 +145,7 @@
             <name>Maven Repository Switchboard</name>
             <url>http://repo1.maven.org/maven2</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>wso2.snapshots</id>
             <name>WSO2 Snapshot Repository</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
@@ -138,7 +156,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-        </repository>
+        </repository>-->
     </repositories>
 
     <build>
@@ -217,7 +235,8 @@
     </build>
 
     <properties>
-        <charon.parent.package.export.version>${project.version}</charon.parent.package.export.version>
+        <charon.parent.version>3.0.0-SNAPSHOT</charon.parent.version>
+        <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>20090211</json.version>
@@ -225,8 +244,6 @@
         <axiom.api.version>1.2.11</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
         <junit.version>4.8.1</junit.version>
-        <wink.server.version>1.1.3-incubating</wink.server.version>
-        <wink.client.version>1.1.3-incubating</wink.client.version>
         <servlet.api.version>2.3</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
@@ -239,6 +256,10 @@
 
         <src.java.version>1.7</src.java.version>
         <target.java.version>1.7</target.java.version>
+        <msf4j.version>2.1.0</msf4j.version>
+        <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
+        <log4j.version>1.2.16</log4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
     </properties>
 
 </project>
