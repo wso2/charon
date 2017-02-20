@@ -85,6 +85,22 @@
                 <artifactId>org.wso2.charon3.utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${fasterxml.jackson.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -94,11 +110,13 @@
             <name>WSO2 Nexus Release Repository</name>
             <url>http://maven.wso2.org/nexus/service/local/staging/deploy/maven2/</url>
         </repository>
+<!--
         <snapshotRepository>
             <id>wso2.snapshots</id>
             <name>Internal Releases</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
+-->
     </distributionManagement>
 
     <repositories>
@@ -127,7 +145,7 @@
             <name>Maven Repository Switchboard</name>
             <url>http://repo1.maven.org/maven2</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>wso2.snapshots</id>
             <name>WSO2 Snapshot Repository</name>
             <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
@@ -138,7 +156,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-        </repository>
+        </repository>-->
     </repositories>
 
     <build>
@@ -239,6 +257,9 @@
         <src.java.version>1.7</src.java.version>
         <target.java.version>1.7</target.java.version>
         <msf4j.version>2.1.0</msf4j.version>
+        <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
+        <log4j.version>1.2.16</log4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
     </properties>
 
 </project>
