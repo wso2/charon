@@ -373,10 +373,6 @@ public class UserResourceManager extends AbstractResourceManager {
             if (searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
             }
-            //If count is not set, server default should be taken
-            if (searchRequest.getCount() == 0) {
-                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
-            }
 
             //check whether provided sortOrder is valid or not
             if (searchRequest.getSortOder() != null) {
@@ -409,13 +405,6 @@ public class UserResourceManager extends AbstractResourceManager {
                 tempList.remove(0);
 
                 returnedUsers = tempList;
-
-                //if user not found, return an error in relevant format.
-                if (returnedUsers.isEmpty()) {
-                    String error = "No resulted users are found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
 
                 for (Object user : returnedUsers) {
                     //perform service provider side validation.

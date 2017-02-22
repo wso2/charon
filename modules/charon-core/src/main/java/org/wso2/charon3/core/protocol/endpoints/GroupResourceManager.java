@@ -396,13 +396,6 @@ public class GroupResourceManager extends AbstractResourceManager {
 
                 returnedGroups = tempList;
 
-                //if user not found, return an error in relevant format.
-                if (returnedGroups.isEmpty()) {
-                    String error = "No resulted users are found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
-
                 for (Object group : returnedGroups) {
                     //perform service provider side validation.
                     ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, schema,
