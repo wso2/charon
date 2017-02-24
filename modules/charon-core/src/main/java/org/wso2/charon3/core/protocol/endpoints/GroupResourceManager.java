@@ -16,7 +16,6 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -237,9 +236,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             if (startIndex < 1) {
                 startIndex = 1;
             }
-            //If count is not set, server default should be taken
-            if (count == 0) {
-                count = CharonConfiguration.getInstance().getCountValueForPagination();
+
+            if (count < 0) {
+                count = 0;
             }
 
             //check whether provided sortOrder is valid or not
@@ -281,13 +280,6 @@ public class GroupResourceManager extends AbstractResourceManager {
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
                 returnedGroups = tempList;
-
-                //if groups not found, return an error in relevant format.
-                if (returnedGroups.isEmpty()) {
-                    String error = "Groups not found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
 
                 for (Object group : returnedGroups) {
                     //perform service provider side validation.
@@ -359,9 +351,9 @@ public class GroupResourceManager extends AbstractResourceManager {
             if (searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
             }
-            //If count is not set, server default should be taken
-            if (searchRequest.getCount() == 0) {
-                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
+
+            if (searchRequest.getCount() < 0) {
+                searchRequest.setCount(0);
             }
 
             //check whether provided sortOrder is valid or not

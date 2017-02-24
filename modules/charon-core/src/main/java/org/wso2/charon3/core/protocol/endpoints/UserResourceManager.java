@@ -20,7 +20,6 @@ package org.wso2.charon3.core.protocol.endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -258,9 +257,9 @@ public class UserResourceManager extends AbstractResourceManager {
             if (startIndex < 1) {
                 startIndex = 1;
             }
-            //If count is not set, server default should be taken
-            if (count == 0) {
-                count = CharonConfiguration.getInstance().getCountValueForPagination();
+
+            if (count < 0) {
+                count = 0;
             }
 
             //check whether provided sortOrder is valid or not
@@ -303,13 +302,6 @@ public class UserResourceManager extends AbstractResourceManager {
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
                 returnedUsers = tempList;
-
-                //if user not found, return an error in relevant format.
-                if (returnedUsers.isEmpty()) {
-                    String error = "No resulted users found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
 
                 for (Object user : returnedUsers) {
                     //perform service provider side validation.
@@ -372,6 +364,10 @@ public class UserResourceManager extends AbstractResourceManager {
             //A value less than one shall be interpreted as 1
             if (searchRequest.getStartIndex() < 1) {
                 searchRequest.setStartIndex(1);
+            }
+
+            if (searchRequest.getCount() < 0) {
+                searchRequest.setCount(0);
             }
 
             //check whether provided sortOrder is valid or not
