@@ -604,7 +604,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.UserSchemaConstants.USER_NAME,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.USERNAME_DESC,
                         true, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.SERVER, null, null, null);
 
         //The components of the user's real name.
