@@ -20,6 +20,7 @@ package org.wso2.charon3.core.protocol.endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -253,16 +254,19 @@ public class UserResourceManager extends AbstractResourceManager {
         Node rootNode = null;
         JSONEncoder encoder = null;
         try {
-            //A value less than one shall be interpreted as 1
+
+            if (filter == null && startIndex == 0 && count == 0 && attributes == null && excludeAttributes == null) {
+                count = CharonConfiguration.getInstance().getCountValueForPagination();
+            } else if ((filter != null || attributes != null || excludeAttributes != null) && count == 0) {
+                count = CharonConfiguration.getInstance().getCountValueForPagination();
+            } else if (count < 0) {
+                count = 0;
+            }
+
             if (startIndex < 1) {
                 startIndex = 1;
             }
 
-            if (count < 0) {
-                count = 0;
-            }
-
-            //check whether provided sortOrder is valid or not
             if (sortOrder != null) {
                 if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
                         || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
@@ -362,12 +366,22 @@ public class UserResourceManager extends AbstractResourceManager {
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
             //A value less than one shall be interpreted as 1
-            if (searchRequest.getStartIndex() < 1) {
-                searchRequest.setStartIndex(1);
+
+            if (searchRequest.getFilter() == null && searchRequest.getStartIndex() == 0 && searchRequest.getCount() == 0
+                    && searchRequest.getAttributes() == null && searchRequest.getExcludedAttributes() == null) {
+
+                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
+            } else if ((searchRequest.getFilter() != null || searchRequest.getAttributes() != null ||
+                    searchRequest.getExcludedAttributes() != null) && searchRequest.getCount() == 0) {
+
+                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
+
+            } else if (searchRequest.getCount() < 0) {
+                searchRequest.setCount(0);
             }
 
-            if (searchRequest.getCount() < 0) {
-                searchRequest.setCount(0);
+            if (searchRequest.getStartIndex() < 1) {
+                searchRequest.setStartIndex(1);
             }
 
             //check whether provided sortOrder is valid or not
