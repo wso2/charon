@@ -255,11 +255,11 @@ public class UserResourceManager extends AbstractResourceManager {
 
         try {
 
-            //According to SCIM 2.0 spec count value should be > than -1
+            //According to SCIM 2.0 spec minus values will be considered as 0
             if (count < 0) {
                 count = 0;
             }
-            //According to SCIM 2.0 spec startIndex value should be > than 0
+            //According to SCIM 2.0 spec minus values will be considered as 1
             if (startIndex < 1) {
                 startIndex = 1;
             }
