@@ -595,8 +595,8 @@ public class JSONDecoder {
             searchRequest.setAttributes(attributes);
             searchRequest.setExcludedAttributes(excludedAttributes);
             searchRequest.setSchema((String) schemas.get(0));
-            searchRequest.setCount(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.COUNT));
-            searchRequest.setStartIndex(decodedJsonObj.optInt(SCIMConstants.OperationalConstants.START_INDEX));
+            searchRequest.setCountStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.COUNT));
+            searchRequest.setStartIndexStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX));
             searchRequest.setFilter(rootNode);
             if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")) {
                 searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
