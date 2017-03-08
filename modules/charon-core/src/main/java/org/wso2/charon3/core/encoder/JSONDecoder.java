@@ -92,6 +92,14 @@ public class JSONDecoder {
         try {
             //decode the string into json representation
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+
+            // Check whether a schema is available in the request.
+            if (!decodedJsonObj.getJSONArray("schemas").get(0).toString().equals(resourceSchema.
+                    getSchemasList().get(0))) {
+                logger.error("json error in decoding the resource");
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            }
+
             //get the attribute schemas list from the schema that defines the given resource
             List<AttributeSchema> attributeSchemas = resourceSchema.getAttributesList();
 
