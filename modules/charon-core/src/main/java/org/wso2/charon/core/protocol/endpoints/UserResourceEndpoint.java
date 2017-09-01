@@ -181,7 +181,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            logger.error("Internal server error while creating new resource.", e);
+            logger.error("Internal server error while creating new resource: " + e.getDescription(), e);
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
             if (e.getCode() == -1) {
