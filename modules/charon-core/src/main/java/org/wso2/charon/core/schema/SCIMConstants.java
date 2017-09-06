@@ -160,6 +160,9 @@ public class SCIMConstants {
 
         public static final String DIRECT_MEMBERSHIP = "direct";
         public static final String INDIRECT_MEMBERSHIP = "indirect";
+
+        public static final String ASK_PASSWORD = "askPassword";
+        public static final String VERIFY_EMAIL = "verifyEmail";
     }
 
     public static class GroupSchemaConstants {
@@ -311,6 +314,8 @@ public class SCIMConstants {
     public static final String ENTITLEMENTS_DESC = "A list of entitlements for the User that represent a thing the User has.";
     public static final String ROLES_DESC = "A list of roles for the User that collectively represent who the User is";
     public static final String X509CERTIFICATES_DESC = "A list of certificates issued to the User. Values are Binary and DER encoded x509";
+    public static final String ASK_PASSWORD_DESC = "Enable password change required notification in the user creation";
+    public static final String VERIFY_EMAIL_DESC = "Enable email confirmation notification in the user creation";
 
 
     /**
@@ -420,6 +425,10 @@ public class SCIMConstants {
     public static final String ENTITLEMENTS_URI = "urn:scim:schemas:core:1.0:entitlements";
     public static final String ROLES_URI = "urn:scim:schemas:core:1.0:roles";
     public static final String X509CERTIFICATES_URI = "urn:scim:schemas:core:1.0:x509Certificates";
+
+    // Identity recovery attributes
+    public static final String ASK_PASSWORD_URI = "urn:scim:schemas:core:1.0:askPassword";
+    public static final String VERIFY_EMAIL_URI = "urn:scim:schemas:core:1.0:verifyEmail";
 
 
 }
