@@ -179,6 +179,12 @@ public class SCIMConstants {
         public static final String COUNTRY = "country";
         public static final String COUNTRY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:addresses.country";
 
+        // Identity Recovery Attributes
+        public static final String ASK_PASSWORD = "askPassword";
+        public static final String ASK_PASSWORD_URI = "urn:ietf:params:scim:schemas:core:2.0:User:askPassword";
+        public static final String VERIFY_EMAIL = "verifyEmail";
+        public static final String VERIFY_EMAIL_URI = "urn:ietf:params:scim:schemas:core:2.0:User:verifyEmail";
+
         //Multi-Valued Attributes
         public static final String EMAILS = "emails";
         public static final String EMAILS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails";
@@ -198,6 +204,7 @@ public class SCIMConstants {
         public static final String ROLES_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles";
         public static final String X509CERTIFICATES = "x509Certificates";
         public static final String X509CERTIFICATES_URI = "urn:ietf:params:scim:schemas:core:2.0:User:x509Certificates";
+
 
         //possible canonical values
         public static final String HOME = "home";
@@ -445,6 +452,10 @@ public class SCIMConstants {
         public static final String X509CERTIFICATES_PRIMARY_DESC = "A Boolean value indicating the 'primary' or " +
                 "preferred attribute value for this attribute." +
                 "The primary attribute value 'true' MUST appear no more than once.";
+
+        public static final String ASK_PASSWORD_DESC = "Enable password change required notification in the user " +
+                "creation.";
+        public static final String VERIFY_EMAIL_DESC = "Enable email confirmation notification in the user creation.";
     }
 
     /**

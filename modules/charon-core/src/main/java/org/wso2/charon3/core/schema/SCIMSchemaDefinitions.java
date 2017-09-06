@@ -666,6 +666,24 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        // Identity recovery ask password attribute
+        public static final SCIMAttributeSchema ASK_PASSWORD =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ASK_PASSWORD_URI,
+                        SCIMConstants.UserSchemaConstants.ASK_PASSWORD,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.ASK_PASSWORD_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Identity recovery verify email attribute
+        public static final SCIMAttributeSchema VERIFY_EMAIL =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.VERIFY_EMAIL_URI,
+                        SCIMConstants.UserSchemaConstants.VERIFY_EMAIL,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.VERIFY_EMAIL_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
         //Indicates the User's preferred written or spoken language.
         public static final SCIMAttributeSchema PREFERRED_LANGUAGE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.PREFERRED_LANGUAGE_URI,
@@ -1225,6 +1243,8 @@ public class SCIMSchemaDefinitions {
                     SCIMUserSchemaDefinition.PROFILE_URL,
                     SCIMUserSchemaDefinition.TITLE,
                     SCIMUserSchemaDefinition.USER_TYPE,
+                    SCIMUserSchemaDefinition.ASK_PASSWORD,
+                    SCIMUserSchemaDefinition.VERIFY_EMAIL,
                     SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
                     SCIMUserSchemaDefinition.LOCALE,
                     SCIMUserSchemaDefinition.TIME_ZONE,
