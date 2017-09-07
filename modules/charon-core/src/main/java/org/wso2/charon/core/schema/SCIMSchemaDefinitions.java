@@ -398,6 +398,18 @@ public class SCIMSchemaDefinitions {
                                                           SCIMConstants.MEMBERS_DESC, SCIMConstants.CORE_SCHEMA_URI,
                                                           false, false, false, null);
 
+    public static final SCIMAttributeSchema ASK_PASSWORD =
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.ASK_PASSWORD_URI,
+                                                          SCIMConstants.UserSchemaConstants.ASK_PASSWORD,
+                                                          DataType.BOOLEAN, false, null, SCIMConstants.ASK_PASSWORD_DESC,
+                                                          SCIMConstants.CORE_SCHEMA_URI, false, false, false, null);
+
+    public static final SCIMAttributeSchema VERIFY_EMAIL =
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.VERIFY_EMAIL_URI,
+                                                          SCIMConstants.UserSchemaConstants.VERIFY_EMAIL,
+                                                          DataType.BOOLEAN, false, null, SCIMConstants.VERIFY_EMAIL_DESC,
+                                                          SCIMConstants.CORE_SCHEMA_URI, false, false, false, null);
+
     /**
      * *************************Attributes defined in Enterprise User Schema***********************
      */
@@ -422,7 +434,7 @@ public class SCIMSchemaDefinitions {
                                                         TITLE, USER_TYPE, PREFERRED_LANGUAGE, LOCALE,
                                                         TIMEZONE, ACTIVE, PASSWORD, EMAILS, PHONE_NUMBERS, IMS,
                                                         PHOTOS, ADDRESSES, GROUPS, ENTITLEMENTS, ROLES,
-                                                        X509CERTIFICATES);
+                                                        X509CERTIFICATES, ASK_PASSWORD, VERIFY_EMAIL);
 
 
     public static final SCIMResourceSchema SCIM_GROUP_SCHEMA =

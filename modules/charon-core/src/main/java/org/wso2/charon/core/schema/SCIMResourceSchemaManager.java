@@ -20,15 +20,15 @@ package org.wso2.charon.core.schema;
 import org.wso2.charon.core.config.SCIMUserSchemaExtensionBuilder;
 
 public class SCIMResourceSchemaManager {
-	
+
 	private static SCIMResourceSchemaManager manager = new SCIMResourceSchemaManager();
-	
+
 	public static SCIMResourceSchemaManager getInstance() {
 		return manager;
 	}
-	
+
 	private SCIMResourceSchemaManager() {
-		
+
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class SCIMResourceSchemaManager {
 		SCIMAttributeSchema schemaExtension =
 		                                      SCIMUserSchemaExtensionBuilder.getInstance()
 		                                                                    .getSCIMUserSchemaExtension();
-		// extensions exist. 
+		// extensions exist.
 		if (schemaExtension != null) {
 			return SCIMResourceSchema.createSCIMResourceSchema(SCIMConstants.USER,
 			                                                   SCIMConstants.CORE_SCHEMA_URI,
@@ -67,6 +67,8 @@ public class SCIMResourceSchemaManager {
 			                                                   SCIMSchemaDefinitions.ENTITLEMENTS,
 			                                                   SCIMSchemaDefinitions.ROLES,
 			                                                   SCIMSchemaDefinitions.X509CERTIFICATES,
+                                                                          SCIMSchemaDefinitions.ASK_PASSWORD,
+                                                                          SCIMSchemaDefinitions.VERIFY_EMAIL,
 			                                                   schemaExtension);
 		} else {
 			// returning the core schema
