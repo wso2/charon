@@ -51,6 +51,7 @@ public class FilterTreeManager {
         //TODO:is ths all?
         input.wordChars('@', '@');
         input.wordChars(':', ':');
+        input.wordChars('_', '_');
         tokenList = new ArrayList<String>();
         String concatenatedString = "";
 
