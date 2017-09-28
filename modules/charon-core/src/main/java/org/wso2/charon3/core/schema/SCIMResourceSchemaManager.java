@@ -54,6 +54,8 @@ public class SCIMResourceSchemaManager {
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ASK_PASSWORD,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.VERIFY_EMAIL,
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
                     SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
