@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Charon-suite-initializer">
+
+    <test name="charon-core-tests" preserve-order="true" parallel="false" group-by-instances="true">
+        
+    </test>
+
+</suite>

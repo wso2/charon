@@ -27,21 +27,25 @@ public class BadRequestException extends AbstractCharonException {
     protected String scimType;
 
     public BadRequestException(String scimType) {
+        super("SCIM type: " + scimType);
         status = ResponseCodeConstants.CODE_BAD_REQUEST;
         detail = ResponseCodeConstants.DESC_BAD_REQUEST;
         this.scimType = scimType;
     }
 
     public BadRequestException(String details, String scimType) {
+        super("SCIM type: " + scimType + ", " + details);
         status = ResponseCodeConstants.CODE_BAD_REQUEST;
         this.detail = details;
         this.scimType = scimType;
     }
 
     public String getScimType() {
-        return scimType; }
+        return scimType;
+    }
 
     public void setScimType(String scimType) {
-        this.scimType = scimType; }
+        this.scimType = scimType;
+    }
 
 }

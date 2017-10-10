@@ -610,6 +610,9 @@ public class PatchOperationUtil {
                                                 AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
                                                 SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException {
+        if (operation == null || operation.getValues() == null) {
+            throw new CharonException("No values for the Patch Operation is defined.");
+        }
         try {
             AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
             if (oldResource != null) {
@@ -1653,7 +1656,7 @@ public class PatchOperationUtil {
             throws NotImplementedException, BadRequestException,
             CharonException, JSONException, InternalErrorException {
 
-        if (parts.length != 1) {
+        if (parts.length >= 2) {
             //currently we only support simple filters here.
             String[] filterParts = parts[1].split(" ");
 
