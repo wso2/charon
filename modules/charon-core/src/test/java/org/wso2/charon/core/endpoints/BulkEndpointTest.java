@@ -17,8 +17,8 @@
 */
 package org.wso2.charon.core.endpoints;
 
-import junit.framework.Assert;
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 import org.wso2.charon.core.encoder.json.JSONDecoder;
 import org.wso2.charon.core.encoder.json.JSONEncoder;
 import org.wso2.charon.core.exceptions.CharonException;
@@ -32,11 +32,10 @@ import org.wso2.charon.core.utils.InMemroyUserManager;
  *
  */
 public class BulkEndpointTest {
-    InMemroyUserManager userManager = new InMemroyUserManager(1, "wso2.org");
+    private InMemroyUserManager userManager = new InMemroyUserManager(1, "wso2.org");
 
     @Test
     public void testBulkEndpointCreatingUsers() throws CharonException {
-        try {
             //encode the user in JSON format
             String encodedUser;
             AbstractResourceEndpoint.registerEncoder(SCIMConstants.JSON, new JSONEncoder());
@@ -87,11 +86,5 @@ public class BulkEndpointTest {
 
             BulkResourceEndpoint bulkResourceEndpoint = new BulkResourceEndpoint();
             SCIMResponse responseString = bulkResourceEndpoint.processBulkData(encodedUser, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON, userManager);
-
-        } catch (Exception e) {
-            Assert.assertFalse(e.toString(), true);
-        }
-
-
     }
 }

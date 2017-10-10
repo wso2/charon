@@ -38,8 +38,8 @@ public class InMemroyUserManager implements UserManager {
     private int tenantId = 0;
 
     //in memory user manager stores users
-    ConcurrentHashMap<String, User> inMemoryUserList = new ConcurrentHashMap<String, User>();
-    ConcurrentHashMap<String, Group> inMemoryGroupList = new ConcurrentHashMap<String, Group>();
+    private  ConcurrentHashMap<String, User> inMemoryUserList = new ConcurrentHashMap<String, User>();
+    private ConcurrentHashMap<String, Group> inMemoryGroupList = new ConcurrentHashMap<String, Group>();
 
 
     public InMemroyUserManager(int tenantId, String tenantDomain) {
