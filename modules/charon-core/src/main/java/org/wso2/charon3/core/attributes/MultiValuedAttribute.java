@@ -16,6 +16,7 @@
 package org.wso2.charon3.core.attributes;
 
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.schema.SCIMDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,8 @@ public class MultiValuedAttribute extends AbstractAttribute {
     public MultiValuedAttribute(String attributeName, List<Attribute> attributeValues) {
         this.name = attributeName;
         this.attributeValues = attributeValues;
+        this.multiValued = Boolean.TRUE;
+        this.type = SCIMDefinitions.DataType.COMPLEX;
     }
     public  MultiValuedAttribute(){}
 

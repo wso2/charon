@@ -38,7 +38,7 @@ public abstract class AbstractAttribute implements Attribute {
     //A Boolean value that specifies if the String attribute is case sensitive
     protected Boolean caseExact;
     //A SCIM defined value that specifies if the attribute's mutability.
-    protected SCIMDefinitions.Mutability mutability;
+    protected SCIMDefinitions.Mutability mutability = SCIMDefinitions.Mutability.READ_WRITE;
     //A SCIM defined value that specifies when the attribute's value need to be returned.
     protected SCIMDefinitions.Returned returned;
     //A SCIM defined value that specifies the uniqueness level of an attribute.

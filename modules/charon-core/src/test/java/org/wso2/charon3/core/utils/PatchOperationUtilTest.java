@@ -1,6 +1,12 @@
 package org.wso2.charon3.core.utils;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.testng.annotations.Test;
+import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -12,7 +18,9 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -89,11 +97,41 @@ public class PatchOperationUtilTest {
         patchOperation.setPath("");
         assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
 
-        patchOperation.setPath("[userName Eq \"testUser1\"\n]");
+        patchOperation.setPath("[userName Eq testUser1]");
         assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
-        patchOperation.setPath("userName[userName Eq \"testUser1\"\n]");
+        patchOperation.setPath("userName[userName Eq testUser1]");
         assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
 
+        user.setAttribute(new SimpleAttribute("testAttrib1", "testVal1"));
+        patchOperation.setPath("testAttrib1[testAttrib1 Eq \"testVal1\"]");
+        assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
+
+        List<Attribute> emailsAttList = new ArrayList<>();
+        emailsAttList.add(new SimpleAttribute("mail_1", "a@b.c"));
+        MultiValuedAttribute emailsAttributes = new MultiValuedAttribute("emails", emailsAttList);
+
+        user.setAttribute(emailsAttributes);
+        patchOperation.setPath("emails[mail_1 Eq a@b.c]");
+        assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
+
+        emailsAttList = new ArrayList<>();
+        ComplexAttribute complexAttribute = new ComplexAttribute("emails");
+        complexAttribute.setSubAttribute(new SimpleAttribute("mail_1", "a@b.c"));
+        emailsAttList.add(complexAttribute);
+        emailsAttributes = new MultiValuedAttribute("emails", emailsAttList);
+
+        assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
+        user = createUser();
+        user.setAttribute(emailsAttributes);
+        userCopy = CopyUtil.deepCopyScim(user);
+
+        JSONObject emailsJsonObject = new JSONObject(new JSONTokener("{\"emails\" : [\"a@b.c\"]}"));
+        patchOperation.setValues(emailsJsonObject);
+        assertInvalidPathForPatchReplace(patchOperation, user, userCopy);
+
+        //
+        //        PatchOperationUtil.doPatchReplace(patchOperation, decoder, user, userCopy,
+        //                scimResourceSchemaManager.getUserResourceSchema());
     }
 
     /**
