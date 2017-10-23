@@ -28,6 +28,7 @@ import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,7 +234,7 @@ public class Group extends AbstractSCIMObject {
                     SCIMConstants.GroupSchemaConstants.MEMBERS);
             return members.getAttributeValuesByType(type);
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 

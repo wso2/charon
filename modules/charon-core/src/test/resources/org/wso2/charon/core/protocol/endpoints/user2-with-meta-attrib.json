@@ -1,0 +1,7 @@
+{
+  "schemas": [],
+  "userName": "testUser2",
+  "meta" : {
+    "attributes" : ["email"]
+  }
+}

@@ -8,6 +8,10 @@
             <package name="org.wso2.charon.core.encoder"/>
             <package name="org.wso2.charon.core.decoder"/>
             <package name="org.wso2.charon.core.endpoints"/>
+            <package name="org.wso2.charon.core.protocol.endpoints"/>
+            <package name="org.wso2.charon.core.objects"/>
+            <package name="org.wso2.charon.core.objects.bulk"/>
+            <package name="org.wso2.charon.core.util"/>
         </packages>
     </test>
 

@@ -53,7 +53,7 @@ public abstract class AbstractValidator /*implements SchemaValidator*/ {
             //check for required attributes.
             if (attributeSchema.getRequired()) {
                 if (!attributeList.containsKey(attributeSchema.getName())) {
-                    String error = "Required attribute " + attributeSchema.getName() + " is missing in the SCIM Object.";
+                    String error = "Required attribute: " + attributeSchema.getName() + " is missing in the SCIM Object.";
                     throw new BadRequestException(error);
                 }
             }

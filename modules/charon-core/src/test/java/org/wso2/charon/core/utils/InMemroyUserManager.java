@@ -18,6 +18,7 @@
 package org.wso2.charon.core.utils;
 
 import org.wso2.charon.core.attributes.Attribute;
+import org.wso2.charon.core.attributes.SimpleAttribute;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.exceptions.DuplicateResourceException;
 import org.wso2.charon.core.exceptions.NotFoundException;
@@ -27,6 +28,8 @@ import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.schema.SCIMConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemroyUserManager implements UserManager {
 
+    public static final String NO_UPDATE_PREFIX = "no-update";
     private String tenantDomain = null;
     private int tenantId = 0;
 
@@ -75,7 +79,7 @@ public class InMemroyUserManager implements UserManager {
             }
             return returnedUsers;
         } else {
-            throw new CharonException("User storage is empty");
+            return Collections.emptyList();
         }
     }
 
@@ -99,12 +103,33 @@ public class InMemroyUserManager implements UserManager {
             for (User user : inMemoryUserList.values()) {
                 if (value.equals(user.getUserName())) {
                     returnedUsers.add(user);
+                } else if(matchAttribute(filter, operation, value, user)) {
+                    returnedUsers.add(user);
                 }
             }
             return returnedUsers;
         } else {
             return null;
         }
+    }
+
+    private boolean matchAttribute(String filter, String operation, String value, User user) {
+        String[] parts = filter.split(":");
+        if (parts.length > 1) {
+            filter = parts[parts.length - 1];
+        }
+        try {
+            Attribute attribValue = user.getAttribute(filter);
+            if (attribValue instanceof SimpleAttribute) {
+                SimpleAttribute simpleAttrib = (SimpleAttribute) attribValue;
+                if (simpleAttrib.getValue().equals(value)) {
+                    return true;
+                }
+            }
+        } catch (NotFoundException e) {
+            return false;
+        }
+        return false;
     }
 
     @Override
@@ -124,14 +149,21 @@ public class InMemroyUserManager implements UserManager {
      */
     @Override
     public User updateUser(User user) {
-        //TODO:should set last modified date
-        //To change body of implemented methods use File | Settings | File Templates.
-        return null;
+        return patchUser(user, user, null);
     }
 
     @Override
     public User patchUser(User newUser, User oldUser, String[] metaAttributes) {
-        return null;
+        User myReference = null;
+        try {
+            myReference = getUser(oldUser.getId());
+            //Just set the last modified for now. We do not really do modification for the test.
+            myReference.setLastModified(new Date());
+        } catch (CharonException e) {
+            return null;
+        }
+
+        return myReference;
     }
 
     /**
@@ -300,14 +332,34 @@ public class InMemroyUserManager implements UserManager {
 
     @Override
     public Group updateGroup(Group oldGroup, Group group) throws CharonException {
-        //TODO:should set last modified date
-        return null;
+        Group updated = inMemoryGroupList.get(oldGroup.getId());
+        if (updated.getDisplayName().startsWith(NO_UPDATE_PREFIX)) {
+            return null;
+        }
+        if (updated != null) {
+            updated.setLastModified(new Date());
+        }
+        return updated;
     }
 
     @Override
     public Group updateGroup(List<Attribute> attributes) throws CharonException {
-        //TODO:should set last modified date
-        return null;
+        Attribute idAttribute = null;
+        for (Attribute attribute : attributes) {
+            if (attribute.getSchemaName().equals(SCIMConstants.ID_URI)) {
+                idAttribute = attribute;
+                break;
+            }
+        }
+        if (idAttribute == null) {
+            return null;
+        }
+
+        Group updated = inMemoryGroupList.get(((SimpleAttribute) idAttribute).getValue());
+        if (updated != null) {
+            updated.setLastModified(new Date());
+        }
+        return updated;
     }
 
     @Override

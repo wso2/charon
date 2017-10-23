@@ -1,0 +1,12 @@
+{
+  "schemas": ["urn:scim:schemas:core:1.0"],
+  "userName": "testUser3",
+  "displayName" : "Test User 3",
+  "nickName" : "Nick",
+  "userType": "Employee",
+
+  "title": "Tour Guide",
+  "preferredLanguage":"en_US",
+  "locale": "en_US",
+  "timezone": "America/Los_Angeles"
+}

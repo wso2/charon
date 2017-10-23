@@ -15,7 +15,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-package org.wso2.charon.core.endpoints;
+package org.wso2.charon.core.protocol.endpoints;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,10 +23,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.wso2.charon.core.client.SCIMClient;
 import org.wso2.charon.core.encoder.json.JSONDecoder;
 import org.wso2.charon.core.encoder.json.JSONEncoder;
+import org.wso2.charon.core.endpoints.UserEndpointTest;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
 import org.wso2.charon.core.objects.Group;
@@ -35,65 +38,71 @@ import org.wso2.charon.core.objects.SCIMObject;
 import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
-import org.wso2.charon.core.protocol.endpoints.AbstractResourceEndpoint;
-import org.wso2.charon.core.protocol.endpoints.GroupResourceEndpoint;
-import org.wso2.charon.core.protocol.endpoints.UserResourceEndpoint;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.utils.InMemroyUserManager;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupEndpointTest {
+public class GroupResourceEndpointTest {
 
     private static Log logger = LogFactory.getLog(UserEndpointTest.class);
-    private InMemroyUserManager userManager = new InMemroyUserManager(1, "wso2.org");
+    private InMemroyUserManager userManager;
+    private static final String TEST_USER_1 = "testUser1";
+    private static final String TEST_USER_2 = "testUser2";
     private String user2ID;
     private String user1ID;
     private String groupID;
+    private String noUpdateGroupID;
     private String parentGroupID;
 
-    @Test
-    public void testGroupEndpoint() throws CharonException {
-        //register encoders and decoders in AbstractResourceEndpoint
+    @BeforeTest
+    protected void setUp() throws CharonException {
         AbstractResourceEndpoint.registerEncoder(SCIMConstants.JSON, new JSONEncoder());
         AbstractResourceEndpoint.registerDecoder(SCIMConstants.JSON, new JSONDecoder());
-        testCreateGroupWithOutMembers();
-        user1ID = createUser("hasini", "hasini@wso2.com");
-        //System.out.println(user1ID);                             GroupEndpointTest
-        user2ID = createUser("umesha", "umesha@gmail.com");
-        //System.out.println(user2ID);
+    }
+
+    @BeforeMethod
+    protected void initEachTest() throws CharonException {
+        userManager = new InMemroyUserManager(1, "wso2.org");
+        createGroupWithoutMembers();
+    }
+
+    private void createGroupWithoutMembers() throws CharonException {
+        //should pass according to SCIM 1.1 although fails according to 1.0
+        Group group = new Group();
+        group.setDisplayName("eng");
+        group.setLocation("Test");
+        JSONEncoder jsonEncoder = new JSONEncoder();
+        String encodedGroup = jsonEncoder.encodeSCIMObject(group);
+        GroupResourceEndpoint groupREP = new GroupResourceEndpoint();
+        SCIMResponse response = groupREP
+                .create(encodedGroup, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_CREATED);
+    }
+
+    private void initGroups() {
+        user1ID = createUser(TEST_USER_1, "hasini@wso2.com");
+        user2ID = createUser(TEST_USER_2, "umesha@gmail.com");
         groupID = createGroup("eng", user1ID);
-        //System.out.println(groupID);
+        noUpdateGroupID = createGroup(InMemroyUserManager.NO_UPDATE_PREFIX + "-eng", user1ID);
         List<String> memberList = new ArrayList<String>();
         memberList.add(user2ID);
         memberList.add(groupID);
-        parentGroupID = testCreatingGroupWithValidMembers("ba", memberList);
+        parentGroupID = creatingGroupWithValidMembers("ba", memberList);
+    }
+
+    @Test
+    public void testGroupEndpoint() throws CharonException {
         testCreatingGroupWithInvalidMembers();
-        testListedGroups(3);
-        testFilteringGroup("eng");
     }
 
-    public void testCreateGroupWithOutMembers() {
-        //should pass according to SCIM 1.1 although fails according to 1.0
-        try {
-            Group group = new Group();
-            group.setDisplayName("eng");
-            group.setLocation("Test");
-            JSONEncoder jsonEncoder = new JSONEncoder();
-            String encodedGroup = jsonEncoder.encodeSCIMObject(group);
-            GroupResourceEndpoint groupREP = new GroupResourceEndpoint();
-            SCIMResponse response = groupREP
-                    .create(encodedGroup, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON, userManager);
-            Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_CREATED);
-            System.out.println(response.getResponseMessage());
-        } catch (CharonException e) {
-            Assert.fail("Error creating group");
-        }
-    }
-
-    public String createUser(String userName, String externalId) {
+    private String createUser(String userName, String externalId) {
         try {
             User user = new User();
             user.setExternalId(externalId);
@@ -117,7 +126,7 @@ public class GroupEndpointTest {
         return null;
     }
 
-    public String createGroup(String displayName, String memberIDs) {
+    private String createGroup(String displayName, String memberIDs) {
         try {
             Group group = new Group();
             group.setDisplayName(displayName);
@@ -142,7 +151,7 @@ public class GroupEndpointTest {
         return null;
     }
 
-    public String testCreatingGroupWithValidMembers(String groupName, List<String> members) {
+    private String creatingGroupWithValidMembers(String groupName, List<String> members) {
         try {
             Group group = new Group();
             group.setDisplayName(groupName);
@@ -179,25 +188,23 @@ public class GroupEndpointTest {
         return null;
     }
 
-    public void testCreatingGroupWithInvalidMembers() {
+    @Test
+    public void testCreatingGroupWithInvalidMembers() throws CharonException {
         //add arbitrary id for member
-        try {
-            Group group = new Group();
-            group.setDisplayName("wrong");
-            group.setMember("abcdefg");
-            JSONEncoder jsonEncoder = new JSONEncoder();
-            String encodedGroup = jsonEncoder.encodeSCIMObject(group);
-            GroupResourceEndpoint gREP = new GroupResourceEndpoint();
-            SCIMResponse scimResponse = gREP
-                    .create(encodedGroup, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON, userManager);
-            Assert.assertEquals(scimResponse.getResponseCode(), ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
-
-        } catch (CharonException e) {
-            Assert.fail(e.getDescription());
-        }
+        Group group = new Group();
+        group.setDisplayName("wrong");
+        group.setMember("abcdefg");
+        JSONEncoder jsonEncoder = new JSONEncoder();
+        String encodedGroup = jsonEncoder.encodeSCIMObject(group);
+        GroupResourceEndpoint gREP = new GroupResourceEndpoint();
+        SCIMResponse scimResponse = gREP
+                .create(encodedGroup, SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertEquals(scimResponse.getResponseCode(), ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
     }
 
+    @Test
     public void testDeletingGroup() {
+        initGroups();
         try {
             //get earlier member user and see if its groups updated
             GroupResourceEndpoint gREP = new GroupResourceEndpoint();
@@ -210,7 +217,7 @@ public class GroupEndpointTest {
             decodedUser = (User) jsonDecoder
                     .decodeResource(scimResponse.getResponseMessage(), SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
                             decodedUser);
-            Assert.assertEquals(decodedUser.getGroups().size(), 0);
+            Assert.assertEquals(decodedUser.getGroups().size(), 1);
 
             //get the parent goup and see if it is updated
             SCIMResponse resp = gREP.get(parentGroupID, SCIMConstants.APPLICATION_JSON, userManager);
@@ -227,48 +234,40 @@ public class GroupEndpointTest {
 
     }
 
-    public void testDeletingUser() {
-        try {
-            //get the groups it was a member and test if members updated
-            UserResourceEndpoint userREP = new UserResourceEndpoint();
-            userREP.delete(user2ID, userManager, SCIMConstants.APPLICATION_JSON);
+    @Test
+    public void testDeletingUser() throws BadRequestException, CharonException {
+        //get the groups it was a member and test if members updated
+        UserResourceEndpoint userREP = new UserResourceEndpoint();
+        userREP.delete(user2ID, userManager, SCIMConstants.APPLICATION_JSON);
 
-            GroupResourceEndpoint gREP = new GroupResourceEndpoint();
-            SCIMResponse resp = gREP.get(parentGroupID, SCIMConstants.APPLICATION_JSON, userManager);
-            JSONDecoder decoder = new JSONDecoder();
-            Group group = new Group();
-            group = (Group) decoder
-                    .decodeResource(resp.getResponseMessage(), SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, group);
-            Assert.assertEquals(group.getMembers().size(), 0);
-        } catch (BadRequestException e) {
-            Assert.fail(e.getDescription());
-        } catch (CharonException e) {
-            Assert.fail(e.getDescription());
-        }
+        GroupResourceEndpoint gREP = new GroupResourceEndpoint();
+        SCIMResponse resp = gREP.get(parentGroupID, SCIMConstants.APPLICATION_JSON, userManager);
+        JSONDecoder decoder = new JSONDecoder();
+        Group group = new Group();
+        group = (Group) decoder
+                .decodeResource(resp.getResponseMessage(), SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, group);
+        Assert.assertNotNull(group);
+        Assert.assertEquals(group.getMembers().size(), 0);
+    }
+    
 
+    @Test
+    public void testListedGroups() throws JSONException {
+        initGroups();
+        GroupResourceEndpoint groupREP = new GroupResourceEndpoint();
+        SCIMResponse scimResponse = groupREP.list(userManager, SCIMConstants.APPLICATION_JSON);
+        String jsonString = scimResponse.getResponseMessage();
+        JSONObject jsonObject = new JSONObject(new JSONTokener(jsonString));
+        int totalResults = (Integer) jsonObject.opt(SCIMConstants.ListedResourcesConstants.TOTAL_RESULTS);
+        Assert.assertEquals(totalResults, 4);
     }
 
-    public void testUpdateGroup() {
-        //try removing a user from a group and see if updated
-    }
-
-    public void testListedGroups(int total) {
-        try {
-            GroupResourceEndpoint groupREP = new GroupResourceEndpoint();
-            SCIMResponse scimResponse = groupREP.list(userManager, SCIMConstants.APPLICATION_JSON);
-            String jsonString = scimResponse.getResponseMessage();
-            JSONObject jsonObject = new JSONObject(new JSONTokener(jsonString));
-            int totalResults = (Integer) jsonObject.opt(SCIMConstants.ListedResourcesConstants.TOTAL_RESULTS);
-            Assert.assertEquals(totalResults, total);
-        } catch (JSONException e) {
-            Assert.fail(e.getMessage());
-        }
-    }
-
-    public void testFilteringGroup(String displayName) {
+    @Test
+    public void testFilteringGroup() {
+        String displayName = "eng";
         GroupResourceEndpoint groupREP = new GroupResourceEndpoint();
         SCIMResponse scimResponse = groupREP
-                .listByFilter("displayNameEq" + displayName, userManager, SCIMConstants.APPLICATION_JSON);
+                .listByFilter("displayName Eq" + displayName, userManager, SCIMConstants.APPLICATION_JSON);
 
         Assert.assertEquals(scimResponse.getResponseCode(), ResponseCodeConstants.CODE_OK);
         //decode listed resource
@@ -293,4 +292,64 @@ public class GroupEndpointTest {
             Assert.fail("Error in decoding the response recieved for filter user: " + displayName);
         }
     }
+
+    @Test
+    public void testUpdateWithPUT() throws IOException {
+        initGroups();
+        GroupResourceEndpoint groupResourceEndpoint = new GroupResourceEndpoint();
+        SCIMResponse response = groupResourceEndpoint
+                .updateWithPUT(groupID, "", SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON,
+                        userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_BAD_REQUEST);
+
+        response = groupResourceEndpoint
+                .updateWithPUT(groupID, getScimResource("group1.json"), SCIMConstants.APPLICATION_JSON,
+                        SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_OK);
+
+        response = groupResourceEndpoint
+                .updateWithPUT("non-existant-group", getScimResource("group1.json"), SCIMConstants.APPLICATION_JSON,
+                        SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
+
+        response = groupResourceEndpoint
+                .updateWithPUT("whatever-group", getScimResource("group1.json"), SCIMConstants.APPLICATION_JSON,
+                        SCIMConstants.APPLICATION_JSON, null);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR,
+                "User manager not set means internal server error");
+
+        response = groupResourceEndpoint
+                .updateWithPUT(noUpdateGroupID, getScimResource("group1.json"), SCIMConstants.APPLICATION_JSON,
+                        SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void testUpdateWithPATCH() throws IOException {
+        initGroups();
+        GroupResourceEndpoint groupResourceEndpoint = new GroupResourceEndpoint();
+        SCIMResponse response = groupResourceEndpoint
+                .updateWithPATCH(groupID, "", SCIMConstants.APPLICATION_JSON, SCIMConstants.APPLICATION_JSON,
+                        userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_BAD_REQUEST);
+
+        response = groupResourceEndpoint
+                .updateWithPATCH(groupID, getScimResource("group1.json"), SCIMConstants.APPLICATION_JSON,
+                        SCIMConstants.APPLICATION_JSON, userManager);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(response.getResponseCode(), ResponseCodeConstants.CODE_OK);
+    }
+
+    private String getScimResource(String resource) throws IOException {
+        String fileName1 = this.getClass().getResource("user1.json").getFile();
+        String scimString = new String(Files.readAllBytes(Paths.get(fileName1)), StandardCharsets.UTF_8);
+        return scimString;
+    }
+
 }

@@ -17,6 +17,8 @@
 */
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,16 +35,14 @@ import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.exceptions.ResourceNotFoundException;
 import org.wso2.charon.core.extensions.Storage;
 import org.wso2.charon.core.extensions.UserManager;
-import org.wso2.charon.core.objects.*;
+import org.wso2.charon.core.objects.ListedResource;
+import org.wso2.charon.core.objects.User;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMResourceSchema;
 import org.wso2.charon.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon.core.schema.ServerSideValidator;
-
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
 import org.wso2.charon.core.util.AttributeUtil;
 import org.wso2.charon.core.util.CopyUtil;
 
@@ -82,8 +82,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             //if user not found, return an error in relevant format.
             if (user == null) {
-                String error = "User not found in the user store.";
-                //TODO:log the error.
+                String error = "User with ID "+id+", not found in the user store.";
                 throw new ResourceNotFoundException(error);
             }
 
@@ -102,7 +101,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
-            logger.error("Internal Server error whlie retrieving user.", e);
+            logger.error("Internal Server error while retrieving user.", e);
             //Inside API code throws CharonException.
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
@@ -148,6 +147,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
             //validate the created user
             ServerSideValidator.validateCreatedSCIMObject(user, schema);
+            if (userManager == null) {
+                throw new InternalServerException("User manager not set");
+            }
             /*handover the SCIM User object to the user storage provided by the SP.
             need to send back the newly created user in the response payload*/
             User createdUser = userManager.createUser(user, isBulkUserAdd);
@@ -618,14 +620,20 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             if (metaAttributeValueObject != null) {
                 String metaAttributeVal = decodedJsonObj.opt(INPUT_PARAMETER_META).toString();
                 JSONObject attributeObject = new JSONObject(new JSONTokener(metaAttributeVal));
-                JSONArray attributes = (JSONArray) attributeObject.opt(INPUT_PARAMETER_ATTRIBUTES);
-                metaAttributeIds = new String[attributes.length()];
-                for (int i = 0; i < attributes.length(); i++) {
-                    metaAttributeIds[i] = attributes.getString(i);
+                Object attributesArray = attributeObject.opt(INPUT_PARAMETER_ATTRIBUTES);
+                if (attributesArray instanceof JSONArray) {
+                    JSONArray attributes = (JSONArray) attributeObject.opt(INPUT_PARAMETER_ATTRIBUTES);
+                    metaAttributeIds = new String[attributes.length()];
+                    for (int i = 0; i < attributes.length(); i++) {
+                        metaAttributeIds[i] = attributes.getString(i);
+                    }
+                    decodedJsonObj.remove(INPUT_PARAMETER_META);
+                    scimObjectString = decodedJsonObj.toString();
+                } else {
+                    throw new BadRequestException(
+                            "An array of \"" + INPUT_PARAMETER_ATTRIBUTES + "\" needs to be present in \""
+                                    + INPUT_PARAMETER_META + "\" of the SCIM request");
                 }
-                decodedJsonObj.remove(INPUT_PARAMETER_META);
-                scimObjectString = decodedJsonObj.toString();
-
             }
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
@@ -647,7 +655,7 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 }
 
             } else {
-                String error = "Provided user manager handler is null.";
+                String error = "Provided user manager is null.";
                 logger.error(error);
                 throw new InternalServerException(error);
             }
@@ -673,7 +681,8 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Input format is not supported.", e);
+            logger.error("One of the Input/Output formats is not supported. input format : " + inputFormat
+                    + ", output format: " + outputFormat, e);
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {

@@ -17,13 +17,14 @@
 */
 package org.wso2.charon.core.protocol.endpoints;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.encoder.Decoder;
 import org.wso2.charon.core.encoder.Encoder;
+import org.wso2.charon.core.exceptions.AbstractCharonException;
 import org.wso2.charon.core.exceptions.BadRequestException;
 import org.wso2.charon.core.exceptions.CharonException;
-import org.wso2.charon.core.exceptions.DuplicateResourceException;
-import org.wso2.charon.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon.core.exceptions.InternalServerException;
 import org.wso2.charon.core.exceptions.NotFoundException;
 import org.wso2.charon.core.exceptions.ResourceNotFoundException;
@@ -36,9 +37,6 @@ import org.wso2.charon.core.protocol.SCIMResponse;
 import org.wso2.charon.core.schema.SCIMConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.schema.ServerSideValidator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.charon.core.util.AttributeUtil;
 
 import java.util.HashMap;
@@ -380,10 +378,10 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
             if (userManager != null) {
                 // retrieve the old object
                 Group oldGroup = userManager.getGroup(existingId);
-                if (group.getDisplayName() == null) {
-                    group.setDisplayName(oldGroup.getDisplayName());
-                }
                 if (oldGroup != null) {
+                    if (group.getDisplayName() == null) {
+                        group.setDisplayName(oldGroup.getDisplayName());
+                    }
                     Group validatedGroup = (Group) ServerSideValidator.
                             validateUpdatedSCIMObject(oldGroup, group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA);
                     if(SCIMConstants.UPDATE_WITH_PUT.equals(updateType)){
@@ -414,7 +412,7 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
 
             } else {
-                String message = "Updated User resource is null..";
+                String message = "The group is not updated by the user manager. group ID : "+existingId;
                 throw new InternalServerException(message);
             }
 
@@ -428,30 +426,10 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
 
     private SCIMResponse handleException(Exception e, Encoder encoder) {
 
-        try {
-            if (e instanceof FormatNotSupportedException) {
-                throw (FormatNotSupportedException) e;
-            } else if (e instanceof CharonException) {
-                throw (CharonException) e;
-            } else if (e instanceof BadRequestException) {
-                throw (BadRequestException) e;
-            } else if (e instanceof InternalServerException) {
-                throw (InternalServerException) e;
-            } else if (e instanceof DuplicateResourceException) {
-                throw (DuplicateResourceException) e;
-            } else {
-                throw (ResourceNotFoundException) e;
-            }
-        } catch (FormatNotSupportedException ex) {
+        if (e instanceof AbstractCharonException) {
+            AbstractCharonException ex = (AbstractCharonException) e;
             if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
-            }
-            // if the submitted format not supported, encode exception and set
-            // it in the response.
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
-        } catch (CharonException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
+                logger.debug(e.getMessage(), e);
             }
             // we have charon exceptions also, instead of having only internal
             // server error
@@ -460,27 +438,13 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
             if (ex.getCode() == -1) {
                 ex.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
-        } catch (BadRequestException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
-            }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
-        } catch (InternalServerException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
-            }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
-        } catch (DuplicateResourceException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
-            }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
-        } catch (ResourceNotFoundException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ex.getMessage(), ex);
-            }
-            return AbstractResourceEndpoint.encodeSCIMException(encoder, ex);
+            // if the submitted format not supported, encode exception and set
+            // it in the response.
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, (AbstractCharonException) e);
+        } else {
+            InternalServerException internalServerException = new InternalServerException(
+                    "Unhandled exception occurred.", e);
+            return AbstractResourceEndpoint.encodeSCIMException(encoder, internalServerException);
         }
     }
 }
