@@ -20,16 +20,22 @@ package org.wso2.charon.core.exceptions;
 import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.SCIMConstants;
 
+/**
+ * Represents Exception thrown on the front end when a server error occurs.
+ * Similar to HTTP 5xx.
+ */
 public class InternalServerException extends AbstractCharonException {
 
     public InternalServerException() {
-        this.code = ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR;
-        this.description = ResponseCodeConstants.DESC_INTERNAL_SERVER_ERROR;
+        super(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR, ResponseCodeConstants.DESC_INTERNAL_SERVER_ERROR);
     }
 
     public InternalServerException(String description) {
-        this.code = ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR;
-        this.description = description;
+        super( ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR, description);
+    }
+
+    public InternalServerException(String description, Throwable t) {
+        super(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR, description, t);
     }
 
     public InternalServerException(int code, String description) {

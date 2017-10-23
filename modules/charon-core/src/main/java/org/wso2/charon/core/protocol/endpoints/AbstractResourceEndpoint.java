@@ -56,12 +56,11 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
      * @return
      * @throws FormatNotSupportedException
      */
-    public Encoder getEncoder(String format)
-            throws FormatNotSupportedException, CharonException {
+    public Encoder getEncoder(String format) throws FormatNotSupportedException, CharonException {
         //if the requested format not supported, return an error.
         if (format == null || !encoderMap.containsKey(format)) {
             //Error is logged by the caller.
-            throw new FormatNotSupportedException();
+            throw new FormatNotSupportedException("Unsupported format :" + format);
         }
         return encoderMap.get(format);
     }
@@ -149,6 +148,10 @@ public abstract class AbstractResourceEndpoint implements ResourceEndpoint {
      */
     public static SCIMResponse encodeSCIMException(Encoder encoder,
                                                    AbstractCharonException exception) {
+        if(encoder == null) {
+            //Assume JSON encoder, if encoder is null, as we need to encode the error somehow.
+            encoder = encoderMap.get(SCIMConstants.JSON);
+        }
         Map<String, String> httpHeaders = new HashMap<String, String>();
         httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.identifyContentType(encoder.getFormat()));
         return new SCIMResponse(exception.getCode(), encoder.encodeSCIMException(exception), httpHeaders);

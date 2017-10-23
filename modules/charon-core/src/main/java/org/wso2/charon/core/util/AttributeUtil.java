@@ -45,6 +45,9 @@ public class AttributeUtil {
     public static Object getAttributeValueFromString(String attributeStringValue,
                                                      SCIMSchemaDefinitions.DataType dataType)
             throws CharonException {
+        if(dataType == null) {
+            throw new CharonException("Data type can not be null" );
+        }
         switch (dataType) {
             case STRING:
                 return attributeStringValue.trim();

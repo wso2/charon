@@ -339,7 +339,8 @@ public class User extends AbstractSCIMObject {
                 return valuesAsStrings;
             }
         } else {
-            return null;
+            //Return an empty array, instead of returning null.
+            return new String[0];
         }
     }
 

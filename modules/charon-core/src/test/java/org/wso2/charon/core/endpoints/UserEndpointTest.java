@@ -17,11 +17,11 @@
 */
 package org.wso2.charon.core.endpoints;
 
-import junit.framework.Assert;
+import org.testng.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.junit.Test;
+import org.testng.annotations.Test;
 import org.wso2.charon.core.attributes.Attribute;
 import org.wso2.charon.core.attributes.ComplexAttribute;
 import org.wso2.charon.core.attributes.MultiValuedAttribute;
@@ -50,8 +50,8 @@ import java.util.Map;
 
 public class UserEndpointTest {
     private static Log logger = LogFactory.getLog(UserEndpointTest.class);
-    InMemroyUserManager inMemroyUserManager = new InMemroyUserManager(1, "wso2.org");
-    String id;
+    private InMemroyUserManager inMemroyUserManager = new InMemroyUserManager(1, "wso2.org");
+    private String id;
 
     @Test
     public void testUserEndpoint() throws CharonException {
@@ -216,25 +216,25 @@ public class UserEndpointTest {
 
             String responseMessage = scimResponse.getResponseMessage();
             Assert.assertEquals(2607, responseMessage.length());
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"ims\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"emails\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"phoneNumbers\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"x509Certificates\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"addresses\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"photos\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"addresses\":[{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"meta\":{"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"name\":{"));
+            Assert.assertTrue(responseMessage.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
+            Assert.assertTrue(responseMessage.contains("\"ims\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"emails\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"phoneNumbers\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"x509Certificates\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"addresses\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"photos\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"addresses\":[{"));
+            Assert.assertTrue(responseMessage.contains("\"meta\":{"));
+            Assert.assertTrue(responseMessage.contains("\"name\":{"));
 
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"someaimhandle\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"babs@jensen.org\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"bjensen@example.com\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"555-555-5555\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"555-555-4444\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"value\":\"https://photos.example" +
+            Assert.assertTrue(responseMessage.contains("\"value\":\"someaimhandle\""));
+            Assert.assertTrue(responseMessage.contains("\"value\":\"babs@jensen.org\""));
+            Assert.assertTrue(responseMessage.contains("\"value\":\"bjensen@example.com\""));
+            Assert.assertTrue(responseMessage.contains("\"value\":\"555-555-5555\""));
+            Assert.assertTrue(responseMessage.contains("\"value\":\"555-555-4444\""));
+            Assert.assertTrue(responseMessage.contains("\"value\":\"https://photos.example" +
                                                                         ".com/profilephoto/72930000000Ccne/T\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains
+            Assert.assertTrue(responseMessage.contains
                     ("\"value\":\"MIIDQzCCAqygAwIBAgICEAAwDQYJKoZIhvcNAQEFBQAwTjELMAkGA1UEBhMCVVMxEzARBgNVBAgMCk" +
                      "NhbGlmb3JuaWExFDASBgNVBAoMC2V4YW1wbGUuY29tMRQwEgYDVQQDDAtleGFtcGxlLmNvbTAeFw0xMTEwMjIwNjI0M" +
                      "zFaFw0xMjEwMDQwNjI0MzFaH8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRQwEgYDVQQKDAtleGFtc" +
@@ -248,37 +248,37 @@ public class UserEndpointTest {
                      "sNwDx708kqaVt0wDQYJKoZIhvcNAQEFBQADgYEAA81SsFnOdYJtNg5Tcq+/ByEDrBgnusx0jloUhByPMEVkoMZ3J7j1Z" +
                      "gI8rAbOkNngX8+pKfTiDz1RC4+dx8oU6Za+4NJXUjlL5CvV6BEYb1+QAEJwitTVvxB/A67g42/vzgAtoRUeDov1GFiBZ" +
                      "+GNF/cAYKcMtGcrs2i97ZkJMo=\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"work\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"aim\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"home\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"mobile\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"photo\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"type\":\"thumbnail\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"preferredLanguage\":\"en_US\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"userType\":\"Employee\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"title\":\"Tour Guide\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"nickName\":\"Babs\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"middleName\":\"Jane\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"formatted\":\"Ms. Barbara J Jensen III\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"formatted\":\"100 Universal City " +
+            Assert.assertTrue(responseMessage.contains("\"type\":\"work\""));
+            Assert.assertTrue(responseMessage.contains("\"type\":\"aim\""));
+            Assert.assertTrue(responseMessage.contains("\"type\":\"home\""));
+            Assert.assertTrue(responseMessage.contains("\"type\":\"mobile\""));
+            Assert.assertTrue(responseMessage.contains("\"type\":\"photo\""));
+            Assert.assertTrue(responseMessage.contains("\"type\":\"thumbnail\""));
+            Assert.assertTrue(responseMessage.contains("\"preferredLanguage\":\"en_US\""));
+            Assert.assertTrue(responseMessage.contains("\"userType\":\"Employee\""));
+            Assert.assertTrue(responseMessage.contains("\"title\":\"Tour Guide\""));
+            Assert.assertTrue(responseMessage.contains("\"nickName\":\"Babs\""));
+            Assert.assertTrue(responseMessage.contains("\"middleName\":\"Jane\""));
+            Assert.assertTrue(responseMessage.contains("\"formatted\":\"Ms. Barbara J Jensen III\""));
+            Assert.assertTrue(responseMessage.contains("\"formatted\":\"100 Universal City " +
                                                                         "Plaza\\nHollywood, CA 91608 USA"));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"timezone\":\"America/Los_Angeles\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"region\":\"CA\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"streetAddress\":\"100 Universal City " +
+            Assert.assertTrue(responseMessage.contains("\"timezone\":\"America/Los_Angeles\""));
+            Assert.assertTrue(responseMessage.contains("\"region\":\"CA\""));
+            Assert.assertTrue(responseMessage.contains("\"streetAddress\":\"100 Universal City " +
                                                                         "Plaza\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"postalCode\":\"91608\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"locality\":\"Hollywood\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"country\":\"USA\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"displayName\":\"Babs Jensen\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"profileUrl\":\"https://login.example" +
+            Assert.assertTrue(responseMessage.contains("\"postalCode\":\"91608\""));
+            Assert.assertTrue(responseMessage.contains("\"locality\":\"Hollywood\""));
+            Assert.assertTrue(responseMessage.contains("\"country\":\"USA\""));
+            Assert.assertTrue(responseMessage.contains("\"displayName\":\"Babs Jensen\""));
+            Assert.assertTrue(responseMessage.contains("\"profileUrl\":\"https://login.example" +
                                                                         ".com/bjensen\""));
 
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"location\":\"null/" + user.getId()));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"externalId\":\"" + externalId));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"userName\":\"" + externalId));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"lastModified\":\""
+            Assert.assertTrue(responseMessage.contains("\"location\":\"null/" + user.getId()));
+            Assert.assertTrue(responseMessage.contains("\"externalId\":\"" + externalId));
+            Assert.assertTrue(responseMessage.contains("\"userName\":\"" + externalId));
+            Assert.assertTrue(responseMessage.contains("\"lastModified\":\""
                                                                         + sdf.format(user.getLastModified()) + "\""));
-            Assert.assertTrue(responseMessage, responseMessage.contains("\"created\":\""
+            Assert.assertTrue(responseMessage.contains("\"created\":\""
                                                                         + sdf.format(user.getCreatedDate()) + "\""));
         } catch (BadRequestException e) {
             Assert.fail(e.getDescription());
@@ -377,18 +377,18 @@ public class UserEndpointTest {
             Map<String, Attribute> attributes = user.getAttributeList();
             Attribute userName = attributes.get(SCIMConstants.UserSchemaConstants.USER_NAME);
             //test if URI is set for simple attribute
-            Assert.assertEquals(SCIMConstants.USER_NAME_URI, userName.getAttributeURI());
+            Assert.assertEquals(userName.getAttributeURI(), SCIMConstants.USER_NAME_URI);
             //test if URI is set for sub attributes of complex attributes
             Attribute nameAttribute = attributes.get(SCIMConstants.UserSchemaConstants.NAME);
 
-            Assert.assertEquals(SCIMConstants.NAME_GIVEN_NAME_URI, nameAttribute.getSubAttribute(
-                    SCIMConstants.UserSchemaConstants.GIVEN_NAME).getAttributeURI());
+            Assert.assertEquals(nameAttribute.getSubAttribute(
+                    SCIMConstants.UserSchemaConstants.GIVEN_NAME).getAttributeURI(), SCIMConstants.NAME_GIVEN_NAME_URI);
             //test if URI is set for multivalued attribute root and sub
 
             //root
             Attribute emailAttribute = attributes.get(SCIMConstants.UserSchemaConstants.EMAILS);
             //sub
-            Assert.assertEquals(SCIMConstants.EMAILS_URI, emailAttribute.getAttributeURI());
+            Assert.assertEquals(emailAttribute.getAttributeURI(), SCIMConstants.EMAILS_URI);
             List<Attribute> attributeList = ((MultiValuedAttribute) emailAttribute).getValuesAsSubAttributes();
             for (Attribute attribute : attributeList) {
                 Map<String, Attribute> subAttributes = ((ComplexAttribute) attribute).getSubAttributes();
@@ -398,7 +398,7 @@ public class UserEndpointTest {
                 if (SCIMConstants.UserSchemaConstants.WORK.equals(typeValue)) {
                     SimpleAttribute valueAttribute = (SimpleAttribute) subAttributes.get(
                             SCIMConstants.CommonSchemaConstants.VALUE);
-                    Assert.assertEquals(SCIMConstants.WORK_EMAIL_URI, valueAttribute.getAttributeURI());
+                    Assert.assertEquals(valueAttribute.getAttributeURI(), SCIMConstants.WORK_EMAIL_URI);
                 }
             }
 
@@ -415,7 +415,7 @@ public class UserEndpointTest {
         UserResourceEndpoint userREP = new UserResourceEndpoint();
         SCIMResponse scimResponse = userREP.listByFilterAndAttribute("userName Eq " + userName, null,
                 inMemroyUserManager, SCIMConstants.APPLICATION_JSON);
-        Assert.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseCode());
+        Assert.assertEquals(scimResponse.getResponseCode(), ResponseCodeConstants.CODE_OK);
         //decode listed resource
         SCIMClient scimClient = new SCIMClient();
         try {
@@ -428,7 +428,7 @@ public class UserEndpointTest {
                 name = ((User) scimObject).getUserName();
 
             }
-            Assert.assertEquals(userName, name);
+            Assert.assertEquals(name, userName);
         } catch (CharonException e) {
             logger.error(e.getDescription());
             Assert.fail("Error in decoding the response recieved for filter user: " + userName);

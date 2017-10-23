@@ -30,11 +30,13 @@ public class BadRequestException extends AbstractCharonException {
     }
 
     public BadRequestException(String description) {
+        super(description);
         this.code = ResponseCodeConstants.CODE_BAD_REQUEST;
         this.description = description;
     }
 
     public BadRequestException(int code, String description) {
+        super(code,description);
         this.code = code;
         this.description = description;
     }
