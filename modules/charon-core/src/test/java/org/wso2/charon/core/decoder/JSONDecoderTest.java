@@ -38,7 +38,6 @@ public class JSONDecoderTest {
         String myAddress = "512/8,High Level Road,\n" + "Pannipitiya.";
         JSONObject encodedAddress = new JSONObject();
         encodedAddress.put("address", myAddress);
-        //System.out.println(encodedAddress.toString());
     }
 
     @Test
@@ -110,14 +109,6 @@ public class JSONDecoderTest {
             Assert.assertEquals("babs@jensen.org", decodedUser.getEmailByType("home"));
             Assert.assertTrue(decodedUser.getActive());
 
-            //            try {
-            //                Assert.assertEquals("bjensen@example.com", decodedUser.getPrimaryEmail());
-            //                decodedUser.getPrimaryEmail();
-            //            } catch (NotFoundException e) {
-            //                e.printStackTrace();
-            //
-            //            }
-
             Assert.assertEquals(decodedUser.getPhoneNumbers("work").get(0), "555-555-5555");
             Assert.assertEquals(decodedUser.getPhoneNumbers("mobile").get(0), "555-555-4444");
             Assert.assertEquals(decodedUser.getIMs("aim").get(0), "someaimhandle");
@@ -127,7 +118,7 @@ public class JSONDecoderTest {
             Assert.assertEquals(decodedUser.getPreferredLanguage(), "en_US");
             Assert.assertEquals(decodedUser.getLocale(), "en_US");
             Assert.assertEquals(decodedUser.getTimeZone(), "America/Los_Angeles");
-            //  Assert.assertEquals("true", decodedUser.getActive());
+            Assert.assertTrue(decodedUser.getActive());
             Assert.assertEquals(decodedUser.getPassword(), "t1meMa$heen");
             Assert.assertEquals(decodedUser.getGroups().get(0), "00300000005N2Y6AA");
             Assert.assertEquals(decodedUser.getGroups().get(1), "00300000005N34H78");
@@ -187,13 +178,11 @@ public class JSONDecoderTest {
                     Assert.fail("given members' display names do not exist in the group.");
                 }
             }
-
         } catch (BadRequestException e) {
             Assert.fail(e.getDescription());
         } catch (CharonException e) {
             Assert.fail(e.getDescription());
         }
-
     }
 
 }
