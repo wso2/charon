@@ -4,7 +4,7 @@
 
     <test name="charon-core-tests" preserve-order="true" parallel="false" group-by-instances="true">
          <packages>
-             <package name="org.wso2.charon.core" />
+             <package name="org.wso2.charon.samples" />
          </packages>
     </test>
 
