@@ -79,7 +79,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
 
     public void deletePrimitiveValues() throws CharonException {
         //here we delete primitive values
-        attributePrimitiveValues.clear();;
+        attributePrimitiveValues.clear();
     }
 
     /**

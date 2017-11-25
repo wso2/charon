@@ -34,6 +34,7 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 public class User extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
+
     /*
      * return userName of the user
      * @return
@@ -61,6 +62,17 @@ public class User extends AbstractSCIMObject {
      */
     public String getPassword() throws CharonException {
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.PASSWORD);
+    }
+
+    /*
+     * set the password of the user
+     * @param password
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    public void setPassword(String password) throws CharonException, BadRequestException {
+        setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+                password);
     }
 
     /*
