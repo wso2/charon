@@ -16,6 +16,8 @@
 
 package org.wso2.charon3.core.utils;
 
+import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
@@ -387,5 +389,57 @@ public class ResourceManagerUtil {
 
     public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
         return getOnlyRequiredAttributesURIs(schema, null, null);
+    }
+
+    /**
+     * Process count value according to SCIM 2.0 specification
+     * @param countStr
+     * @return
+     * @throws BadRequestException
+     */
+    public static int processCount(String countStr) throws BadRequestException {
+
+        int count = 0;
+        if (countStr == null) {
+            count = CharonConfiguration.getInstance().getCountValueForPagination();
+        }
+
+        try {
+            count = Integer.parseInt(countStr);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Value of parameter count is Invalid");
+        }
+
+        if (count < 0) {
+            count = 0;
+        }
+
+        return count;
+    }
+
+    /**
+     * Process startIndex value according to SCIM 2.0 specification
+     * @param startIndexStr
+     * @return
+     * @throws BadRequestException
+     */
+    public static int processStartIndex(String startIndexStr) throws BadRequestException {
+
+        int startIndex = 1;
+        if (startIndexStr == null) {
+            return startIndex;
+        }
+
+        try {
+            startIndex = Integer.parseInt(startIndexStr);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Value of parameter startIndex is Invalid");
+        }
+
+        if (startIndex < 1) {
+            startIndex = 1;
+        }
+
+        return startIndex;
     }
 }

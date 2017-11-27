@@ -34,9 +34,27 @@ public class SearchRequest {
     private ArrayList<String> excludedAttributes = null;
     private int count;
     private int startIndex;
+    private String countStr;
+    private String startIndexStr;
     private Node filter;
     private String sortBy;
     private String sortOder;
+
+    public String getCountStr() {
+        return countStr;
+    }
+
+    public void setCountStr(String countStr) {
+        this.countStr = countStr;
+    }
+
+    public String getStartIndexStr() {
+        return startIndexStr;
+    }
+
+    public void setStartIndexStr(String startIndexStr) {
+        this.startIndexStr = startIndexStr;
+    }
 
     public String getSchema() {
         return schema;
