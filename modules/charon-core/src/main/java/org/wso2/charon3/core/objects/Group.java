@@ -28,7 +28,6 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -84,7 +83,7 @@ public class Group extends AbstractSCIMObject {
             for (Attribute subValue : subValuesList) {
                 ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
                 Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-                if(subAttributesList != null && subAttributesList.containsKey(
+                if (subAttributesList != null && subAttributesList.containsKey(
                         SCIMConstants.CommonSchemaConstants.VALUE)) {
                     memberList.add(((SimpleAttribute) (subAttributesList.get(
                             SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
@@ -111,7 +110,7 @@ public class Group extends AbstractSCIMObject {
                 for (Attribute subValue : subValuesList) {
                     ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
                     Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-                    if(subAttributesList != null && subAttributesList.containsKey(
+                    if (subAttributesList != null && subAttributesList.containsKey(
                             SCIMConstants.CommonSchemaConstants.DISPLAY)) {
                         displayNames.add(((SimpleAttribute) (subAttributesList.get(
                                 SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
