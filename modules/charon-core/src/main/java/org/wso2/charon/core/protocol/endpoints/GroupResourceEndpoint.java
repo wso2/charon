@@ -428,8 +428,12 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
 
         if (e instanceof AbstractCharonException) {
             AbstractCharonException ex = (AbstractCharonException) e;
-            if (logger.isDebugEnabled()) {
-                logger.debug(e.getMessage(), e);
+            if (e instanceof InternalServerException || e instanceof CharonException) {
+                logger.error(e);
+            } else {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(e.getMessage(), e);
+                }
             }
             // we have charon exceptions also, instead of having only internal
             // server error
@@ -442,6 +446,7 @@ public class GroupResourceEndpoint extends AbstractResourceEndpoint implements R
             // it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, (AbstractCharonException) e);
         } else {
+            logger.error("Unhandled exception occurred.", e);
             InternalServerException internalServerException = new InternalServerException(
                     "Unhandled exception occurred.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, internalServerException);
