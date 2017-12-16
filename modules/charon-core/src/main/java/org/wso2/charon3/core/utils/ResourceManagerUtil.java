@@ -399,15 +399,15 @@ public class ResourceManagerUtil {
      */
     public static int processCount(String countStr) throws BadRequestException {
 
-        int count = 0;
-        if (countStr == null) {
+        int count;
+        if (countStr == null || countStr.isEmpty()) {
             count = CharonConfiguration.getInstance().getCountValueForPagination();
-        }
-
-        try {
-            count = Integer.parseInt(countStr);
-        } catch (NumberFormatException e) {
-            throw new BadRequestException("Value of parameter count is Invalid");
+        } else {
+            try {
+                count = Integer.parseInt(countStr);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException("Value of parameter count is Invalid");
+            }
         }
 
         if (count < 0) {
