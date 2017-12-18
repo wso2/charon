@@ -97,7 +97,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Format not supported.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Format not supported.", e);
+            }
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
@@ -108,10 +110,14 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't find the resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Couldn't find the resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            logger.error("Bad request error.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bad request error.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -170,7 +176,6 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, outputFormat);
 
             } else {
-                //TODO:log the error
                 String error = "Newly created User resource is null..";
                 throw new InternalServerException(error);
             }
@@ -179,7 +184,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Format not found exception.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Format not found exception.", e);
+            }
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
@@ -191,13 +198,17 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            logger.error("Bad request error.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bad request error.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
             logger.error("Internal server error while creating new resource.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (DuplicateResourceException e) {
-            logger.error("Duplicate resource exists in user store.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Duplicate resource exists in user store.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
 
@@ -246,26 +257,23 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             //on successful deletion SCIMResponse only has 200 OK status code.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, null, null);
         } catch (InternalServerException e) {
-            if(logger.isDebugEnabled()){
-                logger.debug("Internal Server Error while deleting User", e);
-            }
+            logger.debug("Internal Server Error while deleting User", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("Couldn't find Specified Resource.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (FormatNotSupportedException e) {
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("Format Not Supported.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
-            if(logger.isDebugEnabled()){
-                logger.debug("Internal Server Error while deleting User", e);
-            }
+            logger.debug("Internal Server Error while deleting User", e);
+
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
@@ -386,7 +394,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Format not supported.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Format not supported.", e);
+            }
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
@@ -401,13 +411,19 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Internal server error while retrieving user list.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't find resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Couldn't find resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            logger.error("Error while creating listed resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error while creating listed resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            logger.error("Bad request.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bad request.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -472,7 +488,9 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
 
         } catch (FormatNotSupportedException e) {
-            logger.error("Format not supported.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Format not supported.", e);
+            }
             //if requested format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
@@ -487,10 +505,14 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             logger.error("Internal server error.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't find resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Couldn't find resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (NotFoundException e) {
-            logger.error("Error while creating listed resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error while creating listed resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         }
     }
@@ -561,35 +583,29 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
 
         } catch (FormatNotSupportedException e) {
             //if the submitted format not supported, encode exception and set it in the response.
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("Submitted Format not supported.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
             //we have charon exceptions also, instead of having only internal server error exceptions,
             //because inside API code throws CharonException.
-            if(logger.isDebugEnabled()){
-                logger.debug("Internal Server Error while updating User", e);
-            }
+            logger.error("Internal Server Error while updating User", e);
             if (e.getCode() == -1) {
                 e.setCode(ResponseCodeConstants.CODE_INTERNAL_SERVER_ERROR);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("Bad Request.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
 
-            if(logger.isDebugEnabled()){
-                logger.debug("Internal Server Error while updating User", e);
-            }
+            logger.error("Internal Server Error while updating User", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-
-            if(logger.isDebugEnabled()){
+            if (logger.isDebugEnabled()) {
                 logger.debug("Couldn't find user resource.", e);
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
@@ -681,8 +697,10 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (FormatNotSupportedException e) {
-            logger.error("One of the Input/Output formats is not supported. input format : " + inputFormat
-                    + ", output format: " + outputFormat, e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("One of the Input/Output formats is not supported. input format : " + inputFormat
+                        + ", output format: " + outputFormat, e);
+            }
             //if the submitted format not supported, encode exception and set it in the response.
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (CharonException e) {
@@ -692,16 +710,22 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (BadRequestException e) {
-            logger.error("Bad Request.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Bad Request.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (InternalServerException e) {
             logger.error("Internal Server error while updating user.", e);
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (ResourceNotFoundException e) {
-            logger.error("Couldn't find the requested resource.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Couldn't find the requested resource.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, e);
         } catch (JSONException e) {
-            logger.error("Error while parsing JSON.", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error while parsing JSON.", e);
+            }
             return AbstractResourceEndpoint.encodeSCIMException(encoder, new BadRequestException());
         }
     }
