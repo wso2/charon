@@ -100,24 +100,28 @@ public class SCIMConfigProcessor {
         OMElement scimProvidersElement = rootElement.getFirstChildWithName(
                 new QName(SCIMConfigConstants.ELEMENT_NAME_SCIM_PROVIDERS));
 
-        //iterate over the individual elements and create scim provider map
-        Iterator<OMElement> scimProvidersIterator = scimProvidersElement.getChildrenWithName(new QName(
-                SCIMConfigConstants.ELEMENT_NAME_SCIM_PROVIDER));
+        if (scimProvidersElement != null) {
+            //iterate over the individual elements and create scim provider map
+            Iterator<OMElement> scimProvidersIterator = scimProvidersElement.getChildrenWithName(new QName(
+                    SCIMConfigConstants.ELEMENT_NAME_SCIM_PROVIDER));
 
-        //build providers map
-        if (scimProvidersIterator != null) {
-            Map<String, SCIMProvider> providers = buildSCIMProviderMap(scimProvidersIterator);
-            scimConfig.setProvidersMap(providers);
+            //build providers map
+            if (scimProvidersIterator != null) {
+                Map<String, SCIMProvider> providers = buildSCIMProviderMap(scimProvidersIterator);
+                scimConfig.setProvidersMap(providers);
+            }
         }
 
-        //iterate over the individual elements and create scim consumer map
-        Iterator<OMElement> scimConsumersIterator = scimConsumersElement.getChildrenWithName(new QName(
-                SCIMConfigConstants.ELEMENT_NAME_SCIM_CONSUMER));
+        if (scimConsumersElement != null) {
+            //iterate over the individual elements and create scim consumer map
+            Iterator<OMElement> scimConsumersIterator = scimConsumersElement.getChildrenWithName(new QName(
+                    SCIMConfigConstants.ELEMENT_NAME_SCIM_CONSUMER));
 
-        //build consumers map
-        if (scimConsumersIterator != null) {
-            Map<String, SCIMConsumer> consumers = buildSCIMConsumersMap(scimConsumersIterator);
-            scimConfig.setConsumersMap(consumers);
+            //build consumers map
+            if (scimConsumersIterator != null) {
+                Map<String, SCIMConsumer> consumers = buildSCIMConsumersMap(scimConsumersIterator);
+                scimConfig.setConsumersMap(consumers);
+            }
         }
         //read any additional properties defined.
         Iterator<OMElement> propertiesIterator = rootElement.getChildrenWithName(
