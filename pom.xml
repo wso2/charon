@@ -234,6 +234,32 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>wso2-release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration> <!-- add this to disable checking -->
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <properties>
         <charon.parent.version>3.0.0-SNAPSHOT</charon.parent.version>
         <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
