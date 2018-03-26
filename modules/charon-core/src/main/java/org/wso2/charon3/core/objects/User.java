@@ -70,8 +70,8 @@ public class User extends AbstractSCIMObject {
      * @throws BadRequestException
      */
     public void setPassword(String password) throws CharonException, BadRequestException {
-        setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
-                password);
+        setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.
+                PASSWORD, password);
     }
 
     /*
