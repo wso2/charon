@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.schema;
 
+import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -148,9 +149,9 @@ public class ServerSideValidator extends AbstractValidator {
         //check for read only and immutable attributes
         validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
         //copy meta attribute from old to new
-        validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
+        copyAttribute(SCIMConstants.CommonSchemaConstants.META, oldObject, validatedObject);
         //copy id attribute to new group object
-        validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
+        copyAttribute(SCIMConstants.CommonSchemaConstants.ID, oldObject, validatedObject);
         //edit last modified date
         Date date = new Date();
         validatedObject.setLastModified(date);
@@ -160,6 +161,22 @@ public class ServerSideValidator extends AbstractValidator {
         validateSchemaList(validatedObject, resourceSchema);
 
         return validatedObject;
+    }
+
+    /**
+     * Copies the attribute given by the name from oldObject to validated Object.
+     * @param attributeName the name of the attribute to copy
+     * @param oldObject  the old object the attribute value is copied from.
+     * @param validatedObject  the new object the attribute value is copied to.
+     * @throws CharonException  upon any error while copying.
+     */
+    private static void copyAttribute(String attributeName, AbstractSCIMObject oldObject,
+            AbstractSCIMObject validatedObject) throws CharonException {
+        Attribute oldMetaAttribute = oldObject.getAttribute(attributeName);
+        if (oldMetaAttribute == null) {
+            throw new CharonException("\"" + attributeName + "\" Attribute not found on old SCIM object");
+        }
+        validatedObject.setAttribute(oldMetaAttribute);
     }
 
     /*

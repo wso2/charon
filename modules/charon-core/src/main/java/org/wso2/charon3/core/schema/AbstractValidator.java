@@ -1172,10 +1172,14 @@ public abstract class AbstractValidator {
                             && !subAttributeSchema.getMultiValued()) {
                         //take the value from the value sub attribute and put is as display attribute
                         SimpleAttribute simpleAttribute = null;
-                        simpleAttribute = new SimpleAttribute(
-                                SCIMConstants.CommonSchemaConstants.DISPLAY,
-                                ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName())))
-                                        .getValue());
+                        Attribute innerSubAttribute = subValue.getSubAttribute(subAttributeSchema.getName());
+                        if (!(innerSubAttribute instanceof SimpleAttribute)) {
+                            throw new BadRequestException(
+                                    "The sub-attribute is not a Simple Attribute for the schema : " + subAttributeSchema
+                                            .getName(), ResponseCodeConstants.INVALID_VALUE);
+                        }
+                        simpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY,
+                                ((SimpleAttribute) (innerSubAttribute)).getValue());
 
                         AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants
                                 .CommonSchemaConstants.DISPLAY);

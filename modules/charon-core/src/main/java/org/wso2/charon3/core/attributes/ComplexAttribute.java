@@ -30,9 +30,11 @@ public class ComplexAttribute extends AbstractAttribute {
     protected Map<String, Attribute> subAttributesList = new HashMap<String, Attribute>();
 
     public ComplexAttribute(String name) {
-        this.name = name; }
+        this.name = name;
+    }
 
-    public ComplexAttribute() {}
+    public ComplexAttribute() {
+    }
 
     /**
      * Retrieve the map of sub attributes.
@@ -40,8 +42,8 @@ public class ComplexAttribute extends AbstractAttribute {
      * @return Map of Attributes
      */
     public Map<String, Attribute> getSubAttributesList() {
-            return subAttributesList;
-        }
+        return subAttributesList;
+    }
 
     /**
      * Set the map of sub attributes.
@@ -101,8 +103,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @param subAttribute
      * @throws CharonException
      */
-    public void setSubAttribute(Attribute subAttribute)
-            throws CharonException {
+    public void setSubAttribute(Attribute subAttribute) throws CharonException {
         subAttributesList.put(subAttribute.getName(), subAttribute);
     }
-    }
+}

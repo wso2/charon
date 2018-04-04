@@ -46,6 +46,11 @@
             <groupId>org.wso2.charon</groupId>
             <artifactId>org.wso2.charon3.utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
         <build>

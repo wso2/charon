@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.wso2</groupId>
@@ -100,6 +101,24 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jmockit</groupId>
+                <artifactId>jmockit</artifactId>
+                <scope>test</scope>
+                <version>${jmockit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jacoco</groupId>
+                <artifactId>org.jacoco.agent</artifactId>
+                <classifier>runtime</classifier>
+                <version>${jacoco.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -110,13 +129,13 @@
             <name>WSO2 Nexus Release Repository</name>
             <url>http://maven.wso2.org/nexus/service/local/staging/deploy/maven2/</url>
         </repository>
-<!--
-        <snapshotRepository>
-            <id>wso2.snapshots</id>
-            <name>Internal Releases</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
--->
+        <!--
+                <snapshotRepository>
+                    <id>wso2.snapshots</id>
+                    <name>Internal Releases</name>
+                    <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
+                </snapshotRepository>
+        -->
     </distributionManagement>
 
     <repositories>
@@ -231,6 +250,68 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-prepare-agent-integration</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report-integration</id>
+                        <goals>
+                            <goal>report-integration</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>COMPLEXITY</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <!--<minimum>0.20</minimum>-->
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
         </plugins>
     </build>
 
@@ -269,10 +350,18 @@
         <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.11</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
-        <junit.version>4.8.1</junit.version>
         <servlet.api.version>2.3</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
+
+        <!--  Tests-->
+        <junit.version>4.8.1</junit.version>
+        <testng.version>6.9.10</testng.version>
+        <jacoco.version>0.7.9</jacoco.version>
+        <jmockit.version>1.35</jmockit.version>
+        <powermock.version>1.6.6</powermock.version>
+        <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
+        <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
 
         <!--plugin versions-->
         <compiler.plugin.version>2.3.1</compiler.plugin.version>

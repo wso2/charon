@@ -610,6 +610,9 @@ public class PatchOperationUtil {
                                                 AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
                                                 SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException {
+        if (operation == null || operation.getValues() == null) {
+            throw new CharonException("No values for the Patch Operation is defined.");
+        }
         try {
             AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
             if (oldResource != null) {
@@ -1653,7 +1656,7 @@ public class PatchOperationUtil {
             throws NotImplementedException, BadRequestException,
             CharonException, JSONException, InternalErrorException {
 
-        if (parts.length != 1) {
+        if (parts.length >= 2) {
             //currently we only support simple filters here.
             String[] filterParts = parts[1].split(" ");
 
@@ -2227,7 +2230,11 @@ public class PatchOperationUtil {
                         for (Iterator<Attribute> subValueIterator = subValues.iterator();
                              subValueIterator.hasNext(); ) {
                             Attribute subValue = subValueIterator.next();
-
+                            if (!(subValue instanceof ComplexAttribute)) {
+                                throw new BadRequestException("Attribute: " + subValue.getName()
+                                        + " is not a Complex Attribute, and can not be replaced with filter.",
+                                        ResponseCodeConstants.INVALID_PATH);
+                            }
                             Map<String, Attribute> subValuesSubAttribute =
                                     ((ComplexAttribute) subValue).getSubAttributesList();
                             for (Iterator<Attribute> iterator =
@@ -2251,12 +2258,19 @@ public class PatchOperationUtil {
                             }
                         }
                         if (!isValueFound) {
-                            throw new BadRequestException("No matching filter value found.",
+                            throw new BadRequestException("No matching value on the filter found.",
                                     ResponseCodeConstants.NO_TARGET);
                         }
                         AttributeSchema attributeSchema = SchemaUtil.getAttributeSchema(attributeParts[0], schema);
-                        subValues.add(decoder.buildComplexAttribute(attributeSchema,
-                                (JSONObject) operation.getValues()));
+                        if (!(operation.getValues() instanceof JSONObject)) {
+                            String valueType =
+                                    operation.getValues() == null ? null : operation.getValues().getClass().getName();
+                            throw new BadRequestException(
+                                    "The value of the operation is not a JSON object. value type: " + valueType,
+                                    ResponseCodeConstants.INVALID_VALUE);
+                        }
+                        subValues.add(decoder
+                                .buildComplexAttribute(attributeSchema, (JSONObject) operation.getValues()));
 
                     }
                 } else {

@@ -32,6 +32,9 @@ public class SimpleAttribute extends AbstractAttribute {
     public SimpleAttribute(String attributeName, Object value) {
         this.name = attributeName;
         this.value = value;
+        this.type = detectType(value);
+        this.multiValued = Boolean.FALSE;
+        this.mutability = SCIMDefinitions.Mutability.READ_WRITE;
     }
 
     /*
@@ -39,7 +42,8 @@ public class SimpleAttribute extends AbstractAttribute {
      * @return
      */
     public Object getValue() {
-        return value; }
+        return value;
+    }
 
     /*
      * set the value of the simple attribute
@@ -113,7 +117,31 @@ public class SimpleAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     public void updateValue(Object value) throws CharonException {
-            this.value = value;
+        this.value = value;
 
+    }
+
+    /**
+     * Detects the type of the attribute.
+     * @param value
+     * @return
+     */
+    private SCIMDefinitions.DataType detectType(Object value) {
+        if (value instanceof String) {
+            return SCIMDefinitions.DataType.STRING;
+        }
+        if (value instanceof Integer) {
+            return SCIMDefinitions.DataType.INTEGER;
+        }
+        if (value instanceof Float) {
+            return SCIMDefinitions.DataType.DECIMAL;
+        }
+        if (value instanceof Boolean) {
+            return SCIMDefinitions.DataType.BOOLEAN;
+        }
+        if (value != null) {
+            return SCIMDefinitions.DataType.COMPLEX;
+        }
+        return null;
     }
 }
