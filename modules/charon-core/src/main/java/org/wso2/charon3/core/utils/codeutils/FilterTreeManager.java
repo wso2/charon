@@ -260,7 +260,7 @@ public class FilterTreeManager {
      */
     private void setExpressionNodeValues(String attributeValue, String operation,
                                          String value, ExpressionNode expressionNode) throws BadRequestException {
-        expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(), schema));
+        expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(), schema, true));
         expressionNode.setOperation(operation.trim());
         if (value != null) {
             expressionNode.setValue(value.trim());
