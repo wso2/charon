@@ -178,6 +178,12 @@ public class AttributeUtil {
                     if (attributeURI != null) {
                         return attributeURI;
                     }
+                    // check extension attributes
+                    String extensionAttributeURI = checkSCIMAttributeURIs(((SCIMAttributeSchema) attributeSchema)
+                            .getAttributes(), subAttribute, null);
+                    if (extensionAttributeURI != null) {
+                        return extensionAttributeURI;
+                    }
                 }
 
             }
