@@ -513,9 +513,9 @@ public class SCIMConstants {
         public static final String DESCRIPTION = "description";
         public static final String DESCRIPTION_URI =
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.description";
-        public static final String SPEC_URI = "specURI";
+        public static final String SPEC_URI = "specUri";
         public static final String SPEC_URI_URI =
-                "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.specURI";
+                "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.specUri";
         public static final String TYPE = "type";
         public static final String TYPE_URL =
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.type";
