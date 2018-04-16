@@ -209,6 +209,7 @@ public class JSONDecoder {
             MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
 
             List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
+            List<Object> simpleAttributeValues = new ArrayList<>();
 
             //iterate through JSONArray and create the list of string values.
             for (int i = 0; i < attributeValues.length(); i++) {
@@ -216,6 +217,16 @@ public class JSONDecoder {
                 if (attributeValue instanceof JSONObject) {
                     JSONObject complexAttributeValue = (JSONObject) attributeValue;
                     complexAttributeValues.add(buildComplexValue(attributeSchema, complexAttributeValue));
+                } else if (attributeValue instanceof String || attributeValue instanceof Integer || attributeValue
+                        instanceof Double || attributeValue instanceof Boolean || attributeValue == null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Primitive attribute type detected. Attribute value: " + attributeValue);
+                    }
+                    // If an attribute is passed without a value, no need to save it.
+                    if (attributeValue == null) {
+                        continue;
+                    }
+                    simpleAttributeValues.add(attributeValue);
                 } else {
                     String error = "Unknown JSON representation for the MultiValued attribute " +
                             attributeSchema.getName() + " which has data type as " + attributeSchema.getType();
@@ -224,6 +235,7 @@ public class JSONDecoder {
 
             }
             multiValuedAttribute.setAttributeValues(complexAttributeValues);
+            multiValuedAttribute.setAttributePrimitiveValues(simpleAttributeValues);
 
             return (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
                     multiValuedAttribute);
