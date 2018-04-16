@@ -189,6 +189,20 @@ public class AttributeUtil {
             if (subAttributeURI != null) {
                 return subAttributeURI;
             }
+
+            if (attributeName.contains(attributeSchema.getName()) && attributeSchema.getMultiValued()) {
+
+                String subAttribute = null;
+                if (attributeName.contains(".")) {
+                    String[] splittedString = attributeName.split("\\.", 2);
+                    subAttribute = splittedString[1];
+                }
+                subAttributeURI = attributeSchema.getURI();
+                if (subAttribute != null) {
+                    subAttributeURI = subAttributeURI + "." + subAttribute;
+                    return subAttributeURI;
+                }
+            }
         }
         String error = "Not a valid attribute name/uri";
         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
