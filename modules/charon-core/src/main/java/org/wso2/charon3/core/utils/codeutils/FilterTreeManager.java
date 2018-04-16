@@ -47,11 +47,25 @@ public class FilterTreeManager {
     public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
         this.schema = schema;
         input = new StreamTokenizer(new StringReader(filterString));
+        input.resetSyntax();
+        // Default settings in StreamTokenizer syntax initializer.
+        input.wordChars('a', 'z');
+        input.wordChars('A', 'Z');
+        input.wordChars(128 + 32, 255);
+        input.whitespaceChars(0, ' ');
+        input.commentChar('/');
+        input.quoteChar('"');
+        input.quoteChar('\'');
+
         //Adding other string possible values
-        //TODO:is ths all?
         input.wordChars('@', '@');
         input.wordChars(':', ':');
         input.wordChars('_', '_');
+        input.wordChars('0', '9');
+        input.wordChars('-', '-');
+        input.wordChars('+', '+');
+        input.wordChars('.', '.');
+
         tokenList = new ArrayList<String>();
         String concatenatedString = "";
 
