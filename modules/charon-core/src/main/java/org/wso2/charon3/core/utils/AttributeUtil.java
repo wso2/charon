@@ -170,22 +170,37 @@ public class AttributeUtil {
      * Will iterate through <code>{@code SCIMAttributeSchema}</code> objects
      *
      * @param attributeName
+     * @param schema
      * @return
      */
     public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema) throws
+            BadRequestException {
+
+        return getAttributeURI(attributeName, schema, false);
+    }
+
+    /*
+     * Will iterate through <code>{@code SCIMAttributeSchema}</code> objects
+     *
+     * @param attributeName
+     * @param schema
+     * @param isFilter
+     * @return
+     */
+    public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema, boolean isFilter) throws
             BadRequestException {
 
         Iterator<AttributeSchema> attributeSchemas = schema.getAttributesList().iterator();
         while (attributeSchemas.hasNext()) {
             AttributeSchema attributeSchema = attributeSchemas.next();
 
-            if (attributeSchema.getName().equals(attributeName) || attributeSchema.getURI().equals(attributeName)) {
+            if ((isFilter && attributeSchema.getName().equalsIgnoreCase(attributeName)) ||
+                    attributeSchema.getName().equals(attributeName) || attributeSchema.getURI().equals(attributeName)) {
                 return attributeSchema.getURI();
             }
             // check in sub attributes
-            String subAttributeURI =
-                    checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas(),
-                            attributeSchema, attributeName);
+            String subAttributeURI = checkSCIMSubAttributeURIs(attributeSchema.getSubAttributeSchemas(),
+                    attributeSchema, attributeName, isFilter);
             if (subAttributeURI != null) {
                 return subAttributeURI;
             }
@@ -213,28 +228,45 @@ public class AttributeUtil {
      *
      * @param subAttributes
      * @param attributeSchema
-     * @param attributeName   @return
+     * @param attributeName
+     * @param isFilter
+     * @return
      */
     private static String checkSCIMSubAttributeURIs(List<SCIMAttributeSchema> subAttributes,
-                                                    AttributeSchema attributeSchema, String attributeName) {
+                                                    AttributeSchema attributeSchema, String attributeName,
+                                                    boolean isFilter) {
         if (subAttributes != null) {
             Iterator<SCIMAttributeSchema> subsIterator = subAttributes.iterator();
 
+            StringBuilder sb = new StringBuilder();
+
             while (subsIterator.hasNext()) {
                 SCIMAttributeSchema subAttributeSchema = subsIterator.next();
-                if ((attributeSchema.getName() + "." + subAttributeSchema.getName()).equals(attributeName) ||
+
+                sb.replace(0, sb.length(), "");
+                sb.append(attributeSchema.getName()).append(".").append(subAttributeSchema.getName());
+
+                if ((isFilter && sb.toString().equalsIgnoreCase(attributeName)) ||
+                        sb.toString().equals(attributeName) ||
                         subAttributeSchema.getURI().equals(attributeName)) {
                     return subAttributeSchema.getURI();
                 }
+
                 if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                     List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
                     if (subSubAttributeSchemas != null) {
                         Iterator<SCIMAttributeSchema> subSubsIterator = subSubAttributeSchemas.iterator();
 
+                        int attrLength = sb.length();
+
                         while (subSubsIterator.hasNext()) {
                             SCIMAttributeSchema subSubAttributeSchema = subSubsIterator.next();
-                            if ((attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
-                                    subSubAttributeSchema.getName()).equals(attributeName) ||
+
+                            sb.replace(attrLength, sb.length(), "");
+                            sb.append(".").append(subSubAttributeSchema.getName());
+
+                            if ((isFilter && sb.toString().equalsIgnoreCase(attributeName)) ||
+                                    sb.toString().equals(attributeName) ||
                                     subAttributeSchema.getURI().equals(attributeName)) {
                                 return subSubAttributeSchema.getURI();
                             }
