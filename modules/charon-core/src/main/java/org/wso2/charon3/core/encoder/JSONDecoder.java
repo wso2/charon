@@ -220,7 +220,13 @@ public class JSONDecoder {
                 } else if (attributeValue instanceof String || attributeValue instanceof Integer || attributeValue
                         instanceof Double || attributeValue instanceof Boolean || attributeValue == null) {
                     if (logger.isDebugEnabled()) {
-                        logger.debug("Primitive attribute type detected. Attribute value: " + attributeValue);
+                        if (attributeValue != null) {
+                            logger.debug(
+                                    "Primitive attribute type detected. Attribute type: " + attributeValue.getClass()
+                                            .getName() + ", attribute value: " + attributeValue);
+                        } else {
+                            logger.debug("Attribute value is null.");
+                        }
                     }
                     // If an attribute is passed without a value, no need to save it.
                     if (attributeValue == null) {
