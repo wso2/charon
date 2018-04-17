@@ -51,6 +51,7 @@ public class FilterTreeManager {
         // Default settings in StreamTokenizer syntax initializer.
         input.wordChars('a', 'z');
         input.wordChars('A', 'Z');
+        // Specifies that all extended ASCII characters defined in HTML 4 standard, are word constituents.
         input.wordChars(128 + 32, 255);
         input.whitespaceChars(0, ' ');
         input.commentChar('/');
@@ -65,6 +66,7 @@ public class FilterTreeManager {
         input.wordChars('-', '-');
         input.wordChars('+', '+');
         input.wordChars('.', '.');
+        input.wordChars('*', '*');
 
         tokenList = new ArrayList<String>();
         String concatenatedString = "";
