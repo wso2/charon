@@ -1165,45 +1165,48 @@ public abstract class AbstractValidator {
 
         for (Attribute subValue : subValuesList) {
 
-            for (AttributeSchema subAttributeSchema : attributeSchema.getSubAttributeSchemas()) {
-                if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
+            if (!((ComplexAttribute) subValue).getSubAttributesList().isEmpty()) {
+                for (AttributeSchema subAttributeSchema : attributeSchema.getSubAttributeSchemas()) {
+                    if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {
 
-                    if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
-                            && !subAttributeSchema.getMultiValued()) {
-                        //take the value from the value sub attribute and put is as display attribute
-                        SimpleAttribute simpleAttribute = null;
-                        simpleAttribute = new SimpleAttribute(
-                                SCIMConstants.CommonSchemaConstants.DISPLAY,
-                                ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName())))
-                                        .getValue());
+                        if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                                && !subAttributeSchema.getMultiValued()) {
+                            //take the value from the value sub attribute and put is as display attribute
+                            SimpleAttribute simpleAttribute = null;
+                            simpleAttribute = new SimpleAttribute(
+                                    SCIMConstants.CommonSchemaConstants.DISPLAY,
+                                    ((SimpleAttribute) (subValue.getSubAttribute(subAttributeSchema.getName())))
+                                            .getValue());
 
-                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants
-                                .CommonSchemaConstants.DISPLAY);
-                        simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema,
-                                simpleAttribute);
-                        ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
-                    } else if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
-                            && subAttributeSchema.getMultiValued()) {
+                            AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants
+                                    .CommonSchemaConstants.DISPLAY);
+                            simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema,
+                                    simpleAttribute);
+                            ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
+                        } else if (!subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)
+                                && subAttributeSchema.getMultiValued()) {
 
-                        Attribute valueSubAttribute = (MultiValuedAttribute) (subValue.getSubAttribute
-                                (subAttributeSchema.getName()));
-                        Object displayValue = null;
-                        try {
-                            displayValue = ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues()
-                                    .get(0);
-                        } catch (Exception e) {
-                            String error = "Can not set display attribute value without a value attribute value.";
-                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX, error);
+                            Attribute valueSubAttribute = (MultiValuedAttribute) (subValue.getSubAttribute
+                                    (subAttributeSchema.getName()));
+                            Object displayValue = null;
+                            try {
+                                displayValue =
+                                        ((MultiValuedAttribute) (valueSubAttribute)).getAttributePrimitiveValues()
+                                                .get(0);
+                            } catch (Exception e) {
+                                String error = "Can not set display attribute value without a value attribute value.";
+                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX, error);
+                            }
+                            //if multiple values are available, get the first value and put it as display name
+                            SimpleAttribute simpleAttribute = new SimpleAttribute(
+                                    SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
+                            AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants
+                                    .CommonSchemaConstants.DISPLAY);
+                            simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema,
+                                    simpleAttribute);
+                            ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
+
                         }
-                        //if multiple values are available, get the first value and put it as display name
-                        SimpleAttribute simpleAttribute = new SimpleAttribute(
-                                SCIMConstants.CommonSchemaConstants.DISPLAY, displayValue);
-                        AttributeSchema subSchema = attributeSchema.getSubAttributeSchema(SCIMConstants
-                                .CommonSchemaConstants.DISPLAY);
-                        simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subSchema,
-                                simpleAttribute);
-                        ((ComplexAttribute) (subValue)).setSubAttribute(simpleAttribute);
-
                     }
                 }
             }
