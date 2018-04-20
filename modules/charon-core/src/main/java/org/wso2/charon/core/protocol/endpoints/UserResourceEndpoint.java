@@ -657,13 +657,12 @@ public class UserResourceEndpoint extends AbstractResourceEndpoint {
             if (userManager != null) {
                 //retrieve the old object
                 User oldUser = userManager.getUser(existingId);
-                if (user.getDisplayName() == null) {
-                    user.setDisplayName(oldUser.getDisplayName());
-                }
                 if (oldUser != null) {
+                    if (user.getDisplayName() == null) {
+                        user.setDisplayName(oldUser.getDisplayName());
+                    }
                     User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
                     updatedUser = userManager.patchUser(validatedUser, oldUser, metaAttributeIds);
-
                 } else {
                     String error = "No user exists with the given id: " + existingId;
                     logger.error(error);
