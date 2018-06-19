@@ -604,7 +604,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.UserSchemaConstants.USER_NAME,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.USERNAME_DESC,
                         true, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.SERVER, null, null, null);
 
         //The components of the user's real name.
@@ -995,7 +995,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI_URI,
                         SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI,
                         SCIMDefinitions.DataType.REFERENCE, false,
-                        SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI_DESC, true, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.SPEC_URI_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null,
                         new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType
@@ -1007,7 +1007,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI,
                         SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS_DOCUMENTATION_URI_URI,
                         SCIMDefinitions.DataType.REFERENCE, false,
-                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI_DESC, true, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DOCUMENTATION_URI_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null,
                         new ArrayList<SCIMDefinitions.ReferenceType>(Arrays.asList(SCIMDefinitions.ReferenceType
@@ -1029,7 +1029,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.PRIMARY,
                         SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.ServiceProviderConfigSchemaConstants
                                 .PRIMARY_DESC,
-                        true, false, SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        false, false, SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
     /*------------------------------------------------------------------------------------------------------*/

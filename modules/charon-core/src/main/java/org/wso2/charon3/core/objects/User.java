@@ -64,6 +64,17 @@ public class User extends AbstractSCIMObject {
     }
 
     /*
+     * set the password of the user
+     * @param password
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    public void setPassword(String password) throws CharonException, BadRequestException {
+        setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.
+                PASSWORD, password);
+    }
+
+    /*
      * set simple attribute in the scim object
      * @param attributeName
      * @param attributeSchema

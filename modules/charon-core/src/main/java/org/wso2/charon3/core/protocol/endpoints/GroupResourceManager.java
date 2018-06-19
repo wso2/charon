@@ -16,7 +16,6 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -229,18 +228,19 @@ public class GroupResourceManager extends AbstractResourceManager {
                                     int count, String sortBy, String sortOrder,
                                     String attributes, String excludeAttributes) {
 
+        //According to SCIM 2.0 spec minus values will be considered as 0
+        if (count < 0) {
+            count = 0;
+        }
+        //According to SCIM 2.0 spec minus values will be considered as 1
+        if (startIndex < 1) {
+            startIndex = 1;
+        }
+
         FilterTreeManager filterTreeManager = null;
         Node rootNode = null;
         JSONEncoder encoder = null;
         try {
-            //A value less than one shall be interpreted as 1
-            if (startIndex < 1) {
-                startIndex = 1;
-            }
-            //If count is not set, server default should be taken
-            if (count == 0) {
-                count = CharonConfiguration.getInstance().getCountValueForPagination();
-            }
 
             //check whether provided sortOrder is valid or not
             if (sortOrder != null) {
@@ -281,13 +281,6 @@ public class GroupResourceManager extends AbstractResourceManager {
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
                 returnedGroups = tempList;
-
-                //if groups not found, return an error in relevant format.
-                if (returnedGroups.isEmpty()) {
-                    String error = "Groups not found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
 
                 for (Object group : returnedGroups) {
                     //perform service provider side validation.
@@ -349,19 +342,12 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             //create the search request object
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
+            searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
 
             if (searchRequest.getSchema() != null && !searchRequest.getSchema().equals(SCIMConstants
                     .SEARCH_SCHEMA_URI)) {
                 throw new BadRequestException("Provided schema is invalid", ResponseCodeConstants.INVALID_VALUE);
-            }
-
-            //A value less than one shall be interpreted as 1
-            if (searchRequest.getStartIndex() < 1) {
-                searchRequest.setStartIndex(1);
-            }
-            //If count is not set, server default should be taken
-            if (searchRequest.getCount() == 0) {
-                searchRequest.setCount(CharonConfiguration.getInstance().getCountValueForPagination());
             }
 
             //check whether provided sortOrder is valid or not
@@ -395,13 +381,6 @@ public class GroupResourceManager extends AbstractResourceManager {
                 tempList.remove(0);
 
                 returnedGroups = tempList;
-
-                //if user not found, return an error in relevant format.
-                if (returnedGroups.isEmpty()) {
-                    String error = "No resulted users are found in the user store.";
-                    //throw resource not found.
-                    throw new NotFoundException(error);
-                }
 
                 for (Object group : returnedGroups) {
                     //perform service provider side validation.
