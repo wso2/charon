@@ -46,6 +46,7 @@ public class FilterTreeManager {
     private SCIMResourceTypeSchema schema;
 
     public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
+
         this.schema = schema;
         input = new CustomStreamTokenizer(new StringReader(filterString));
         //Adding other string possible values
