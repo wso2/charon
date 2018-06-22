@@ -136,7 +136,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //decode the SCIM group object, encoded in the submitted payload.
             Group group = (Group) decoder.decodeResource(scimObjectString, schema, new Group());
             //validate decoded group
-            ServerSideValidator.validateCreatedSCIMObject(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA);
+            ServerSideValidator.validateCreatedSCIMObject(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, userManager.getContext());
             //handover the SCIM User object to the group usermanager provided by the SP.
             Group createdGroup;
             //need to send back the newly created group in the response payload
@@ -150,7 +150,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 encodedGroup = encoder.encodeSCIMObject(createdGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.GROUP_ENDPOINT) + "/" + createdGroup.getId());
+                        SCIMConstants.GROUP_ENDPOINT, userManager.getContext()) + "/" + createdGroup.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -473,7 +473,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 encodedGroup = encoder.encodeSCIMObject(copiedGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.GROUP_ENDPOINT) + "/" + updatedGroup.getId());
+                        SCIMConstants.GROUP_ENDPOINT, userManager.getContext()) + "/" + updatedGroup.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -595,7 +595,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 encodedGroup = getEncoder().encodeSCIMObject(copiedGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.USER_ENDPOINT) + "/" + newGroup.getId());
+                        SCIMConstants.USER_ENDPOINT, userManager.getContext()) + "/" + newGroup.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {

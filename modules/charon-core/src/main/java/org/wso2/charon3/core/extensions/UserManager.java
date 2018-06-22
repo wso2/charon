@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public interface UserManager {
 
+    public String getContext();
+
         /***************User Manipulation operations.*******************/
 
     public User createUser(User user, Map<String, Boolean> requiredAttributes)
