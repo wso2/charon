@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
  * All terminals are filter expressions hence denoted by ExpressionNodes and all non terminal nodes are operators hence
  * denoted by OperatorNodes.
  */
+
 public class FilterTreeManager {
 
     private StreamTokenizer input;
@@ -45,6 +46,7 @@ public class FilterTreeManager {
     private SCIMResourceTypeSchema schema;
 
     public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
+
         this.schema = schema;
         input = new StreamTokenizer(new StringReader(filterString));
         input.resetSyntax();
@@ -67,7 +69,8 @@ public class FilterTreeManager {
         input.wordChars('+', '+');
         input.wordChars('.', '.');
         input.wordChars('*', '*');
-
+        input.wordChars('/', '/');
+        
         tokenList = new ArrayList<String>();
         String concatenatedString = "";
 
@@ -87,6 +90,7 @@ public class FilterTreeManager {
                         input.sval.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
                     //concatenate the string by adding spaces in between
                     concatenatedString += " " + input.sval;
+
                 } else {
                     concatenatedString = concatenatedString.trim();
                     if (!concatenatedString.equals("")) {
