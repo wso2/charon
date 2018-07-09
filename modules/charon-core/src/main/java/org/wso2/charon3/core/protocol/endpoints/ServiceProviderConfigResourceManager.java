@@ -56,10 +56,10 @@ public class ServiceProviderConfigResourceManager extends AbstractResourceManage
      */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
-        return getServiceProviderConfig();
+        return getServiceProviderConfig(userManager.getContext());
     }
 
-    private SCIMResponse getServiceProviderConfig() {
+    private SCIMResponse getServiceProviderConfig(String context) {
         JSONEncoder encoder = null;
         try {
             //obtain the json encoder
@@ -87,7 +87,7 @@ public class ServiceProviderConfigResourceManager extends AbstractResourceManage
                 encodedObject = encoder.encodeSCIMObject(copiedObject);
                 //add location header
                 responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT));
+                        SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT, context));
                 responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {

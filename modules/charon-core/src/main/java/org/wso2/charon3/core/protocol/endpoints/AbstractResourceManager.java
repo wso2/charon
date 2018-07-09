@@ -67,9 +67,13 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @return endpoint URL
      * @throws NotFoundException
      */
-    public static String getResourceEndpointURL(String resource) throws NotFoundException {
+    public static String getResourceEndpointURL(String resource, String context) throws NotFoundException {
         if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
+            String endpointURL = endpointURLMap.get(resource);
+            if (context == null)
+                return endpointURL;
+            else
+                return String.format(endpointURL, context);
         } else {
             throw new NotFoundException();
         }

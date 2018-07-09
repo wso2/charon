@@ -104,7 +104,7 @@ public class UserResourceManager extends AbstractResourceManager {
             Map<String, String> responseHeaders = new HashMap<String, String>();
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
             responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                    SCIMConstants.USER_ENDPOINT) + "/" + user.getId());
+                    SCIMConstants.USER_ENDPOINT, userManager.getContext()) + "/" + user.getId());
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, responseHeaders);
 
         } catch (NotFoundException e) {
@@ -139,7 +139,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
             //validate the created user.
-            ServerSideValidator.validateCreatedSCIMObject(user, schema);
+            ServerSideValidator.validateCreatedSCIMObject(user, schema, userManager.getContext());
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                     (SCIMResourceTypeSchema)
@@ -167,7 +167,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.USER_ENDPOINT) + "/" + createdUser.getId());
+                        SCIMConstants.USER_ENDPOINT, userManager.getContext()) + "/" + createdUser.getId());
                 responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -487,7 +487,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 encodedUser = encoder.encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.USER_ENDPOINT) + "/" + updatedUser.getId());
+                        SCIMConstants.USER_ENDPOINT, userManager.getContext()) + "/" + updatedUser.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -608,7 +608,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 encodedUser = getEncoder().encodeSCIMObject(copiedUser);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.USER_ENDPOINT) + "/" + newUser.getId());
+                        SCIMConstants.USER_ENDPOINT, userManager.getContext()) + "/" + newUser.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {

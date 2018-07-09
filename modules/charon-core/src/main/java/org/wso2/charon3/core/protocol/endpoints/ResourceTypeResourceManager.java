@@ -50,7 +50,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
-        return getResourceType();
+        return getResourceType(userManager.getContext());
     }
 
     /*
@@ -58,7 +58,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      *
      * @return
      */
-    private SCIMResponse getResourceType() {
+    private SCIMResponse getResourceType(String context) {
         JSONEncoder encoder = null;
         try {
             //obtain the json encoder
@@ -76,12 +76,12 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
             AbstractSCIMObject userResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
                     scimUserObjectString, schema, new AbstractSCIMObject());
             //add meta data
-            userResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(userResourceTypeObject);
+            userResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(userResourceTypeObject, context);
             //build the group abstract scim object
             AbstractSCIMObject groupResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
                     scimGroupObjectString, schema, new AbstractSCIMObject());
             //add meta data
-            groupResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(groupResourceTypeObject);
+            groupResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(groupResourceTypeObject, context);
             //build the root abstract scim object
             AbstractSCIMObject resourceTypeObject = buildCombinedResourceType(userResourceTypeObject,
                     groupResourceTypeObject);
@@ -95,7 +95,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
                 encodedObject = encoder.encodeSCIMObject(copiedObject);
                 //add location header
                 responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.RESOURCE_TYPE_ENDPOINT));
+                        SCIMConstants.RESOURCE_TYPE_ENDPOINT, context));
                 responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {

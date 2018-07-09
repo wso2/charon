@@ -49,6 +49,11 @@ public class InMemoryUserManager implements UserManager {
 
 
     @Override
+    public String getContext() {
+        return null;
+    }
+
+    @Override
     public User createUser(User user, Map<String, Boolean> map)
             throws CharonException, ConflictException, BadRequestException {
         if (inMemoryUserList.get(user.getId()) != null) {

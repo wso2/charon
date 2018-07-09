@@ -41,7 +41,7 @@ public class ServerSideValidator extends AbstractValidator {
      * @throw BadRequestException
      * @throw NotFoundException
      */
-    public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema)
+    public static void validateCreatedSCIMObject(AbstractSCIMObject scimObject, SCIMResourceTypeSchema resourceSchema, String context)
             throws CharonException, BadRequestException, NotFoundException {
 
         if (scimObject instanceof User) {
@@ -61,12 +61,12 @@ public class ServerSideValidator extends AbstractValidator {
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
-                    SCIMConstants.USER_ENDPOINT), scimObject.getId());
+                    SCIMConstants.USER_ENDPOINT, context), scimObject.getId());
             scimObject.setLocation(location);
             scimObject.setResourceType(SCIMConstants.USER);
         } else if (resourceSchema.isSchemaAvailable(SCIMConstants.GROUP_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
-                    SCIMConstants.GROUP_ENDPOINT), scimObject.getId());
+                    SCIMConstants.GROUP_ENDPOINT, context), scimObject.getId());
             scimObject.setLocation(location);
             scimObject.setResourceType(SCIMConstants.GROUP);
         }
@@ -171,12 +171,12 @@ public class ServerSideValidator extends AbstractValidator {
      * @throws BadRequestException
      * @throws CharonException
      */
-    public static AbstractSCIMObject validateResourceTypeSCIMObject(AbstractSCIMObject scimObject)
+    public static AbstractSCIMObject validateResourceTypeSCIMObject(AbstractSCIMObject scimObject, String context)
             throws NotFoundException, BadRequestException, CharonException {
         String endpoint = (String) (((SimpleAttribute) (scimObject.getAttribute
                 (SCIMConstants.ResourceTypeSchemaConstants.NAME))).getValue());
         String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
-                SCIMConstants.RESOURCE_TYPE_ENDPOINT), endpoint);
+                SCIMConstants.RESOURCE_TYPE_ENDPOINT, context), endpoint);
         scimObject.setLocation(location);
         scimObject.setResourceType(SCIMConstants.RESOURCE_TYPE);
         return scimObject;
