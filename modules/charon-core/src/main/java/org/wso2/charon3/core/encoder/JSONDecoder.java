@@ -31,7 +31,6 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
-import org.wso2.charon3.core.objects.SCIMObject;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
@@ -86,8 +85,9 @@ public class JSONDecoder {
      * @param scimObject         - a container holding the attributes and schema list
      * @return SCIMObject
      */
-    public SCIMObject decodeResource(String scimResourceString, ResourceTypeSchema resourceSchema,
-                                     AbstractSCIMObject scimObject)
+    public <T extends AbstractSCIMObject> T decodeResource(String scimResourceString,
+                                                           ResourceTypeSchema resourceSchema,
+                                                           T scimObject)
             throws BadRequestException, CharonException, InternalErrorException {
         try {
             //decode the string into json representation
