@@ -41,7 +41,7 @@ public class SCIMResourceSchema implements ResourceSchema {
     //define a private method to add common schema attributes to every SCIM resource schema.
 
     private void addCommonSchema() {
-        if (!this.name.equals(SCIMConstants.COMMON)) {
+        if (!(SCIMConstants.COMMON.equals(this.name))) {
             List<AttributeSchema> commonAttributeSchemas =
                     SCIMSchemaDefinitions.SCIM_COMMON_SCHEMA.getAttributesList();
             for (AttributeSchema commonAttributeSchema : commonAttributeSchemas) {
