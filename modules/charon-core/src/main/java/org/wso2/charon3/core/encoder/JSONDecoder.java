@@ -126,6 +126,8 @@ public class JSONDecoder {
                             scimObject.setAttribute(buildSimpleAttribute
                                     (attributeSchema, attributeValObj), resourceSchema);
 
+                        } else if (JSONObject.NULL.equals(attributeValObj)) {
+                            continue;
                         } else {
                             logger.error("Error decoding the simple attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
