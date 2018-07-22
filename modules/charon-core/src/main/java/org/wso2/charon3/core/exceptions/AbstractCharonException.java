@@ -25,7 +25,7 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  * implementers can use code property to decide which HTTP code needs to be set in header of the
  * response.
  */
-public class AbstractCharonException extends Exception {
+public class AbstractCharonException extends RuntimeException {
 
     //Error responses are identified using the following "schema" uri
     protected String schemas;
