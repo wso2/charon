@@ -126,6 +126,8 @@ public class JSONDecoder {
                             scimObject.setAttribute(buildSimpleAttribute
                                     (attributeSchema, attributeValObj), resourceSchema);
 
+                        } else if (JSONObject.NULL.equals(attributeValObj)) {
+                            continue;
                         } else {
                             logger.error("Error decoding the simple attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
@@ -330,6 +332,8 @@ public class JSONDecoder {
                         // or Reference, it is a SimpleAttribute.
                         subAttributesMap.put(subAttributeSchema.getName(),
                                 buildSimpleAttribute(subAttributeSchema, attributeValObj));
+                    } else if (JSONObject.NULL.equals(attributeValObj)) {
+                      continue;
                     } else {
                         logger.error("Error decoding the sub attribute");
                         throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
@@ -495,6 +499,8 @@ public class JSONDecoder {
                         simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(subAttributeSchema,
                                 simpleAttribute);
                         subAttributesMap.put(subAttributeSchema.getName(), simpleAttribute);
+                    }  else if (JSONObject.NULL.equals(subAttributeValue)) {
+                        continue;
                     } else {
                         throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                     }
