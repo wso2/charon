@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.utils;
 
+import org.json.JSONObject;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -54,6 +55,8 @@ public class AttributeUtil {
                 attributeStringValue = String.valueOf(attributeValue);
             } else if (attributeValue instanceof Double) {
                 attributeStringValue = String.valueOf(attributeValue);
+            } else if (JSONObject.NULL.equals(attributeValue)){
+                attributeStringValue = "";
             } else {
                 attributeStringValue = (String) attributeValue;
             }

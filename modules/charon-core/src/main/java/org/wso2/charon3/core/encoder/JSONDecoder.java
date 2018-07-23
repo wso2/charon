@@ -116,7 +116,8 @@ public class JSONDecoder {
 
                     if (!attributeSchema.getMultiValued()) {
                         if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
-                                attributeValObj instanceof Integer || attributeValObj == null) {
+                                attributeValObj instanceof Integer ||
+                                JSONObject.NULL.equals(attributeValObj) ||attributeValObj == null) {
                             //If an attribute is passed without a value, no need to save it.
                             if (attributeValObj == null) {
                                 continue;
@@ -321,7 +322,8 @@ public class JSONDecoder {
                     subAttributeSchemaType.equals(REFERENCE)) {
                 if (!subAttributeSchema.getMultiValued()) {
                     if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
-                            attributeValObj instanceof Integer || attributeValObj == null) {
+                            attributeValObj instanceof Integer ||
+                            JSONObject.NULL.equals(attributeValObj) || attributeValObj == null) {
                         //If an attribute is passed without a value, no need to save it.
                         if (attributeValObj == null) {
                             continue;
@@ -486,7 +488,7 @@ public class JSONDecoder {
                     }
                 } else {
                     if (subAttributeValue instanceof String || subAttributeValue instanceof Boolean ||
-                            subAttributeValue instanceof Integer) {
+                            JSONObject.NULL.equals(subAttributeValue) || subAttributeValue instanceof Integer) {
 
                         SimpleAttribute simpleAttribute =
                                 buildSimpleAttribute(subAttributeSchema, subAttributeValue);
