@@ -50,16 +50,16 @@ public class AttributeUtil {
             return attributeValue;
         }
         String attributeStringValue = null;
-        if (!(attributeValue instanceof Boolean)) {
-            if (attributeValue instanceof Integer) {
-                attributeStringValue = String.valueOf(attributeValue);
-            } else if (attributeValue instanceof Double) {
-                attributeStringValue = String.valueOf(attributeValue);
-            } else if (JSONObject.NULL.equals(attributeValue)) {
-                attributeStringValue = "";
-            } else {
-                attributeStringValue = (String) attributeValue;
-            }
+        if (attributeValue instanceof Boolean) {
+        	attributeStringValue = String.valueOf(attributeValue);
+        } else if (attributeValue instanceof Integer) {
+            attributeStringValue = String.valueOf(attributeValue);
+        } else if (attributeValue instanceof Double) {
+            attributeStringValue = String.valueOf(attributeValue);
+        } else if (JSONObject.NULL.equals(attributeValue)) {
+            attributeStringValue = "";
+        } else {
+            attributeStringValue = (String) attributeValue;
         }
 
         switch (dataType) {
