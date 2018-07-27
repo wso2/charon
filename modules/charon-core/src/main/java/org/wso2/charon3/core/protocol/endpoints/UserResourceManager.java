@@ -305,7 +305,6 @@ public class UserResourceManager extends AbstractResourceManager {
                 }
 
                 try {
-                    // left for backwards compatability
                     totalResults = (int) tempList.get(0);
                     tempList.remove(0);
                 } catch (IndexOutOfBoundsException | ClassCastException ex) {
