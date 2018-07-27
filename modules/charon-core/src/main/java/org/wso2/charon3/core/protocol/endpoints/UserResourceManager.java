@@ -46,6 +46,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,8 +300,18 @@ public class UserResourceManager extends AbstractResourceManager {
                 List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, requiredAttributes);
 
-                totalResults = (int) tempList.get(0);
-                tempList.remove(0);
+                if (tempList == null) {
+                    tempList = Collections.emptyList();
+                }
+
+                try {
+                    // left for backwards compatability
+                    totalResults = (int) tempList.get(0);
+                    tempList.remove(0);
+                } catch (IndexOutOfBoundsException | ClassCastException ex) {
+                    totalResults = tempList.size();
+                }
+
                 returnedUsers = tempList;
 
                 for (Object user : returnedUsers) {
