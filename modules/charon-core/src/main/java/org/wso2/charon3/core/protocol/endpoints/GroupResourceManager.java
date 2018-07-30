@@ -43,6 +43,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -278,8 +279,16 @@ public class GroupResourceManager extends AbstractResourceManager {
                 List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, requiredAttributes);
 
-                totalResults = (int) tempList.get(0);
-                tempList.remove(0);
+                if (tempList == null) {
+                    tempList = Collections.emptyList();
+                }
+
+                try {
+                    totalResults = (int) tempList.get(0);
+                    tempList.remove(0);
+                } catch (IndexOutOfBoundsException | ClassCastException ex) {
+                    totalResults = tempList.size();
+                }
                 returnedGroups = tempList;
 
                 for (Object group : returnedGroups) {
