@@ -51,7 +51,7 @@ public class AttributeUtil {
         }
         String attributeStringValue = null;
         if (attributeValue instanceof Boolean) {
-        	attributeStringValue = String.valueOf(attributeValue);
+            attributeStringValue = String.valueOf(attributeValue);
         } else if (attributeValue instanceof Integer) {
             attributeStringValue = String.valueOf(attributeValue);
         } else if (attributeValue instanceof Double) {
