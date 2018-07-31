@@ -1,5 +1,9 @@
 # WSO2 Charon - SCIM 2.0 Open Source Implementation 
 
+|  Branch | Build Status |
+| :------------ |:------------- |
+| master      | [![Build Status](https://wso2.org/jenkins/job/forked-dependencies/job/wso2-charon/badge/icon)](https://wso2.org/jenkins/job/forked-dependencies/job/wso2-charon/) |
+
 WSO2 Charon is an open source implementation of SCIM protocol which is an open standard for Identity Provisioning. Charon comes under Apache 2.0 license. It can be used by any one who wants to add SCIM-based provisioning support for their applications. WSO2 Charon is integrated with WSO2 Identity Server. 
 <p align="center">
 <img align="middle" src="https://github.com/Vindulamj/Charon-3.0/blob/master/logo.png"  width="350px" height = "120px">
