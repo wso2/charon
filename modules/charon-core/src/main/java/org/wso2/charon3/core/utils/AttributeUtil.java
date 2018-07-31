@@ -55,7 +55,7 @@ public class AttributeUtil {
                 attributeStringValue = String.valueOf(attributeValue);
             } else if (attributeValue instanceof Double) {
                 attributeStringValue = String.valueOf(attributeValue);
-            } else if (JSONObject.NULL.equals(attributeValue)){
+            } else if (JSONObject.NULL.equals(attributeValue)) {
                 attributeStringValue = "";
             } else {
                 attributeStringValue = (String) attributeValue;
