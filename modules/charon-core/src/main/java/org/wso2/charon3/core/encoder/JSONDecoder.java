@@ -117,7 +117,7 @@ public class JSONDecoder {
                     if (!attributeSchema.getMultiValued()) {
                         if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
                                 attributeValObj instanceof Integer ||
-                                JSONObject.NULL.equals(attributeValObj) ||attributeValObj == null) {
+                                JSONObject.NULL.equals(attributeValObj) || attributeValObj == null) {
                             //If an attribute is passed without a value, no need to save it.
                             if (attributeValObj == null) {
                                 continue;
