@@ -15,6 +15,8 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
@@ -56,6 +58,8 @@ import java.util.Map;
  */
 
 public class GroupResourceManager extends AbstractResourceManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(GroupResourceManager.class);
 
     /*
      * Retrieves a group resource given an unique group id. Mapped to HTTP GET request.
@@ -286,7 +290,16 @@ public class GroupResourceManager extends AbstractResourceManager {
                 try {
                     totalResults = (int) tempList.get(0);
                     tempList.remove(0);
-                } catch (IndexOutOfBoundsException | ClassCastException ex) {
+                } catch (IndexOutOfBoundsException e) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Group result list is empty.");
+                    }
+                    totalResults = tempList.size();
+                } catch (ClassCastException ex) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Parse error while getting the group result count. Setting result count as: " +
+                                     tempList.size(), ex);
+                    }
                     totalResults = tempList.size();
                 }
                 returnedGroups = tempList;

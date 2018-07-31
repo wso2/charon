@@ -307,7 +307,14 @@ public class UserResourceManager extends AbstractResourceManager {
                 try {
                     totalResults = (int) tempList.get(0);
                     tempList.remove(0);
-                } catch (IndexOutOfBoundsException | ClassCastException ex) {
+                } catch (IndexOutOfBoundsException e) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Group result list is empty.");
+                    }
+                    totalResults = tempList.size();
+                } catch (ClassCastException ex) {
+                    logger.debug("Parse error while getting the user result count. Setting result count as: " +
+                                 tempList.size(), ex);
                     totalResults = tempList.size();
                 }
 
