@@ -64,12 +64,13 @@ public interface ResourceManager {
      * @param count
      * @param sortBy
      * @param sortOrder
+     * @param domainName
      * @param attributes
      * @param excludeAttributes
      * @return
      */
     public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder,
+                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
                                     String attributes, String excludeAttributes);
 
     /*

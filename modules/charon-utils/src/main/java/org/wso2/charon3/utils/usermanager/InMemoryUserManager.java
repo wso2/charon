@@ -81,7 +81,7 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public List<Object> listUsersWithGET(Node rootNode, int startIndex, int count, String sortBy,
-                                         String sortOrder, Map<String, Boolean> requiredAttributes)
+                                         String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
@@ -115,7 +115,8 @@ public class InMemoryUserManager implements UserManager {
     public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         return listUsersWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getSortBy(), searchRequest.getSortOder(), requiredAttributes);
+                searchRequest.getSortBy(), searchRequest.getSortOder(), searchRequest.getDomainName(),
+                requiredAttributes);
     }
 
     @Override
@@ -181,8 +182,8 @@ public class InMemoryUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy,
-                                          String sortOrder, Map<String, Boolean> requiredAttributes)
+    public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
+                                          String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
@@ -225,7 +226,9 @@ public class InMemoryUserManager implements UserManager {
     @Override
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException {
-        return listGroupsWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getSortBy(), searchRequest.getSortOder(), requiredAttributes);
+
+        return listGroupsWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(),
+                searchRequest.getCount(), searchRequest.getSortBy(), searchRequest.getSortOder(),
+                searchRequest.getDomainName(), requiredAttributes);
     }
 }

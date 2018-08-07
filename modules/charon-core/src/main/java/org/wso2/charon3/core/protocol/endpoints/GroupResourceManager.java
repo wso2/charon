@@ -219,13 +219,14 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @param count
      * @param sortBy
      * @param sortOrder
+     * @param domainName
      * @param attributes
      * @param excludeAttributes
      * @return
      */
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex,
-                                    int count, String sortBy, String sortOrder,
+                                    int count, String sortBy, String sortOrder, String domainName,
                                     String attributes, String excludeAttributes) {
 
         //According to SCIM 2.0 spec minus values will be considered as 0
@@ -276,7 +277,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //API group should pass a usermanager usermanager to GroupResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
-                        sortBy, sortOrder, requiredAttributes);
+                        sortBy, sortOrder, domainName, requiredAttributes);
 
                 totalResults = (int) tempList.get(0);
                 tempList.remove(0);
