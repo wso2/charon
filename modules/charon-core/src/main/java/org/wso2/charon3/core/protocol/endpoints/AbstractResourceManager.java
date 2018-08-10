@@ -34,9 +34,9 @@ import java.util.Map;
  */
 public abstract class AbstractResourceManager implements ResourceManager {
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractResourceManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractResourceManager.class);
 
-  private static JSONEncoder encoder = new JSONEncoder();
+    private static JSONEncoder encoder = new JSONEncoder();
 
     private static JSONDecoder decoder = new JSONDecoder();
 
