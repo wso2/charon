@@ -114,6 +114,7 @@ public class InMemoryUserManager implements UserManager {
     @Override
     public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
+
         return listUsersWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
                 searchRequest.getSortBy(), searchRequest.getSortOder(), searchRequest.getDomainName(),
                 requiredAttributes);

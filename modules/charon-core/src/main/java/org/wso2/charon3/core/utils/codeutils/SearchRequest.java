@@ -147,9 +147,9 @@ public class SearchRequest {
         return excludedAttributes;
     }
 
-    public void setDomainName(String domainName) {
+    public void setDomainName(String domain) {
 
-        this.domainName = domainName;
+        this.domainName = domain;
     }
 
     public String getDomainName() {

@@ -615,6 +615,7 @@ public class JSONDecoder {
             searchRequest.setSchema((String) schemas.get(0));
             searchRequest.setCountStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.COUNT));
             searchRequest.setStartIndexStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX));
+            searchRequest.setDomainName(decodedJsonObj.optString(SCIMConstants.OperationalConstants.DOMAIN));
             searchRequest.setFilter(rootNode);
             if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")) {
                 searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
