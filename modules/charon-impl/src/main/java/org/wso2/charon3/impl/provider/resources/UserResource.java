@@ -195,7 +195,9 @@ public class UserResource extends AbstractResource {
                             @ApiParam(value = SCIMProviderConstants.SORT_BY_DESC, required = false)
                             @QueryParam(SCIMProviderConstants.SORT_BY) String sortBy,
                             @ApiParam(value = SCIMProviderConstants.SORT_ORDER_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.SORT_ORDER) String sortOrder)
+                            @QueryParam(SCIMProviderConstants.SORT_ORDER) String sortOrder,
+                            @ApiParam(value = SCIMProviderConstants.DOMAIN_DESC, required = false)
+                            @QueryParam(SCIMProviderConstants.DOMAIN) String domainName)
             throws FormatNotSupportedException, CharonException {
 
         try {
@@ -206,7 +208,7 @@ public class UserResource extends AbstractResource {
             UserResourceManager userResourceManager = new UserResourceManager();
 
             SCIMResponse scimResponse = userResourceManager.listWithGET(userManager, filter, startIndex, count,
-                    sortBy, sortOrder, attribute, excludedAttributes);
+                    sortBy, sortOrder, domainName, attribute, excludedAttributes);
 
             return buildResponse(scimResponse);
 

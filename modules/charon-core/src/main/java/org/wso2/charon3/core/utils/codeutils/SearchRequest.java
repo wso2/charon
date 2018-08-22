@@ -39,6 +39,7 @@ public class SearchRequest {
     private Node filter;
     private String sortBy;
     private String sortOder;
+    private String domainName;
 
     public String getCountStr() {
         return countStr;
@@ -144,5 +145,15 @@ public class SearchRequest {
             return null;
         }
         return excludedAttributes;
+    }
+
+    public void setDomainName(String domain) {
+
+        this.domainName = domain;
+    }
+
+    public String getDomainName() {
+
+        return domainName;
     }
 }
