@@ -203,7 +203,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants
                                 .PHONE_NUMBERS_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants
                                 .PHONE_NUMBERS_PRIMARY_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
