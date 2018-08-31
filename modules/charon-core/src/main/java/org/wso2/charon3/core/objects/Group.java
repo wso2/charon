@@ -126,24 +126,33 @@ public class Group extends AbstractSCIMObject {
 
     /*
      * set a member to the group
-     * @param userId
-     * @param userName
+     * @param value
+     * @param display
      * @throws BadRequestException
      * @throws CharonException
      */
-    public void setMember(String userId, String userName) throws BadRequestException, CharonException {
-        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
-                    SCIMConstants.GroupSchemaConstants.MEMBERS);
-            ComplexAttribute complexAttribute = setMemberCommon(userId, userName);
-            members.setAttributeValue(complexAttribute);
-        } else {
-            MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
-            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
-            ComplexAttribute complexAttribute = setMemberCommon(userId, userName);
-            members.setAttributeValue(complexAttribute);
-            this.setAttribute(members);
+    public void setMember(String value, String display) throws BadRequestException, CharonException {
+        setMember(value, display, null, null);
+    }
+
+    /*
+     * set a member to the group
+     * @param value
+     * @param display
+     * @param ref
+     * @param type
+     * @throws BadRequestException
+     * @throws CharonException
+     */
+    public void setMember(String value, String display, String ref, String type) throws BadRequestException, CharonException {
+        if (!this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+          MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+          DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
+          this.setAttribute(members);
         }
+        MultiValuedAttribute members = (MultiValuedAttribute) this.getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+        ComplexAttribute complexAttribute = setMemberCommon(value, display, ref, type);
+        members.setAttributeValue(complexAttribute);
     }
 
     /*
@@ -154,7 +163,7 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    private ComplexAttribute setMemberCommon(String userId, String userName)
+    private ComplexAttribute setMemberCommon(String userId, String userName, String ref, String type)
             throws BadRequestException, CharonException {
         ComplexAttribute complexAttribute = new ComplexAttribute();
         complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS + "_" + userId + SCIMConstants.DEFAULT);
@@ -167,8 +176,20 @@ public class Group extends AbstractSCIMObject {
         DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
 
+        SimpleAttribute refSimpleAttribute = new SimpleAttribute(
+                SCIMConstants.CommonSchemaConstants.REF, ref);
+        DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, refSimpleAttribute);
+
+        SimpleAttribute typeSimpleAttribute = new SimpleAttribute(
+                SCIMConstants.CommonSchemaConstants.TYPE, type);
+                DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.TYPE, typeSimpleAttribute);
+
         complexAttribute.setSubAttribute(valueSimpleAttribute);
         complexAttribute.setSubAttribute(displaySimpleAttribute);
+        complexAttribute.setSubAttribute(refSimpleAttribute);
+        complexAttribute.setSubAttribute(typeSimpleAttribute);
         DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);
         return  complexAttribute;
