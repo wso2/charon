@@ -144,13 +144,14 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    public void setMember(String value, String display, String ref, String type) throws BadRequestException, CharonException {
-        if (!this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+    public void setMember(String value, String display, String ref, String type) 
+           throws BadRequestException, CharonException {
+        if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
           MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
           DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
-          this.setAttribute(members);
+          setAttribute(members);
         }
-        MultiValuedAttribute members = (MultiValuedAttribute) this.getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+        MultiValuedAttribute members = (MultiValuedAttribute) getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
         ComplexAttribute complexAttribute = setMemberCommon(value, display, ref, type);
         members.setAttributeValue(complexAttribute);
     }
