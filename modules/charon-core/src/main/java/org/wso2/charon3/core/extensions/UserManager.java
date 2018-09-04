@@ -46,9 +46,18 @@ public interface UserManager {
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
+    default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
                                          String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException;
+            throws CharonException, NotImplementedException, BadRequestException {
+        return null;
+    }
+
+    @Deprecated
+    default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
+                                         Map<String, Boolean> requiredAttributes)
+            throws CharonException, NotImplementedException, BadRequestException {
+        return listUsersWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
+    }
 
     public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
@@ -80,9 +89,18 @@ public interface UserManager {
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    public List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
+    default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
                                           String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException;
+            throws CharonException, NotImplementedException, BadRequestException {
+        return null;
+    }
+
+    @Deprecated
+    default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
+                                          String sortOrder, Map<String, Boolean> requiredAttributes)
+            throws CharonException, NotImplementedException, BadRequestException {
+        return listGroupsWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
+    }
 
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
