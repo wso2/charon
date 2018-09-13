@@ -31,6 +31,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
+import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
@@ -75,6 +76,94 @@ public class JSONDecoder {
 
     public JSONDecoder() {
 
+    }
+
+  /**
+   * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
+   * {@link ListedResource} object that holds the parsed objects
+   *
+   * @param scimResourceString the listed resource string
+   * @param resourceSchema the schema of the resource objects that should be present.
+   * @param scimObjectType the type of the scim resources
+   * @param <T> a {@link AbstractSCIMObject} type as {@link Group} or {@link User}
+   * @return the listed resource objecz
+   * @throws BadRequestException if the json could not be parsed
+   * @throws CharonException if a value of the json contains data in an unexpected format or type
+   */
+    public <T extends AbstractSCIMObject> ListedResource<T> decodeToListedResource(String scimResourceString,
+                                                                                   ResourceTypeSchema resourceSchema,
+                                                                                   Class<T> scimObjectType)
+        throws BadRequestException, CharonException {
+
+        JSONObject decodedJsonObj;
+        try {
+            decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+        } catch (JSONException e) {
+            logger.error("json error in decoding the resource", e);
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        int totalResults = getIntValueFromJson(decodedJsonObj,
+                                               SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
+        int startIndex = getIntValueFromJson(decodedJsonObj,
+                                             SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+        int itemsPerPage = getIntValueFromJson(decodedJsonObj,
+                                               SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
+
+        ListedResource<T> listedResource = new ListedResource<>();
+        listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        listedResource.setTotalResults(totalResults);
+        listedResource.setStartIndex(startIndex);
+        listedResource.setItemsPerPage(itemsPerPage);
+
+        JSONArray resources = null;
+        try {
+            resources = decodedJsonObj.getJSONArray(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+        } catch (JSONException e) {
+            logger.error("could not get '{}' from json structure",
+                         SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+        }
+
+        for (int i = 0; i < resources.length(); i++) {
+            JSONObject resource;
+            try {
+                resource = resources.getJSONObject(i);
+            } catch (JSONException e) {
+                logger.error("could not get '{}' from json structure",
+                             SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+                throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+            }
+            try {
+                T abstractSCIMObject = decodeResource(resource.toString(),
+                                                      resourceSchema,
+                                                      scimObjectType.newInstance());
+                listedResource.addResource(abstractSCIMObject);
+                listedResource.setResources(abstractSCIMObject.getAttributeList());
+            } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
+                throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
+            }
+        }
+        return listedResource;
+    }
+
+
+    /**
+     * retrieves an int value from the given {@link JSONObject}
+     * @param jsonObject the jsonObject that might hold an int-value under the given key
+     * @param name the name of the attribute in the json structure that should be retrieved as int
+     * @return the int value of the key
+     * @throws CharonException if the value under the given key is not an int value
+     */
+    private int getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+        int totalResults;
+        try {
+            totalResults = jsonObject.getInt(name);
+        } catch (JSONException e) {
+            logger.error("could not get '{}' value from scim resource", name);
+            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+        }
+        return totalResults;
     }
 
     /**
