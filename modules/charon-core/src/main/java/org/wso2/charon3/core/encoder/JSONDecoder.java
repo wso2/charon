@@ -120,9 +120,9 @@ public class JSONDecoder {
         try {
             resources = decodedJsonObj.getJSONArray(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
         } catch (JSONException e) {
-            logger.error("could not get '{}' from json structure",
-                         SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
-            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+          logger.debug("could not get '{}' from json structure, result is empty",
+                       SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+          return listedResource;
         }
 
         for (int i = 0; i < resources.length(); i++) {
