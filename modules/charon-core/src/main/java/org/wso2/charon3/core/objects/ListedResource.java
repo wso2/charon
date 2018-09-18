@@ -18,29 +18,17 @@ package org.wso2.charon3.core.objects;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
-import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Represents the listed resource object which is a collection of resources.
  **/
 
-public class ListedResource implements SCIMObject {
+public class ListedResource extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /**
-     * List of schemas which the resource is associated with
-     */
-    protected List<String> schemaList = new ArrayList<String>();
-    /**
-     * Collection of attributes which constitute this resource.
-     */
-    protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
     /**
      * @return the total results value of this listed resource
@@ -138,34 +126,6 @@ public class ListedResource implements SCIMObject {
         }
     }
 
-    @Override
-    public Attribute getAttribute(String attributeName) throws NotFoundException {
-        return null;
-    }
-
-    @Override
-    public void deleteAttribute(String attributeName) throws NotFoundException {
-
-    }
-
-    @Override
-    public List<String> getSchemaList() {
-        return schemaList;
-    }
-
-    public void setSchemaList(List<String> schemaList) {
-        this.schemaList = schemaList;
-    }
-
-    @Override
-    public Map<String, Attribute> getAttributeList() {
-        return attributeList;
-    }
-
-    public void setSchema(String schema) {
-        schemaList.add(schema);
-    }
-
     /**
      * set the listed resources
      *
@@ -181,9 +141,5 @@ public class ListedResource implements SCIMObject {
             ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
                 .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
         }
-    }
-
-    protected boolean isAttributeExist(String attributeName) {
-        return attributeList.containsKey(attributeName);
     }
 }
