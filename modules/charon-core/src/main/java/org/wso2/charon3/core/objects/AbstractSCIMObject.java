@@ -202,6 +202,20 @@ public class AbstractSCIMObject implements SCIMObject {
     }
 
     /*
+     * Set a String that is an identifier for the resource as defined by the
+     * provisioning client.
+     *
+     * @param externalId identifier for the SCIM Resource as defined by the provisioning client.
+     * @throws BadRequestException
+     */
+    public void setExternalId(String externalId) throws CharonException, BadRequestException {
+        SimpleAttribute externalIdAttribute = new SimpleAttribute(
+                SCIMConstants.CommonSchemaConstants.EXTERNAL_ID, externalId);
+        DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.EXTERNAL_ID, externalIdAttribute);
+        this.setAttribute(externalIdAttribute);
+    }
+
+    /*
      * set the created date and time of the resource
      *
      * @param createdDate
@@ -304,6 +318,23 @@ public class AbstractSCIMObject implements SCIMObject {
                     SCIMConstants.CommonSchemaConstants.ID)).getStringValue();
         } else {
             return null;
+        }
+    }
+
+    /*
+     * Get the value of externalId attribute.
+     * String that is an identifier for the resource as defined by the
+     * provisioning client.
+     *
+     * @return String
+     */
+    public String getExternalId() throws CharonException {
+        SimpleAttribute externalId = (SimpleAttribute) getAttribute(
+            SCIMConstants.CommonSchemaConstants.EXTERNAL_ID);
+        if (externalId == null) {
+            return null;
+        } else {
+            return externalId.getStringValue();
         }
     }
 
