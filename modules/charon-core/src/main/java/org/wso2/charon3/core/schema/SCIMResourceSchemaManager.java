@@ -42,7 +42,7 @@ public class SCIMResourceSchemaManager {
     public SCIMResourceTypeSchema getUserResourceSchema() {
 
 
-        SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension != null) {
             return SCIMResourceTypeSchema.createSCIMResourceSchema(
                     new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI, schemaExtension.getURI())),
@@ -79,7 +79,7 @@ public class SCIMResourceSchemaManager {
      * @return
      */
     public Boolean isExtensionSet() {
-        SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension != null) {
             return true;
         } else {
@@ -93,7 +93,7 @@ public class SCIMResourceSchemaManager {
      * @return
      */
     public String getExtensionName() {
-        SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return null;
         }
@@ -106,7 +106,7 @@ public class SCIMResourceSchemaManager {
      * @return
      */
     public String getExtensionURI() {
-        SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return null;
         }
@@ -119,7 +119,7 @@ public class SCIMResourceSchemaManager {
      * @return
      */
     public boolean getExtensionRequired() {
-        SCIMAttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return false;
         }

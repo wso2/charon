@@ -15,6 +15,21 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DATE_TIME;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +52,6 @@ import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
-import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
@@ -47,21 +61,6 @@ import org.wso2.charon3.core.utils.codeutils.FilterTreeManager;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DATE_TIME;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 
 /**
  * This decodes the json encoded resource string and create a SCIM object model according to the specification
@@ -308,8 +307,8 @@ public class JSONDecoder {
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         //list of sub attributes of the complex attribute
-        List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
+        List<AttributeSchema> subAttributeSchemas =
+                ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
@@ -356,7 +355,7 @@ public class JSONDecoder {
                     SCIMResourceSchemaManager.getInstance().getExtensionName())) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
-                    List<SCIMAttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
+                    List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
                     for (AttributeSchema attributeSchema : subList) {
                         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             String error = "Complex attribute can not have complex sub attributes";
@@ -442,10 +441,10 @@ public class JSONDecoder {
 
         ComplexAttribute complexAttribute = new ComplexAttribute(attributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
-        List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+        List<AttributeSchema> subAttributeSchemas =
+                ((AttributeSchema) attributeSchema).getSubAttributeSchemas();
 
-        for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
+        for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
             //setting up a name for the complex attribute for the reference purpose
             if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {

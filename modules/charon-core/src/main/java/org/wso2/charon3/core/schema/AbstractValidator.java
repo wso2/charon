@@ -86,11 +86,11 @@ public abstract class AbstractValidator {
                                                                    AttributeSchema attributeSchema) throws
             CharonException, BadRequestException {
         if (attribute != null) {
-            List<SCIMAttributeSchema> subAttributesSchemaList =
-                    ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+            List<AttributeSchema> subAttributesSchemaList =
+                    ((AttributeSchema) attributeSchema).getSubAttributeSchemas();
 
             if (subAttributesSchemaList != null) {
-                for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
+                for (AttributeSchema subAttributeSchema : subAttributesSchemaList) {
                     if (subAttributeSchema.getRequired()) {
 
                         if (attribute instanceof ComplexAttribute) {
@@ -126,8 +126,7 @@ public abstract class AbstractValidator {
                             }
                         }
                     }
-                    List<SCIMAttributeSchema> subSubAttributesSchemaList =
-                            ((SCIMAttributeSchema) subAttributeSchema).getSubAttributeSchemas();
+                    List<AttributeSchema> subSubAttributesSchemaList = subAttributeSchema.getSubAttributeSchemas();
                     if (subSubAttributesSchemaList != null) {
                         validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema);
                     }
@@ -198,10 +197,9 @@ public abstract class AbstractValidator {
     private static void removeAnyReadOnlySubAttributes(Attribute attribute,
                                                        AttributeSchema attributeSchema) throws CharonException {
         if (attribute != null) {
-            List<SCIMAttributeSchema> subAttributesSchemaList =
-                    ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+            List<AttributeSchema> subAttributesSchemaList = attributeSchema.getSubAttributeSchemas();
             if (subAttributesSchemaList != null && !subAttributesSchemaList.isEmpty()) {
-                for (SCIMAttributeSchema subAttributeSchema : subAttributesSchemaList) {
+                for (AttributeSchema subAttributeSchema : subAttributesSchemaList) {
                     if (subAttributeSchema.getMutability() == SCIMDefinitions.Mutability.READ_ONLY) {
                         if (attribute instanceof ComplexAttribute) {
                             if (attribute.getSubAttribute(subAttributeSchema.getName()) != null) {
@@ -809,7 +807,7 @@ public abstract class AbstractValidator {
         //check for sub attributes.
         AbstractAttribute newAttribute = (AbstractAttribute) newAttributeList.get(attributeSchema.getName());
         AbstractAttribute oldAttribute = (AbstractAttribute) oldAttributeList.get(attributeSchema.getName());
-        List<SCIMAttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
+        List<AttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
 
         if (subAttributeSchemaList != null) {
             if (SCIMResourceSchemaManager.getInstance().getExtensionName() != null) {
@@ -925,7 +923,7 @@ public abstract class AbstractValidator {
      * @throws BadRequestException
      */
     private static void checkIfReadOnlyAndImmutableExtensionAttributesModified(
-            List<SCIMAttributeSchema> subAttributeSchemaList, AbstractAttribute newAttribute,
+            List<AttributeSchema> subAttributeSchemaList, AbstractAttribute newAttribute,
             AbstractAttribute oldAttribute) throws CharonException, BadRequestException {
 
         Map<String, Attribute> newAttributeList = new HashMap<String, Attribute>();
@@ -1051,7 +1049,7 @@ public abstract class AbstractValidator {
      * @throws BadRequestException
      */
     private static void checkForReadOnlyAndImmutableInComplexAttributes(Attribute newAttribute, Attribute oldAttribute,
-                                                                        List<SCIMAttributeSchema> subAttributeSchemaList
+                                                                        List<AttributeSchema> subAttributeSchemaList
     ) throws CharonException, BadRequestException {
         //this is complex attribute case
         Map<String, Attribute> newSubAttributeList = ((ComplexAttribute) (newAttribute)).getSubAttributesList();
@@ -1125,7 +1123,7 @@ public abstract class AbstractValidator {
                 }
             } else if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                 //this is only valid for extension schema
-                List<SCIMAttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
+                List<AttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
                 for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
                     if (subAttributeSchema.getMultiValued() &&
                             subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
