@@ -54,6 +54,7 @@ public class ListedResource implements SCIMObject {
      * @param totalResults
      */
     public void setTotalResults(int totalResults) {
+        this.totalResults = totalResults;
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS)) {
             SimpleAttribute totalResultsAttribute =
                     new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResults);
