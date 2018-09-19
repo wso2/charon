@@ -37,7 +37,7 @@ import java.util.Map;
 public class Group extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /*
+    /**
      * get the display name of the group
      * @return
      * @throws CharonException
@@ -51,7 +51,7 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
      * set the display name of the group
      * @param displayName
      * @throws CharonException
@@ -70,7 +70,14 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
+     * deletes the current value of displayname and exchanges it with the given value
+     */
+    public void replaceDisplayName(String displayname) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayname);
+    }
+
+    /**
      * get the members of the group
      * @return
      */
