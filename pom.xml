@@ -280,8 +280,8 @@
         <bundle.plugin.version>1.4.0</bundle.plugin.version>
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
 
-        <src.java.version>1.7</src.java.version>
-        <target.java.version>1.7</target.java.version>
+        <src.java.version>1.8</src.java.version>
+        <target.java.version>1.8</target.java.version>
         <msf4j.version>2.1.0</msf4j.version>
         <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
         <log4j.version>1.2.16</log4j.version>
