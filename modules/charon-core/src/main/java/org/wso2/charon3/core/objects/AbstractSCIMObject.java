@@ -39,7 +39,7 @@ import java.util.Map;
  * These attributes MUST be included in all other objects which become SCIM resources.
  */
 
-public class AbstractSCIMObject implements SCIMObject {
+public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
     /*Collection of attributes which constitute this resource.*/
@@ -293,21 +293,6 @@ public class AbstractSCIMObject implements SCIMObject {
     }
 
     /*
-     * Get the value of id attribute.
-     * Unique identifier for the SCIM Resource as defined by the Service Provider.
-     *
-     * @return String
-     */
-    public String getId() throws CharonException {
-        if (isAttributeExist(SCIMConstants.CommonSchemaConstants.ID)) {
-            return ((SimpleAttribute) attributeList.get(
-                    SCIMConstants.CommonSchemaConstants.ID)).getStringValue();
-        } else {
-            return null;
-        }
-    }
-
-    /*
      * set the location of the meta attribute
      *
      * @param location
@@ -363,16 +348,6 @@ public class AbstractSCIMObject implements SCIMObject {
             createMetaAttribute();
             getMetaAttribute().setSubAttribute(resourceTypeAttribute);
 
-        }
-    }
-
-    public String getLocation() throws CharonException {
-        if (this.isMetaAttributeExist()) {
-            SimpleAttribute location = (SimpleAttribute) this.getMetaAttribute().getSubAttribute
-                    (SCIMConstants.CommonSchemaConstants.LOCATION);
-            return location != null ? location.getStringValue() : null;
-        } else {
-            return null;
         }
     }
 
@@ -582,4 +557,12 @@ public class AbstractSCIMObject implements SCIMObject {
         return complexValue;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractSCIMObject getResource() {
+        return this;
+    }
 }
