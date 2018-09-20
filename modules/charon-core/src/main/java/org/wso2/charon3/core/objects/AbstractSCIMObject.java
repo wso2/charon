@@ -15,6 +15,13 @@
  */
 package org.wso2.charon3.core.objects;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -26,12 +33,6 @@ import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -220,10 +221,20 @@ public class AbstractSCIMObject implements SCIMObject {
      *
      * @param createdDate
      */
+    @Deprecated
     public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
+        setCreatedInstant(createdDate == null ? null : createdDate.toInstant());
+    }
+
+    /*
+     * set the created date and time of the resource
+     *
+     * @param createdDate
+     */
+    public void setCreatedInstant(Instant created) throws CharonException, BadRequestException {
         //create the created date attribute as defined in schema.
         SimpleAttribute createdDateAttribute = new SimpleAttribute(
-                SCIMConstants.CommonSchemaConstants.CREATED, createdDate);
+                SCIMConstants.CommonSchemaConstants.CREATED, created);
         createdDateAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.CREATED, createdDateAttribute);
         //check meta complex attribute already exist.
@@ -251,11 +262,21 @@ public class AbstractSCIMObject implements SCIMObject {
      *
      * @param lastModifiedDate
      */
+    @Deprecated
     public void setLastModified(Date lastModifiedDate) throws CharonException, BadRequestException {
+        setLastModifiedInstant(lastModifiedDate == null ? null : lastModifiedDate.toInstant());
+    }
+
+    /*
+     * set the last modified date and time of the resource
+     *
+     * @param lastModifiedDate
+     */
+    public void setLastModifiedInstant(Instant lastModified) throws CharonException, BadRequestException {
         //create the lastModified date attribute as defined in schema.
         SimpleAttribute lastModifiedAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.LAST_MODIFIED,
-                new SimpleAttribute(SCIMConstants.CommonSchemaConstants.LAST_MODIFIED, lastModifiedDate));
+                new SimpleAttribute(SCIMConstants.CommonSchemaConstants.LAST_MODIFIED, lastModified));
 
         //check meta complex attribute already exist.
         if (getMetaAttribute() != null) {
@@ -407,19 +428,31 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
+    @Deprecated
     public Date getCreatedDate() throws CharonException {
+        Instant created = getCreatedInstant();
+        return created != null ? new Date(created.toEpochMilli()) : null;
+    }
+
+    public Instant getCreatedInstant() throws CharonException {
         if (this.isMetaAttributeExist()) {
             SimpleAttribute createdDate = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("created");
-            return createdDate != null ? createdDate.getDateValue() : null;
+            return createdDate != null ? createdDate.getInstantValue() : null;
         } else {
             return null;
         }
     }
 
+    @Deprecated
     public Date getLastModified() throws CharonException {
+        Instant lastModified = getLastModifiedInstant();
+        return lastModified != null ? new Date(lastModified.toEpochMilli()) : null;
+    }
+
+    public Instant getLastModifiedInstant() throws CharonException {
         if (this.isMetaAttributeExist()) {
-            SimpleAttribute createdDate = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("lastModified");
-            return createdDate != null ? createdDate.getDateValue() : null;
+            SimpleAttribute lastModified = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("lastModified");
+            return lastModified != null ? lastModified.getInstantValue() : null;
         } else {
             return null;
         }

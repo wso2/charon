@@ -15,13 +15,13 @@
  */
 package org.wso2.charon3.core.attributes;
 
+import java.time.Instant;
+
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
-
-import java.util.Date;
 
 /**
  * Default implementation of AttributeFactory according to SCIM Schema spec.
@@ -111,7 +111,7 @@ public class DefaultAttributeFactory {
             case INTEGER:
                 return attributeValue instanceof Integer;
             case DATE_TIME:
-                return attributeValue instanceof Date;
+                return attributeValue instanceof Instant;
             case BINARY:
                 return attributeValue instanceof Byte[];
             case REFERENCE:

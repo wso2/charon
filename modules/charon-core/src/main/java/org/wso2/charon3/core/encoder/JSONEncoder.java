@@ -15,6 +15,12 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,12 +43,6 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This encodes the in the json format.
@@ -169,7 +169,7 @@ public class JSONEncoder {
             //if type is DateTime, convert before encoding.
             if (attribute.getType() != null && attribute.getType() == SCIMDefinitions.DataType.DATE_TIME) {
                 rootObject.put(attribute.getName(),
-                        AttributeUtil.formatDateTime((Date) attribute.getValue()));
+                        AttributeUtil.formatDateTime((Instant) attribute.getValue()));
                 return;
             }
             rootObject.put(attribute.getName(), attribute.getValue());
@@ -219,7 +219,7 @@ public class JSONEncoder {
             if (attributeValue.getType() != null &&
                     attributeValue.getType() == SCIMDefinitions.DataType.DATE_TIME) {
                 attributeValueObject.put(attributeValue.getName(),
-                        AttributeUtil.formatDateTime((Date) attributeValue.getValue()));
+                        AttributeUtil.formatDateTime((Instant) attributeValue.getValue()));
                 return;
             }
             attributeValueObject.put(attributeValue.getName(), attributeValue.getValue());
