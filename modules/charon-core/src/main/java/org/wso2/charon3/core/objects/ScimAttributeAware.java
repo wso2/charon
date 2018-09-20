@@ -401,6 +401,154 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * this method is used to compare to scim objects
+     *
+     * @param object the object to compare with this object
+     * @return true if both attributes do contain the same attributes and values
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (!ScimAttributeAware.class.isAssignableFrom(object.getClass())) {
+            return false;
+        }
+        ScimAttributeAware scimAttributeAware = (ScimAttributeAware) object;
+        if (!getResource().getSchemaList().equals(scimAttributeAware.getResource().getSchemaList())) {
+            return false;
+        }
+        if (!getResource().getAttributeList().keySet()
+                          .equals(scimAttributeAware.getResource().getAttributeList().keySet())) {
+
+            return false;
+        }
+
+        return getResource().getAttributeList().keySet().stream().allMatch(attributeName -> {
+            return attributesEquals(getResource().getAttribute(attributeName),
+                                    scimAttributeAware.getResource().getAttribute(attributeName));
+        });
+    }
+
+    /**
+     * checks that two given attributes are equals by running through their structure recursively
+     *
+     * @return true if the given attributes are equals, false else
+     */
+    public static boolean attributesEquals(Attribute attribute,
+                                           Attribute attributeOther) {
+        if (!attribute.getClass().equals(attributeOther.getClass())) {
+            return false;
+        }
+        if (!attributeMetaEquals(attribute, attributeOther)) {
+            return false;
+        }
+        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
+            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
+        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
+            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
+        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
+            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
+        }
+        return false;
+    }
+
+    /**
+     * tells us if the given two attributes do contain the same meta-data
+     *
+     * @return if the meta-data is identical
+     */
+    public static boolean attributeMetaEquals(Attribute attribute,
+                                              Attribute attributeOther) {
+        if (attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
+            return false;
+        }
+        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
+            return false;
+        }
+        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
+            return false;
+        }
+        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
+            return false;
+        }
+        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
+            return false;
+        }
+        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
+            return false;
+        }
+        if (!attribute.getURI().equals(attributeOther.getURI())) {
+            return false;
+        }
+        return attribute.getType().equals(attributeOther.getType());
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
+                                                SimpleAttribute attribute2) {
+        if (!attribute1.getValue().equals(attribute2.getValue())) {
+            return false;
+        }
+        return attributeMetaEquals(attribute1, attribute2);
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
+                                                     MultiValuedAttribute otherAttribute) {
+        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaEquals) {
+            return false;
+        }
+        if (attribute.getAttributePrimitiveValues().isEmpty()) {
+            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
+                return false;
+            }
+            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
+                return otherAttribute.getAttributeValues().stream().anyMatch(
+                    otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
+            });
+        } else {
+            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
+        }
+    }
+
+    /**
+     * tells us if two complex attributes are identical or not
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean complexAttributeEquals(ComplexAttribute attribute,
+                                                 ComplexAttribute otherAttribute) {
+        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaDataEquals) {
+            return false;
+        }
+
+        // @formatter:off
+        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
+            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
+                otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
+                                                       otherAttribute.getSubAttribute((String) otherAttributeName)))
+                .apply(oAttributeName));
+        });
+        // @formatter:on
+    }
+
+    @Override
+    public int hashCode() {
+        return getResource().getAttributeList().hashCode();
+    }
+
+    /**
      * tells us if this string is blank or not
      */
     protected boolean isBlank(String s) {
