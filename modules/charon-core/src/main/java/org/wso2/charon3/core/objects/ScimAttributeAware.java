@@ -155,6 +155,36 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * sets the created date into the given SCIM resource as localized date string based on the current system
+     * time
+     *
+     * @param createdTimestamp the UTC timestamp as long
+     */
+    public void replaceCreated(Long createdTimestamp)
+    {
+        SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
+        SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
+        ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
+        Date created = new Date(createdTimestamp);
+        getSetSubAttributeConsumer(meta).accept(createdDefinition, () -> created);
+    }
+
+    /**
+     * sets the last modified timestamp date into the given SCIM resource as localized date string based on the
+     * current system time
+     *
+     * @param lastModifiedTimestamp the UTC timestamp as long
+     */
+    public void replaceLastModified(Long lastModifiedTimestamp)
+    {
+        SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
+        SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
+        ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
+        Date lastModified = new Date(lastModifiedTimestamp);
+        getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition, () -> lastModified);
+    }
+
+    /**
      * @return the last modified timestamp as {@link LocalDateTime} of the SCIM {@link #getResource()}
      */
     public LocalDateTime getLastModifiedDateTime() {
@@ -170,6 +200,19 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * @return the created timestamp as long of the SCIM {@link #getResource()}
+     */
+    public Long getLastModifiedLong()
+    {
+        SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
+        SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
+        return getComplexAttribute(metaDefinition).map(meta ->
+                  getSimpleAttribute(lastModifiedDefinition, meta)
+                     .map(rethrowFunction(simpleAttribute -> simpleAttribute.getDateValue().getTime())).orElse(null))
+               .orElse(null);
+    }
+
+    /**
      * sets the last modified date into the given SCIM resource
      *
      * @param lastModifiedDateTime the java local date time representaiton
@@ -181,6 +224,8 @@ public abstract class ScimAttributeAware {
         Date lastModified = Date.from(lastModifiedDateTime.atZone(ZoneId.systemDefault()).toInstant());
         getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition, () -> lastModified);
     }
+
+
 
     /**
      * gets a {@link SimpleAttribute} from the given {@link #getResource()} object
