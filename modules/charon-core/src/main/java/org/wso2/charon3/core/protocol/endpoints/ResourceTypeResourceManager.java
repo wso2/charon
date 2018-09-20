@@ -135,7 +135,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
-                                    String sortOrder, String attributes, String excludeAttributes) {
+                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);

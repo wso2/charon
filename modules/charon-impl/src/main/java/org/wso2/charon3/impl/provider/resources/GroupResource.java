@@ -262,19 +262,21 @@ public class GroupResource extends AbstractResource {
             @ApiResponse(code = 404, message = "Valid groups are not found")})
 
     public Response getGroup(@ApiParam(value = SCIMProviderConstants.ATTRIBUTES_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.ATTRIBUTES) String attribute,
-                            @ApiParam(value = SCIMProviderConstants.EXCLUDED_ATTRIBUTES_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.EXCLUDE_ATTRIBUTES) String excludedAttributes,
-                            @ApiParam(value = SCIMProviderConstants.FILTER_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.FILTER) String filter,
-                            @ApiParam(value = SCIMProviderConstants.START_INDEX_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.START_INDEX) int startIndex,
-                            @ApiParam(value = SCIMProviderConstants.COUNT_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.COUNT) int count,
-                            @ApiParam(value = SCIMProviderConstants.SORT_BY_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.SORT_BY) String sortBy,
-                            @ApiParam(value = SCIMProviderConstants.SORT_ORDER_DESC, required = false)
-                            @QueryParam(SCIMProviderConstants.SORT_ORDER) String sortOrder)
+                             @QueryParam(SCIMProviderConstants.ATTRIBUTES) String attribute,
+                             @ApiParam(value = SCIMProviderConstants.EXCLUDED_ATTRIBUTES_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.EXCLUDE_ATTRIBUTES) String excludedAttributes,
+                             @ApiParam(value = SCIMProviderConstants.FILTER_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.FILTER) String filter,
+                             @ApiParam(value = SCIMProviderConstants.START_INDEX_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.START_INDEX) int startIndex,
+                             @ApiParam(value = SCIMProviderConstants.COUNT_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.COUNT) int count,
+                             @ApiParam(value = SCIMProviderConstants.SORT_BY_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.SORT_BY) String sortBy,
+                             @ApiParam(value = SCIMProviderConstants.SORT_ORDER_DESC, required = false)
+                             @QueryParam(SCIMProviderConstants.SORT_ORDER) String sortOrder,
+                             @ApiParam(value = SCIMProviderConstants.DOMAIN_DESC, required = false)
+                             @QueryParam(value = SCIMProviderConstants.DOMAIN) String domainName)
             throws FormatNotSupportedException, CharonException {
 
         try {
@@ -285,7 +287,7 @@ public class GroupResource extends AbstractResource {
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
             SCIMResponse scimResponse = groupResourceManager.listWithGET(userManager, filter, startIndex, count,
-                    sortBy, sortOrder, attribute, excludedAttributes);
+                    sortBy, sortOrder, domainName, attribute, excludedAttributes);
 
             return buildResponse(scimResponse);
 

@@ -655,6 +655,7 @@ public class SCIMConstants {
         public static final String SORT_BY = "sortBy";
         public static final String SORT_ORDER = "sortOrder";
         public static final String FILTER = "filter";
+        public static final String DOMAIN = "domain";
 
         //bulk constants
         public static final String METHOD = "method";

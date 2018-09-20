@@ -242,12 +242,13 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param count
      * @param sortBy
      * @param sortOrder
+     * @param domainName
      * @param attributes
      * @param excludeAttributes
      * @return
      */
     public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder,
+                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
                                     String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
@@ -298,7 +299,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
-                        sortBy, sortOrder, requiredAttributes);
+                        sortBy, sortOrder, domainName, requiredAttributes);
 
                 if (tempList == null) {
                     tempList = Collections.emptyList();
