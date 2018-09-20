@@ -130,7 +130,7 @@ public class User extends AbstractSCIMObject {
     /**
      * deletes the current value of user type and exchanges it with the given value
      */
-    public void setUserType(String userType) {
+    public void replaceUserType(String userType) {
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE, userType);
     }
 
@@ -147,7 +147,7 @@ public class User extends AbstractSCIMObject {
     /**
      * deletes the current value of title and exchanges it with the given value
      */
-    public void setTitle(String title) {
+    public void replaceTitle(String title) {
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE, title);
     }
 
@@ -165,6 +165,14 @@ public class User extends AbstractSCIMObject {
      * deletes the current value of preferred language and exchanges it with the given value
      */
     public void setPreferredLanguage(String preferredLanguage) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE, preferredLanguage);
+    }
+
+    /**
+     * deletes the preferred language attribute and exchanges it with the given value
+     * @param preferredLanguage the new preferred language
+     */
+    public void replacePreferredLanguage(String preferredLanguage) {
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE, preferredLanguage);
     }
 
@@ -199,6 +207,14 @@ public class User extends AbstractSCIMObject {
      * deletes the current value of timezone and exchanges it with the given value
      */
     public void setTimezone(String timezone) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE, timezone);
+    }
+
+    /**
+     * deletes the timezone attribute and exchanges it with the given value
+     * @param timezone the new timezone
+     */
+    public void replaceTimezone(String timezone) {
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE, timezone);
     }
 
@@ -575,6 +591,14 @@ public class User extends AbstractSCIMObject {
     public void setUserName(String userName) throws CharonException, BadRequestException {
         this.setSimpleAttribute(SCIMConstants.UserSchemaConstants.USER_NAME,
                                 SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
+    }
+
+    /**
+     * deletes the username attribute and exchanges it with the given value
+     * @param username the new username
+     */
+    public void replaceUserName(String username) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, username);
     }
 
     /**
