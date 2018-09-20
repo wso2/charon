@@ -505,7 +505,7 @@ public abstract class ScimAttributeAware {
      */
     public static boolean attributeMetaEquals(Attribute attribute,
                                               Attribute attributeOther) {
-        if (attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
+        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
             return false;
         }
         if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
