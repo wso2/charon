@@ -26,6 +26,7 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
+import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,10 @@ public class Group extends AbstractSCIMObject {
      * @return
      * @throws CharonException
      */
-    public String getDisplayName() throws CharonException {
+    public String getDisplayName() {
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
-            return ((SimpleAttribute) attributeList.get(
-                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue();
+            return LambdaExceptionUtils.rethrowSupplier(() -> ((SimpleAttribute) attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue()).get();
         } else {
             return null;
         }
