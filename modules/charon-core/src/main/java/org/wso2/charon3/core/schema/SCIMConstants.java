@@ -457,6 +457,7 @@ public class SCIMConstants {
         public static final String MEMBERS = "members";
         public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:members";
         public static final String DISPLAY = "display";
+        public static final String TYPE = "type";
 
         /*******Attributes descriptions of the attributes found in Group Schema.***************/
 
@@ -466,11 +467,13 @@ public class SCIMConstants {
         public static final String REF_DESC = "The uri corresponding to a SCIM resource that is a member of this " +
                 "Group.";
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
+        public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
 
         /*******URIs of sub and multivalued attributes.**************/
         public static final String VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.value";
         public static final String REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
         public static final String DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.display";
+        public static final String TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.type";
     }
 
     /**

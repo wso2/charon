@@ -857,6 +857,15 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        //A label indicating the type of resource, e.g. 'User' or 'Group'.
+        public static final SCIMAttributeSchema TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.TYPE_URI,
+                        SCIMConstants.GroupSchemaConstants.TYPE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.TYPE_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
     /*------------------------------------------------------------------------------------------------------*/
 
                 /* attribute schemas of the attributes defined in group schema. */
@@ -878,7 +887,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<SCIMAttributeSchema>(Arrays.asList
-                                (VALUE, REF, DISPLAY)));
+                                (VALUE, REF, DISPLAY, TYPE)));
     }
 
     /**
