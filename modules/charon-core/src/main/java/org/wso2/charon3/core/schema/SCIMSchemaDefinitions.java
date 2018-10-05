@@ -43,6 +43,14 @@ public class SCIMSchemaDefinitions {
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                     SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+    public static final SCIMAttributeSchema RESOURCE_TYPES =
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI,
+                    SCIMConstants.ListedResourceSchemaConstants.RESOURCES,
+                    SCIMDefinitions.DataType.STRING, false, SCIMConstants.CommonSchemaConstants.RESOURCE_TYPE_DESC,
+                    false, true,
+                    SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                    SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
     //The "DateTime" that the resource was added to the service provider.
     public static final SCIMAttributeSchema CREATED =
             SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.CREATED_URI,
@@ -1280,6 +1288,17 @@ public class SCIMSchemaDefinitions {
     /*
      * **********SCIM defined Resource Type Resource Schema.****************************
      */
+
+    public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPES_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
+                    SCIMResourceTypeSchemaDefinition.ID,
+                    SCIMResourceTypeSchemaDefinition.NAME,
+                    SCIMResourceTypeSchemaDefinition.ENDPOINT,
+                    SCIMResourceTypeSchemaDefinition.DESCRIPTION,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
+
 
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(

@@ -254,7 +254,15 @@ public class JSONEncoder {
         }
         if (stringAttributeValues != null && !stringAttributeValues.isEmpty()) {
             for (Object arrayValue : stringAttributeValues) {
-                jsonArray.put(arrayValue);
+                if (arrayValue instanceof SCIMObject) {
+                    try {
+                        jsonArray.put(getSCIMObjectAsJSONObject((SCIMObject) arrayValue));
+                    } catch (CharonException e) {
+                        throw new JSONException(e);
+                    }
+                } else {
+                    jsonArray.put(arrayValue);
+                }
             }
         }
         jsonObject.put(multiValuedAttribute.getName(), jsonArray);

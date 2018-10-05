@@ -153,4 +153,8 @@ public class SCIMResourceSchemaManager {
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
     }
 
+    public SCIMResourceTypeSchema getResourceTypesResourceSchema() {
+        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPES_SCHEMA;
+    }
+
 }

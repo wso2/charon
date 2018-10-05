@@ -27,6 +27,8 @@ import org.wso2.charon3.core.utils.AttributeUtil;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.wso2.charon3.core.schema.SCIMConstants.SCIM2_COMPLIANCE;
+
 /**
  * Server Side Validator.
  */
@@ -177,6 +179,11 @@ public class ServerSideValidator extends AbstractValidator {
                 (SCIMConstants.ResourceTypeSchemaConstants.NAME))).getValue());
         String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                 SCIMConstants.RESOURCE_TYPE_ENDPOINT), endpoint);
+        String specCompliance = System.getProperty(SCIM2_COMPLIANCE);
+        if (specCompliance != null && "true".equals(specCompliance)) {
+            location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
+                    SCIMConstants.RESOURCE_TYPES_ENDPOINT), endpoint);
+        }
         scimObject.setLocation(location);
         scimObject.setResourceType(SCIMConstants.RESOURCE_TYPE);
         return scimObject;
