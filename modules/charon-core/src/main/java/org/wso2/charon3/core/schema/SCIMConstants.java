@@ -49,7 +49,7 @@ public class SCIMConstants {
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
-    public static final String RESOURCE_TYPE_ENDPOINT = "/RESOURCE_TYPE";
+    public static final String RESOURCE_TYPE_ENDPOINT = "/RESOURCE_TYPES";
 
 
     //HTTP Headers used in SCIM request/response other than auth headers.
@@ -81,7 +81,7 @@ public class SCIMConstants {
         public static final String LOCATION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.location";
         public static final String VERSION = "version";
         public static final String VERSION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.version";
-
+        public static final String TOTAL_RESULTS = "totalResults";
         //characteristics of multi valued attribute
         public static final String TYPE = "type";
         public static final String PRIMARY = "primary";

@@ -1283,11 +1283,12 @@ public class SCIMSchemaDefinitions {
 
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    new ArrayList<String>(Arrays.asList(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI)), META,
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
                     SCIMResourceTypeSchemaDefinition.ID,
                     SCIMResourceTypeSchemaDefinition.NAME,
                     SCIMResourceTypeSchemaDefinition.ENDPOINT,
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
                     SCIMResourceTypeSchemaDefinition.SCHEMA,
                     SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
+
 }
