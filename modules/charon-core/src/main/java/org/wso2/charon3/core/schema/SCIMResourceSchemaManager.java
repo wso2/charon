@@ -144,17 +144,9 @@ public class SCIMResourceSchemaManager {
         return SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA;
     }
 
-    /*
-     * return resource type resource schema
-     *
-     * @return
-     */
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
-        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
-    }
 
-    public SCIMResourceTypeSchema getResourceTypesResourceSchema() {
-        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPES_SCHEMA;
+        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
     }
 
 }
