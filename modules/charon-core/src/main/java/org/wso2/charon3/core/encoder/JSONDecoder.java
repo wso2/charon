@@ -86,11 +86,11 @@ public class JSONDecoder {
    * @param resourceSchema the schema of the resource objects that should be present.
    * @param scimObjectType the type of the scim resources
    * @param <T> a {@link AbstractSCIMObject} type as {@link Group} or {@link User}
-   * @return the listed resource objecz
+   * @return the listed resource object
    * @throws BadRequestException if the json could not be parsed
    * @throws CharonException if a value of the json contains data in an unexpected format or type
    */
-    public <T extends AbstractSCIMObject> ListedResource<T> decodeToListedResource(String scimResourceString,
+    public <T extends AbstractSCIMObject> ListedResource<T> decodeListedResource(String scimResourceString,
                                                                                    ResourceTypeSchema resourceSchema,
                                                                                    Class<T> scimObjectType)
         throws BadRequestException, CharonException {

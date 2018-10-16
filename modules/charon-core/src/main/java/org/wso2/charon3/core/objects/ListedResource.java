@@ -46,7 +46,7 @@ public class ListedResource<ScimResourceType extends AbstractSCIMObject> impleme
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
     /**
-     * thescim resources that are represented by this listed resource
+     * scim resources that are represented by this listed resource
      */
     private List<ScimResourceType> resources = new ArrayList<>();
 
