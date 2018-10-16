@@ -65,7 +65,7 @@ public interface AttributeSchema {
 
     public void setUniqueness(SCIMDefinitions.Uniqueness uniqueness);
 
-    public List<SCIMAttributeSchema> getSubAttributeSchemas();
+    public List<AttributeSchema> getSubAttributeSchemas();
 
     public AttributeSchema getSubAttributeSchema(String subAttribute);
 

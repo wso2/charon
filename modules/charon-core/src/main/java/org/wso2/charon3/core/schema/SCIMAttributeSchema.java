@@ -16,12 +16,12 @@
 
 package org.wso2.charon3.core.schema;
 
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.utils.CopyUtil;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.utils.CopyUtil;
 
 /**
  * This defines the attributes schema as in SCIM Spec.
@@ -51,7 +51,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
     //A SCIM defined value that specifies the uniqueness level of an attribute.
     private SCIMDefinitions.Uniqueness uniqueness;
     //A list specifying the contained attributes. OPTIONAL.
-    private ArrayList<SCIMAttributeSchema> subAttributes;
+    private ArrayList<AttributeSchema> subAttributes;
     //A collection of suggested canonical values that MAY be used -OPTIONAL
     private ArrayList<String> canonicalValues;
     //A multi-valued array of JSON strings that indicate the SCIM resource types that may be referenced
@@ -63,7 +63,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
                                 SCIMDefinitions.Mutability mutability, SCIMDefinitions.Returned returned,
                                 SCIMDefinitions.Uniqueness uniqueness, ArrayList<String> canonicalValues,
                                 ArrayList<SCIMDefinitions.ReferenceType> referenceTypes,
-                                ArrayList<SCIMAttributeSchema> subAttributes) {
+                                ArrayList<AttributeSchema> subAttributes) {
         this.uri = uri;
         this.name = name;
         this.type = type;
@@ -88,7 +88,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
                                                                 SCIMDefinitions.Uniqueness uniqueness,
                                                                 ArrayList<String> canonicalValues,
                                                                 ArrayList<SCIMDefinitions.ReferenceType> referenceTypes,
-                                                                ArrayList<SCIMAttributeSchema> subAttributes) {
+                                                                ArrayList<AttributeSchema> subAttributes) {
 
         return new SCIMAttributeSchema(uri, name, type, multiValued, description, required, caseExact, mutability,
                 returned, uniqueness, canonicalValues, referenceTypes, subAttributes);
@@ -177,13 +177,13 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
     }
 
     @Override
-    public List<SCIMAttributeSchema> getSubAttributeSchemas() {
+    public List<AttributeSchema> getSubAttributeSchemas() {
         return subAttributes;
     }
 
     @Override
     public AttributeSchema getSubAttributeSchema(String subAttribute) {
-        for (SCIMAttributeSchema subAttributeSchema : subAttributes) {
+        for (AttributeSchema subAttributeSchema : subAttributes) {
             if (subAttributeSchema.getName().equals(subAttribute)) {
                 return subAttributeSchema;
             }
@@ -205,7 +205,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
         }
     }
 
-    public void setSubAttributes(ArrayList<SCIMAttributeSchema> subAttributes) {
+    public void setSubAttributes(ArrayList<AttributeSchema> subAttributes) {
         this.subAttributes = subAttributes;
     }
 

@@ -15,21 +15,20 @@
  */
 package org.wso2.charon3.core.utils;
 
-import org.json.JSONObject;
-import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.protocol.ResponseCodeConstants;
-import org.wso2.charon3.core.schema.AttributeSchema;
-import org.wso2.charon3.core.schema.SCIMAttributeSchema;
-import org.wso2.charon3.core.schema.SCIMConstants;
-import org.wso2.charon3.core.schema.SCIMDefinitions;
-import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.json.JSONObject;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.protocol.ResponseCodeConstants;
+import org.wso2.charon3.core.schema.AttributeSchema;
+import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMDefinitions;
+import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
 /**
  * This class acts as an utility class for attributes.
@@ -188,7 +187,7 @@ public class AttributeUtil {
             }
             // check in sub attributes
             String subAttributeURI =
-                    checkSCIMSubAttributeURIs(((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas(),
+                    checkSCIMSubAttributeURIs(attributeSchema.getSubAttributeSchemas(),
                             attributeSchema, attributeName);
             if (subAttributeURI != null) {
                 return subAttributeURI;
@@ -219,24 +218,24 @@ public class AttributeUtil {
      * @param attributeSchema
      * @param attributeName   @return
      */
-    private static String checkSCIMSubAttributeURIs(List<SCIMAttributeSchema> subAttributes,
+    private static String checkSCIMSubAttributeURIs(List<AttributeSchema> subAttributes,
                                                     AttributeSchema attributeSchema, String attributeName) {
         if (subAttributes != null) {
-            Iterator<SCIMAttributeSchema> subsIterator = subAttributes.iterator();
+            Iterator<AttributeSchema> subsIterator = subAttributes.iterator();
 
             while (subsIterator.hasNext()) {
-                SCIMAttributeSchema subAttributeSchema = subsIterator.next();
+                AttributeSchema subAttributeSchema = subsIterator.next();
                 if ((attributeSchema.getName() + "." + subAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
                         subAttributeSchema.getURI().equals(attributeName)) {
                     return subAttributeSchema.getURI();
                 }
                 if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                    List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+                    List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
                     if (subSubAttributeSchemas != null) {
-                        Iterator<SCIMAttributeSchema> subSubsIterator = subSubAttributeSchemas.iterator();
+                        Iterator<AttributeSchema> subSubsIterator = subSubAttributeSchemas.iterator();
 
                         while (subSubsIterator.hasNext()) {
-                            SCIMAttributeSchema subSubAttributeSchema = subSubsIterator.next();
+                            AttributeSchema subSubAttributeSchema = subSubsIterator.next();
                             if ((attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
                                     subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
                                     subAttributeSchema.getURI().equals(attributeName)) {
