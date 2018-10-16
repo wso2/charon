@@ -30,7 +30,7 @@ import java.util.Map;
  * Represents the listed resource object which is a collection of resources.
  **/
 
-public class ListedResource implements SCIMObject {
+public class ListedResource<ScimResourceType extends AbstractSCIMObject> implements SCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
     /*List of schemas which the resource is associated with*/
@@ -44,6 +44,11 @@ public class ListedResource implements SCIMObject {
     protected int startIndex;
     /*Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
+
+    /**
+     * thescim resources that are represented by this listed resource
+     */
+    private List<ScimResourceType> resources = new ArrayList<>();
 
     public int getTotalResults() {
         return totalResults;
@@ -149,5 +154,20 @@ public class ListedResource implements SCIMObject {
             ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.START_INDEX))
                     .setValue(startIndex);
         }
+    }
+
+    /**
+     * @see #resources
+     */
+    public List<ScimResourceType> getResources() {
+        return resources;
+    }
+
+    /**
+     * adds a new resource
+     * @param scimResourceType the new resource
+     */
+    public void addResource(ScimResourceType scimResourceType) {
+        resources.add(scimResourceType);
     }
 }
