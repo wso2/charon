@@ -181,7 +181,9 @@ public class BulkRequestProcessor {
 
         bulkResponseContent.setScimResponse(response);
         bulkResponseContent.setMethod(method);
-        bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
+        if (response.getHeaderParamMap() != null) {
+            bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
+        }
         bulkResponseContent.setBulkID(requestContent.getBulkID());
         bulkResponseContent.setVersion(requestContent.getVersion());
 

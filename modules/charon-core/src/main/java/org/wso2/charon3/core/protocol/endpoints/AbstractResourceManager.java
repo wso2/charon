@@ -15,6 +15,8 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
@@ -31,6 +33,8 @@ import java.util.Map;
  * operations. And an entry point for initiating the charon from the outside.
  */
 public abstract class AbstractResourceManager implements ResourceManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractResourceManager.class);
 
     private static JSONEncoder encoder = new JSONEncoder();
 
@@ -86,6 +90,7 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @return SCIMResponse
      */
     public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
+        logger.debug(exception.getDetail(), exception);
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), responseHeaders);

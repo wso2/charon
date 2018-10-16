@@ -173,10 +173,12 @@ public class ServerSideValidator extends AbstractValidator {
      */
     public static AbstractSCIMObject validateResourceTypeSCIMObject(AbstractSCIMObject scimObject)
             throws NotFoundException, BadRequestException, CharonException {
+
         String endpoint = (String) (((SimpleAttribute) (scimObject.getAttribute
                 (SCIMConstants.ResourceTypeSchemaConstants.NAME))).getValue());
         String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                 SCIMConstants.RESOURCE_TYPE_ENDPOINT), endpoint);
+
         scimObject.setLocation(location);
         scimObject.setResourceType(SCIMConstants.RESOURCE_TYPE);
         return scimObject;

@@ -31,8 +31,10 @@ public class ListedResource extends AbstractSCIMObject {
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * @return the total results value of this listed resource
+     * scim resources that are represented by this listed resource
      */
+    private List<SCIMObject> resources = new ArrayList<>();
+
     public int getTotalResults() {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS)) {
             return 0;
@@ -141,5 +143,20 @@ public class ListedResource extends AbstractSCIMObject {
             ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
                 .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
         }
+    }
+
+    /**
+     * @see #resources
+     */
+    public List<ScimResourceType> getResources() {
+        return resources;
+    }
+
+    /**
+     * adds a new resource
+     * @param scimResourceType the new resource
+     */
+    public void addResource(ScimResourceType scimResourceType) {
+        resources.add(scimResourceType);
     }
 }

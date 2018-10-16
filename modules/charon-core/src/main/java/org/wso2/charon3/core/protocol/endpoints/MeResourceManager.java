@@ -195,8 +195,8 @@ public class MeResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy,
-                                    String sortOrder, String attributes, String excludeAttributes) {
+                                    int startIndex, int count, String sortBy, String sortOrder,
+                                    String domainName, String attributes, String excludeAttributes) {
         return null;
     }
 

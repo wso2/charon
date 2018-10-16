@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
@@ -45,15 +46,15 @@ public class SCIMUserSchemaExtensionBuilder {
     // extension root attribute name
     String extensionRootAttributeName = null;
     // built schema map
-    private static Map<String, SCIMAttributeSchema> attributeSchemas = new HashMap<String, SCIMAttributeSchema>();
+    private static Map<String, AttributeSchema> attributeSchemas = new HashMap<String, AttributeSchema>();
     // extension root attribute schema
-    private SCIMAttributeSchema extensionSchema = null;
+    private AttributeSchema extensionSchema = null;
 
     public static SCIMUserSchemaExtensionBuilder getInstance() {
         return configReader;
     }
 
-    public SCIMAttributeSchema getExtensionSchema() {
+    public AttributeSchema getExtensionSchema() {
         return extensionSchema;
     }
 
@@ -164,11 +165,11 @@ public class SCIMUserSchemaExtensionBuilder {
      */
     private void buildComplexSchema(ExtensionAttributeSchemaConfig config) {
         String[] subAttributeNames = config.getSubAttributes();
-        ArrayList<SCIMAttributeSchema> subAttributes = new ArrayList<SCIMAttributeSchema>();
+        ArrayList<AttributeSchema> subAttributes = new ArrayList<AttributeSchema>();
         for (String subAttributeName : subAttributeNames) {
             subAttributes.add(attributeSchemas.get(subAttributeName));
         }
-        SCIMAttributeSchema complexAttribute =
+        AttributeSchema complexAttribute =
                 createSCIMAttributeSchema(config, subAttributes);
         attributeSchemas.put(config.getName(), complexAttribute);
     }
@@ -179,9 +180,9 @@ public class SCIMUserSchemaExtensionBuilder {
      * @param config
      */
     private void buildSimpleAttributeSchema(ExtensionAttributeSchemaConfig config) {
-        ArrayList<SCIMAttributeSchema> subAttributeList = new ArrayList<SCIMAttributeSchema>();
+        ArrayList<AttributeSchema> subAttributeList = new ArrayList<AttributeSchema>();
         if (!attributeSchemas.containsKey(config.getName())) {
-            SCIMAttributeSchema attributeSchema =
+            AttributeSchema attributeSchema =
                     createSCIMAttributeSchema(config, subAttributeList);
             attributeSchemas.put(config.getName(), attributeSchema);
         }
@@ -195,7 +196,7 @@ public class SCIMUserSchemaExtensionBuilder {
      * @return
      */
     public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
-                                                         ArrayList<SCIMAttributeSchema> subAttributeList) {
+                                                         ArrayList<AttributeSchema> subAttributeList) {
 
         return SCIMAttributeSchema.createSCIMAttributeSchema
                 (attribute.getURI(), attribute.getName(), attribute.getType(),

@@ -18,14 +18,12 @@
 
 package org.wso2.charon3.core.utils;
 
+import java.util.List;
+
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
-import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
-
-
-import java.util.List;
 
 /**
  * Attribute schema related supportutils can be found here.
@@ -50,7 +48,7 @@ public class SchemaUtil {
                 }
                 if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                     if (attributeSchema.getMultiValued()) {
-                        List<SCIMAttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
+                        List<AttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
                         for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
                             if (attributeFullName.equals
                                     (attributeSchema.getName() + "." + subAttributeSchema.getName())) {
@@ -58,7 +56,7 @@ public class SchemaUtil {
                             }
                         }
                     } else {
-                        List<SCIMAttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
+                        List<AttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
                         for (AttributeSchema subAttributeSchema : subAttributeSchemaList) {
                             if (attributeFullName.equals
                                     (attributeSchema.getName() + "." + subAttributeSchema.getName())) {
@@ -66,7 +64,7 @@ public class SchemaUtil {
                             }
                             if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                                 // this is only valid for extension schema
-                                List<SCIMAttributeSchema> subSubAttributeSchemaList =
+                                List<AttributeSchema> subSubAttributeSchemaList =
                                         subAttributeSchema.getSubAttributeSchemas();
                                 for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemaList) {
                                     if (attributeFullName.equals(attributeSchema.getName() + "." +

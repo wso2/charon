@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.json.JSONException;
-import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -39,7 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The "RESOURCE_TYPE" schema specifies the metadata about a resource type.
+ * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
+ * ResourceTypeResourceManager
  */
 public class ResourceTypeResourceManager extends AbstractResourceManager {
 
@@ -50,6 +50,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
+
         return getResourceType();
     }
 
@@ -59,6 +60,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      * @return
      */
     private SCIMResponse getResourceType() {
+
         JSONEncoder encoder = null;
         try {
             //obtain the json encoder
@@ -121,6 +123,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String
             excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -128,6 +131,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse delete(String id, UserManager userManager) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -135,7 +139,8 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
-                                    String sortOrder, String attributes, String excludeAttributes) {
+                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -143,6 +148,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -151,6 +157,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -159,6 +166,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -175,25 +183,24 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      */
     private AbstractSCIMObject buildCombinedResourceType(AbstractSCIMObject userObject, AbstractSCIMObject groupObject)
             throws CharonException {
-        Map<String, Attribute> userObjectAttributeList = userObject.getAttributeList();
-        Map<String, Attribute> groupObjectAttributeList = groupObject.getAttributeList();
 
         AbstractSCIMObject rootObject = new AbstractSCIMObject();
         MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(
-                SCIMConstants.ResourceTypeSchemaConstants.RESOURCE_TYPE);
-        ComplexAttribute userComplexAttribute = new ComplexAttribute();
+                SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
 
-        for (Attribute attribute : userObjectAttributeList.values()) {
-            userComplexAttribute.setSubAttribute(attribute);
-        }
-        multiValuedAttribute.setAttributeValue(userComplexAttribute);
-        ComplexAttribute groupComplexAttribute = new ComplexAttribute();
-        for (Attribute attribute : groupObjectAttributeList.values()) {
-            groupComplexAttribute.setSubAttribute(attribute);
-        }
-        multiValuedAttribute.setAttributeValue(groupComplexAttribute);
+        userObject.getSchemaList().clear();
+        userObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+        multiValuedAttribute.setAttributePrimitiveValue(userObject);
+
+        groupObject.getSchemaList().clear();
+        groupObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+        multiValuedAttribute.setAttributePrimitiveValue(groupObject);
+
         rootObject.setAttribute(multiValuedAttribute);
-        rootObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+        rootObject.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        // Using a hard coded value of 2 since currently we only support two items in the list.
+        SimpleAttribute totalResults = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.TOTAL_RESULTS, 2);
+        rootObject.setAttribute(totalResults);
         return rootObject;
     }
 }

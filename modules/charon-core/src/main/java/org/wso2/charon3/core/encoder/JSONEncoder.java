@@ -87,7 +87,7 @@ public class JSONEncoder {
 
         try {
             //construct error object with details in the exception
-            errorObject.put(ResponseCodeConstants.SCHEMAS, exception.getSchemas());
+            errorObject.put(ResponseCodeConstants.SCHEMAS, new String[]{exception.getSchemas()});
             if (exception instanceof BadRequestException) {
                 errorObject.put(ResponseCodeConstants.SCIM_TYPE, ((BadRequestException) (exception)).getScimType());
             }
@@ -254,7 +254,15 @@ public class JSONEncoder {
         }
         if (stringAttributeValues != null && !stringAttributeValues.isEmpty()) {
             for (Object arrayValue : stringAttributeValues) {
-                jsonArray.put(arrayValue);
+                if (arrayValue instanceof SCIMObject) {
+                    try {
+                        jsonArray.put(getSCIMObjectAsJSONObject((SCIMObject) arrayValue));
+                    } catch (CharonException e) {
+                        throw new JSONException(e);
+                    }
+                } else {
+                    jsonArray.put(arrayValue);
+                }
             }
         }
         jsonObject.put(multiValuedAttribute.getName(), jsonArray);
