@@ -49,7 +49,7 @@ public class SCIMConstants {
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
-    public static final String RESOURCE_TYPE_ENDPOINT = "/RESOURCE_TYPE";
+    public static final String RESOURCE_TYPE_ENDPOINT = "/RESOURCE_TYPES";
 
 
     //HTTP Headers used in SCIM request/response other than auth headers.
@@ -81,7 +81,7 @@ public class SCIMConstants {
         public static final String LOCATION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.location";
         public static final String VERSION = "version";
         public static final String VERSION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.version";
-
+        public static final String TOTAL_RESULTS = "totalResults";
         //characteristics of multi valued attribute
         public static final String TYPE = "type";
         public static final String PRIMARY = "primary";
@@ -457,6 +457,7 @@ public class SCIMConstants {
         public static final String MEMBERS = "members";
         public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:members";
         public static final String DISPLAY = "display";
+        public static final String TYPE = "type";
 
         /*******Attributes descriptions of the attributes found in Group Schema.***************/
 
@@ -466,11 +467,13 @@ public class SCIMConstants {
         public static final String REF_DESC = "The uri corresponding to a SCIM resource that is a member of this " +
                 "Group.";
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
+        public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
 
         /*******URIs of sub and multivalued attributes.**************/
         public static final String VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.value";
         public static final String REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
         public static final String DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.display";
+        public static final String TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.type";
     }
 
     /**
