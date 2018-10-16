@@ -20,6 +20,8 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -148,7 +150,7 @@ public class ListedResource extends AbstractSCIMObject {
     /**
      * @see #resources
      */
-    public List<ScimResourceType> getResources() {
+    public List<SCIMObject> getResources() {
         return resources;
     }
 
@@ -156,7 +158,7 @@ public class ListedResource extends AbstractSCIMObject {
      * adds a new resource
      * @param scimResourceType the new resource
      */
-    public void addResource(ScimResourceType scimResourceType) {
+    public void addResource(SCIMObject scimResourceType) {
         resources.add(scimResourceType);
     }
 }
