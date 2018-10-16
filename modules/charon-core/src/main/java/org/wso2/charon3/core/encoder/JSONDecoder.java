@@ -15,21 +15,6 @@
  */
 package org.wso2.charon3.core.encoder;
 
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DATE_TIME;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +48,21 @@ import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DATE_TIME;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
+
 /**
  * This decodes the json encoded resource string and create a SCIM object model according to the specification
  * according to the info that the user has sent, and returns SCIMUser object.
@@ -89,7 +89,7 @@ public class JSONDecoder {
    * @throws BadRequestException if the json could not be parsed
    * @throws CharonException if a value of the json contains data in an unexpected format or type
    */
-    public <T extends AbstractSCIMObject> ListedResource<T> decodeListedResource(String scimResourceString,
+    public <T extends AbstractSCIMObject> ListedResource decodeListedResource(String scimResourceString,
                                                                                    ResourceTypeSchema resourceSchema,
                                                                                    Class<T> scimObjectType)
         throws BadRequestException, CharonException {
@@ -109,7 +109,7 @@ public class JSONDecoder {
         int itemsPerPage = getIntValueFromJson(decodedJsonObj,
                                                SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
 
-        ListedResource<T> listedResource = new ListedResource<>();
+        ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
         listedResource.setTotalResults(totalResults);
         listedResource.setStartIndex(startIndex);

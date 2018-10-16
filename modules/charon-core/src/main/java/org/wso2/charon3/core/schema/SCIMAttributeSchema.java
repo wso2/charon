@@ -16,12 +16,12 @@
 
 package org.wso2.charon3.core.schema;
 
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.utils.CopyUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.utils.CopyUtil;
 
 /**
  * This defines the attributes schema as in SCIM Spec.

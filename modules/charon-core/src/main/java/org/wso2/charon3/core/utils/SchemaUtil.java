@@ -18,12 +18,12 @@
 
 package org.wso2.charon3.core.utils;
 
-import java.util.List;
-
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
+
+import java.util.List;
 
 /**
  * Attribute schema related supportutils can be found here.
