@@ -681,7 +681,7 @@ public class PatchOperationUtil {
                                                         }
                                                     } else {
                                                         ((SimpleAttribute) subSubAttribute).setValue(
-                                                                ((SimpleAttribute) subSubAttrib.getValue()));
+                                                                ((SimpleAttribute) subSubAttrib.getValue()).getValue());
                                                     }
                                                 } else {
                                                     if (subSubAttrib.getValue() != null) {
@@ -704,7 +704,7 @@ public class PatchOperationUtil {
                                             }
                                         } else {
                                             ((SimpleAttribute) subAttribute).setValue(((SimpleAttribute)
-                                                    subAttrib.getValue()));
+                                                    subAttrib.getValue()).getValue());
                                         }
                                     }
                                 } else {
@@ -2477,7 +2477,7 @@ public class PatchOperationUtil {
                                                         }
                                                     } else {
                                                         ((SimpleAttribute) subSubAttribute).setValue(
-                                                                ((SimpleAttribute) subSubAttrb.getValue()));
+                                                                ((SimpleAttribute) subSubAttrb.getValue()).getValue());
                                                     }
                                                 } else {
                                                     ((ComplexAttribute) (subAttribute)).setSubAttribute(
