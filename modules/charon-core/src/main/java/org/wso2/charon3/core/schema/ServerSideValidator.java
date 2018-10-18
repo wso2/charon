@@ -24,7 +24,7 @@ import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -53,11 +53,11 @@ public class ServerSideValidator extends AbstractValidator {
         //add created and last modified dates
         String id = UUID.randomUUID().toString();
         scimObject.setId(id);
-        Date date = new Date();
+        Instant now = Instant.now();
         //set the created date and time
-        scimObject.setCreatedDate(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
+        scimObject.setCreatedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
         //creates date and the last modified are the same if not updated.
-        scimObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
+        scimObject.setLastModifiedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
@@ -152,8 +152,7 @@ public class ServerSideValidator extends AbstractValidator {
         //copy id attribute to new group object
         validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
         //edit last modified date
-        Date date = new Date();
-        validatedObject.setLastModified(date);
+        validatedObject.setLastModifiedInstant(Instant.now());
         //check for required attributes.
         validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
         //check for schema list

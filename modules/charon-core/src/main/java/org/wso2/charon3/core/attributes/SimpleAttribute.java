@@ -18,6 +18,7 @@ package org.wso2.charon3.core.attributes;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -86,9 +87,20 @@ public class SimpleAttribute extends AbstractAttribute {
      * @return
      * @throws CharonException
      */
+    @Deprecated
     public Date getDateValue() throws CharonException {
+        Instant instant = getInstantValue();
+        return instant != null ? new Date(instant.toEpochMilli()) : null;
+    }
+
+    /*
+     * return the date type of the attribute value
+     * @return
+     * @throws CharonException
+     */
+    public Instant getInstantValue() throws CharonException {
         if (this.type.equals(SCIMDefinitions.DataType.DATE_TIME)) {
-            return (Date) this.value;
+            return (Instant) this.value;
         } else {
             throw new CharonException("Datatype doesn\'t match the datatype of the attribute value");
         }
@@ -96,7 +108,9 @@ public class SimpleAttribute extends AbstractAttribute {
 
     /*
      * return boolean type of the attribute value
+     * 
      * @return
+     * 
      * @throws CharonException
      */
     public Boolean getBooleanValue() throws CharonException {
@@ -109,11 +123,12 @@ public class SimpleAttribute extends AbstractAttribute {
 
     /*
      * uodate the attribute value
+     * 
      * @param value
+     * 
      * @throws CharonException
      */
     public void updateValue(Object value) throws CharonException {
-            this.value = value;
-
+        this.value = value;
     }
 }

@@ -20,13 +20,12 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
-import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Iterator;
 import java.util.List;
 
@@ -103,7 +102,7 @@ public class AttributeUtil {
             case INTEGER:
                 return String.valueOf(attributeValue);
             case DATE_TIME:
-                return formatDateTime((Date) attributeValue);
+                return formatDateTime((Instant) attributeValue);
             case BINARY:
                 return String.valueOf(attributeValue);
             case REFERENCE:
@@ -119,18 +118,12 @@ public class AttributeUtil {
      *
      * @param dateTimeString
      */
-    public static Date parseDateTime(String dateTimeString) throws CharonException {
+    public static Instant parseDateTime(String dateTimeString) throws CharonException {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.DATE_TIME_FORMAT);
-            return sdf.parse(dateTimeString);
-        } catch (ParseException e) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.DATE_TIME_FORMAT2);
-                return sdf.parse(dateTimeString);
-            } catch (ParseException e1) {
-                throw new CharonException("Error in parsing date time. " +
-                        "Date time should adhere to the format: " + SCIMConstants.DATE_TIME_FORMAT, e1);
-            }
+            return OffsetDateTime.parse(dateTimeString).toInstant();
+        } catch (DateTimeException e) {
+            throw new CharonException("Error in parsing date time. " +
+                    "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
         }
     }
 
@@ -149,10 +142,8 @@ public class AttributeUtil {
      *
      * @param date
      */
-    public static String formatDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.DATE_TIME_FORMAT);
-        String formattedDate = sdf.format(date);
-        return formattedDate;
+    public static String formatDateTime(Instant instant) {
+        return instant.toString();
     }
 
     /*
