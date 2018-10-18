@@ -15,9 +15,6 @@
  */
 package org.wso2.charon3.core.schema;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -26,6 +23,9 @@ import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
+
+import java.time.Instant;
+import java.util.UUID;
 
 /**
  * Server Side Validator.

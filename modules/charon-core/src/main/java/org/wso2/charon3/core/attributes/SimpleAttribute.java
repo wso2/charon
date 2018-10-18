@@ -15,11 +15,11 @@
  */
 package org.wso2.charon3.core.attributes;
 
-import java.time.Instant;
-import java.util.Date;
-
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
+
+import java.time.Instant;
+import java.util.Date;
 
 /**
  * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec.
