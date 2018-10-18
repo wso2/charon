@@ -20,7 +20,6 @@ import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.AttributeSchema;
-import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
@@ -138,9 +137,9 @@ public class ResourceManagerUtil {
                 }
             }
             if (realAttributeSchema != null) {
-                List<SCIMAttributeSchema> subAttributeList = attributeSchema.getSubAttributeSchemas();
+                List<AttributeSchema> subAttributeList = attributeSchema.getSubAttributeSchemas();
 
-                for (SCIMAttributeSchema subAttributeSchema : subAttributeList) {
+                for (AttributeSchema subAttributeSchema : subAttributeList) {
 
                     //check for never/request attributes.
                     if (subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
@@ -217,7 +216,7 @@ public class ResourceManagerUtil {
             AttributeSchema realAttributeSchema = null;
             //need to get the right reference first as we are going to delete by reference
             for (AttributeSchema schema : attributeSchemaArrayList) {
-                List<SCIMAttributeSchema> subSchemas = schema.getSubAttributeSchemas();
+                List<AttributeSchema> subSchemas = schema.getSubAttributeSchemas();
                 if (subSchemas != null) {
                     for (AttributeSchema subSchema : subSchemas) {
                         if (subSchema.getURI().equals(subAttribute.getURI())) {
@@ -228,9 +227,9 @@ public class ResourceManagerUtil {
                 }
             }
             if (realAttributeSchema != null) {
-                List<SCIMAttributeSchema> subSubAttributeList = subAttribute.getSubAttributeSchemas();
+                List<AttributeSchema> subSubAttributeList = subAttribute.getSubAttributeSchemas();
 
-                for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeList) {
+                for (AttributeSchema subSubAttributeSchema : subSubAttributeList) {
 
                     //check for never/request attributes.
                     if (subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
@@ -286,17 +285,17 @@ public class ResourceManagerUtil {
     private static boolean isSubAttributeExistsInList(List<String> requestedAttributes, AttributeSchema
             attributeSchema) {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-            List<SCIMAttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
+            List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
 
-            for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
+            for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
                 if (requestedAttributes.contains(attributeSchema.getName() + "." + subAttributeSchema.getName())) {
                     return true;
                 }
 
                 if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                    List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+                    List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
-                    for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
+                    for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
                         if (requestedAttributes.contains(
                                 attributeSchema.getName() + "." +
                                         subAttributeSchema.getName() + "." +
@@ -325,9 +324,9 @@ public class ResourceManagerUtil {
                                                          AttributeSchema subAttributeSchema) {
 
         if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-            List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+            List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
-            for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
+            for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
                 if (requestedAttributes.contains(attributeSchema.getName() + "." +
                         subAttributeSchema.getName() + "." + subSubAttributeSchema.getName())) {
                     return true;
@@ -350,11 +349,11 @@ public class ResourceManagerUtil {
         Map<String, Boolean> uriList = new HashMap<>();
         for (AttributeSchema schema : schemas) {
             if (schema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                List<SCIMAttributeSchema> subAttributeSchemas = schema.getSubAttributeSchemas();
-                for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
+                List<AttributeSchema> subAttributeSchemas = schema.getSubAttributeSchemas();
+                for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
                     if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
-                        List<SCIMAttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
-                        for (SCIMAttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
+                        List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+                        for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
                             uriList.put(subSubAttributeSchema.getURI(), subAttributeSchema.getMultiValued());
                         }
                     } else {

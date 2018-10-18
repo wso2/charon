@@ -31,13 +31,13 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
+import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
-import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
@@ -75,6 +75,94 @@ public class JSONDecoder {
 
     public JSONDecoder() {
 
+    }
+
+  /**
+   * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
+   * {@link ListedResource} object that holds the parsed objects
+   *
+   * @param scimResourceString the listed resource string
+   * @param resourceSchema the schema of the resource objects that should be present.
+   * @param scimObjectType the type of the scim resources
+   * @param <T> a {@link AbstractSCIMObject} type as {@link Group} or {@link User}
+   * @return the listed resource object
+   * @throws BadRequestException if the json could not be parsed
+   * @throws CharonException if a value of the json contains data in an unexpected format or type
+   */
+    public <T extends AbstractSCIMObject> ListedResource decodeListedResource(String scimResourceString,
+                                                                                   ResourceTypeSchema resourceSchema,
+                                                                                   Class<T> scimObjectType)
+        throws BadRequestException, CharonException {
+
+        JSONObject decodedJsonObj;
+        try {
+            decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+        } catch (JSONException e) {
+            logger.error("json error in decoding the resource", e);
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        int totalResults = getIntValueFromJson(decodedJsonObj,
+                                               SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
+        int startIndex = getIntValueFromJson(decodedJsonObj,
+                                             SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+        int itemsPerPage = getIntValueFromJson(decodedJsonObj,
+                                               SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
+
+        ListedResource listedResource = new ListedResource();
+        listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        listedResource.setTotalResults(totalResults);
+        listedResource.setStartIndex(startIndex);
+        listedResource.setItemsPerPage(itemsPerPage);
+
+        JSONArray resources = null;
+        try {
+            resources = decodedJsonObj.getJSONArray(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+        } catch (JSONException e) {
+          logger.debug("could not get '{}' from json structure, result is empty",
+                       SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+          return listedResource;
+        }
+
+        for (int i = 0; i < resources.length(); i++) {
+            JSONObject resource;
+            try {
+                resource = resources.getJSONObject(i);
+            } catch (JSONException e) {
+                logger.error("could not get '{}' from json structure",
+                             SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+                throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+            }
+            try {
+                T abstractSCIMObject = decodeResource(resource.toString(),
+                                                      resourceSchema,
+                                                      scimObjectType.newInstance());
+                listedResource.addResource(abstractSCIMObject);
+                listedResource.setResources(abstractSCIMObject.getAttributeList());
+            } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
+                throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
+            }
+        }
+        return listedResource;
+    }
+
+
+    /**
+     * retrieves an int value from the given {@link JSONObject}
+     * @param jsonObject the jsonObject that might hold an int-value under the given key
+     * @param name the name of the attribute in the json structure that should be retrieved as int
+     * @return the int value of the key
+     * @throws CharonException if the value under the given key is not an int value
+     */
+    private int getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+        int totalResults;
+        try {
+            totalResults = jsonObject.getInt(name);
+        } catch (JSONException e) {
+            logger.error("could not get '{}' value from scim resource", name);
+            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+        }
+        return totalResults;
     }
 
     /**
@@ -308,8 +396,8 @@ public class JSONDecoder {
         ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
         //list of sub attributes of the complex attribute
-        List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
+        List<AttributeSchema> subAttributeSchemas =
+                ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
@@ -356,7 +444,7 @@ public class JSONDecoder {
                     SCIMResourceSchemaManager.getInstance().getExtensionName())) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
-                    List<SCIMAttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
+                    List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
                     for (AttributeSchema attributeSchema : subList) {
                         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             String error = "Complex attribute can not have complex sub attributes";
@@ -442,10 +530,10 @@ public class JSONDecoder {
 
         ComplexAttribute complexAttribute = new ComplexAttribute(attributeSchema.getName());
         Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
-        List<SCIMAttributeSchema> subAttributeSchemas =
-                ((SCIMAttributeSchema) attributeSchema).getSubAttributeSchemas();
+        List<AttributeSchema> subAttributeSchemas =
+                ((AttributeSchema) attributeSchema).getSubAttributeSchemas();
 
-        for (SCIMAttributeSchema subAttributeSchema : subAttributeSchemas) {
+        for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
             Object subAttributeValue = jsonObject.opt(subAttributeSchema.getName());
             //setting up a name for the complex attribute for the reference purpose
             if (subAttributeSchema.getName().equals(SCIMConstants.CommonSchemaConstants.VALUE)) {

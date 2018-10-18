@@ -110,7 +110,7 @@ public class SCIMSchemaDefinitions {
                     false,
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                     SCIMDefinitions.Uniqueness.NONE, null, null,
-                    new ArrayList<SCIMAttributeSchema>(Arrays.asList(RESOURCE_TYPE, CREATED, LAST_MODIFIED, LOCATION,
+                    new ArrayList<AttributeSchema>(Arrays.asList(RESOURCE_TYPE, CREATED, LAST_MODIFIED, LOCATION,
                             VERSION)));
 
 
@@ -615,7 +615,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(FORMATTED, FAMILY_NAME, GIVEN_NAME,
+                        new ArrayList<AttributeSchema>(Arrays.asList(FORMATTED, FAMILY_NAME, GIVEN_NAME,
                                 MIDDLE_NAME,
                                 HONORIFIC_PREFIX, HONORIFIC_SUFFIX)));
 
@@ -720,7 +720,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(EMAIL_VALUE, EMAIL_DISPLAY, EMAIL_TYPE,
+                        new ArrayList<AttributeSchema>(Arrays.asList(EMAIL_VALUE, EMAIL_DISPLAY, EMAIL_TYPE,
                                 EMAIL_PRIMARY)));
 
         //Phone numbers for the User.
@@ -731,7 +731,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(PHONE_NUMBERS_VALUE, PHONE_NUMBERS_DISPLAY,
+                        new ArrayList<AttributeSchema>(Arrays.asList(PHONE_NUMBERS_VALUE, PHONE_NUMBERS_DISPLAY,
                                 PHONE_NUMBERS_TYPE, PHONE_NUMBERS_PRIMARY)));
 
         //Instant messaging addresses for the User.
@@ -742,7 +742,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(IMS_VALUE, IMS_DISPLAY, IMS_TYPE,
+                        new ArrayList<AttributeSchema>(Arrays.asList(IMS_VALUE, IMS_DISPLAY, IMS_TYPE,
                                 IMS_PRIMARY)));
 
         //URLs of photos of the User.
@@ -753,7 +753,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(PHOTOS_VALUE, PHOTOS_DISPLAY, PHOTOS_TYPE,
+                        new ArrayList<AttributeSchema>(Arrays.asList(PHOTOS_VALUE, PHOTOS_DISPLAY, PHOTOS_TYPE,
                                 PHOTOS_PRIMARY)));
 
         //A physical mailing address for this User.
@@ -764,7 +764,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(ADDRESSES_FORMATTED,
+                        new ArrayList<AttributeSchema>(Arrays.asList(ADDRESSES_FORMATTED,
                                 ADDRESSES_STREET_ADDRESS, ADDRESSES_LOCALITY,
                                 ADDRESSES_REGION, ADDRESSES_POSTAL_CODE, ADDRESSES_COUNTRY, ADDRESSES_TYPE,
                                 ADDRESSES_PRIMARY)));
@@ -778,7 +778,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(GROUP_VALUE, GROUP_REF, GROUP_DISPLAY,
+                        new ArrayList<AttributeSchema>(Arrays.asList(GROUP_VALUE, GROUP_REF, GROUP_DISPLAY,
                                 GROUP_TYPE)));
 
         //A list of entitlements for the User that represent a thing the User has.
@@ -789,7 +789,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(ENTITLEMENTS_VALUE, ENTITLEMENTS_DISPLAY,
+                        new ArrayList<AttributeSchema>(Arrays.asList(ENTITLEMENTS_VALUE, ENTITLEMENTS_DISPLAY,
                                 ENTITLEMENTS_TYPE, ENTITLEMENTS_PRIMARY)));
 
         //A list of roles for the User that collectively represent who the User is, e.g., 'Student', 'Faculty'.
@@ -800,7 +800,7 @@ public class SCIMSchemaDefinitions {
                         false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(ROLES_VALUE, ROLES_DISPLAY,
+                        new ArrayList<AttributeSchema>(Arrays.asList(ROLES_VALUE, ROLES_DISPLAY,
                                 ROLES_TYPE, ROLES_PRIMARY)));
 
         //A list of roles for the User that collectively represent who the User is, e.g., 'Student', 'Faculty'.
@@ -811,7 +811,7 @@ public class SCIMSchemaDefinitions {
                                 .X509CERTIFICATES_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(X509CERTIFICATES_VALUE,
+                        new ArrayList<AttributeSchema>(Arrays.asList(X509CERTIFICATES_VALUE,
                                 X509CERTIFICATES_DISPLAY,
                                 X509CERTIFICATES_TYPE, X509CERTIFICATES_PRIMARY)));
 
@@ -857,6 +857,15 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        //A label indicating the type of resource, e.g. 'User' or 'Group'.
+        public static final SCIMAttributeSchema TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.TYPE_URI,
+                        SCIMConstants.GroupSchemaConstants.TYPE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.TYPE_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
     /*------------------------------------------------------------------------------------------------------*/
 
                 /* attribute schemas of the attributes defined in group schema. */
@@ -877,7 +886,7 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.DataType.COMPLEX, true, SCIMConstants.GroupSchemaConstants.MEMBERS_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<SCIMAttributeSchema>(Arrays.asList
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<AttributeSchema>(Arrays.asList
                                 (VALUE, REF, DISPLAY)));
     }
 
@@ -1053,7 +1062,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.PATCH_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(PATCH_SUPPORTED)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(PATCH_SUPPORTED)));
 
         public static final SCIMAttributeSchema BULK =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1063,7 +1072,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.BULK_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(BULK_SUPPORTED, MAX_OPERATIONS,
+                        new ArrayList<AttributeSchema>(Arrays.asList(BULK_SUPPORTED, MAX_OPERATIONS,
                                 MAX_PAYLOAD_SIZE)));
 
         public static final SCIMAttributeSchema FILTER =
@@ -1074,7 +1083,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.FILTERS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(FILTER_SUPPORTED, MAX_RESULTS)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(FILTER_SUPPORTED, MAX_RESULTS)));
 
         public static final SCIMAttributeSchema CHANGE_PASSWORD =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1084,7 +1093,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.CHANGE_PASSWORD_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(CHANGE_PASSWORD_SUPPORTED)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(CHANGE_PASSWORD_SUPPORTED)));
 
         public static final SCIMAttributeSchema SORT =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1094,7 +1103,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.SORT_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(SORT_SUPPORTED)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(SORT_SUPPORTED)));
 
         public static final SCIMAttributeSchema ETAG =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1104,7 +1113,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.ETAG_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(ETAG_SUPPORTED)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(ETAG_SUPPORTED)));
 
         public static final SCIMAttributeSchema AUTHENTICATION_SCHEMES =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1114,7 +1123,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(NAME, DESCRIPTION,
+                        new ArrayList<AttributeSchema>(Arrays.asList(NAME, DESCRIPTION,
                                 SPEC_URI, AUTHENTICATION_SCHEMES_DOCUMENTATION_URI, TYPE, PRIMARY)));
 
 
@@ -1204,7 +1213,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<SCIMAttributeSchema>(Arrays.asList(SCHEMA_EXTENSION_SCHEMA,
+                        new ArrayList<AttributeSchema>(Arrays.asList(SCHEMA_EXTENSION_SCHEMA,
                                 SCHEMA_EXTENSION_REQUIRED)));
 
 
@@ -1239,7 +1248,6 @@ public class SCIMSchemaDefinitions {
                     SCIMUserSchemaDefinition.ENTITLEMENTS,
                     SCIMUserSchemaDefinition.ROLES,
                     SCIMUserSchemaDefinition.X509CERTIFICATES);
-
     /*
      * **********SCIM defined Group Resource Schema.****************************
      */
@@ -1274,11 +1282,12 @@ public class SCIMSchemaDefinitions {
 
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    new ArrayList<String>(Arrays.asList(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI)), META,
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
                     SCIMResourceTypeSchemaDefinition.ID,
                     SCIMResourceTypeSchemaDefinition.NAME,
                     SCIMResourceTypeSchemaDefinition.ENDPOINT,
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
                     SCIMResourceTypeSchemaDefinition.SCHEMA,
                     SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
+
 }

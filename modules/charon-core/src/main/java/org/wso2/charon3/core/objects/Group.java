@@ -26,6 +26,7 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
+import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +38,21 @@ import java.util.Map;
 public class Group extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /*
+    /**
      * get the display name of the group
      * @return
      * @throws CharonException
      */
-    public String getDisplayName() throws CharonException {
+    public String getDisplayName() {
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
-            return ((SimpleAttribute) attributeList.get(
-                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue();
+            return LambdaExceptionUtils.rethrowSupplier(() -> ((SimpleAttribute) attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue()).get();
         } else {
             return null;
         }
     }
 
-    /*
+    /**
      * set the display name of the group
      * @param displayName
      * @throws CharonException
@@ -70,7 +71,14 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
+     * deletes the current value of displayname and exchanges it with the given value
+     */
+    public void replaceDisplayName(String displayname) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayname);
+    }
+
+    /**
      * get the members of the group
      * @return
      */
@@ -95,7 +103,7 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
      * get the members of the group with their display names
      * @return
      */
@@ -124,29 +132,39 @@ public class Group extends AbstractSCIMObject {
         return displayNames;
     }
 
-    /*
+    /**
      * set a member to the group
-     * @param userId
-     * @param userName
+     * @param value
+     * @param display
      * @throws BadRequestException
      * @throws CharonException
      */
-    public void setMember(String userId, String userName) throws BadRequestException, CharonException {
-        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList.get(
-                    SCIMConstants.GroupSchemaConstants.MEMBERS);
-            ComplexAttribute complexAttribute = setMemberCommon(userId, userName);
-            members.setAttributeValue(complexAttribute);
-        } else {
-            MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
-            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
-            ComplexAttribute complexAttribute = setMemberCommon(userId, userName);
-            members.setAttributeValue(complexAttribute);
-            this.setAttribute(members);
-        }
+    public void setMember(String value, String display) throws BadRequestException, CharonException {
+        setMember(value, display, null, null);
     }
 
     /*
+     * set a member to the group
+     * @param value
+     * @param display
+     * @param ref
+     * @param type
+     * @throws BadRequestException
+     * @throws CharonException
+     */
+    public void setMember(String value, String display, String ref, String type) 
+           throws BadRequestException, CharonException {
+        if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+          MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+          DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
+          setAttribute(members);
+        }
+        MultiValuedAttribute members = (MultiValuedAttribute) getAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+        ComplexAttribute complexAttribute = setMemberCommon(value, display, ref, type);
+        members.setAttributeValue(complexAttribute);
+    }
+
+    /**
      * set member to the group
      * @param userId
      * @param userName
@@ -154,7 +172,7 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    private ComplexAttribute setMemberCommon(String userId, String userName)
+    private ComplexAttribute setMemberCommon(String userId, String userName, String ref, String type)
             throws BadRequestException, CharonException {
         ComplexAttribute complexAttribute = new ComplexAttribute();
         complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS + "_" + userId + SCIMConstants.DEFAULT);
@@ -167,14 +185,26 @@ public class Group extends AbstractSCIMObject {
         DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
 
+        SimpleAttribute refSimpleAttribute = new SimpleAttribute(
+                SCIMConstants.CommonSchemaConstants.REF, ref);
+        DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, refSimpleAttribute);
+
+        SimpleAttribute typeSimpleAttribute = new SimpleAttribute(
+                SCIMConstants.CommonSchemaConstants.TYPE, type);
+                DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.TYPE, typeSimpleAttribute);
+
         complexAttribute.setSubAttribute(valueSimpleAttribute);
         complexAttribute.setSubAttribute(displaySimpleAttribute);
+        complexAttribute.setSubAttribute(refSimpleAttribute);
+        complexAttribute.setSubAttribute(typeSimpleAttribute);
         DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);
         return  complexAttribute;
     }
 
-    /*
+    /**
      * set the schemas for scim object -group
      */
     public void setSchemas() {
