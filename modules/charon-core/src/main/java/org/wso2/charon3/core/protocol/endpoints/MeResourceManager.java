@@ -18,12 +18,11 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -86,11 +85,7 @@ public class MeResourceManager extends AbstractResourceManager {
                     SCIMConstants.USER_ENDPOINT) + "/" + user.getId());
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, responseHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         }
     }
@@ -153,15 +148,7 @@ public class MeResourceManager extends AbstractResourceManager {
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED,
                     encodedUser, responseHeaders);
 
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (ConflictException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         }
     }
@@ -180,15 +167,7 @@ public class MeResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         }
     }
@@ -268,15 +247,7 @@ public class MeResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         }
     }
@@ -388,15 +359,7 @@ public class MeResourceManager extends AbstractResourceManager {
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
@@ -417,7 +380,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
             return user.getUserName();
 
-        } catch (BadRequestException | InternalErrorException | CharonException e) {
+        } catch (AbstractCharonException e) {
             throw new CharonException("Error in getting the username from the anonymous request");
         }
     }

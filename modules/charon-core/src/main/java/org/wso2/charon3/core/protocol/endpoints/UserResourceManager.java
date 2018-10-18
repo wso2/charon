@@ -22,12 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
@@ -108,11 +107,7 @@ public class UserResourceManager extends AbstractResourceManager {
                     SCIMConstants.USER_ENDPOINT) + "/" + user.getId());
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, responseHeaders);
 
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -187,13 +182,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 e.setStatus(ResponseCodeConstants.CODE_INTERNAL_ERROR);
             }
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (ConflictException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -219,15 +208,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -341,15 +322,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (IOException e) {
             String error = "Error in tokenization of the input filter";
@@ -434,15 +407,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -516,15 +481,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -635,15 +592,7 @@ public class UserResourceManager extends AbstractResourceManager {
             }
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);

@@ -21,10 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
-import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -97,13 +96,7 @@ public class ServiceProviderConfigResourceManager extends AbstractResourceManage
             //put the uri of the service provider config object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK,
                     encodedObject, responseHeaders);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         } catch (JSONException e) {
             return null;
