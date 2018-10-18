@@ -19,10 +19,7 @@
 package org.wso2.charon3.core.objects.plainobjects;
 
 /**
- * author Pascal Knueppel <br>
- * created at: 19.09.2018 - 09:49 <br>
- * <br>
- * this class representation can be used to easily add an address to an
+ * This class representation can be used to easily add an address to an
  * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
  */
 public class ScimAddress {
@@ -73,6 +70,7 @@ public class ScimAddress {
     private boolean primary;
 
     public ScimAddress() {
+
     }
 
     public ScimAddress(String formatted,
@@ -83,6 +81,7 @@ public class ScimAddress {
                        String postalCode,
                        String country,
                        boolean primary) {
+
         this.formatted = formatted;
         this.type = type;
         this.streetAddress = streetAddress;
@@ -97,6 +96,7 @@ public class ScimAddress {
      * @see #formatted
      */
     public String getFormatted() {
+
         return formatted;
     }
 
@@ -104,6 +104,7 @@ public class ScimAddress {
      * @see #formatted
      */
     public void setFormatted(String formatted) {
+
         this.formatted = formatted;
     }
 
@@ -111,6 +112,7 @@ public class ScimAddress {
      * @see #type
      */
     public String getType() {
+
         return type;
     }
 
@@ -118,6 +120,7 @@ public class ScimAddress {
      * @see #type
      */
     public void setType(String type) {
+
         this.type = type;
     }
 
@@ -125,6 +128,7 @@ public class ScimAddress {
      * @see #streetAddress
      */
     public String getStreetAddress() {
+
         return streetAddress;
     }
 
@@ -132,6 +136,7 @@ public class ScimAddress {
      * @see #streetAddress
      */
     public void setStreetAddress(String streetAddress) {
+
         this.streetAddress = streetAddress;
     }
 
@@ -139,6 +144,7 @@ public class ScimAddress {
      * @see #locality
      */
     public String getLocality() {
+
         return locality;
     }
 
@@ -146,6 +152,7 @@ public class ScimAddress {
      * @see #locality
      */
     public void setLocality(String locality) {
+
         this.locality = locality;
     }
 
@@ -153,6 +160,7 @@ public class ScimAddress {
      * @see #region
      */
     public String getRegion() {
+
         return region;
     }
 
@@ -160,6 +168,7 @@ public class ScimAddress {
      * @see #region
      */
     public void setRegion(String region) {
+
         this.region = region;
     }
 
@@ -167,6 +176,7 @@ public class ScimAddress {
      * @see #postalCode
      */
     public String getPostalCode() {
+
         return postalCode;
     }
 
@@ -174,6 +184,7 @@ public class ScimAddress {
      * @see #postalCode
      */
     public void setPostalCode(String postalCode) {
+
         this.postalCode = postalCode;
     }
 
@@ -181,6 +192,7 @@ public class ScimAddress {
      * @see #country
      */
     public String getCountry() {
+
         return country;
     }
 
@@ -188,6 +200,7 @@ public class ScimAddress {
      * @see #country
      */
     public void setCountry(String country) {
+
         this.country = country;
     }
 
@@ -195,6 +208,7 @@ public class ScimAddress {
      * @see #primary
      */
     public boolean isPrimary() {
+
         return primary;
     }
 
@@ -202,11 +216,13 @@ public class ScimAddress {
      * @see #primary
      */
     public void setPrimary(boolean primary) {
+
         this.primary = primary;
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -242,6 +258,7 @@ public class ScimAddress {
 
     @Override
     public int hashCode() {
+
         int result = formatted != null ? formatted.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (streetAddress != null ? streetAddress.hashCode() : 0);

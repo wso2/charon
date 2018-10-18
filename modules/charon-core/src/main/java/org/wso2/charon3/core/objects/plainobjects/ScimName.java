@@ -19,10 +19,7 @@
 package org.wso2.charon3.core.objects.plainobjects;
 
 /**
- * author Pascal Knueppel <br>
- * created at: 19.09.2018 - 09:48 <br>
- * <br>
- * this class representation can be used to easily add a scim name to an
+ * This class representation can be used to easily add a scim name to an
  * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
  */
 public class ScimName {
@@ -63,6 +60,7 @@ public class ScimName {
     private String honorificSuffix;
 
     public ScimName() {
+
     }
 
     public ScimName(String formatted,
@@ -71,6 +69,7 @@ public class ScimName {
                     String middleName,
                     String honorificPrefix,
                     String honorificSuffix) {
+
         this.formatted = formatted;
         this.familyName = familyName;
         this.givenName = givenName;
@@ -83,6 +82,7 @@ public class ScimName {
      * @see #formatted
      */
     public String getFormatted() {
+
         return formatted;
     }
 
@@ -90,6 +90,7 @@ public class ScimName {
      * @see #formatted
      */
     public void setFormatted(String formatted) {
+
         this.formatted = formatted;
     }
 
@@ -97,6 +98,7 @@ public class ScimName {
      * @see #familyName
      */
     public String getFamilyName() {
+
         return familyName;
     }
 
@@ -104,6 +106,7 @@ public class ScimName {
      * @see #familyName
      */
     public void setFamilyName(String familyName) {
+
         this.familyName = familyName;
     }
 
@@ -111,6 +114,7 @@ public class ScimName {
      * @see #givenName
      */
     public String getGivenName() {
+
         return givenName;
     }
 
@@ -118,6 +122,7 @@ public class ScimName {
      * @see #givenName
      */
     public void setGivenName(String givenName) {
+
         this.givenName = givenName;
     }
 
@@ -125,6 +130,7 @@ public class ScimName {
      * @see #middleName
      */
     public String getMiddleName() {
+
         return middleName;
     }
 
@@ -132,6 +138,7 @@ public class ScimName {
      * @see #middleName
      */
     public void setMiddleName(String middleName) {
+
         this.middleName = middleName;
     }
 
@@ -139,6 +146,7 @@ public class ScimName {
      * @see #honorificPrefix
      */
     public String getHonorificPrefix() {
+
         return honorificPrefix;
     }
 
@@ -146,6 +154,7 @@ public class ScimName {
      * @see #honorificPrefix
      */
     public void setHonorificPrefix(String honorificPrefix) {
+
         this.honorificPrefix = honorificPrefix;
     }
 
@@ -153,6 +162,7 @@ public class ScimName {
      * @see #honorificSuffix
      */
     public String getHonorificSuffix() {
+
         return honorificSuffix;
     }
 
@@ -160,11 +170,13 @@ public class ScimName {
      * @see #honorificSuffix
      */
     public void setHonorificSuffix(String honorificSuffix) {
+
         this.honorificSuffix = honorificSuffix;
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -187,15 +199,16 @@ public class ScimName {
             return false;
         }
         if (honorificPrefix != null ? !honorificPrefix
-            .equals(scimName.honorificPrefix) : scimName.honorificPrefix != null) {
+                .equals(scimName.honorificPrefix) : scimName.honorificPrefix != null) {
             return false;
         }
         return honorificSuffix != null ? honorificSuffix
-            .equals(scimName.honorificSuffix) : scimName.honorificSuffix == null;
+                .equals(scimName.honorificSuffix) : scimName.honorificSuffix == null;
     }
 
     @Override
     public int hashCode() {
+
         int result = formatted != null ? formatted.hashCode() : 0;
         result = 31 * result + (familyName != null ? familyName.hashCode() : 0);
         result = 31 * result + (givenName != null ? givenName.hashCode() : 0);

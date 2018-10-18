@@ -43,7 +43,6 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowBiConsumer
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
 
-
 /**
  * Represents the User object which is a collection of attributes defined by SCIM User-schema.
  */
@@ -55,15 +54,17 @@ public class User extends AbstractSCIMObject {
      * returns the username of this user
      */
     public String getUsername() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME;
         return getSimpleAttribute(attributeDefinition).map(rethrowFunction(SimpleAttribute::getStringValue))
-                                                      .orElse(null);
+                .orElse(null);
     }
 
     /**
      * deletes the current value of username and exchanges it with the given value
      */
     public void replaceUsername(String username) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, username);
     }
 
@@ -71,16 +72,18 @@ public class User extends AbstractSCIMObject {
      * gets the displayName of this user
      */
     public String getDisplayName() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of displayName and exchanges it with the given value
      */
     public void replaceDisplayName(String displayName) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME, displayName);
     }
 
@@ -88,16 +91,18 @@ public class User extends AbstractSCIMObject {
      * gets the nickname of this user
      */
     public String getNickName() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of nickname and exchanges it with the given value
      */
     public void replaceNickName(String nickName) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME, nickName);
     }
 
@@ -105,15 +110,17 @@ public class User extends AbstractSCIMObject {
      * gets the profile url of this user
      */
     public String getProfileUrl() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL;
         return getSimpleAttribute(attributeDefinition)
-            .map(simpleAttribute -> stripToNull((String) simpleAttribute.getValue())).orElse(null);
+                .map(simpleAttribute -> stripToNull((String) simpleAttribute.getValue())).orElse(null);
     }
 
     /**
      * deletes the current value of profile url and exchanges it with the given value
      */
     public void replaceProfileUrl(String profileUrl) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL, profileUrl);
     }
 
@@ -121,16 +128,18 @@ public class User extends AbstractSCIMObject {
      * gets the user type of this user
      */
     public String getUserType() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of user type and exchanges it with the given value
      */
     public void replaceUserType(String userType) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE, userType);
     }
 
@@ -138,16 +147,18 @@ public class User extends AbstractSCIMObject {
      * gets the title value of this user
      */
     public String getTitle() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of title and exchanges it with the given value
      */
     public void replaceTitle(String title) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE, title);
     }
 
@@ -155,24 +166,28 @@ public class User extends AbstractSCIMObject {
      * gets the preferred language value of this user
      */
     public String getPreferredLanguage() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of preferred language and exchanges it with the given value
      */
     public void setPreferredLanguage(String preferredLanguage) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE, preferredLanguage);
     }
 
     /**
      * deletes the preferred language attribute and exchanges it with the given value
+     *
      * @param preferredLanguage the new preferred language
      */
     public void replacePreferredLanguage(String preferredLanguage) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE, preferredLanguage);
     }
 
@@ -180,16 +195,18 @@ public class User extends AbstractSCIMObject {
      * gets the current locale value of this user
      */
     public String getLocale() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of preferred language and exchanges it with the given value
      */
     public void replaceLocale(String locale) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE, locale);
     }
 
@@ -197,24 +214,28 @@ public class User extends AbstractSCIMObject {
      * gets the current timezone value of this user
      */
     public String getTimezone() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE;
         return getSimpleAttribute(attributeDefinition).map(
-            simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
-                                                      .orElse(null);
+                simpleAttribute -> stripToNull(rethrowFunction(SimpleAttribute::getStringValue).apply(simpleAttribute)))
+                .orElse(null);
     }
 
     /**
      * deletes the current value of timezone and exchanges it with the given value
      */
     public void setTimezone(String timezone) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE, timezone);
     }
 
     /**
      * deletes the timezone attribute and exchanges it with the given value
+     *
      * @param timezone the new timezone
      */
     public void replaceTimezone(String timezone) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE, timezone);
     }
 
@@ -222,16 +243,18 @@ public class User extends AbstractSCIMObject {
      * gets the current active value of this user
      */
     public boolean getActive() {
+
         SCIMAttributeSchema attributeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE;
         return getSimpleAttribute(attributeDefinition)
-            .map(simpleAttribute -> rethrowFunction(SimpleAttribute::getBooleanValue).apply(simpleAttribute))
-            .orElse(false);
+                .map(simpleAttribute -> rethrowFunction(SimpleAttribute::getBooleanValue).apply(simpleAttribute))
+                .orElse(false);
     }
 
     /**
      * deletes the current value of active and exchanges it with the given value
      */
     public void replaceActive(boolean active) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE, active);
     }
 
@@ -239,6 +262,7 @@ public class User extends AbstractSCIMObject {
      * extracts the complex "name" attribute from the Scim structure
      */
     public ScimName getName() {
+
         SCIMAttributeSchema nameDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME;
         SCIMAttributeSchema formattedDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.FORMATTED;
         SCIMAttributeSchema givenNameDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GIVEN_NAME;
@@ -256,8 +280,8 @@ public class User extends AbstractSCIMObject {
             getSimpleAttributeValue(honorificPrefixDefinition, name).ifPresent(scimName::setHonorificPrefix);
             getSimpleAttributeValue(honorificSuffixDefinition, name).ifPresent(scimName::setHonorificSuffix);
             if (isBlank(scimName.getFormatted()) && isBlank(scimName.getFamilyName()) && isBlank(
-                scimName.getGivenName()) && isBlank(scimName.getMiddleName()) && isBlank(
-                scimName.getHonorificPrefix()) && isBlank(scimName.getHonorificSuffix())) {
+                    scimName.getGivenName()) && isBlank(scimName.getMiddleName()) && isBlank(
+                    scimName.getHonorificPrefix()) && isBlank(scimName.getHonorificSuffix())) {
                 return null;
             }
             return scimName;
@@ -268,6 +292,7 @@ public class User extends AbstractSCIMObject {
      * deletes the current complex name attribute and exchanges it with the given value
      */
     public void replaceName(ScimName scimName) {
+
         SCIMAttributeSchema nameDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME;
         SCIMAttributeSchema formattedDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.FORMATTED;
         SCIMAttributeSchema givenNameDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GIVEN_NAME;
@@ -306,6 +331,7 @@ public class User extends AbstractSCIMObject {
      * gets the emails from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getEmails() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_DISPLAY;
@@ -313,13 +339,14 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_PRIMARY;
 
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, null).orElse(Collections.emptyList());
+                primaryDefinition, null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the current complex emails attributes and exchanges it with the given values
      */
     public void replaceEmails(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_DISPLAY;
@@ -327,13 +354,14 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAIL_PRIMARY;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, primaryDefinition, null);
+                typeDefinition, primaryDefinition, null);
     }
 
     /**
      * gets the phonenumbers from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getPhoneNumbers() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_DISPLAY;
@@ -341,13 +369,14 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_PRIMARY;
 
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, null).orElse(Collections.emptyList());
+                primaryDefinition, null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the current complex phonenumber attributes and exchanges it with the given values
      */
     public void replacePhoneNumbers(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_DISPLAY;
@@ -355,26 +384,28 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS_PRIMARY;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, primaryDefinition, null);
+                typeDefinition, primaryDefinition, null);
     }
 
     /**
      * gets the instant messaging addresses from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getInstantMessagingAddresses() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_TYPE;
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_PRIMARY;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, null).orElse(Collections.emptyList());
+                primaryDefinition, null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the current complex instant messaging addresses attributes and exchanges it with the given values
      */
     public void replaceInstantMessagingAddresses(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_DISPLAY;
@@ -382,26 +413,28 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS_PRIMARY;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, primaryDefinition, null);
+                typeDefinition, primaryDefinition, null);
     }
 
     /**
      * gets the photo uris from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getPhotos() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_TYPE;
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_PRIMARY;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, null).orElse(Collections.emptyList());
+                primaryDefinition, null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the current photo uri attributes and exchanges it with the given values
      */
     public void replacePhotos(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_DISPLAY;
@@ -409,26 +442,28 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS_PRIMARY;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, primaryDefinition, null);
+                typeDefinition, primaryDefinition, null);
     }
 
     /**
      * gets the x509 certificates from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getX509Certificates() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_TYPE;
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_PRIMARY;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, null).orElse(Collections.emptyList());
+                primaryDefinition, null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the current x509 certificate attributes and exchanges it with the given values
      */
     public void replaceX509Certificates(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_DISPLAY;
@@ -436,26 +471,28 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES_PRIMARY;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, primaryDefinition, null);
+                typeDefinition, primaryDefinition, null);
     }
 
     /**
      * gets the groups from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getGroups() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_TYPE;
         SCIMAttributeSchema referenceDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_REF;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition, null,
-                                         referenceDefinition).orElse(Collections.emptyList());
+                referenceDefinition).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the group attributes and exchanges it with the given values
      */
     public void replaceGroups(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY;
@@ -463,32 +500,34 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema referenceDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_REF;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, null, referenceDefinition);
+                typeDefinition, null, referenceDefinition);
     }
 
     /**
      * gets the roles from this user or an empty list if there are none present
      */
     public List<MultiValuedComplexType> getRoles() {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_TYPE;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, typeDefinition, null,
-                                         null).orElse(Collections.emptyList());
+                null).orElse(Collections.emptyList());
     }
 
     /**
      * deletes the role attributes and exchanges it with the given values
      */
     public void replaceRoles(List<MultiValuedComplexType> multiValuedComplexTypeList) {
+
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES;
         SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_VALUE;
         SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_DISPLAY;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_TYPE;
 
         addMultivaluedComplexAtribute(multiValuedComplexTypeList, complexDefinition, valueDefinition, displayDefinition,
-                                      typeDefinition, null, null);
+                typeDefinition, null, null);
     }
 
     /**
@@ -499,7 +538,7 @@ public class User extends AbstractSCIMObject {
         SCIMAttributeSchema multiValuedDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES;
         SCIMAttributeSchema formattedDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_FORMATTED;
         SCIMAttributeSchema streetAddressDefinition =
-            SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_STREET_ADDRESS;
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_STREET_ADDRESS;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_TYPE;
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_PRIMARY;
         SCIMAttributeSchema localityDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_LOCALITY;
@@ -516,16 +555,16 @@ public class User extends AbstractSCIMObject {
                 getSimpleAttributeValue(streetAddressDefinition, complexAttribute).ifPresent(address::setStreetAddress);
                 getSimpleAttributeValue(typeDefinition, complexAttribute).ifPresent(address::setType);
                 getSimpleAttribute(primaryDefinition, complexAttribute)
-                    .map(rethrowFunction(SimpleAttribute::getBooleanValue)).ifPresent(address::setPrimary);
+                        .map(rethrowFunction(SimpleAttribute::getBooleanValue)).ifPresent(address::setPrimary);
                 getSimpleAttributeValue(localityDefinition, complexAttribute).ifPresent(address::setLocality);
                 getSimpleAttributeValue(regionDefinition, complexAttribute).ifPresent(address::setRegion);
                 getSimpleAttributeValue(postalCodeDefinition, complexAttribute).ifPresent(address::setPostalCode);
                 getSimpleAttributeValue(countryDefinition, complexAttribute).ifPresent(address::setCountry);
 
                 if (!(isBlank(address.getFormatted()) && isBlank(address.getStreetAddress()) && isBlank(
-                    address.getLocality()) && isBlank(address.getRegion()) && isBlank(
-                    address.getPostalCode()) && isBlank(address.getCountry()) && isBlank(address.getType()) && !address
-                    .isPrimary())) {
+                        address.getLocality()) && isBlank(address.getRegion()) && isBlank(
+                        address.getPostalCode()) && isBlank(address.getCountry()) && isBlank(address.getType()) && !address
+                        .isPrimary())) {
                     multiValuedComplexTypes.add(address);
                 }
             }
@@ -537,10 +576,11 @@ public class User extends AbstractSCIMObject {
      * deletes the addresses attributes and exchanges it with the given values
      */
     public void replaceAddresses(List<ScimAddress> addressList) {
+
         SCIMAttributeSchema addressDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES;
         SCIMAttributeSchema formattedDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_FORMATTED;
         SCIMAttributeSchema streetAddressDefinition =
-            SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_STREET_ADDRESS;
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_STREET_ADDRESS;
         SCIMAttributeSchema typeDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_TYPE;
         SCIMAttributeSchema primaryDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_PRIMARY;
         SCIMAttributeSchema localityDefinition = SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES_LOCALITY;
@@ -552,13 +592,13 @@ public class User extends AbstractSCIMObject {
 
         MultiValuedAttribute multivaluedAddressAttribute = new MultiValuedAttribute(addressDefinition.getName());
         LambdaExceptionUtils.rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
-                            .accept(addressDefinition, multivaluedAddressAttribute);
+                .accept(addressDefinition, multivaluedAddressAttribute);
 
         addressList.forEach(address -> {
             ComplexAttribute complexAttribute = new ComplexAttribute(addressDefinition.getName());
 
             BiConsumer<SCIMAttributeSchema, Supplier<Object>> setSubAttribute = getSetSubAttributeConsumer(
-                complexAttribute);
+                    complexAttribute);
 
             setSubAttribute.accept(formattedDefinition, address::getFormatted);
             setSubAttribute.accept(streetAddressDefinition, address::getStreetAddress);
@@ -575,54 +615,65 @@ public class User extends AbstractSCIMObject {
 
     /**
      * return userName of the user
+     *
      * @return
      * @throws CharonException
      */
     public String getUserName() throws CharonException {
+
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.USER_NAME);
     }
 
     /**
      * set the userName of the user
+     *
      * @param userName
      * @throws CharonException
      * @throws BadRequestException
      */
     public void setUserName(String userName) throws CharonException, BadRequestException {
+
         this.setSimpleAttribute(SCIMConstants.UserSchemaConstants.USER_NAME,
-                                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
     }
 
     /**
      * deletes the username attribute and exchanges it with the given value
+     *
      * @param username the new username
      */
     public void replaceUserName(String username) {
+
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, username);
     }
 
     /**
      * return the password of the user
+     *
      * @return
      * @throws CharonException
      */
     public String getPassword() throws CharonException {
+
         return this.getSimpleAttributeStringVal(SCIMConstants.UserSchemaConstants.PASSWORD);
     }
 
     /**
      * set the password of the user
+     *
      * @param password
      * @throws CharonException
      * @throws BadRequestException
      */
     public void setPassword(String password) throws CharonException, BadRequestException {
+
         setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.
-            PASSWORD, password);
+                PASSWORD, password);
     }
 
     /**
      * set simple attribute in the scim object
+     *
      * @param attributeName
      * @param attributeSchema
      * @param value
@@ -632,13 +683,14 @@ public class User extends AbstractSCIMObject {
     private void setSimpleAttribute(String attributeName,
                                     AttributeSchema attributeSchema,
                                     Object value) throws CharonException, BadRequestException {
+
         if (this.isAttributeExist(attributeName)) {
             ((SimpleAttribute) this.attributeList.get(attributeName)).updateValue(value);
         } else {
             SimpleAttribute simpleAttribute = new SimpleAttribute(attributeName, value);
             simpleAttribute = (SimpleAttribute) DefaultAttributeFactory.
-                                                                           createAttribute(attributeSchema,
-                                                                                           simpleAttribute);
+                    createAttribute(attributeSchema,
+                            simpleAttribute);
             this.attributeList.put(attributeName, simpleAttribute);
         }
 
@@ -646,17 +698,20 @@ public class User extends AbstractSCIMObject {
 
     /**
      * return simple attribute's string value
+     *
      * @param attributeName
      * @return
      * @throws CharonException
      */
     private String getSimpleAttributeStringVal(String attributeName) throws CharonException {
+
         return this.isAttributeExist(attributeName) ? ((SimpleAttribute) this.attributeList.get(attributeName))
-            .getStringValue() : null;
+                .getStringValue() : null;
     }
 
     /**
      * set the associated groups of the user
+     *
      * @param type
      * @param value
      * @param display
@@ -666,6 +721,7 @@ public class User extends AbstractSCIMObject {
     public void setGroup(String type,
                          String value,
                          String display) throws CharonException, BadRequestException {
+
         SimpleAttribute typeSimpleAttribute = null;
         SimpleAttribute valueSimpleAttribute = null;
         SimpleAttribute displaySimpleAttribute = null;
@@ -673,21 +729,21 @@ public class User extends AbstractSCIMObject {
         if (type != null) {
             typeSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.TYPE, type);
             typeSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_TYPE, typeSimpleAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_TYPE, typeSimpleAttribute);
             complexAttribute.setSubAttribute(typeSimpleAttribute);
         }
 
         if (value != null) {
             valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value);
             valueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_VALUE, valueSimpleAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_VALUE, valueSimpleAttribute);
             complexAttribute.setSubAttribute(valueSimpleAttribute);
         }
 
         if (display != null) {
             displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
             displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY, displaySimpleAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY, displaySimpleAttribute);
             complexAttribute.setSubAttribute(displaySimpleAttribute);
         }
         if (complexAttribute.getSubAttributesList().size() != 0) {
@@ -702,12 +758,13 @@ public class User extends AbstractSCIMObject {
             String complexAttributeName = SCIMConstants.UserSchemaConstants.GROUPS + "_" + valueVal + "_" + typeVal;
             complexAttribute.setName(complexAttributeName);
             DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
             setGroup(complexAttribute);
         }
     }
 
     private void setGroup(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
+
         MultiValuedAttribute groupsAttribute;
 
         if (this.attributeList.containsKey(SCIMConstants.UserSchemaConstants.GROUPS)) {
@@ -717,7 +774,7 @@ public class User extends AbstractSCIMObject {
             groupsAttribute = new MultiValuedAttribute(SCIMConstants.UserSchemaConstants.GROUPS);
             groupsAttribute.setAttributeValue(groupPropertiesAttribute);
             groupsAttribute = (MultiValuedAttribute) DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, groupsAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, groupsAttribute);
             this.attributeList.put(SCIMConstants.UserSchemaConstants.GROUPS, groupsAttribute);
         }
 
@@ -727,6 +784,7 @@ public class User extends AbstractSCIMObject {
      * set the schemas of the user
      */
     public void setSchemas() {
+
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         java.util.List<String> schemasList = schema.getSchemasList();
         for (String scheme : schemasList) {

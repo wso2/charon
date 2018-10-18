@@ -19,9 +19,6 @@
 package org.wso2.charon3.core.objects.plainobjects;
 
 /**
- * author Pascal Knueppel <br>
- * created at: 19.09.2018 - 09:51 <br>
- * <br>
  * this class representation can be used to easily add a multi valued complex type representation like an email
  * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
  */
@@ -67,6 +64,7 @@ public class MultiValuedComplexType {
                                   String display,
                                   String value,
                                   String reference) {
+
         this.type = type;
         this.primary = primary;
         this.display = display;
@@ -78,6 +76,7 @@ public class MultiValuedComplexType {
      * @see #type
      */
     public String getType() {
+
         return type;
     }
 
@@ -85,6 +84,7 @@ public class MultiValuedComplexType {
      * @see #type
      */
     public void setType(String type) {
+
         this.type = type;
     }
 
@@ -92,6 +92,7 @@ public class MultiValuedComplexType {
      * @see #primary
      */
     public boolean isPrimary() {
+
         return primary;
     }
 
@@ -99,6 +100,7 @@ public class MultiValuedComplexType {
      * @see #primary
      */
     public void setPrimary(boolean primary) {
+
         this.primary = primary;
     }
 
@@ -106,6 +108,7 @@ public class MultiValuedComplexType {
      * @see #display
      */
     public String getDisplay() {
+
         return display;
     }
 
@@ -113,6 +116,7 @@ public class MultiValuedComplexType {
      * @see #display
      */
     public void setDisplay(String display) {
+
         this.display = display;
     }
 
@@ -120,6 +124,7 @@ public class MultiValuedComplexType {
      * @see #value
      */
     public String getValue() {
+
         return value;
     }
 
@@ -127,6 +132,7 @@ public class MultiValuedComplexType {
      * @see #value
      */
     public void setValue(String value) {
+
         this.value = value;
     }
 
@@ -134,6 +140,7 @@ public class MultiValuedComplexType {
      * @see #reference
      */
     public String getReference() {
+
         return reference;
     }
 
@@ -141,11 +148,13 @@ public class MultiValuedComplexType {
      * @see #reference
      */
     public void setReference(String reference) {
+
         this.reference = reference;
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -172,6 +181,7 @@ public class MultiValuedComplexType {
 
     @Override
     public int hashCode() {
+
         int result = type != null ? type.hashCode() : 0;
         result = 31 * result + (primary ? 1 : 0);
         result = 31 * result + (display != null ? display.hashCode() : 0);
