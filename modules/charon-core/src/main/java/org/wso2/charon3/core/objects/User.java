@@ -563,8 +563,8 @@ public class User extends AbstractSCIMObject {
 
                 if (!(isBlank(address.getFormatted()) && isBlank(address.getStreetAddress()) && isBlank(
                         address.getLocality()) && isBlank(address.getRegion()) && isBlank(
-                        address.getPostalCode()) && isBlank(address.getCountry()) && isBlank(address.getType()) && !address
-                        .isPrimary())) {
+                        address.getPostalCode()) && isBlank(address.getCountry()) && isBlank(address.getType()) &&
+                        !address.isPrimary())) {
                     multiValuedComplexTypes.add(address);
                 }
             }
@@ -743,7 +743,8 @@ public class User extends AbstractSCIMObject {
         if (display != null) {
             displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
             displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY, displaySimpleAttribute);
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY,
+                            displaySimpleAttribute);
             complexAttribute.setSubAttribute(displaySimpleAttribute);
         }
         if (complexAttribute.getSubAttributesList().size() != 0) {
