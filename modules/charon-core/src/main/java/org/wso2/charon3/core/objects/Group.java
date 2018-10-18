@@ -26,6 +26,7 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
+import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +38,21 @@ import java.util.Map;
 public class Group extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /*
+    /**
      * get the display name of the group
      * @return
      * @throws CharonException
      */
-    public String getDisplayName() throws CharonException {
+    public String getDisplayName() {
         if (isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
-            return ((SimpleAttribute) attributeList.get(
-                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue();
+            return LambdaExceptionUtils.rethrowSupplier(() -> ((SimpleAttribute) attributeList.get(
+                    SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).getStringValue()).get();
         } else {
             return null;
         }
     }
 
-    /*
+    /**
      * set the display name of the group
      * @param displayName
      * @throws CharonException
@@ -70,7 +71,14 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
+     * deletes the current value of displayname and exchanges it with the given value
+     */
+    public void replaceDisplayName(String displayname) {
+        replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayname);
+    }
+
+    /**
      * get the members of the group
      * @return
      */
@@ -95,7 +103,7 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
-    /*
+    /**
      * get the members of the group with their display names
      * @return
      */
@@ -124,7 +132,7 @@ public class Group extends AbstractSCIMObject {
         return displayNames;
     }
 
-    /*
+    /**
      * set a member to the group
      * @param value
      * @param display
@@ -156,7 +164,7 @@ public class Group extends AbstractSCIMObject {
         members.setAttributeValue(complexAttribute);
     }
 
-    /*
+    /**
      * set member to the group
      * @param userId
      * @param userName
@@ -196,7 +204,7 @@ public class Group extends AbstractSCIMObject {
         return  complexAttribute;
     }
 
-    /*
+    /**
      * set the schemas for scim object -group
      */
     public void setSchemas() {
