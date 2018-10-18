@@ -39,16 +39,16 @@ import java.util.Map;
  * These attributes MUST be included in all other objects which become SCIM resources.
  */
 
-public class AbstractSCIMObject implements SCIMObject {
+public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /*Collection of attributes which constitute this resource.*/
+    /**Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
-    /*List of schemas where the attributes of this resource, are defined.*/
+    /**List of schemas where the attributes of this resource, are defined.*/
     protected List<String> schemaList = new ArrayList<String>();
 
-    /*
+    /**
      * Set the attributes and corresponding schema in the SCIM Object.
      *
      * @param newAttribute
@@ -60,7 +60,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * Set the attributes in the SCIM Object.
      *
      * @param newAttribute
@@ -98,7 +98,7 @@ public class AbstractSCIMObject implements SCIMObject {
         return null;
     }
 
-    /*
+    /**
      * Deleting an attribute is the responsibility of an attribute holder.
      *
      * @param id - name of the attribute
@@ -109,7 +109,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
      * @param parentAttribute - name of the parent attribute
@@ -121,7 +121,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * This deletion method is only applicable for extension schema
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
@@ -139,7 +139,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
      *
      */
@@ -178,7 +178,7 @@ public class AbstractSCIMObject implements SCIMObject {
         return attributeList.containsKey(SCIMConstants.CommonSchemaConstants.META);
     }
 
-    /*
+    /**
      * Set a value for the id attribute. If attribute not already created in the resource,
      * create attribute and set the value.
      * Unique identifier for the SCIM Resource as defined by the Service Provider
@@ -201,7 +201,7 @@ public class AbstractSCIMObject implements SCIMObject {
 
     }
 
-    /*
+    /**
      * Set a String that is an identifier for the resource as defined by the
      * provisioning client.
      *
@@ -215,7 +215,7 @@ public class AbstractSCIMObject implements SCIMObject {
         this.setAttribute(externalIdAttribute);
     }
 
-    /*
+    /**
      * set the created date and time of the resource
      *
      * @param createdDate
@@ -246,7 +246,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * set the last modified date and time of the resource
      *
      * @param lastModifiedDate
@@ -276,7 +276,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * crete the meta attribute of the scim object
      *
      */
@@ -292,7 +292,7 @@ public class AbstractSCIMObject implements SCIMObject {
             attributeList.put(SCIMConstants.CommonSchemaConstants.META, metaAttribute);
         }
     }
-    /*
+    /**
      * Return the meta attribute
      *
      * @return ComplexAttribute
@@ -306,39 +306,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
-     * Get the value of id attribute.
-     * Unique identifier for the SCIM Resource as defined by the Service Provider.
-     *
-     * @return String
-     */
-    public String getId() throws CharonException {
-        if (isAttributeExist(SCIMConstants.CommonSchemaConstants.ID)) {
-            return ((SimpleAttribute) attributeList.get(
-                    SCIMConstants.CommonSchemaConstants.ID)).getStringValue();
-        } else {
-            return null;
-        }
-    }
-
-    /*
-     * Get the value of externalId attribute.
-     * String that is an identifier for the resource as defined by the
-     * provisioning client.
-     *
-     * @return String
-     */
-    public String getExternalId() throws CharonException {
-        SimpleAttribute externalId = (SimpleAttribute) getAttribute(
-            SCIMConstants.CommonSchemaConstants.EXTERNAL_ID);
-        if (externalId == null) {
-            return null;
-        } else {
-            return externalId.getStringValue();
-        }
-    }
-
-    /*
+    /**
      * set the location of the meta attribute
      *
      * @param location
@@ -368,7 +336,7 @@ public class AbstractSCIMObject implements SCIMObject {
         }
     }
 
-    /*
+    /**
      * set the resourceType of the meta attribute
      *
      * @param resourceType
@@ -394,16 +362,6 @@ public class AbstractSCIMObject implements SCIMObject {
             createMetaAttribute();
             getMetaAttribute().setSubAttribute(resourceTypeAttribute);
 
-        }
-    }
-
-    public String getLocation() throws CharonException {
-        if (this.isMetaAttributeExist()) {
-            SimpleAttribute location = (SimpleAttribute) this.getMetaAttribute().getSubAttribute
-                    (SCIMConstants.CommonSchemaConstants.LOCATION);
-            return location != null ? location.getStringValue() : null;
-        } else {
-            return null;
         }
     }
 
@@ -611,6 +569,14 @@ public class AbstractSCIMObject implements SCIMObject {
         }
         complexValue = complexValue + "]";
         return complexValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AbstractSCIMObject getResource() {
+        return this;
     }
 
 }
