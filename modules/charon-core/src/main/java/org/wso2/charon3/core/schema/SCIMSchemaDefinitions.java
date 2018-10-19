@@ -887,7 +887,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<AttributeSchema>(Arrays.asList
-                                (VALUE, REF, DISPLAY)));
+                                (VALUE, REF, DISPLAY, TYPE)));
     }
 
     /**
