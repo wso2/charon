@@ -176,6 +176,28 @@ public class JSONDecoder {
         return new AbstractCharonException(httpStatusCode, detail, scimType);
     }
 
+    /**
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     *
+     * @return the decoded exception
+     */
+    public <T extends AbstractCharonException> T decodeCharonException(String scimErrorString, Class<T> exceptionType)
+        throws BadRequestException, CharonException {
+
+        AbstractCharonException abstractCharonException = decodeCharonException(scimErrorString);
+        T exception;
+        try {
+            exception = exceptionType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new CharonException("could not create instance of type: " + exceptionType.getName(), e);
+        }
+        exception.setSchemas(abstractCharonException.getSchemas());
+        exception.setDetail(abstractCharonException.getDetail());
+        exception.setScimType(abstractCharonException.getScimType());
+        exception.setStatus(abstractCharonException.getStatus());
+        return exception;
+    }
+
 
     /**
      * retrieves the first schema string value from the given {@link JSONObject} in the

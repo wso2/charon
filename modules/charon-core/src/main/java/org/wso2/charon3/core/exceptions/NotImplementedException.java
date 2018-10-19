@@ -21,6 +21,11 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  * Service provider does not support the request operation.
  */
 public class NotImplementedException extends AbstractCharonException {
+
+    public NotImplementedException() {
+        this(ResponseCodeConstants.DESC_NOT_IMPLEMENTED);
+    }
+
     public NotImplementedException(String msg) {
         status = ResponseCodeConstants.CODE_NOT_IMPLEMENTED;
         detail = msg;

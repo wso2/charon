@@ -23,8 +23,7 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class ForbiddenException extends AbstractCharonException {
 
     public ForbiddenException() {
-        status = ResponseCodeConstants.CODE_FORBIDDEN;
-        detail = ResponseCodeConstants.DESC_CONFLICT;
+        this(ResponseCodeConstants.DESC_CONFLICT);
     }
 
     public ForbiddenException(String exception) {

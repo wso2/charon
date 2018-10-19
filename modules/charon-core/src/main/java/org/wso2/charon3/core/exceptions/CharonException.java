@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 package org.wso2.charon3.core.exceptions;
+
+import org.wso2.charon3.core.protocol.ResponseCodeConstants;
+
 /**
  * General exceptions in charon server side. Those that are not returned to client
  * with in the response.
  */
 public class CharonException extends AbstractCharonException {
+
+    public CharonException() {
+        this(ResponseCodeConstants.DESC_INTERNAL_ERROR);
+    }
 
     /**
      * Constructs a new exception with the specified detail message and

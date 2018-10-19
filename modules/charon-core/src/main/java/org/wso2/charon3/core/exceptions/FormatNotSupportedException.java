@@ -24,8 +24,7 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class FormatNotSupportedException extends AbstractCharonException {
 
     public FormatNotSupportedException() {
-        this.status = ResponseCodeConstants.CODE_FORMAT_NOT_SUPPORTED;
-        this.detail = ResponseCodeConstants.DESC_FORMAT_NOT_SUPPORTED;
+        this(ResponseCodeConstants.DESC_FORMAT_NOT_SUPPORTED);
     }
 
     public FormatNotSupportedException(String detail) {

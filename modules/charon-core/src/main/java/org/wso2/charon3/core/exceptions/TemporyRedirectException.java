@@ -22,6 +22,10 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class TemporyRedirectException extends AbstractCharonException {
 
+    public TemporyRedirectException() {
+        this(ResponseCodeConstants.DESC_TEMPORARY_REDIRECT);
+    }
+
     public TemporyRedirectException(String msg) {
         status = ResponseCodeConstants.CODE_TEMPORARY_REDIRECT;
         detail = msg;
