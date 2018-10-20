@@ -24,12 +24,10 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class ConflictException extends AbstractCharonException {
 
     public ConflictException() {
-        status = ResponseCodeConstants.CODE_CONFLICT;
-        detail = ResponseCodeConstants.DESC_CONFLICT;
+        this(ResponseCodeConstants.DESC_CONFLICT);
     }
 
     public ConflictException(String detail) {
-        status = ResponseCodeConstants.CODE_CONFLICT;
-        this.detail = detail;
+        super(ResponseCodeConstants.CODE_CONFLICT, detail, null);
     }
 }

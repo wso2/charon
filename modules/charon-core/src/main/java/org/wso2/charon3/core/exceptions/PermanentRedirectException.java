@@ -22,8 +22,11 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class PermanentRedirectException extends AbstractCharonException {
 
+    public PermanentRedirectException() {
+        this(ResponseCodeConstants.DESC_PERMANENT_REDIRECT);
+    }
+
     public PermanentRedirectException(String msg) {
-        status = ResponseCodeConstants.CODE_PERMANENT_REDIRECT;
-        detail = msg;
+        super(ResponseCodeConstants.CODE_PERMANENT_REDIRECT, msg, null);
     }
 }
