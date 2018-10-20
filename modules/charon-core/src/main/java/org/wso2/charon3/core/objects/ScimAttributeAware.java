@@ -227,7 +227,8 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         return getComplexAttribute(metaDefinition).map(meta -> {
-            return getSimpleAttribute(lastModifiedDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
+            return getSimpleAttribute(lastModifiedDefinition, meta)
+                    .map(rethrowFunction(SimpleAttribute::getInstantValue))
                     .map(instant -> LocalDateTime
                             .ofInstant(instant, TimeZone.getDefault().toZoneId()))
                     .orElse(null);
@@ -242,7 +243,8 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         return getComplexAttribute(metaDefinition).map(meta -> {
-            return getSimpleAttribute(lastModifiedDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
+            return getSimpleAttribute(lastModifiedDefinition, meta)
+                    .map(rethrowFunction(SimpleAttribute::getInstantValue))
                     .orElse(null);
         }).orElse(null);
     }
