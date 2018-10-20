@@ -392,28 +392,10 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         return created != null ? new Date(created.toEpochMilli()) : null;
     }
 
-    public Instant getCreatedInstant() throws CharonException {
-        if (this.isMetaAttributeExist()) {
-            SimpleAttribute createdDate = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("created");
-            return createdDate != null ? createdDate.getInstantValue() : null;
-        } else {
-            return null;
-        }
-    }
-
     @Deprecated
     public Date getLastModified() throws CharonException {
         Instant lastModified = getLastModifiedInstant();
         return lastModified != null ? new Date(lastModified.toEpochMilli()) : null;
-    }
-
-    public Instant getLastModifiedInstant() throws CharonException {
-        if (this.isMetaAttributeExist()) {
-            SimpleAttribute lastModified = (SimpleAttribute) this.getMetaAttribute().getSubAttribute("lastModified");
-            return lastModified != null ? lastModified.getInstantValue() : null;
-        } else {
-            return null;
-        }
     }
 
     public String toString() {
