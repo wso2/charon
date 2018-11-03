@@ -99,6 +99,8 @@ public class FilterTreeManager {
                     }
                     tokenList.add(input.sval);
                 }
+            } else if (input.ttype == '\"' || input.ttype == '\'') {
+                concatenatedString += " " + input.sval;
             }
         }
         //Add to the list, if the filter is a simple filter
