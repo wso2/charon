@@ -29,8 +29,12 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.VALUE;
+import static org.wso2.charon3.core.schema.SCIMConstants.GroupSchemaConstants.MEMBERS;
 
 /**
  * Represents the Group object which is a collection of attributes defined by SCIM Group-schema.
@@ -152,7 +156,7 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    public void setMember(String value, String display, String ref, String type) 
+    public void setMember(String value, String display, String ref, String type)
            throws BadRequestException, CharonException {
         if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
           MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
@@ -214,6 +218,61 @@ public class Group extends AbstractSCIMObject {
             setSchema(scheme);
         }
 
+    }
+
+    /**
+     * Returns the ID list of all members of type User
+     */
+    public List<String> getUserIds() {
+        return getMemberIdsOfType(SCIMConstants.USER);
+    }
+
+
+    /**
+     * Returns the ID list of all members of type Group
+     */
+    public List<String> getSubGroupIds() {
+        return getMemberIdsOfType(SCIMConstants.GROUP);
+    }
+
+
+    /**
+     * Returns the ID list of all members of specified type
+     */
+    public List<String> getMemberIdsOfType(String searchType) {
+        List<String> memberIds = new ArrayList<>();
+        if (!isAttributeExist(MEMBERS)) {
+            return memberIds;
+        }
+
+        MultiValuedAttribute membersAttribute = (MultiValuedAttribute) getAttribute(MEMBERS);
+        if (membersAttribute == null) {
+            return Collections.emptyList();
+        }
+        List<Attribute> memberList = membersAttribute.getAttributeValues();
+        for (Attribute memberListEntry : memberList) {
+            ComplexAttribute memberComplexAttribute = (ComplexAttribute) memberListEntry;
+            if (!memberComplexAttribute.isSubAttributeExist(VALUE)
+                || !memberComplexAttribute.isSubAttributeExist(SCIMConstants.CommonSchemaConstants.TYPE)) {
+                continue;
+            }
+            //@formatter:off
+            String type = (String) (LambdaExceptionUtils.rethrowSupplier(() ->
+                (SimpleAttribute) memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.TYPE))
+                .get()).getValue();
+            //@formatter:on
+            if (type == null || !type.equals(searchType)) {
+                continue;
+            }
+
+            //@formatter:off
+            String value = (LambdaExceptionUtils.rethrowSupplier(() ->
+                ((SimpleAttribute) memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.VALUE))
+                    .getStringValue())).get();
+            //@formatter:on
+            memberIds.add(value);
+        }
+        return memberIds;
     }
 
 }
