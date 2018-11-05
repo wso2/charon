@@ -24,12 +24,10 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class NotFoundException extends AbstractCharonException {
 
     public NotFoundException() {
-        status = ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND;
-        detail = ResponseCodeConstants.DESC_RESOURCE_NOT_FOUND;
+        this(ResponseCodeConstants.DESC_RESOURCE_NOT_FOUND);
     }
 
     public NotFoundException(String detail) {
-        status = ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND;
-        this.detail = detail;
+        super(ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND, detail, null);
     }
 }

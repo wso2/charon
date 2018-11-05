@@ -22,8 +22,11 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class UnauthorizedException extends AbstractCharonException {
 
+    public UnauthorizedException() {
+        this(ResponseCodeConstants.DESC_UNAUTHORIZED);
+    }
+
     public UnauthorizedException(String msg) {
-        status = ResponseCodeConstants.CODE_UNAUTHORIZED;
-        detail = msg;
+        super(ResponseCodeConstants.CODE_UNAUTHORIZED, msg, null);
     }
 }

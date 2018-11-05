@@ -22,8 +22,11 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class PayloadTooLargeException extends AbstractCharonException {
 
+    public PayloadTooLargeException() {
+        this(ResponseCodeConstants.DESC_PAYLOAD_TOO_LARGE);
+    }
+
     public PayloadTooLargeException(String msg) {
-        status = ResponseCodeConstants.CODE_PAYLOAD_TOO_LARGE;
-        detail = msg;
+        super(ResponseCodeConstants.CODE_PAYLOAD_TOO_LARGE, msg, null);
     }
 }

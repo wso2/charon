@@ -26,6 +26,7 @@ import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
@@ -144,6 +145,102 @@ public class JSONDecoder {
             }
         }
         return listedResource;
+    }
+
+    /**
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     *
+     * @return the decoded exception
+     */
+    public AbstractCharonException decodeCharonException(String scimErrorString)
+        throws BadRequestException, CharonException {
+
+        JSONObject decodedJsonObj;
+        try {
+            decodedJsonObj = new JSONObject(new JSONTokener(scimErrorString));
+        } catch (JSONException e) {
+            logger.error("json error in decoding the resource", e);
+            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        final String schema = getFirstSchemaValueFromJson(decodedJsonObj);
+        final String scimType = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.SCIM_TYPE);
+        final String detail = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.DETAIL);
+        final int httpStatusCode = getIntValueFromJson(decodedJsonObj, ResponseCodeConstants.STATUS);
+
+        if (schema == null || !schema.equals(ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI)) {
+            throw new CharonException("given scim resource string does not seem to be an error. Expected scim error " +
+                "URI but got: '" + schema + "'");
+        }
+
+        return new AbstractCharonException(httpStatusCode, detail, scimType);
+    }
+
+    /**
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     *
+     * @return the decoded exception
+     */
+    public <T extends AbstractCharonException> T decodeCharonException(String scimErrorString, Class<T> exceptionType)
+        throws BadRequestException, CharonException {
+
+        AbstractCharonException abstractCharonException = decodeCharonException(scimErrorString);
+        T exception;
+        try {
+            exception = exceptionType.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new CharonException("could not create instance of type: " + exceptionType.getName(), e);
+        }
+        exception.setSchemas(abstractCharonException.getSchemas());
+        exception.setDetail(abstractCharonException.getDetail());
+        exception.setScimType(abstractCharonException.getScimType());
+        exception.setStatus(abstractCharonException.getStatus());
+        return exception;
+    }
+
+
+    /**
+     * retrieves the first schema string value from the given {@link JSONObject} in the
+     * {@link ResponseCodeConstants#SCHEMAS} attribute field which should be an array. This method is only useful if
+     * this array is expected to contain a single element.
+     *
+     * @param jsonObject the jsonObject that might hold a schema-value
+     * @return the schema value of the given resource
+     * @throws CharonException if the value under the given key is not an int value
+     */
+    private String getFirstSchemaValueFromJson(JSONObject jsonObject) throws CharonException {
+        String value = null;
+        try {
+            JSONArray schemas = jsonObject.getJSONArray(ResponseCodeConstants.SCHEMAS);
+            value = jsonObject.getString(schemas.getString(0));
+        } catch (JSONException e) {
+            logger.debug("could not get '{}' value from scim resource as an array", ResponseCodeConstants.SCHEMAS);
+            // if the value could not be extracted as JSONArray we will give it another chance to extract it as
+            // simple string
+            value = getStringValueFromJson(jsonObject, ResponseCodeConstants.SCHEMAS);
+            if (value == null) {
+                throw new CharonException("could not retrieve the 'schemas' field from the given json resource");
+            }
+        }
+        return value;
+    }
+
+    /**
+     * retrieves the string value from the given {@link JSONObject}
+     *
+     * @param jsonObject the jsonObject that might hold a string-value under the given key
+     * @param name       the name of the attribute in the json structure that should be retrieved as string
+     * @return the int value of the key
+     * @throws CharonException if the value under the given key is not an int value
+     */
+    private String getStringValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+        String value = null;
+        try {
+            value = jsonObject.getString(name);
+        } catch (JSONException e) {
+            logger.debug("could not get '{}' value from scim resource", name);
+        }
+        return value;
     }
 
 

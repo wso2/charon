@@ -27,19 +27,31 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class AbstractCharonException extends Exception {
 
-    //Error responses are identified using the following "schema" uri
+    /**
+     * Error responses are identified using the following "schema" uri
+     */
     protected String schemas;
 
-    //A detailed human-readable message.
+    /**
+     * A detailed human-readable message.
+     */
     protected String detail;
 
-    //The HTTP status code
+    /**
+     * The HTTP status code
+     */
     protected int status;
+
+    /**
+     * the scim type for scim errors as defined in RFC7644 3.12
+     */
+    protected String scimType;
 
     public AbstractCharonException(int status, String detail, String scimType) {
         this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
         this.status = status;
         this.detail = detail;
+        this.scimType = scimType;
     }
     public AbstractCharonException() {
         this.schemas = ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI;
@@ -89,6 +101,12 @@ public class AbstractCharonException extends Exception {
 
     public void setStatus(int status) {
         this.status = status; }
+
+    public String getScimType() {
+        return scimType; }
+
+    public void setScimType(String scimType) {
+        this.scimType = scimType; }
 }
 
 
