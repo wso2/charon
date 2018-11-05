@@ -239,8 +239,7 @@ public class Group extends AbstractSCIMObject {
     /**
      * Returns the ID list of all members of specified type
      */
-    public List<String> getMemberIdsOfType(String searchType)
-    {
+    public List<String> getMemberIdsOfType(String searchType) {
         List<String> memberIds = new ArrayList<>();
         if (!isAttributeExist(MEMBERS)) {
             return memberIds;
@@ -251,8 +250,7 @@ public class Group extends AbstractSCIMObject {
             return Collections.emptyList();
         }
         List<Attribute> memberList = membersAttribute.getAttributeValues();
-        for ( Attribute memberListEntry : memberList )
-        {
+        for (Attribute memberListEntry : memberList) {
             ComplexAttribute memberComplexAttribute = (ComplexAttribute) memberListEntry;
             if (!memberComplexAttribute.isSubAttributeExist(VALUE)
                 || !memberComplexAttribute.isSubAttributeExist(SCIMConstants.CommonSchemaConstants.TYPE)) {
