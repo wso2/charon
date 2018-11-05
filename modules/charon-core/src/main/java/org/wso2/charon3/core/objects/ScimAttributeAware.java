@@ -417,6 +417,9 @@ public abstract class ScimAttributeAware {
                                        Object value) {
 
         if (scimAttributeSchema == null || value == null) {
+            if (scimAttributeSchema != null) {
+                getResource().deleteAttribute(scimAttributeSchema.getName());
+            }
             return;
         }
         SimpleAttribute simpleAttribute = new SimpleAttribute(scimAttributeSchema.getName(), value);
