@@ -223,8 +223,7 @@ public class Group extends AbstractSCIMObject {
     /**
      * Returns the ID list of all members of type User
      */
-    public List<String> getUserIds()
-    {
+    public List<String> getUserIds() {
         return getMemberIdsOfType(SCIMConstants.USER);
     }
 
@@ -232,8 +231,7 @@ public class Group extends AbstractSCIMObject {
     /**
      * Returns the ID list of all members of type Group
      */
-    public List<String> getSubGroupIds()
-    {
+    public List<String> getSubGroupIds() {
         return getMemberIdsOfType(SCIMConstants.GROUP);
     }
 
@@ -244,37 +242,34 @@ public class Group extends AbstractSCIMObject {
     public List<String> getMemberIdsOfType(String searchType)
     {
         List<String> memberIds = new ArrayList<>();
-        if (!isAttributeExist(MEMBERS))
-        {
+        if (!isAttributeExist(MEMBERS)) {
             return memberIds;
         }
 
-        MultiValuedAttribute membersAttribute = (MultiValuedAttribute)getAttribute(MEMBERS);
+        MultiValuedAttribute membersAttribute = (MultiValuedAttribute) getAttribute(MEMBERS);
         if (membersAttribute == null) {
             return Collections.emptyList();
         }
         List<Attribute> memberList = membersAttribute.getAttributeValues();
         for ( Attribute memberListEntry : memberList )
         {
-            ComplexAttribute memberComplexAttribute = (ComplexAttribute)memberListEntry;
+            ComplexAttribute memberComplexAttribute = (ComplexAttribute) memberListEntry;
             if (!memberComplexAttribute.isSubAttributeExist(VALUE)
-                || !memberComplexAttribute.isSubAttributeExist(SCIMConstants.CommonSchemaConstants.TYPE))
-            {
+                || !memberComplexAttribute.isSubAttributeExist(SCIMConstants.CommonSchemaConstants.TYPE)) {
                 continue;
             }
             //@formatter:off
-            String type = (String)(LambdaExceptionUtils.rethrowSupplier(() ->
-                (SimpleAttribute)memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.TYPE))
+            String type = (String) (LambdaExceptionUtils.rethrowSupplier(() ->
+                (SimpleAttribute) memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.TYPE))
                 .get()).getValue();
             //@formatter:on
-            if (type == null || !type.equals(searchType))
-            {
+            if (type == null || !type.equals(searchType)) {
                 continue;
             }
 
             //@formatter:off
             String value = (LambdaExceptionUtils.rethrowSupplier(() ->
-                ((SimpleAttribute)memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.VALUE))
+                ((SimpleAttribute) memberComplexAttribute.getSubAttribute(SCIMConstants.CommonSchemaConstants.VALUE))
                     .getStringValue())).get();
             //@formatter:on
             memberIds.add(value);
