@@ -240,7 +240,7 @@ public class Group extends AbstractSCIMObject {
     /**
      * Returns the ID list of all members of specified type
      */
-    private List<String> getMemberIdsOfType(String searchType)
+    public List<String> getMemberIdsOfType(String searchType)
     {
         List<String> memberIds = new ArrayList<>();
         if (!isAttributeExist(MEMBERS))
