@@ -29,6 +29,7 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    public void setMember(String value, String display, String ref, String type) 
+    public void setMember(String value, String display, String ref, String type)
            throws BadRequestException, CharonException {
         if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
           MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
@@ -249,6 +250,9 @@ public class Group extends AbstractSCIMObject {
         }
 
         MultiValuedAttribute membersAttribute = (MultiValuedAttribute)getAttribute(MEMBERS);
+        if (membersAttribute == null) {
+            return Collections.emptyList();
+        }
         List<Attribute> memberList = membersAttribute.getAttributeValues();
         for ( Attribute memberListEntry : memberList )
         {
