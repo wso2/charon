@@ -212,7 +212,7 @@ public class JSONDecoder {
         String value = null;
         try {
             JSONArray schemas = jsonObject.getJSONArray(ResponseCodeConstants.SCHEMAS);
-            value = jsonObject.getString(schemas.getString(0));
+            value = schemas.getString(0);
         } catch (JSONException e) {
             logger.debug("could not get '{}' value from scim resource as an array", ResponseCodeConstants.SCHEMAS);
             // if the value could not be extracted as JSONArray we will give it another chance to extract it as
