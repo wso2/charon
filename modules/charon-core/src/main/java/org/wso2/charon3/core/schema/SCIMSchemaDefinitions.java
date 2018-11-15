@@ -34,6 +34,13 @@ public class SCIMSchemaDefinitions {
 
     // sub attributes of the meta attributes
 
+  public static final SCIMAttributeSchema SCHEMAS =
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.SCHEMAS_URI,
+                    SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMDefinitions.DataType.STRING, true,
+                    SCIMConstants.CommonSchemaConstants.SCHEMAS_DESC, false, true,
+                    SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                    SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
     //The name of the resource type of the resource.
     public static final SCIMAttributeSchema RESOURCE_TYPE =
             SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.RESOURCE_TYPE_URI,

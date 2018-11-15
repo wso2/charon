@@ -66,6 +66,7 @@ public class SCIMConstants {
     public static class CommonSchemaConstants {
 
         public static final String SCHEMAS = "schemas";
+        public static final String SCHEMAS_URI = "urn:ietf:params:scim:schemas:core:2.0:schemas";
         public static final String ID = "id";
         public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:id";
         public static final String EXTERNAL_ID = "externalId";
@@ -105,6 +106,7 @@ public class SCIMConstants {
                 "were updated at the service provider.";
         public static final String LOCATION_DESC = "Location  The uri of the resource being returned";
         public static final String VERSION_DESC = "The version of the resource being returned.";
+        public static final String SCHEMAS_DESC = "The schemas describing the resource and its attributes";
 
     }
 
