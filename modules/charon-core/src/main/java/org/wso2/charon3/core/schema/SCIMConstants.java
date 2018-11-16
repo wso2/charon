@@ -456,7 +456,7 @@ public class SCIMConstants {
         public static final String DISPLAY_NAME = "displayName";
         public static final String DISPLAY_NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:displayName";
         public static final String MEMBERS = "members";
-        public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:User:members";
+        public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members";
         public static final String DISPLAY = "display";
         public static final String TYPE = "type";
 
