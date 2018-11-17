@@ -24,7 +24,7 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class BadRequestException extends AbstractCharonException {
 
     public BadRequestException() {
-        this("invalid request");
+        this(ResponseCodeConstants.INVALID_REQUEST);
     }
 
     public BadRequestException(String scimType) {
