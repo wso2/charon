@@ -82,6 +82,7 @@ public class ResponseCodeConstants {
 
 
     //For HTTP status code 400 (Bad Request) responses, the following detail error types are defined:
+    public static final String INVALID_REQUEST = "invalid request";
     public static final String INVALID_FILTER = "InvalidFilter";
     public static final String TOO_MANY = "tooMany";
     public static final String UNIQUENESS = "uniqueness";

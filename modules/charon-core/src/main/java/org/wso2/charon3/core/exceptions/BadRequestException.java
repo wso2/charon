@@ -23,6 +23,10 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
  */
 public class BadRequestException extends AbstractCharonException {
 
+    public BadRequestException() {
+        this(ResponseCodeConstants.INVALID_REQUEST);
+    }
+
     public BadRequestException(String scimType) {
         this(ResponseCodeConstants.DESC_BAD_REQUEST, scimType);
     }
