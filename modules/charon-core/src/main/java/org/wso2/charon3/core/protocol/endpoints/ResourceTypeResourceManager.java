@@ -188,11 +188,11 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(
                 SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
 
-        userObject.getSchemaList().clear();
+        userObject.deleteAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
         userObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
         multiValuedAttribute.setAttributePrimitiveValue(userObject);
 
-        groupObject.getSchemaList().clear();
+        groupObject.deleteAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
         groupObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
         multiValuedAttribute.setAttributePrimitiveValue(groupObject);
 

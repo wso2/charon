@@ -28,12 +28,11 @@ import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 
 /**
  * This represents the object which is a collection of attributes defined by common-schema.
@@ -45,9 +44,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     private static final long serialVersionUID = 6106269076155338045L;
     /**Collection of attributes which constitute this resource.*/
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
-
-    /**List of schemas where the attributes of this resource, are defined.*/
-    protected List<String> schemaList = new ArrayList<String>();
 
     /**
      * Set the attributes and corresponding schema in the SCIM Object.
@@ -74,7 +70,12 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     protected boolean isSchemaExists(String schemaName) {
-        return schemaList.contains(schemaName);
+        MultiValuedAttribute schemasList =
+            (MultiValuedAttribute) getAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+        if (schemasList == null) {
+            return false;
+        }
+        return schemasList.getAttributePrimitiveValues().contains(schemaName);
     }
 
     public boolean isAttributeExist(String attributeName) {
@@ -82,14 +83,33 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     public Map<String, Attribute> getAttributeList() {
-        return attributeList; }
-
-    public void setSchema(String schema) {
-        schemaList.add(schema);
+        return attributeList;
     }
 
+    public void setSchema(String schema) {
+        MultiValuedAttribute schemas =
+            (MultiValuedAttribute) getAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+        if (schemas == null) {
+            schemas = new MultiValuedAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+            try {
+                DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCHEMAS, schemas);
+            } catch (CharonException | BadRequestException e) {
+                // may not happen, because schema is not a SimpleAttribtue
+            }
+            attributeList.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, schemas);
+        }
+        schemas.setAttributePrimitiveValue(schema);
+    }
+
+    @Override
     public List<String> getSchemaList() {
-        return schemaList;
+        MultiValuedAttribute schemas =
+            (MultiValuedAttribute) getAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+        if (schemas == null) {
+            return null;
+        }
+        return schemas.getAttributePrimitiveValues().stream().map(schema -> (String) schema)
+            .collect(Collectors.toList());
     }
 
     public Attribute getAttribute(String attributeName) {

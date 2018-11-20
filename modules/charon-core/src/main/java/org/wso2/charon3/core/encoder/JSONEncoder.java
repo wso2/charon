@@ -113,9 +113,6 @@ public class JSONEncoder {
         //root json object containing the encoded SCIM Object.
         JSONObject rootObject = new JSONObject();
         try {
-            //encode schemas
-            this.encodeArrayOfValues(SCIMConstants.CommonSchemaConstants.SCHEMAS,
-                    (scimObject.getSchemaList()).toArray(), rootObject);
             //encode attribute list
             Map<String, Attribute> attributes = scimObject.getAttributeList();
             if (attributes != null && !attributes.isEmpty()) {
