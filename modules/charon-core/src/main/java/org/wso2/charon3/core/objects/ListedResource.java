@@ -15,14 +15,14 @@
  */
 package org.wso2.charon3.core.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.schema.SCIMConstants;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents the listed resource object which is a collection of resources.
@@ -136,6 +136,7 @@ public class ListedResource extends AbstractSCIMObject {
      * @param valueWithAttributes
      */
     public void setResources(Map<String, Attribute> valueWithAttributes) {
+        // set given valueWithAttributes as resource in attributeList
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
             MultiValuedAttribute resourcesAttribute =
                 new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
@@ -145,6 +146,10 @@ public class ListedResource extends AbstractSCIMObject {
             ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
                 .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
         }
+        // set given valueWithAttributes as resource in list resource
+        AbstractSCIMObject resourcesScimObject = new AbstractSCIMObject();
+        valueWithAttributes.forEach((name, attribtue) -> resourcesScimObject.setAttribute(attribtue));
+        resources.add(resourcesScimObject);
     }
 
     /**
@@ -159,6 +164,15 @@ public class ListedResource extends AbstractSCIMObject {
      * @param scimResourceType the new resource
      */
     public void addResource(SCIMObject scimResourceType) {
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
+            MultiValuedAttribute resourcesAttribute =
+                new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            resourcesAttribute.setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
+        }else {
+            ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
+                .setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
+        }
         resources.add(scimResourceType);
     }
 }
