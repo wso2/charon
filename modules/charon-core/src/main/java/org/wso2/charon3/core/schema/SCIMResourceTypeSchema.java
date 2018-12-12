@@ -17,7 +17,10 @@ package org.wso2.charon3.core.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This declares the SCIM resources schema as specified in SCIM core specification 2.0.
@@ -26,6 +29,9 @@ import java.util.List;
 public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable {
 
     private static final long serialVersionUID = 6106269076155338045L;
+
+    private static Map<String, SCIMResourceTypeSchema> existingResourceSchemas
+                                                       = new HashMap<String, SCIMResourceTypeSchema>();
     //The core schema for the resource type is identified using the following schemas URIs
     //e.g.: for 'User' - urn:ietf:params:scim:schemasList:core:2.0:User
     private List<String> schemasList;
@@ -39,6 +45,9 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
                 this.attributeList.add(attributeSchema);
             }
         }
+        // assuming that a "ResourceTypeSchema" in most cases only has ONE schema uri,
+        // otherwise it would be considered a resource (which are subclasses of AbstractSCIMObject)
+        existingResourceSchemas.put(schemas.get(0), this);
     }
 
     /*
@@ -82,5 +91,13 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
 
     public void setAttributeList(ArrayList attributeList) {
         this.attributeList = attributeList;
+    }
+
+    public static Set<String> getExistingSchemaUris() {
+        return existingResourceSchemas.keySet();
+    }
+
+    public static SCIMResourceTypeSchema getExistingSchema(String uri) {
+        return existingResourceSchemas.get(uri);
     }
 }
