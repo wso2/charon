@@ -21,7 +21,10 @@ import org.wso2.charon3.core.utils.CopyUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This defines the attributes schema as in SCIM Spec.
@@ -30,6 +33,8 @@ import java.util.List;
 public class SCIMAttributeSchema implements AttributeSchema, Serializable {
 
     private static final long serialVersionUID = 6106269076155338045L;
+
+    private static Map<String, SCIMAttributeSchema> existingSchemas = new HashMap<String, SCIMAttributeSchema>();
     //unique identifier for the attribute
     private String uri;
     //name of the attribute
@@ -77,6 +82,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
         this.subAttributes = subAttributes;
         this.canonicalValues = canonicalValues;
         this.referenceTypes = referenceTypes;
+        existingSchemas.put(uri, this);
     }
 
     public static SCIMAttributeSchema createSCIMAttributeSchema(String uri, String name, SCIMDefinitions.DataType type,
@@ -223,5 +229,13 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
 
     public void setReferenceTypes(ArrayList<SCIMDefinitions.ReferenceType> referenceTypes) {
         this.referenceTypes = referenceTypes;
+    }
+
+    public static Set<String> getExistingAttributeSchemaUris() {
+        return existingSchemas.keySet();
+    }
+
+    public static SCIMAttributeSchema getExistingSchema(String uri) {
+        return existingSchemas.get(uri);
     }
 }
