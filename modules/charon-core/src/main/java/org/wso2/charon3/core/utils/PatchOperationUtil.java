@@ -2452,8 +2452,9 @@ public class PatchOperationUtil {
                                                     subSubAttributeList.entrySet()) {
                                                 Attribute subSubAttribute = oldAttribute.getSubAttribute
                                                         (subAttrib.getKey()).getSubAttribute(subSubAttrb.getKey());
-                                              Attribute subSubAttributeValue = attributeHoldingSCIMObject.getAttribute(attributeName).
-                                                      getSubAttribute(subAttrib.getKey()).getSubAttribute(subSubAttrb.getKey());
+                                                Attribute subSubAttributeValue = attributeHoldingSCIMObject
+                                                    .getAttribute(attributeName).getSubAttribute(subAttrib.getKey())
+                                                    .getSubAttribute(subSubAttrb.getKey());
 
                                                 if (subSubAttribute != null) {
                                                     if (subSubAttribute.getMultiValued()) {
