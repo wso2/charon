@@ -39,6 +39,7 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMDefinitions.ReferenceType;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
+import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
@@ -508,6 +509,30 @@ public class JSONEncoder {
         operationResponseList.add(operationObject);
 
     }
+
+
+    /**
+     * Takes a {@link SCIMResourceTypeSchema} and encodes it to JSON format, then returns it as a String.
+     *
+     * @param resourceSchema the {@link SCIMResourceTypeSchema} to encode
+     * @return encoded String representation of schema
+     */
+    public String encodeResourceTypeSchema(SCIMResourceTypeSchema resourceSchema) {
+        JSONObject rootObject = new JSONObject();
+        JSONArray schemasObject = new JSONArray();
+        resourceSchema.getSchemasList().forEach((schema) -> schemasObject.put(schema));
+        JSONArray attributeObject = new JSONArray();
+        resourceSchema.getAttributesList().forEach(schema -> attributeObject.put(schema.getURI()));
+        try {
+            rootObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, schemasObject);
+            rootObject.put(SCIMConstants.OperationalConstants.ATTRIBUTES, attributeObject);
+        } catch (JSONException e) {
+            // key should never be null, except method gets called when constants aren't initialized yet.
+            throw new IllegalStateException(e);
+        }
+        return rootObject.toString();
+    }
+
 
     /**
      * Takes a {@link SCIMAttributeSchema} and encodes it to JSON format, then returns it as a String.
