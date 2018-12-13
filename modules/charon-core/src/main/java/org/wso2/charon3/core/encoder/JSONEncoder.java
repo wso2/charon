@@ -33,8 +33,11 @@ import org.wso2.charon3.core.objects.SCIMObject;
 import org.wso2.charon3.core.objects.bulk.BulkResponseContent;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
+import org.wso2.charon3.core.schema.AttributeSchema;
+import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
+import org.wso2.charon3.core.schema.SCIMDefinitions.ReferenceType;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
@@ -43,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This encodes the in the json format.
@@ -503,6 +507,47 @@ public class JSONEncoder {
 
         operationResponseList.add(operationObject);
 
+    }
+
+    /**
+     * Takes a {@link SCIMAttributeSchema} and encodes it to JSON format, then returns it as a String.
+     *
+     * @param attributeSchema the {@link SCIMAttributeSchema} to encode
+     * @return encoded String representation of schema
+     */
+    public String encodeAttributeSchema(SCIMAttributeSchema attributeSchema) {
+        JSONObject rootObject = new JSONObject();
+        try {
+            rootObject.put(SCIMConfigConstants.ATTRIBUTE_URI, attributeSchema.getURI());
+            rootObject.put(SCIMConfigConstants.ATTRIBUTE_NAME, attributeSchema.getName());
+            rootObject.put(SCIMConfigConstants.DATA_TYPE, attributeSchema.getType().toString());
+            rootObject.put(SCIMConfigConstants.MULTIVALUED, String.valueOf(attributeSchema.getMultiValued()));
+            rootObject.put(SCIMConfigConstants.DESCRIPTION, attributeSchema.getDescription());
+            rootObject.put(SCIMConfigConstants.REQUIRED, String.valueOf(attributeSchema.getRequired()));
+            rootObject.put(SCIMConfigConstants.CASE_EXACT, String.valueOf(attributeSchema.getCaseExact()));
+            rootObject.put(SCIMConfigConstants.MUTABILITY, String.valueOf(attributeSchema.getMutability()));
+            rootObject.put(SCIMConfigConstants.RETURNED, attributeSchema.getReturned().toString());
+            rootObject.put(SCIMConfigConstants.UNIQUENESS, attributeSchema.getUniqueness().toString());
+            List<AttributeSchema> subAttributes;
+            if ((subAttributes = attributeSchema.getSubAttributeSchemas()) != null) {
+                List<String> subSchemaUris = subAttributes.stream()
+                                                          .map((schema) -> schema.getURI())
+                                                          .collect(Collectors.toList());
+                rootObject.put(SCIMConfigConstants.SUB_ATTRIBUTES, subSchemaUris);
+            }
+            List<String> canonicalValues;
+            if ((canonicalValues = attributeSchema.getCanonicalValues()) != null) {
+                rootObject.put(SCIMConfigConstants.CANONICAL_VALUES, canonicalValues);
+            }
+            List<ReferenceType> referenceTypes;
+            if ((referenceTypes = attributeSchema.getReferenceTypes()) != null) {
+                rootObject.put(SCIMConfigConstants.REFERENCE_TYPES, referenceTypes);
+            }
+        } catch (JSONException e) {
+            // key should never be null, except method gets called when constants aren't initialized yet.
+            throw new IllegalStateException(e);
+        }
+        return rootObject.toString();
     }
 }
 
