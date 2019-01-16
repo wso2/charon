@@ -22,12 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
@@ -66,11 +65,11 @@ public class UserResourceManager extends AbstractResourceManager {
 
     }
 
-    /*
+    /**
      * Retrieves a user resource given an unique user id. Mapped to HTTP GET request.
      *
      * @param id          - unique resource id
-     * @param usermanager - usermanager instance defined by the external implementor of charon
+     * @param userManager - usermanager instance defined by the external implementor of charon
      * @return SCIM response to be returned.
      */
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
@@ -108,16 +107,12 @@ public class UserResourceManager extends AbstractResourceManager {
                     SCIMConstants.USER_ENDPOINT) + "/" + user.getId());
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, responseHeaders);
 
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
-    /*
+    /**
      * Returns SCIMResponse based on the sucess or failure of the create user operation
      *
      * @param scimObjectString -raw string containing user info
@@ -187,25 +182,18 @@ public class UserResourceManager extends AbstractResourceManager {
                 e.setStatus(ResponseCodeConstants.CODE_INTERNAL_ERROR);
             }
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (ConflictException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
-    /*
+    /**
      * Method of the ResourceManager that is mapped to HTTP Delete method..
      *
      * @param id          - unique resource id
-     * @param usermanager - usermanager instance defined by the external implementor of charon
+     * @param userManager - usermanager instance defined by the external implementor of charon
      * @return
      */
-
     public SCIMResponse delete(String id, UserManager userManager) {
         JSONEncoder encoder = null;
         try {
@@ -221,22 +209,16 @@ public class UserResourceManager extends AbstractResourceManager {
             }
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
 
-    /*
+    /**
      * To list all the resources of resource endpoint.
      *
-     * @param usermanager
+     * @param userManager
      * @param filter
      * @param startIndex
      * @param count
@@ -341,27 +323,19 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (IOException e) {
+        }  catch (IOException e) {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
         }
     }
 
-    /*
+    /**
      * this facilitates the querying using HTTP POST
      * @param resourceString
-     * @param usermanager
+     * @param userManager
      * @return
      */
 
@@ -434,25 +408,17 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
-    /*
+    /**
      * To update the user by giving entire attribute set
      *
      * @param existingId
      * @param scimObjectString
-     * @param usermanager
+     * @param userManager
      * @return
      */
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager,
@@ -516,15 +482,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -635,23 +593,12 @@ public class UserResourceManager extends AbstractResourceManager {
             }
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (RuntimeException e) {
-            CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
-            return AbstractResourceManager.encodeSCIMException(e1);
         }
     }
 
-    /*
+    /**
      * Creates the Listed Resource.
      *
      * @param users
