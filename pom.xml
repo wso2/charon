@@ -304,6 +304,7 @@
         <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
         <log4j.version>1.2.16</log4j.version>
         <slf4j.version>1.7.21</slf4j.version>
+        <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
     </properties>
 
 </project>
