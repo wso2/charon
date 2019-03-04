@@ -139,7 +139,6 @@ public class JSONDecoder {
                                                       resourceSchema,
                                                       scimObjectType.newInstance());
                 listedResource.addResource(abstractSCIMObject);
-                listedResource.setResources(abstractSCIMObject.getAttributeList());
             } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
                 throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
             }
