@@ -109,6 +109,8 @@ public class UserResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -184,6 +186,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -207,10 +211,10 @@ public class UserResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -329,6 +333,8 @@ public class UserResourceManager extends AbstractResourceManager {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -410,6 +416,8 @@ public class UserResourceManager extends AbstractResourceManager {
             }
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -484,6 +492,8 @@ public class UserResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -595,6 +605,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -605,11 +617,10 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param startIndex
      * @param totalResults
      * @return
-     * @throws CharonException
      * @throws NotFoundException
      */
     protected ListedResource createListedResource(List<Object> users, int startIndex, int totalResults)
-            throws CharonException, NotFoundException {
+            throws NotFoundException {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
         listedResource.setTotalResults(totalResults);
