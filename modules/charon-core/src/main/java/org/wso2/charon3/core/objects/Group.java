@@ -59,10 +59,9 @@ public class Group extends AbstractSCIMObject {
     /**
      * set the display name of the group
      * @param displayName
-     * @throws CharonException
      * @throws BadRequestException
      */
-    public void setDisplayName(String displayName) throws CharonException, BadRequestException {
+    public void setDisplayName(String displayName) throws BadRequestException {
         if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
             ((SimpleAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)).
                     updateValue(displayName);
@@ -141,9 +140,8 @@ public class Group extends AbstractSCIMObject {
      * @param value
      * @param display
      * @throws BadRequestException
-     * @throws CharonException
      */
-    public void setMember(String value, String display) throws BadRequestException, CharonException {
+    public void setMember(String value, String display) throws BadRequestException {
         setMember(value, display, null, null);
     }
 
@@ -157,7 +155,7 @@ public class Group extends AbstractSCIMObject {
      * @throws CharonException
      */
     public void setMember(String value, String display, String ref, String type)
-           throws BadRequestException, CharonException {
+           throws BadRequestException {
         if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
           MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
           DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
@@ -174,10 +172,9 @@ public class Group extends AbstractSCIMObject {
      * @param userName
      * @return
      * @throws BadRequestException
-     * @throws CharonException
      */
     private ComplexAttribute setMemberCommon(String userId, String userName, String ref, String type)
-            throws BadRequestException, CharonException {
+            throws BadRequestException {
         ComplexAttribute complexAttribute = new ComplexAttribute();
         complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS + "_" + userId + SCIMConstants.DEFAULT);
         SimpleAttribute valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, userId);

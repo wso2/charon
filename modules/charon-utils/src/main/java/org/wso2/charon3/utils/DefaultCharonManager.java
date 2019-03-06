@@ -20,7 +20,6 @@ package org.wso2.charon3.utils;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -48,7 +47,7 @@ public class DefaultCharonManager {
     /**
      * Perform initialization.
      */
-    private void init() throws CharonException {
+    private void init() {
         //Define endpoint urls to be used in Location Header
         endpointURLs.put(SCIMConstants.USER_ENDPOINT, USERS_URL);
         endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, GROUPS_URL);
@@ -56,7 +55,7 @@ public class DefaultCharonManager {
         registerEndpointURLs();
     }
 
-    private DefaultCharonManager() throws CharonException {
+    private DefaultCharonManager() {
         init();
     }
 
@@ -86,7 +85,7 @@ public class DefaultCharonManager {
      *
      * @return
      */
-    public JSONDecoder getDecoder() throws FormatNotSupportedException {
+    public JSONDecoder getDecoder() {
         return jsonDecoder;
     }
 
@@ -95,11 +94,11 @@ public class DefaultCharonManager {
      *
      * @return
      */
-    public JSONEncoder getEncoder() throws FormatNotSupportedException {
+    public JSONEncoder getEncoder() {
         return jsonEncoder;
     }
 
-    public UserManager getUserManager() throws CharonException {
+    public UserManager getUserManager() {
         return userManager;
     }
 

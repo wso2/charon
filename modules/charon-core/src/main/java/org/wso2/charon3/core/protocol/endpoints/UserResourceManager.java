@@ -617,10 +617,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param startIndex
      * @param totalResults
      * @return
-     * @throws NotFoundException
      */
-    protected ListedResource createListedResource(List<Object> users, int startIndex, int totalResults)
-            throws NotFoundException {
+    protected ListedResource createListedResource(List<Object> users, int startIndex, int totalResults) {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
         listedResource.setTotalResults(totalResults);

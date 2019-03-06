@@ -233,7 +233,7 @@ public class JSONDecoder {
      * @return the int value of the key
      * @throws CharonException if the value under the given key is not an int value
      */
-    private String getStringValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private String getStringValueFromJson(JSONObject jsonObject, String name) {
         String value = null;
         try {
             value = jsonObject.getString(name);

@@ -58,7 +58,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @param attributeName
      * @return Attribute
      */
-    public Attribute getSubAttribute(String attributeName) throws CharonException {
+    public Attribute getSubAttribute(String attributeName) {
         if (subAttributesList.containsKey(attributeName)) {
             return subAttributesList.get(attributeName);
         } else {
@@ -71,7 +71,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         subAttributesList.clear();
     }
 
@@ -101,8 +101,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @param subAttribute
      * @throws CharonException
      */
-    public void setSubAttribute(Attribute subAttribute)
-            throws CharonException {
+    public void setSubAttribute(Attribute subAttribute) {
         subAttributesList.put(subAttribute.getName(), subAttribute);
     }
     }

@@ -130,8 +130,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      * @param parentAttribute
      * @param childAttribute
      */
-    public void deleteSubSubAttribute(String childAttribute, String parentAttribute, String grandParentAttribute)
-            throws CharonException {
+    public void deleteSubSubAttribute(String childAttribute, String parentAttribute, String grandParentAttribute) {
         if (attributeList.containsKey(grandParentAttribute)) {
             ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
             Attribute parent = ((ComplexAttribute) grandParent).getSubAttribute(parentAttribute);
@@ -209,7 +208,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      * @param externalId identifier for the SCIM Resource as defined by the provisioning client.
      * @throws BadRequestException
      */
-    public void setExternalId(String externalId) throws CharonException, BadRequestException {
+    public void setExternalId(String externalId) throws BadRequestException {
         SimpleAttribute externalIdAttribute = new SimpleAttribute(
                 SCIMConstants.CommonSchemaConstants.EXTERNAL_ID, externalId);
         DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.EXTERNAL_ID, externalIdAttribute);
@@ -387,13 +386,13 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     @Deprecated
-    public Date getCreatedDate() throws CharonException {
+    public Date getCreatedDate() {
         Instant created = getCreatedInstant();
         return created != null ? new Date(created.toEpochMilli()) : null;
     }
 
     @Deprecated
-    public Date getLastModified() throws CharonException {
+    public Date getLastModified() {
         Instant lastModified = getLastModifiedInstant();
         return lastModified != null ? new Date(lastModified.toEpochMilli()) : null;
     }

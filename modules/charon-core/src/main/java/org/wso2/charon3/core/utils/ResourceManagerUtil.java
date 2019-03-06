@@ -18,7 +18,6 @@ package org.wso2.charon3.core.utils;
 
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -45,8 +44,7 @@ public class ResourceManagerUtil {
      */
     public static Map<String, Boolean> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
                                                                      String requestedAttributes,
-                                                                     String requestedExcludingAttributes)
-            throws CharonException {
+                                                                     String requestedExcludingAttributes) {
 
         ArrayList<AttributeSchema> attributeSchemaArrayList = (ArrayList<AttributeSchema>)
                 CopyUtil.deepCopy(schema.getAttributesList());
@@ -124,8 +122,7 @@ public class ResourceManagerUtil {
                                                          String requestedAttributes,
                                                          String requestedExcludingAttributes,
                                                          List<String> requestedAttributesList,
-                                                         List<String> requestedExcludingAttributesList)
-            throws CharonException {
+                                                         List<String> requestedExcludingAttributesList) {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
             AttributeSchema realAttributeSchema = null;
@@ -208,8 +205,7 @@ public class ResourceManagerUtil {
                                                             String requestedAttributes,
                                                             String requestedExcludingAttributes,
                                                             List<String> requestedAttributesList,
-                                                            List<String> requestedExcludingAttributesList)
-            throws CharonException {
+                                                            List<String> requestedExcludingAttributesList) {
 
         if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
@@ -374,8 +370,7 @@ public class ResourceManagerUtil {
      * @param attributeName
      * @throws CharonException
      */
-    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName)
-            throws CharonException {
+    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName) {
         List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);
         int count = 0;
         for (AttributeSchema attributeSchema : tempList) {
@@ -386,7 +381,7 @@ public class ResourceManagerUtil {
         }
     }
 
-    public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
+    public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) {
         return getOnlyRequiredAttributesURIs(schema, null, null);
     }
 

@@ -631,7 +631,7 @@ public class User extends AbstractSCIMObject {
      * @throws CharonException
      * @throws BadRequestException
      */
-    public void setUserName(String userName) throws CharonException, BadRequestException {
+    public void setUserName(String userName) throws BadRequestException {
 
         this.setSimpleAttribute(SCIMConstants.UserSchemaConstants.USER_NAME,
                 SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME, userName);
@@ -665,7 +665,7 @@ public class User extends AbstractSCIMObject {
      * @throws CharonException
      * @throws BadRequestException
      */
-    public void setPassword(String password) throws CharonException, BadRequestException {
+    public void setPassword(String password) throws BadRequestException {
 
         setSimpleAttribute(SCIMConstants.UserSchemaConstants.PASSWORD, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.
                 PASSWORD, password);
@@ -677,12 +677,11 @@ public class User extends AbstractSCIMObject {
      * @param attributeName
      * @param attributeSchema
      * @param value
-     * @throws CharonException
      * @throws BadRequestException
      */
     private void setSimpleAttribute(String attributeName,
                                     AttributeSchema attributeSchema,
-                                    Object value) throws CharonException, BadRequestException {
+                                    Object value) throws BadRequestException {
 
         if (this.isAttributeExist(attributeName)) {
             ((SimpleAttribute) this.attributeList.get(attributeName)).updateValue(value);
@@ -720,7 +719,7 @@ public class User extends AbstractSCIMObject {
      */
     public void setGroup(String type,
                          String value,
-                         String display) throws CharonException, BadRequestException {
+                         String display) throws BadRequestException {
 
         SimpleAttribute typeSimpleAttribute = null;
         SimpleAttribute valueSimpleAttribute = null;
@@ -764,7 +763,7 @@ public class User extends AbstractSCIMObject {
         }
     }
 
-    private void setGroup(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
+    private void setGroup(ComplexAttribute groupPropertiesAttribute) throws BadRequestException {
 
         MultiValuedAttribute groupsAttribute;
 
