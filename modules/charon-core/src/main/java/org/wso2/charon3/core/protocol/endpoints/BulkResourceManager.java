@@ -79,7 +79,7 @@ public class BulkResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }

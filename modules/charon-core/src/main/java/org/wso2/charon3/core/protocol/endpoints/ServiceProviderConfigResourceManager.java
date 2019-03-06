@@ -101,7 +101,7 @@ public class ServiceProviderConfigResourceManager extends AbstractResourceManage
             return encodeSCIMException(e);
         } catch (JSONException e) {
             return null;
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }

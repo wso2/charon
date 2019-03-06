@@ -87,7 +87,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -152,7 +152,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -173,7 +173,7 @@ public class MeResourceManager extends AbstractResourceManager {
             }
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -255,7 +255,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -372,7 +372,7 @@ public class MeResourceManager extends AbstractResourceManager {
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
             return encodeSCIMException(e1);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }

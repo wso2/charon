@@ -111,7 +111,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (JSONException e) {
             return null;
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }

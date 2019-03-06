@@ -101,7 +101,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -163,7 +163,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -191,7 +191,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             }
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -313,7 +313,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -402,7 +402,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             }
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -478,7 +478,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
         } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (Exception ex) {
+        } catch (RuntimeException ex) {
             return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
@@ -596,8 +596,6 @@ public class GroupResourceManager extends AbstractResourceManager {
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
             return AbstractResourceManager.encodeSCIMException(e1);
-        } catch (Exception ex) {
-            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
