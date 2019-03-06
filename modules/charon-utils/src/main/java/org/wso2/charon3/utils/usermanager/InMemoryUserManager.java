@@ -20,7 +20,6 @@ package org.wso2.charon3.utils.usermanager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -102,13 +101,7 @@ public class InMemoryUserManager implements UserManager {
             userList.add(entry.getValue());
         }
         userList.set(0, userList.size() - 1);
-        try {
-            return (List<Object>) CopyUtil.deepCopy(userList);
-        } catch (CharonException e) {
-            logger.error("Error in listing users");
-            return  null;
-        }
-
+        return (List<Object>) CopyUtil.deepCopy(userList);
     }
 
     @Override
@@ -204,13 +197,7 @@ public class InMemoryUserManager implements UserManager {
             groupList.add(group);
         }
         groupList.set(0, groupList.size() - 1);
-        try {
-            return (List<Object>) CopyUtil.deepCopy(groupList);
-        } catch (CharonException e) {
-            logger.error("Error in listing groups");
-            return  null;
-        }
-
+        return (List<Object>) CopyUtil.deepCopy(groupList);
     }
 
     @Override

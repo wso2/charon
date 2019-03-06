@@ -56,10 +56,7 @@ public class DefaultAttributeFactory {
                 attribute.setType(attributeSchema.getType());
             }
             return attribute;
-        } catch (CharonException e) {
-            String error = "Unknown attribute schema.";
-            throw new CharonException(error);
-        } catch (BadRequestException e) {
+        }  catch (BadRequestException e) {
             String error = "Violation in attribute schema. DataType doesn't match that of the value.";
             throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
         }
