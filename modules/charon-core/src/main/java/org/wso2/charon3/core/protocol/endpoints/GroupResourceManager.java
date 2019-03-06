@@ -605,8 +605,7 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @param groups
      * @return
      */
-    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults)
-            throws CharonException, NotFoundException {
+    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults) {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
         listedResource.setTotalResults(totalResults);

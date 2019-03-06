@@ -16,7 +16,6 @@
 
 package org.wso2.charon3.core.schema;
 
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.utils.CopyUtil;
 
 import java.io.Serializable;
@@ -192,7 +191,7 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
     }
 
     @Override
-    public void removeSubAttribute(String subAttributeName) throws CharonException {
+    public void removeSubAttribute(String subAttributeName) {
         ArrayList<AttributeSchema> tempSubAttributes = (ArrayList<AttributeSchema>) CopyUtil.deepCopy(subAttributes);
         int count = 0;
         for (AttributeSchema subAttributeSchema : tempSubAttributes) {

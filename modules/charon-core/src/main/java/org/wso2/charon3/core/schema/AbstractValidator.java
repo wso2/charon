@@ -251,7 +251,7 @@ public abstract class AbstractValidator {
      * @param requestedExcludingAttributes
      */
     public static void validateReturnedAttributes(AbstractSCIMObject scimObject, String requestedAttributes,
-                                                  String requestedExcludingAttributes) throws CharonException {
+                                                  String requestedExcludingAttributes) {
         List<String> requestedAttributesList = null;
         List<String> requestedExcludingAttributesList = null;
 
@@ -461,7 +461,7 @@ public abstract class AbstractValidator {
                                                        String requestedExcludingAttributes, List<String>
                                                                requestedAttributesList,
                                                        List<String> requestedExcludingAttributesList,
-                                                       AbstractSCIMObject scimObject) throws CharonException {
+                                                       AbstractSCIMObject scimObject) {
         //check for never/request attributes.
         if (subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.NEVER)) {
             scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute.getName());
@@ -1050,7 +1050,7 @@ public abstract class AbstractValidator {
      */
     private static void checkForReadOnlyAndImmutableInComplexAttributes(Attribute newAttribute, Attribute oldAttribute,
                                                                         List<AttributeSchema> subAttributeSchemaList
-    ) throws CharonException, BadRequestException {
+    ) throws BadRequestException {
         //this is complex attribute case
         Map<String, Attribute> newSubAttributeList = ((ComplexAttribute) (newAttribute)).getSubAttributesList();
         Map<String, Attribute> oldSubAttributeList = ((ComplexAttribute) (oldAttribute)).getSubAttributesList();

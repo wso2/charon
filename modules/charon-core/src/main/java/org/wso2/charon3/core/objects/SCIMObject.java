@@ -16,7 +16,6 @@
 package org.wso2.charon3.core.objects;
 
 import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.exceptions.NotFoundException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -30,9 +29,9 @@ import java.util.Map;
 //SCIMObject is extended from Serializable as later in org.wso2.charon.core.util.CopyUtil, it need to be serialized.
 public interface SCIMObject extends Serializable {
 
-    public Attribute getAttribute(String attributeName) throws NotFoundException;
+    public Attribute getAttribute(String attributeName);
 
-    public void deleteAttribute(String attributeName) throws NotFoundException;
+    public void deleteAttribute(String attributeName);
 
     public List<String> getSchemaList();
 

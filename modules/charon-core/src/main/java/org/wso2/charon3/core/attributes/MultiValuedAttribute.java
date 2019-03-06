@@ -67,7 +67,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         //here we delete the complex type sub attributes which act as sub values
         attributeValues.clear();
     }
@@ -77,7 +77,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
      * @throws CharonException
      */
 
-    public void deletePrimitiveValues() throws CharonException {
+    public void deletePrimitiveValues() {
         //here we delete primitive values
         attributePrimitiveValues.clear();
     }

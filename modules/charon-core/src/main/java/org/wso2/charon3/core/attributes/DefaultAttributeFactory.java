@@ -72,12 +72,11 @@ public class DefaultAttributeFactory {
      * @param attributeSchema
      * @param simpleAttribute
      * @return SimpleAttribute
-     * @throws CharonException
      * @throws BadRequestException
      */
     protected static SimpleAttribute createSimpleAttribute
                     (AttributeSchema attributeSchema, SimpleAttribute simpleAttribute)
-            throws CharonException, BadRequestException {
+            throws BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
                 simpleAttribute.setType(attributeSchema.getType());
