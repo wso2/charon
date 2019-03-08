@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -290,6 +291,17 @@ public class JSONDecoder {
                 if (attributeValObj == null) {
                     //user may define the attribute by its fully qualified uri
                     attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
+                }
+                if (attributeValObj == null) {
+                    // user shall define extension attributes in extension namespace, see RFC 7643 figure 5
+                    Optional<String> schemaUri = resourceSchema.getSchemasList().stream()
+                        .filter(attributeSchema.getURI()::startsWith).findFirst();
+                    if (schemaUri.isPresent()) {
+                        Object schemaObject = decodedJsonObj.opt(schemaUri.get());
+                        if (schemaObject instanceof JSONObject) {
+                            attributeValObj = ((JSONObject) schemaObject).opt(attributeSchema.getName());
+                        }
+                    }
                 }
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
