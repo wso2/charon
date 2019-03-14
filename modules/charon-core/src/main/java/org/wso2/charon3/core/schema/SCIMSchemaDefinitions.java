@@ -1130,7 +1130,7 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * SCIM defined resourceType  schemas.
+     * SCIM defined resourceType schemas.
      */
     public static class SCIMResourceTypeSchemaDefinition {
 
@@ -1219,6 +1219,54 @@ public class SCIMSchemaDefinitions {
 
     }
 
+    /**
+     * SCIM defined ListResponse schemas.
+     */
+    public static class SCIMListResponseSchemaDefinition {
+
+        public static final SCIMAttributeSchema TOTAL_RESULTS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS_URI,
+                        SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        /*
+         * sub attributes are set to <code>null</code>, which is not correct,
+         * but we cannot know the type, because it is resource type dependent
+         * e.g. users have different attributes than groups
+         */
+        public static final SCIMAttributeSchema RESOURCES =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ListedResourceSchemaConstants.RESOURCES_URI,
+                        SCIMConstants.ListedResourceSchemaConstants.RESOURCES,
+                        SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.ListedResourceSchemaConstants.RESOURCES_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema START_INDEX  =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ListedResourceSchemaConstants.START_INDEX_URI,
+                        SCIMConstants.ListedResourceSchemaConstants.START_INDEX,
+                        SCIMDefinitions.DataType.INTEGER, true,
+                        SCIMConstants.ListedResourceSchemaConstants.START_INDEX_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema ITEMS_PER_PAGE  =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE_URI,
+                        SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE,
+                        SCIMDefinitions.DataType.INTEGER, true,
+                        SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+    }
+
     /*
      * **********SCIM defined User Resource Schema.****************************
      */
@@ -1289,5 +1337,17 @@ public class SCIMSchemaDefinitions {
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
                     SCIMResourceTypeSchemaDefinition.SCHEMA,
                     SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
+
+    /*
+     * **********SCIM defined ListResponse Schema.****************************
+     */
+
+    public static final SCIMResourceTypeSchema SCIM_LIST_RESPONSE_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)),
+                    SCIMListResponseSchemaDefinition.TOTAL_RESULTS,
+                    SCIMListResponseSchemaDefinition.RESOURCES,
+                    SCIMListResponseSchemaDefinition.START_INDEX,
+                    SCIMListResponseSchemaDefinition.ITEMS_PER_PAGE);
 
 }

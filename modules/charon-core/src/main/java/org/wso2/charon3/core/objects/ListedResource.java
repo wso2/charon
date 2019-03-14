@@ -16,13 +16,17 @@
 package org.wso2.charon3.core.objects;
 
 import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowBiConsumer;
 
 /**
  * Represents the listed resource object which is a collection of resources.
@@ -56,9 +60,8 @@ public class ListedResource extends AbstractSCIMObject {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS)) {
             SimpleAttribute totalResultsAttribute =
                 new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResults);
-            //No need to let the Default attribute factory to handle the attribute, as this is
-            //not officially defined as SCIM attribute, hence have no characteristics defined
-            //TODO: may be we can let the default attribute factory to handle it?
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
+                .accept(SCIMSchemaDefinitions.SCIMListResponseSchemaDefinition.TOTAL_RESULTS, totalResultsAttribute);
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, totalResultsAttribute);
         } else {
             ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS))
@@ -86,12 +89,11 @@ public class ListedResource extends AbstractSCIMObject {
      */
     public void setItemsPerPage(int itemsPerPage) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE)) {
-            SimpleAttribute totalResultsAttribute =
+            SimpleAttribute itemsPerPageAttribute =
                 new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, itemsPerPage);
-            //No need to let the Default attribute factory to handle the attribute, as this is
-            //not officially defined as SCIM attribute, hence have no characteristics defined
-            //TODO: may be we can let the default attribute factory to handle it?
-            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, totalResultsAttribute);
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
+                .accept(SCIMSchemaDefinitions.SCIMListResponseSchemaDefinition.ITEMS_PER_PAGE, itemsPerPageAttribute);
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE, itemsPerPageAttribute);
         } else {
             ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE))
                 .setValue(itemsPerPage);
@@ -118,12 +120,11 @@ public class ListedResource extends AbstractSCIMObject {
      */
     public void setStartIndex(int startIndex) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)) {
-            SimpleAttribute totalResultsAttribute =
+            SimpleAttribute startIndexAttribute =
                 new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.START_INDEX, startIndex);
-            //No need to let the Default attribute factory to handle the attribute, as this is
-            //not officially defined as SCIM attribute, hence have no charactersitics defined
-            //TODO: may be we can let the default attribute factory to handle it?
-            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.START_INDEX, totalResultsAttribute);
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
+                .accept(SCIMSchemaDefinitions.SCIMListResponseSchemaDefinition.START_INDEX, startIndexAttribute);
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.START_INDEX, startIndexAttribute);
         } else {
             ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.START_INDEX))
                 .setValue(startIndex);
@@ -141,6 +142,8 @@ public class ListedResource extends AbstractSCIMObject {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
             MultiValuedAttribute resourcesAttribute =
                 new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
+                .accept(SCIMSchemaDefinitions.SCIMListResponseSchemaDefinition.RESOURCES, resourcesAttribute);
             resourcesAttribute.setComplexValueWithSetOfSubAttributes(valueWithAttributes);
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
         } else {
@@ -168,6 +171,8 @@ public class ListedResource extends AbstractSCIMObject {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
             MultiValuedAttribute resourcesAttribute =
                 new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute)
+                .accept(SCIMSchemaDefinitions.SCIMListResponseSchemaDefinition.RESOURCES, resourcesAttribute);
             resourcesAttribute.setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
         } else {
