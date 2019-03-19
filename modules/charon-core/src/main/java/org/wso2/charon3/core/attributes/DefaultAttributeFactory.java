@@ -56,10 +56,7 @@ public class DefaultAttributeFactory {
                 attribute.setType(attributeSchema.getType());
             }
             return attribute;
-        } catch (CharonException e) {
-            String error = "Unknown attribute schema.";
-            throw new CharonException(error);
-        } catch (BadRequestException e) {
+        }  catch (BadRequestException e) {
             String error = "Violation in attribute schema. DataType doesn't match that of the value.";
             throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
         }
@@ -72,12 +69,11 @@ public class DefaultAttributeFactory {
      * @param attributeSchema
      * @param simpleAttribute
      * @return SimpleAttribute
-     * @throws CharonException
      * @throws BadRequestException
      */
     protected static SimpleAttribute createSimpleAttribute
                     (AttributeSchema attributeSchema, SimpleAttribute simpleAttribute)
-            throws CharonException, BadRequestException {
+            throws BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
                 simpleAttribute.setType(attributeSchema.getType());

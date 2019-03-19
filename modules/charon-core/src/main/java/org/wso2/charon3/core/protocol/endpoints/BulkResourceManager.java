@@ -19,9 +19,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
-import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -78,12 +77,10 @@ public class BulkResourceManager extends AbstractResourceManager {
             //create the final response
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, finalEncodedResponse, responseHeaders);
 
-        } catch (CharonException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 

@@ -15,11 +15,7 @@
  */
 package org.wso2.charon3.core.extensions;
 
-import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
-import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.exceptions.NotImplementedException;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.utils.codeutils.Node;
@@ -38,73 +34,73 @@ public interface UserManager {
         /***************User Manipulation operations.*******************/
 
     public User createUser(User user, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, BadRequestException;
+            throws AbstractCharonException;
 
     public User getUser(String id, Map<String, Boolean> requiredAttributes)
-            throws CharonException, BadRequestException, NotFoundException;
+            throws AbstractCharonException;
 
     public void deleteUser(String userId)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws AbstractCharonException;
 
     default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
                                          String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+            throws AbstractCharonException {
         return null;
     }
 
     @Deprecated
     default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
                                          Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+            throws AbstractCharonException {
         return listUsersWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
     }
 
     public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException;
+            throws AbstractCharonException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
+            throws AbstractCharonException;
 
     public User getMe(String userName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, BadRequestException, NotFoundException;
+            throws AbstractCharonException;
 
     public User createMe(User user, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, BadRequestException;
+            throws AbstractCharonException;
 
     public void deleteMe(String userName)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws AbstractCharonException;
 
     public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
+            throws AbstractCharonException;
 
 
    /* ****************Group manipulation operations.********************/
 
     public Group createGroup(Group group, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, NotImplementedException, BadRequestException;
+            throws AbstractCharonException;
 
     public Group getGroup(String id, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
+            throws AbstractCharonException;
 
     public void deleteGroup(String id)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws AbstractCharonException;
 
     default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
                                           String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+            throws AbstractCharonException {
         return null;
     }
 
     @Deprecated
     default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
                                           String sortOrder, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+            throws AbstractCharonException {
         return listGroupsWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
     }
 
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
+            throws AbstractCharonException;
 
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;;
+            throws AbstractCharonException;
 }

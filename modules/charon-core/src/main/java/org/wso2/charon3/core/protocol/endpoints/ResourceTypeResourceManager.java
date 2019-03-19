@@ -20,10 +20,10 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
-import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -107,16 +107,12 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
             //put the uri of the resource type object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK,
                     encodedObject, responseHeaders);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         } catch (JSONException e) {
             return null;
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -182,7 +178,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      * @throws CharonException
      */
     private AbstractSCIMObject buildCombinedResourceType(AbstractSCIMObject userObject, AbstractSCIMObject groupObject)
-            throws CharonException {
+    {
 
         AbstractSCIMObject rootObject = new AbstractSCIMObject();
         MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(

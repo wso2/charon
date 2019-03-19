@@ -20,12 +20,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.ListedResource;
@@ -100,14 +99,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             Map<String, String> httpHeaders = new HashMap<String, String>();
             httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -166,18 +161,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             //put the uri of the Group object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedGroup, httpHeaders);
 
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (ConflictException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -202,16 +189,10 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -326,20 +307,14 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
         } catch (IOException e) {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -425,16 +400,10 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -507,16 +476,10 @@ public class GroupResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
 
-        } catch (NotFoundException e) {
+        } catch (AbstractCharonException e) {
             return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
+        } catch (RuntimeException ex) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException(ex.getMessage(), ex));
         }
     }
 
@@ -628,15 +591,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
@@ -650,8 +605,7 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @param groups
      * @return
      */
-    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults)
-            throws CharonException, NotFoundException {
+    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults) {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
         listedResource.setTotalResults(totalResults);
