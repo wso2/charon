@@ -11,6 +11,8 @@ import java.util.Set;
  */
 public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
 
+    private static final long serialVersionUID = -9019208071755800613L;
+
     private SCIMResourceTypeExtensionSchema(String schema, AttributeSchema[] attributeSchemaList) {
         super(Collections.singletonList(schema), null, attributeSchemaList);
     }
