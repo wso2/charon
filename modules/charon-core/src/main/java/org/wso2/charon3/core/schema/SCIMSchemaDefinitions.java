@@ -247,7 +247,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema IMS_PRIMARY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.IMS_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.IMS_PRIMARY_DESC,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.IMS_PRIMARY_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
@@ -289,7 +289,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema PHOTOS_PRIMARY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.PHOTOS_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants
                                 .PHOTOS_PRIMARY_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
@@ -452,7 +452,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants
                                 .ENTITLEMENTS_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants
                                 .ENTITLEMENTS_PRIMARY_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
@@ -490,7 +490,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema ROLES_PRIMARY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ROLES_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.ROLES_PRIMARY_DESC,
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants.ROLES_PRIMARY_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
@@ -532,7 +532,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants
                                 .X509CERTIFICATES_PRIMARY_URI,
                         SCIMConstants.CommonSchemaConstants.PRIMARY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants
+                        SCIMDefinitions.DataType.BOOLEAN, false, SCIMConstants.UserSchemaConstants
                                 .X509CERTIFICATES_PRIMARY_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);

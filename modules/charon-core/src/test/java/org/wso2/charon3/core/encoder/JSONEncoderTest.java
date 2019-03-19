@@ -1,5 +1,8 @@
 package org.wso2.charon3.core.encoder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -7,6 +10,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
@@ -31,15 +35,31 @@ public class JSONEncoderTest implements FileReferences {
     }
 
     /**
-     * this test will show that the encoding of a group does work as expected
+     * this test will show that the encoding of a user does work as expected
      */
     @Test
     public void testEncodeUser() throws InternalErrorException, BadRequestException, CharonException {
         String groupJson = readResourceFile(CREATE_USER_MAXILEIN_FILE);
         User user = JSON_DECODER.decodeResource(groupJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
         String encodedJson = JSON_ENCODER.encodeSCIMObject(user);
-        User onceEncodedGroup = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+        User onceEncodedUser = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
             new User());
-        Assertions.assertEquals(user, onceEncodedGroup);
+        Assertions.assertEquals(user, onceEncodedUser);
+    }
+
+    /**
+     * this test will show that the encoding of an enterprise user does work as expected
+     */
+    @Test
+    public void testEncodeEnterpriseUser() throws InternalErrorException, BadRequestException, CharonException,
+            JSONException {
+        String userJson = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        User user = JSON_DECODER.decodeResource(userJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
+        String encodedJson = JSON_ENCODER.encodeSCIMObject(user);
+        JSONObject decodedJsonObj = new JSONObject(new JSONTokener(userJson));
+        Assertions.assertTrue(decodedJsonObj.has(SCIMConstants.ENTERPRISE_USER_SCHEMA_URI));
+        User onceEncodedUser = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
+        Assertions.assertEquals(user, onceEncodedUser);
     }
 }

@@ -135,7 +135,9 @@ public class ListedResource extends AbstractSCIMObject {
      *
      * @param valueWithAttributes
      */
+    @Deprecated
     public void setResources(Map<String, Attribute> valueWithAttributes) {
+        // set given valueWithAttributes as resource in attributeList
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
             MultiValuedAttribute resourcesAttribute =
                 new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
@@ -145,6 +147,10 @@ public class ListedResource extends AbstractSCIMObject {
             ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
                 .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
         }
+        // set given valueWithAttributes as resource in list resource
+        AbstractSCIMObject resourcesScimObject = new AbstractSCIMObject();
+        valueWithAttributes.forEach((name, attribtue) -> resourcesScimObject.setAttribute(attribtue));
+        resources.add(resourcesScimObject);
     }
 
     /**
@@ -159,6 +165,15 @@ public class ListedResource extends AbstractSCIMObject {
      * @param scimResourceType the new resource
      */
     public void addResource(SCIMObject scimResourceType) {
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
+            MultiValuedAttribute resourcesAttribute =
+                new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            resourcesAttribute.setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
+        } else {
+            ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
+                .setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
+        }
         resources.add(scimResourceType);
     }
 }

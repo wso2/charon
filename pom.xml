@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.10-SNAPSHOT</version>
+    <version>3.1.15-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -357,6 +357,8 @@
         <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
         <log4j.version>1.2.16</log4j.version>
         <slf4j.version>1.7.21</slf4j.version>
+
+        <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
 
         <commons.io.version>2.6</commons.io.version>
         <commons.lang3.version>3.8.1</commons.lang3.version>

@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -69,7 +70,6 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
  * This decodes the json encoded resource string and create a SCIM object model according to the specification
@@ -146,7 +146,6 @@ public class JSONDecoder {
                         resourceSchema,
                         scimObjectType.newInstance());
                 listedResource.addResource(abstractSCIMObject);
-                listedResource.setResources(abstractSCIMObject.getAttributeList());
             } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
                 throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
             }
@@ -391,7 +390,8 @@ public class JSONDecoder {
             try {
                 resourceString = jsonObject.getString(extension.getSchema());
             } catch (JSONException e) {
-                throw new IllegalStateException(e.getMessage(), e);
+                logger.debug(e.getMessage(), e);
+                return scimObject;
             }
             if (StringUtils.isBlank(resourceString)) {
                 return scimObject;
