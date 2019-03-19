@@ -450,6 +450,9 @@ public class SCIMConstants {
                 "The primary attribute value 'true' MUST appear no more than once.";
     }
 
+    /**
+     * represents the constants for the enterprise user schema
+     */
     public class EnterpriseUserSchemaConstants {
 
         public static final String EMPLOYEE_NUMBER = "employeeNumber";

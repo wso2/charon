@@ -57,7 +57,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * does the checks for {@link #testDecodeUser(String)}  
+     * does the checks for {@link #testDecodeUser(String)}
      */
     private void testUserDecoding(String fileResource)
             throws BadRequestException, CharonException, InternalErrorException {

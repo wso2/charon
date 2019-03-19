@@ -30,7 +30,8 @@ public class JSONEncoderTest implements FileReferences {
         String groupJson = readResourceFile(CREATE_GROUP_BREMEN_FILE);
         Group group = JSON_DECODER.decodeResource(groupJson, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, new Group());
         String encodedJson = JSON_ENCODER.encodeSCIMObject(group);
-        Group onceEncodedGroup = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, new Group());
+        Group onceEncodedGroup = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+                new Group());
         Assertions.assertEquals(group, onceEncodedGroup);
     }
 
@@ -43,7 +44,7 @@ public class JSONEncoderTest implements FileReferences {
         User user = JSON_DECODER.decodeResource(groupJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
         String encodedJson = JSON_ENCODER.encodeSCIMObject(user);
         User onceEncodedUser = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-            new User());
+                new User());
         Assertions.assertEquals(user, onceEncodedUser);
     }
 
@@ -59,7 +60,7 @@ public class JSONEncoderTest implements FileReferences {
         JSONObject decodedJsonObj = new JSONObject(new JSONTokener(userJson));
         Assertions.assertTrue(decodedJsonObj.has(SCIMConstants.ENTERPRISE_USER_SCHEMA_URI));
         User onceEncodedUser = JSON_DECODER.decodeResource(encodedJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-            new User());
+                new User());
         Assertions.assertEquals(user, onceEncodedUser);
     }
 }

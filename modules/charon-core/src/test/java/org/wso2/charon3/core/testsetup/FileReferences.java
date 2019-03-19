@@ -18,7 +18,7 @@ public interface FileReferences {
     /**
      * the basePath where the resource files are
      */
-    public static final String basePath = "/org/wso2/charon3/core/";
+    public static final String BASE_PATH = "/org/wso2/charon3/core/";
 
     /**
      * a decoder to convert json-string into SCIM DTO objects
@@ -33,18 +33,18 @@ public interface FileReferences {
     /**
      * the resource file path to the json structure with a creation representation of a group named "bremen"
      */
-    public static final String CREATE_GROUP_BREMEN_FILE = basePath + "group/create-group-bremen.json";
+    public static final String CREATE_GROUP_BREMEN_FILE = BASE_PATH + "group/create-group-bremen.json";
 
     /**
      * the resource file path to the json structure with a creation representation of an user named "maxilein"
      */
-    public static final String CREATE_USER_MAXILEIN_FILE = basePath + "group/create-user-maxilein.json";
+    public static final String CREATE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-user-maxilein.json";
 
     /**
      * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
      * enterprise extension
      */
-    public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE = basePath + "group/create-enterprise-user" +
+    public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-enterprise-user" +
             "-maxilein.json";
 
     /**

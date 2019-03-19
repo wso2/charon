@@ -70,8 +70,12 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SCIMResourceTypeExtensionSchema)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SCIMResourceTypeExtensionSchema)) {
+            return false;
+        }
 
         SCIMResourceTypeExtensionSchema that = (SCIMResourceTypeExtensionSchema) o;
 
