@@ -453,7 +453,7 @@ public class SCIMConstants {
     /**
      * represents the constants for the enterprise user schema
      */
-    public class EnterpriseUserSchemaConstants {
+    public static class EnterpriseUserSchemaConstants {
 
         public static final String EMPLOYEE_NUMBER = "employeeNumber";
         public static final String EMPLOYEE_NUMBER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + EMPLOYEE_NUMBER;
