@@ -26,6 +26,7 @@ import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
+import org.wso2.charon3.core.schema.SCIMResourceTypeExtensionSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.time.Instant;
@@ -49,6 +50,124 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
  * implementation of {@link AbstractSCIMObject}s is added.
  */
 public abstract class ScimAttributeAware {
+
+    /**
+     * checks that two given attributes are equals by running through their structure recursively
+     *
+     * @return true if the given attributes are equals, false else
+     */
+    public static boolean attributesEquals(Attribute attribute,
+                                           Attribute attributeOther) {
+
+        if (!attribute.getClass().equals(attributeOther.getClass())) {
+            return false;
+        }
+        if (!attributeMetaEquals(attribute, attributeOther)) {
+            return false;
+        }
+        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
+            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
+        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
+            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
+        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
+            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
+        }
+        return false;
+    }
+
+    /**
+     * tells us if the given two attributes do contain the same meta-data
+     *
+     * @return if the meta-data is identical
+     */
+    public static boolean attributeMetaEquals(Attribute attribute,
+                                              Attribute attributeOther) {
+
+        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
+            return false;
+        }
+        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
+            return false;
+        }
+        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
+            return false;
+        }
+        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
+            return false;
+        }
+        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
+            return false;
+        }
+        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
+            return false;
+        }
+        if (!attribute.getURI().equals(attributeOther.getURI())) {
+            return false;
+        }
+        return attribute.getType().equals(attributeOther.getType());
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
+                                                SimpleAttribute attribute2) {
+
+        if (!attribute1.getValue().equals(attribute2.getValue())) {
+            return false;
+        }
+        return attributeMetaEquals(attribute1, attribute2);
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
+                                                     MultiValuedAttribute otherAttribute) {
+
+        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaEquals) {
+            return false;
+        }
+        if (attribute.getAttributePrimitiveValues().isEmpty()) {
+            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
+                return false;
+            }
+            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
+                return otherAttribute.getAttributeValues().stream().anyMatch(
+                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
+            });
+        } else {
+            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
+        }
+    }
+
+    /**
+     * tells us if two complex attributes are identical or not
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean complexAttributeEquals(ComplexAttribute attribute,
+                                                 ComplexAttribute otherAttribute) {
+
+        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaDataEquals) {
+            return false;
+        }
+
+        // @formatter:off
+        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
+            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
+                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
+                            otherAttribute.getSubAttribute((String) otherAttributeName)))
+                    .apply(oAttributeName));
+        });
+        // @formatter:on
+    }
 
     /**
      * @return the id of the SCIM {@link #getResource()}
@@ -159,7 +278,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         return getComplexAttribute(metaDefinition).map(meta -> {
             return getSimpleAttribute(createdDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
-                .map(instant -> LocalDateTime.ofInstant(instant, TimeZone.getDefault().
+                    .map(instant -> LocalDateTime.ofInstant(instant, TimeZone.getDefault().
                             toZoneId())).orElse(null);
         }).orElse(null);
     }
@@ -173,7 +292,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         return getComplexAttribute(metaDefinition).map(meta -> {
             return getSimpleAttribute(createdDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
-                .orElse(null);
+                    .orElse(null);
         }).orElse(null);
     }
 
@@ -188,7 +307,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
         getSetSubAttributeConsumer(meta).accept(createdDefinition, () ->
-                                                            createdDate.atZone(ZoneId.systemDefault()).toInstant());
+                createdDate.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -274,7 +393,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
         getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition,
-            () -> lastModifiedDateTime.atZone(ZoneId.systemDefault()).toInstant());
+                () -> lastModifiedDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -302,7 +421,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
         getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition,
-            () -> Instant.ofEpochMilli(lastModifiedTimestamp));
+                () -> Instant.ofEpochMilli(lastModifiedTimestamp));
     }
 
     /**
@@ -371,6 +490,17 @@ public abstract class ScimAttributeAware {
     public Optional<ComplexAttribute> getComplexAttribute(SCIMAttributeSchema scimAttributeSchema) {
 
         return Optional.ofNullable((ComplexAttribute) getResource().getAttribute(scimAttributeSchema.getName()));
+    }
+
+    /**
+     * gets a {@link ComplexAttribute} from the given {@link #getResource()} object
+     *
+     * @param attributeName the attribute name that should be read from the {@link #getResource()}
+     * @return the attribute from the {@link #getResource()} or an empty
+     */
+    public Optional<ComplexAttribute> getComplexAttribute(String attributeName) {
+
+        return Optional.ofNullable((ComplexAttribute) getResource().getAttribute(attributeName));
     }
 
     /**
@@ -514,27 +644,51 @@ public abstract class ScimAttributeAware {
         return getMultiValuedAttribute(multiValuedDefinition).map(multiValuedAttribute -> {
             List<MultiValuedComplexType> multiValuedComplexTypes = new ArrayList<>();
             for (Attribute attributeValue : multiValuedAttribute.getAttributeValues()) {
-                ComplexAttribute complexAttribute = (ComplexAttribute) attributeValue;
-                MultiValuedComplexType multiValuedComplexType = new MultiValuedComplexType();
-                getSimpleAttributeValue(valueDefinition, complexAttribute).ifPresent(multiValuedComplexType::setValue);
-                getSimpleAttributeValue(displayDefinition, complexAttribute)
-                        .ifPresent(multiValuedComplexType::setDisplay);
-                getSimpleAttributeValue(typeDefinition, complexAttribute).ifPresent(multiValuedComplexType::setType);
-                getSimpleAttribute(primaryDefinition, complexAttribute)
-                        .map(rethrowFunction(SimpleAttribute::getBooleanValue))
-                        .ifPresent(multiValuedComplexType::setPrimary);
-                getSimpleAttribute(referenceDefinition, complexAttribute)
-                        .map(simpleAttribute -> (String) simpleAttribute.getValue())
-                        .ifPresent(multiValuedComplexType::setReference);
-
-                if (!(isBlank(multiValuedComplexType.getValue()) && isBlank(
-                        multiValuedComplexType.getDisplay()) && isBlank(multiValuedComplexType.getType()) && isBlank(
-                        multiValuedComplexType.getReference()) && !multiValuedComplexType.isPrimary())) {
-                    multiValuedComplexTypes.add(multiValuedComplexType);
-                }
+                getMultiValuedComplexType((ComplexAttribute) attributeValue,
+                        valueDefinition, displayDefinition, typeDefinition,
+                        primaryDefinition, referenceDefinition).ifPresent(multiValuedComplexType -> {
+                            multiValuedComplexTypes.add(multiValuedComplexType);
+                });
             }
             return multiValuedComplexTypes;
         });
+    }
+
+    /**
+     * parses a {@link ComplexAttribute} into a {@link MultiValuedComplexType}
+     * @param attributeValue the complex type to parse
+     * @param valueDefinition the value attribute description
+     * @param displayDefinition the display attribute description
+     * @param typeDefinition the type attribute description
+     * @param primaryDefinition the primary attribute description
+     * @param referenceDefinition the reference attribute description
+     * @return the {@link MultiValuedComplexType} or an empty if no such sub-attributes exist
+     */
+    public Optional<MultiValuedComplexType> getMultiValuedComplexType(ComplexAttribute attributeValue,
+                                                                      SCIMAttributeSchema valueDefinition,
+                                                                      SCIMAttributeSchema displayDefinition,
+                                                                      SCIMAttributeSchema typeDefinition,
+                                                                      SCIMAttributeSchema primaryDefinition,
+                                                                      SCIMAttributeSchema referenceDefinition) {
+        ComplexAttribute complexAttribute = attributeValue;
+        MultiValuedComplexType multiValuedComplexType = new MultiValuedComplexType();
+        getSimpleAttributeValue(valueDefinition, complexAttribute).ifPresent(multiValuedComplexType::setValue);
+        getSimpleAttributeValue(displayDefinition, complexAttribute)
+                .ifPresent(multiValuedComplexType::setDisplay);
+        getSimpleAttributeValue(typeDefinition, complexAttribute).ifPresent(multiValuedComplexType::setType);
+        getSimpleAttribute(primaryDefinition, complexAttribute)
+                .map(rethrowFunction(SimpleAttribute::getBooleanValue))
+                .ifPresent(multiValuedComplexType::setPrimary);
+        getSimpleAttribute(referenceDefinition, complexAttribute)
+                .map(simpleAttribute -> (String) simpleAttribute.getValue())
+                .ifPresent(multiValuedComplexType::setReference);
+
+        if (!(isBlank(multiValuedComplexType.getValue()) && isBlank(
+                multiValuedComplexType.getDisplay()) && isBlank(multiValuedComplexType.getType()) && isBlank(
+                multiValuedComplexType.getReference()) && !multiValuedComplexType.isPrimary())) {
+            return Optional.of(multiValuedComplexType);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -568,124 +722,6 @@ public abstract class ScimAttributeAware {
         });
     }
 
-    /**
-     * checks that two given attributes are equals by running through their structure recursively
-     *
-     * @return true if the given attributes are equals, false else
-     */
-    public static boolean attributesEquals(Attribute attribute,
-                                           Attribute attributeOther) {
-
-        if (!attribute.getClass().equals(attributeOther.getClass())) {
-            return false;
-        }
-        if (!attributeMetaEquals(attribute, attributeOther)) {
-            return false;
-        }
-        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
-            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
-        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
-            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
-        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
-            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
-        }
-        return false;
-    }
-
-    /**
-     * tells us if the given two attributes do contain the same meta-data
-     *
-     * @return if the meta-data is identical
-     */
-    public static boolean attributeMetaEquals(Attribute attribute,
-                                              Attribute attributeOther) {
-
-        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
-            return false;
-        }
-        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
-            return false;
-        }
-        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
-            return false;
-        }
-        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
-            return false;
-        }
-        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
-            return false;
-        }
-        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
-            return false;
-        }
-        if (!attribute.getURI().equals(attributeOther.getURI())) {
-            return false;
-        }
-        return attribute.getType().equals(attributeOther.getType());
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
-                                                SimpleAttribute attribute2) {
-
-        if (!attribute1.getValue().equals(attribute2.getValue())) {
-            return false;
-        }
-        return attributeMetaEquals(attribute1, attribute2);
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
-                                                     MultiValuedAttribute otherAttribute) {
-
-        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaEquals) {
-            return false;
-        }
-        if (attribute.getAttributePrimitiveValues().isEmpty()) {
-            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
-                return false;
-            }
-            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
-                return otherAttribute.getAttributeValues().stream().anyMatch(
-                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
-            });
-        } else {
-            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
-        }
-    }
-
-    /**
-     * tells us if two complex attributes are identical or not
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean complexAttributeEquals(ComplexAttribute attribute,
-                                                 ComplexAttribute otherAttribute) {
-
-        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaDataEquals) {
-            return false;
-        }
-
-        // @formatter:off
-        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
-            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
-                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
-                            otherAttribute.getSubAttribute((String) otherAttributeName)))
-                    .apply(oAttributeName));
-        });
-        // @formatter:on
-    }
-
     @Override
     public int hashCode() {
 
@@ -714,6 +750,66 @@ public abstract class ScimAttributeAware {
     protected String stripToNull(String s) {
 
         return isBlank(s) ? null : s.trim();
+    }
+
+    /**
+     * gets the value of the attribute in the given resource extension as string value
+     *
+     * @param extensionSchema the resource schema extension that should hold the attribute
+     * @param attributeSchema the attribute to read
+     * @return the value of the attribute or null
+     * @throws ClassCastException if the attribute to extract is not of type {@link SimpleAttribute}
+     */
+    public String getExtensionAttributeAsString(SCIMResourceTypeExtensionSchema extensionSchema,
+                                                SCIMAttributeSchema attributeSchema) {
+
+        Optional<ComplexAttribute> extensionAttributeOptional = getComplexAttribute(extensionSchema.getSchema());
+        if (!extensionAttributeOptional.isPresent()) {
+            return null;
+        }
+        ComplexAttribute complexAttribute = extensionAttributeOptional.get();
+
+        return getSimpleAttributeValue(attributeSchema, complexAttribute).orElse(null);
+    }
+
+    /**
+     * this method will extract a complex attribute from another complex-attribute that is defined just like a
+     * {@link MultiValuedComplexType}. <br>
+     * <br>
+     * <b>NOTE:</b><br>
+     * this method is actually a specification violation because SCIM does not allow complex attributes
+     * within complex attributes. But since extensions are an exception in their representation this method ignores
+     * this violation to get complex-attributes from an extension
+     * @param extensionSchema the schema extension that might hold the complex attribute
+     * @param attributeSchema the complex schema definition of the schema extension
+     * @param valueDefinition
+     * @param displayDefinition
+     * @param typeDefinition
+     * @param primaryDefinition
+     * @param referenceDefinition
+     * @see <a href="https://tools.ietf.org/html/rfc7643#section-2.3.8">
+     *     https://tools.ietf.org/html/rfc7643#section-2.3.8
+     *     </a>
+     * @return
+     */
+    public MultiValuedComplexType getExtensionAttributeAsComplexType(SCIMResourceTypeExtensionSchema extensionSchema,
+                                                                     SCIMAttributeSchema attributeSchema,
+                                                                     SCIMAttributeSchema valueDefinition,
+                                                                     SCIMAttributeSchema displayDefinition,
+                                                                     SCIMAttributeSchema typeDefinition,
+                                                                     SCIMAttributeSchema primaryDefinition,
+                                                                     SCIMAttributeSchema referenceDefinition) {
+
+        Optional<ComplexAttribute> extensionAttributeOptional = getComplexAttribute(extensionSchema.getSchema());
+        if (!extensionAttributeOptional.isPresent()) {
+            return null;
+        }
+        ComplexAttribute extensionAttribute = extensionAttributeOptional.get();
+        Attribute extensionSubAttribute = rethrowFunction(name -> extensionAttribute.getSubAttribute((String) name))
+                .apply(attributeSchema.getName());
+        ComplexAttribute complexSubAttribute = (ComplexAttribute) extensionSubAttribute;
+        return getMultiValuedComplexType(complexSubAttribute, valueDefinition, displayDefinition, typeDefinition,
+                                         primaryDefinition, referenceDefinition).orElse(null);
     }
 
     /**

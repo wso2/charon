@@ -33,12 +33,19 @@ public interface FileReferences {
     /**
      * the resource file path to the json structure with a creation representation of a group named "bremen"
      */
-    public static final String CREATE_GROUP_BREMEN_FILE = basePath + "group/create-group-bremen.json"; // NOPMD
+    public static final String CREATE_GROUP_BREMEN_FILE = basePath + "group/create-group-bremen.json";
 
     /**
      * the resource file path to the json structure with a creation representation of an user named "maxilein"
      */
-    public static final String CREATE_USER_MAXILEIN_FILE = basePath + "group/create-user-maxilein.json"; // NOPMD
+    public static final String CREATE_USER_MAXILEIN_FILE = basePath + "group/create-user-maxilein.json";
+
+    /**
+     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
+     * enterprise extension
+     */
+    public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE = basePath + "group/create-enterprise-user" +
+            "-maxilein.json";
 
     /**
      * reads a file from the test-resources
