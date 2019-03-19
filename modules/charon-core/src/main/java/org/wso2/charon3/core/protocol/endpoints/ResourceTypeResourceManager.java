@@ -177,8 +177,8 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      * @return
      * @throws CharonException
      */
-    private AbstractSCIMObject buildCombinedResourceType(AbstractSCIMObject userObject, AbstractSCIMObject groupObject)
-    {
+    private AbstractSCIMObject buildCombinedResourceType(AbstractSCIMObject userObject,
+                                                         AbstractSCIMObject groupObject) {
 
         AbstractSCIMObject rootObject = new AbstractSCIMObject();
         MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(
