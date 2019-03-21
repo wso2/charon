@@ -380,7 +380,7 @@ public class UserResourceManager extends AbstractResourceManager {
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
 
             //check whether provided sortOrder is valid or not
             if (searchRequest.getSortOder() != null) {
