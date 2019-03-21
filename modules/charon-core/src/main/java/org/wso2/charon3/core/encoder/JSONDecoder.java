@@ -234,12 +234,14 @@ public class JSONDecoder {
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
      * @return the int value of the key
-     * @throws CharonException if the value under the given key is not an int value
      */
-    private String getStringValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private String getStringValueFromJson(JSONObject jsonObject, String name) {
         String value = null;
         try {
             value = jsonObject.getString(name);
+            if (StringUtils.equalsIgnoreCase("null", value)) {
+                value = null;
+            }
         } catch (JSONException e) {
             logger.debug("could not get '{}' value from scim resource", name);
         }
@@ -411,7 +413,7 @@ public class JSONDecoder {
                             null);
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
             Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
-                                                                                   complexAttribute);
+                    complexAttribute);
             ComplexAttribute complexExtension = (ComplexAttribute) extensionAttribute;
 
             scimExtension.getAttributeList().forEach((s, attribute) -> {

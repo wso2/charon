@@ -9,9 +9,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.util.StringUtils;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
+import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.exceptions.NotFoundException;
+import org.wso2.charon3.core.exceptions.NotImplementedException;
+import org.wso2.charon3.core.exceptions.PayloadTooLargeException;
+import org.wso2.charon3.core.exceptions.PermanentRedirectException;
+import org.wso2.charon3.core.exceptions.PreConditionFailedException;
+import org.wso2.charon3.core.exceptions.TemporyRedirectException;
+import org.wso2.charon3.core.exceptions.UnauthorizedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -43,6 +54,27 @@ public class JSONEncoderTest implements FileReferences {
         return Stream.of(Arguments.of(1, 1, "userName eq \"chuck_norris\"", "domain", "userName", "ascending",
                 Arrays.asList("userName", "id"), Arrays.asList("emails", "nickName")),
                 Arguments.of(0, 100, null, null, null, null, null, null));
+    }
+
+    /**
+     * build the exception arguments for the test-method {@link #testDecodeScimExceptions(AbstractCharonException)}
+     */
+    public static Stream<Arguments> getScimExceptions() {
+        return Stream.of(
+                Arguments.of(new AbstractCharonException()),
+                Arguments.of(new CharonException()),
+                Arguments.of(new BadRequestException()),
+                Arguments.of(new ConflictException()),
+                Arguments.of(new ForbiddenException()),
+                Arguments.of(new FormatNotSupportedException()),
+                Arguments.of(new InternalErrorException()),
+                Arguments.of(new NotFoundException()),
+                Arguments.of(new NotImplementedException()),
+                Arguments.of(new PayloadTooLargeException()),
+                Arguments.of(new PermanentRedirectException()),
+                Arguments.of(new PreConditionFailedException()),
+                Arguments.of(new TemporyRedirectException()),
+                Arguments.of(new UnauthorizedException()));
     }
 
     /**
@@ -123,5 +155,25 @@ public class JSONEncoderTest implements FileReferences {
                 decodedRequest.getAttributes());
         Assertions.assertEquals(excludedAttributes == null ? Collections.emptyList() : excludedAttributes,
                 decodedRequest.getExcludedAttributes());
+    }
+
+    /**
+     * will test that decoding of the charon exceptions does work as expected
+     *
+     * @param exception the exception to decode
+     */
+    @ParameterizedTest
+    @MethodSource("getScimExceptions")
+    public void testDecodeScimExceptions(AbstractCharonException exception)
+            throws BadRequestException, CharonException {
+        String scimExceptionString = JSON_ENCODER.encodeSCIMException(exception);
+        AbstractCharonException decodedAbstractException = JSON_DECODER.decodeCharonException(scimExceptionString);
+        Assertions.assertNotNull(decodedAbstractException);
+        AbstractCharonException ex = JSON_DECODER.decodeCharonException(scimExceptionString, exception.getClass());
+        Assertions.assertEquals(exception.getClass(), ex.getClass());
+        Assertions.assertEquals(exception.getDetail(), ex.getDetail());
+        Assertions.assertEquals(exception.getStatus(), ex.getStatus());
+        Assertions.assertEquals(exception.getSchemas(), ex.getSchemas());
+        Assertions.assertEquals(exception.getScimType(), ex.getScimType());
     }
 }
