@@ -70,8 +70,8 @@ public interface ResourceManager {
      * @return
      */
     public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
-                                    String attributes, String excludeAttributes);
+                                    Integer startIndex, Integer count, String sortBy, String sortOrder,
+                                    String domainName, String attributes, String excludeAttributes);
 
     /*
      * query resources

@@ -248,7 +248,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @return
      */
     public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
+                                    Integer startIndexInt, Integer countInt, String sortBy, String sortOrder,
+                                    String domainName,
                                     String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
@@ -256,15 +257,10 @@ public class UserResourceManager extends AbstractResourceManager {
         JSONEncoder encoder = null;
 
         try {
+            int count = ResourceManagerUtil.processCount(countInt == null ? null : String.valueOf(countInt));
+            int startIndex = ResourceManagerUtil.processStartIndex(startIndexInt == null ?
+                    null : String.valueOf(startIndexInt));
 
-            //According to SCIM 2.0 spec minus values will be considered as 0
-            if (count < 0) {
-                count = 0;
-            }
-            //According to SCIM 2.0 spec minus values will be considered as 1
-            if (startIndex < 1) {
-                startIndex = 1;
-            }
             if (sortOrder != null) {
                 if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
                         || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {

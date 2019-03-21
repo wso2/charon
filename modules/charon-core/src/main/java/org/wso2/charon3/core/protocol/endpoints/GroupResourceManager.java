@@ -230,23 +230,18 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @return
      */
     @Override
-    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex,
-                                    int count, String sortBy, String sortOrder, String domainName,
+    public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt,
+                                    Integer countInt, String sortBy, String sortOrder, String domainName,
                                     String attributes, String excludeAttributes) {
-
-        //According to SCIM 2.0 spec minus values will be considered as 0
-        if (count < 0) {
-            count = 0;
-        }
-        //According to SCIM 2.0 spec minus values will be considered as 1
-        if (startIndex < 1) {
-            startIndex = 1;
-        }
 
         FilterTreeManager filterTreeManager = null;
         Node rootNode = null;
         JSONEncoder encoder = null;
         try {
+
+            int count = ResourceManagerUtil.processCount(countInt == null ? null : String.valueOf(countInt));
+            int startIndex = ResourceManagerUtil.processStartIndex(startIndexInt == null ?
+                    null : String.valueOf(startIndexInt));
 
             //check whether provided sortOrder is valid or not
             if (sortOrder != null) {
