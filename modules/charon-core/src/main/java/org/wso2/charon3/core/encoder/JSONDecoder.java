@@ -850,9 +850,9 @@ public class JSONDecoder {
                 }
             }
 
-            if (decodedJsonObj.opt(SCIMConstants.OperationalConstants.FILTER) != null) {
-                filterTreeManager = new FilterTreeManager(
-                        (String) decodedJsonObj.opt(SCIMConstants.OperationalConstants.FILTER), schema);
+            final String filterString = (String) decodedJsonObj.opt(SCIMConstants.OperationalConstants.FILTER);
+            if (filterString != null) {
+                filterTreeManager = new FilterTreeManager(filterString, schema);
                 rootNode = filterTreeManager.buildTree();
             }
             searchRequest.setAttributes(attributes);
@@ -860,8 +860,11 @@ public class JSONDecoder {
             searchRequest.setSchema((String) schemas.get(0));
             searchRequest.setCountStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.COUNT));
             searchRequest.setStartIndexStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX));
-            searchRequest.setDomainName(decodedJsonObj.optString(SCIMConstants.OperationalConstants.DOMAIN));
             searchRequest.setFilter(rootNode);
+            searchRequest.setFilterString(filterString);
+            if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.DOMAIN).equals("")) {
+                searchRequest.setDomainName(decodedJsonObj.optString(SCIMConstants.OperationalConstants.DOMAIN));
+            }
             if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")) {
                 searchRequest.setSortBy(decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY));
             }

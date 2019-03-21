@@ -16,7 +16,10 @@
 
 package org.wso2.charon3.core.utils.codeutils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.function.BiFunction;
 
 /**
  * this corresponds to the /.search request object
@@ -29,6 +32,22 @@ import java.util.ArrayList;
  */
 public class SearchRequest {
 
+    /**
+     * used to determine the values of count and startIndex
+     */
+    private static final BiFunction<String, Integer, Integer> GET_INT_VALUE = (string, integer) -> {
+        if (integer > 0) {
+            return integer;
+        }
+        if (StringUtils.isBlank(string)) {
+            return integer;
+        }
+        if (!string.matches("\\d+")) {
+            return integer;
+        }
+        return Integer.parseInt(string);
+    };
+
     private String schema;
     private ArrayList<String> attributes = null;
     private ArrayList<String> excludedAttributes = null;
@@ -36,6 +55,7 @@ public class SearchRequest {
     private int startIndex;
     private String countStr;
     private String startIndexStr;
+    private String filterString;
     private Node filter;
     private String sortBy;
     private String sortOder;
@@ -66,7 +86,11 @@ public class SearchRequest {
     }
 
     public int getCount() {
-        return count;
+        return GET_INT_VALUE.apply(countStr, count);
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public ArrayList<String> getAttributes() {
@@ -85,16 +109,20 @@ public class SearchRequest {
         this.excludedAttributes = excludedAttributes;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     public int getStartIndex() {
-        return startIndex;
+        return GET_INT_VALUE.apply(startIndexStr, startIndex);
     }
 
     public void setStartIndex(int startIndex) {
         this.startIndex = startIndex;
+    }
+
+    public String getFilterString() {
+        return filterString;
+    }
+
+    public void setFilterString(String filterString) {
+        this.filterString = filterString;
     }
 
     public Node getFilter() {
@@ -138,7 +166,7 @@ public class SearchRequest {
         String excludedAttributes = null;
         StringBuffer str = new StringBuffer();
         for (String attributeValue : this.excludedAttributes) {
-             str.append(",").append(attributeValue);
+            str.append(",").append(attributeValue);
         }
         excludedAttributes = str.toString();
         if (excludedAttributes.equals("")) {
@@ -147,13 +175,13 @@ public class SearchRequest {
         return excludedAttributes;
     }
 
-    public void setDomainName(String domain) {
-
-        this.domainName = domain;
-    }
-
     public String getDomainName() {
 
         return domainName;
+    }
+
+    public void setDomainName(String domain) {
+
+        this.domainName = domain;
     }
 }
