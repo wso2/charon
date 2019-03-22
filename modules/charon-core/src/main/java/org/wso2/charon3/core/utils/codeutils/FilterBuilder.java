@@ -8,6 +8,8 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
+import java.util.Locale;
+
 import static org.wso2.charon3.core.schema.SCIMDefinitions.FilterOperation.PR;
 
 /**
@@ -121,7 +123,7 @@ public class FilterBuilder {
         }
         filter.append(buildAttributeName(attributeSchema))
                 .append(' ')
-                .append(operation.name().toLowerCase());
+                .append(operation.name().toLowerCase(Locale.ENGLISH));
         if (!PR.equals(operation)) {
             filter.append(' ')
                     .append(ESCAPE_STRING_LITERAL)
@@ -135,9 +137,9 @@ public class FilterBuilder {
      */
     private void prependConcatenation(SCIMDefinitions.FilterConcatenation concatenation) {
         if (filter.length() != 0) {
-            filter.append(' ').append(concatenation.name().toLowerCase()).append(' ');
+            filter.append(' ').append(concatenation.name().toLowerCase(Locale.ENGLISH)).append(' ');
         } else if (SCIMDefinitions.FilterConcatenation.NOT.equals(concatenation)) {
-            filter.append(' ').append(concatenation.name().toLowerCase()).append(' ');
+            filter.append(' ').append(concatenation.name().toLowerCase(Locale.ENGLISH)).append(' ');
         }
     }
 
