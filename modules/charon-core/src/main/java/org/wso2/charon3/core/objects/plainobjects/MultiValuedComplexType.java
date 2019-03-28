@@ -189,4 +189,15 @@ public class MultiValuedComplexType {
         result = 31 * result + (reference != null ? reference.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "MultiValuedComplexType{" +
+                 "type='" + type + '\'' +
+                 ", primary=" + primary +
+                 ", display='" + display + '\'' +
+                 ", value='" + value + '\'' +
+                 ", reference='" + reference + '\'' +
+                 '}';
+    }
 }

@@ -217,4 +217,16 @@ public class ScimName {
         result = 31 * result + (honorificSuffix != null ? honorificSuffix.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ScimName{" +
+                 "formatted='" + formatted + '\'' +
+                 ", familyName='" + familyName + '\'' +
+                 ", givenName='" + givenName + '\'' +
+                 ", middleName='" + middleName + '\'' +
+                 ", honorificPrefix='" + honorificPrefix + '\'' +
+                 ", honorificSuffix='" + honorificSuffix + '\'' +
+                 '}';
+    }
 }
