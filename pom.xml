@@ -337,7 +337,7 @@
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>20180813</json.version>
         <commons.logging.version>1.2</commons.logging.version>
-        <axiom.api.version>1.2.11</axiom.api.version>
+        <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
         <junit.jupiter.version>5.4.0</junit.jupiter.version>
         <junit.platform.version>1.4.0</junit.platform.version>
