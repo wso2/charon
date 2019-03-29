@@ -283,7 +283,7 @@
         <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
-        <json.version>20090211</json.version>
+        <json.version>20180813</json.version>
         <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.11</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
