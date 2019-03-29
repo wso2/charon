@@ -18,8 +18,6 @@ package org.wso2.charon3.core.protocol.endpoints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.ResourceTypeRegistration;
-import org.wso2.charon3.core.encoder.JSONDecoder;
-import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -29,8 +27,6 @@ import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
-import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
-import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.HashMap;
