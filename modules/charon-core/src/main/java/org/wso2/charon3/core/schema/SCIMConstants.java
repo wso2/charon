@@ -23,6 +23,8 @@ public class SCIMConstants {
 
     public static final String CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0";
     public static final String USER_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:User";
+    public static final String ENTERPRISE_USER_SCHEMA_URI = "urn:ietf:params:scim:schemas:extension:enterprise:2" +
+            ".0:User";
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI =
@@ -449,6 +451,56 @@ public class SCIMConstants {
     }
 
     /**
+     * represents the constants for the enterprise user schema
+     */
+    public static class EnterpriseUserSchemaConstants {
+
+        public static final String EMPLOYEE_NUMBER = "employeeNumber";
+        public static final String EMPLOYEE_NUMBER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + EMPLOYEE_NUMBER;
+        public static final String EMPLOYEE_NUMBER_DESC = "Numeric or alphanumeric identifier assigned to a " +
+                "person, typically based on order of hire or association with an organization.";
+
+        public static final String COST_CENTER = "costCenter";
+        public static final String COST_CENTER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + COST_CENTER;
+        public static final String COST_CENTER_DESC = "Identifies the name of a cost center.";
+
+        public static final String ORGANIZATION = "organization";
+        public static final String ORGANIZATION_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + ORGANIZATION;
+        public static final String ORGANIZATION_DESC = "Identifies the name of an organization.";
+
+        public static final String DIVISION = "division";
+        public static final String DIVISION_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + DIVISION;
+        public static final String DIVISION_DESC = "Identifies the name of a division.";
+
+        public static final String DEPARTMENT = "department";
+        public static final String DEPARTMENT_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + DEPARTMENT;
+        public static final String DEPARTMENT_DESC = "Identifies the name of a department.";
+
+        public static final String VALUE = "value";
+        public static final String VALUE_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + VALUE;
+        public static final String VALUE_DESC = "The id of the SCIM resource representing the User's manager.  " +
+                "REQUIRED.";
+
+        public static final String REF = "$ref";
+        public static final String REF_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + REF;
+        public static final String REF_DESC = "The URI of the SCIM resource representing the User's manager.  " +
+                "REQUIRED.";
+
+        public static final String DISPLAY_NAME = "displayName";
+        public static final String DISPLAY_NAME_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + DISPLAY_NAME;
+        public static final String DISPLAY_NAME_DESC = "The displayName of the User's manager. " +
+                "OPTIONAL and READ-ONLY.";
+
+        public static final String MANAGER = "manager";
+        public static final String MANAGER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + MANAGER;
+        public static final String MANAGER_DESC = "The User's manager.  A complex type that optionally " +
+                "allows service providers to represent organizational hierarchy by referencing the 'id' " +
+                "attribute of another User.";
+
+
+    }
+
+    /**
      * Constants found in group schema.
      */
     public static class GroupSchemaConstants {
@@ -678,4 +730,5 @@ public class SCIMConstants {
 
 
     }
+
 }

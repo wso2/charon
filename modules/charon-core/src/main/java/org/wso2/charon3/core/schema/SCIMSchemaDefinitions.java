@@ -17,6 +17,7 @@ package org.wso2.charon3.core.schema;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This class contains the schema definitions in
@@ -818,6 +819,159 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
+     * SCIM Enterprise User Schema Definition.
+     */
+    public static class SCIMEnterpriseUserSchemaDefinition {
+
+
+        public static final SCIMAttributeSchema EMPLOYEE_NUMBER =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.EMPLOYEE_NUMBER_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.EMPLOYEE_NUMBER,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.EMPLOYEE_NUMBER_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema COST_CENTER =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.COST_CENTER_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.COST_CENTER,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.COST_CENTER_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema ORGANIZATION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.ORGANIZATION_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.ORGANIZATION,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.ORGANIZATION_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema DIVISION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.DIVISION_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DIVISION,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DIVISION_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema DEPARTMENT =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DEPARTMENT_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.VALUE_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.VALUE,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.VALUE_DESC,
+                        true,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.REF_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.REF,
+                        SCIMDefinitions.DataType.REFERENCE,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.REF_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        new ArrayList<>(Collections.singletonList(SCIMDefinitions.ReferenceType.USER)),
+                        null);
+
+        public static final SCIMAttributeSchema DISPLAY_NAME =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.DISPLAY_NAME_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DISPLAY_NAME,
+                        SCIMDefinitions.DataType.STRING,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.DISPLAY_NAME_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_ONLY,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        null);
+
+        public static final SCIMAttributeSchema MANAGER =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.EnterpriseUserSchemaConstants.MANAGER_URI,
+                        SCIMConstants.EnterpriseUserSchemaConstants.MANAGER,
+                        SCIMDefinitions.DataType.COMPLEX,
+                        false,
+                        SCIMConstants.EnterpriseUserSchemaConstants.MANAGER_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.READ_WRITE,
+                        SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE,
+                        null,
+                        null,
+                        new ArrayList<>(Arrays.asList(VALUE, REF, DISPLAY_NAME)));
+
+
+    }
+
+    /**
      * SCIM defined group attribute schemas.
      */
     public static class SCIMGroupSchemaDefinition {
@@ -1219,13 +1373,27 @@ public class SCIMSchemaDefinitions {
 
     }
 
-    /*
+    /**
+     * **********SCIM defined Enterprise User Resource Schema.****************************
+     */
+    public static final SCIMResourceTypeExtensionSchema SCIM_ENTERPRISE_USER_SCHEMA =
+            SCIMResourceTypeExtensionSchema.createSCIMResourcetypeExtension(
+                    SCIMConstants.ENTERPRISE_USER_SCHEMA_URI,
+                    SCIMEnterpriseUserSchemaDefinition.EMPLOYEE_NUMBER,
+                    SCIMEnterpriseUserSchemaDefinition.COST_CENTER,
+                    SCIMEnterpriseUserSchemaDefinition.ORGANIZATION,
+                    SCIMEnterpriseUserSchemaDefinition.DIVISION,
+                    SCIMEnterpriseUserSchemaDefinition.DEPARTMENT,
+                    SCIMEnterpriseUserSchemaDefinition.MANAGER
+            );
+
+    /**
      * **********SCIM defined User Resource Schema.****************************
      */
-
     public static final SCIMResourceTypeSchema SCIM_USER_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
+                    new ArrayList<>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI)),
+                    Arrays.asList(SCIM_ENTERPRISE_USER_SCHEMA),
                     ID, EXTERNAL_ID, META,
                     SCIMUserSchemaDefinition.USERNAME,
                     SCIMUserSchemaDefinition.NAME,
@@ -1248,10 +1416,11 @@ public class SCIMSchemaDefinitions {
                     SCIMUserSchemaDefinition.ENTITLEMENTS,
                     SCIMUserSchemaDefinition.ROLES,
                     SCIMUserSchemaDefinition.X509CERTIFICATES);
-    /*
+
+
+    /**
      * **********SCIM defined Group Resource Schema.****************************
      */
-
     public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
                     new ArrayList<String>(Arrays.asList(SCIMConstants.GROUP_CORE_SCHEMA_URI)),

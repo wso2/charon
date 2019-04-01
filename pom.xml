@@ -68,11 +68,32 @@
                 <artifactId>axiom-impl</artifactId>
                 <version>${axiom.impl.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit.platform.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -119,8 +140,39 @@
                 <version>${slf4j.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <!-- for maven to execute junit jupiter tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+        </dependency>
+    </dependencies>
 
     <distributionManagement>
         <repository>
@@ -287,7 +339,8 @@
         <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.11</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
-        <junit.version>4.8.1</junit.version>
+        <junit.jupiter.version>5.4.0</junit.jupiter.version>
+        <junit.platform.version>1.4.0</junit.platform.version>
         <servlet.api.version>2.3</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
@@ -304,7 +357,11 @@
         <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
         <log4j.version>1.2.16</log4j.version>
         <slf4j.version>1.7.21</slf4j.version>
+
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
+
+        <commons.io.version>2.6</commons.io.version>
+        <commons.lang3.version>3.8.1</commons.lang3.version>
     </properties>
 
 </project>

@@ -17,6 +17,7 @@ package org.wso2.charon3.core.schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is the interface for resource schema definition. Default schema definitions included in
@@ -32,5 +33,7 @@ public interface ResourceTypeSchema {
     public ArrayList<AttributeSchema> getAttributesList();
 
     public void setAttributeList(ArrayList attributeList);
+
+    public Set<SCIMResourceTypeExtensionSchema> getExtensions();
 
 }

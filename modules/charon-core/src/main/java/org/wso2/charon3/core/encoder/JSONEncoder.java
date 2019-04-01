@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This encodes the in the json format.
@@ -117,39 +116,19 @@ public class JSONEncoder {
             //encode schemas
             this.encodeArrayOfValues(SCIMConstants.CommonSchemaConstants.SCHEMAS,
                     (scimObject.getSchemaList()).toArray(), rootObject);
-            //relate attributes to schema
-            Map<String, List<Attribute>> schemaAttributeMap = new HashMap<>();
-            scimObject.getSchemaList().stream().forEach(schema -> schemaAttributeMap.put(schema, new ArrayList<>()));
+            //encode attribute list
             Map<String, Attribute> attributes = scimObject.getAttributeList();
             if (attributes != null && !attributes.isEmpty()) {
                 for (Attribute attribute : attributes.values()) {
-                    Optional<String> schema = scimObject.getSchemaList().stream()
-                        .filter(attribute.getURI()::startsWith).findFirst();
-                    if (!schema.isPresent()) {
-                        throw new CharonException("Schema not present for attribute " + attribute.getURI());
-                    }
-                    schemaAttributeMap.get(schema.get()).add(attribute);
-                }
-            }
-            //encode attribute list
-            String baseSchema = scimObject.getSchemaList().get(0);
-            for (String schema : scimObject.getSchemaList()) {
-                JSONObject attributeRoot = rootObject;
-                if (!schema.equals(baseSchema)) {
-                    JSONObject schemaObject = new JSONObject();
-                    rootObject.put(schema, schemaObject);
-                    attributeRoot = schemaObject;
-                }
-                for (Attribute attribute : schemaAttributeMap.get(schema)) {
                     //using instanceof instead of polymorphic way, in order to make encoder pluggable.
                     if (attribute instanceof SimpleAttribute) {
-                        encodeSimpleAttribute((SimpleAttribute) attribute, attributeRoot);
+                        encodeSimpleAttribute((SimpleAttribute) attribute, rootObject);
 
                     } else if (attribute instanceof ComplexAttribute) {
-                        encodeComplexAttribute((ComplexAttribute) attribute, attributeRoot);
+                        encodeComplexAttribute((ComplexAttribute) attribute, rootObject);
 
                     } else if (attribute instanceof MultiValuedAttribute) {
-                        encodeMultiValuedAttribute((MultiValuedAttribute) attribute, attributeRoot);
+                        encodeMultiValuedAttribute((MultiValuedAttribute) attribute, rootObject);
                     }
                 }
             }
