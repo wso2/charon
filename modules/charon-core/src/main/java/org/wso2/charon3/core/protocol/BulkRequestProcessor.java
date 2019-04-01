@@ -1,20 +1,20 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ *  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.wso2.charon3.core.protocol;
 
 
@@ -33,6 +33,7 @@ import org.wso2.charon3.core.schema.SCIMConstants;
  *
  */
 public class BulkRequestProcessor {
+
     private UserResourceManager userResourceManager;
     private GroupResourceManager groupResourceManager;
     private int failOnError;
@@ -93,85 +94,89 @@ public class BulkRequestProcessor {
         BulkResponseData bulkResponseData = new BulkResponseData();
         SCIMResponse response = null;
 
-        for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
-            if (failOnError == 0) {
-                bulkResponseData.addUserOperation
-                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
-            } else {
-                if (errors < failOnError) {
-                    bulkResponseData.addUserOperation
-                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
-                }
-            }
-
-        }
-        for (BulkRequestContent bulkRequestContent : bulkRequestData.getGroupOperationRequests()) {
-            if (failOnError == 0) {
-                bulkResponseData.addGroupOperation
-                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
-            } else  {
-                if (errors < failOnError) {
-                    bulkResponseData.addGroupOperation
-                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
-                }
-            }
-
-        }
-        bulkResponseData.setSchema(SCIMConstants.BULK_RESPONSE_URI);
-        return bulkResponseData;
+        // TODO rebuild
+//        for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
+//            if (failOnError == 0) {
+//                bulkResponseData.addUserOperation
+//                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+//            } else {
+//                if (errors < failOnError) {
+//                    bulkResponseData.addUserOperation
+//                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+//                }
+//            }
+//
+//        }
+//        for (BulkRequestContent bulkRequestContent : bulkRequestData.getGroupOperationRequests()) {
+//            if (failOnError == 0) {
+//                bulkResponseData.addGroupOperation
+//                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
+//            } else  {
+//                if (errors < failOnError) {
+//                    bulkResponseData.addGroupOperation
+//                            (getBulkResponseContent(bulkRequestContent, groupResourceManager));
+//                }
+//            }
+//                                                   il
+//        }
+//        bulkResponseData.setSchema(SCIMConstants.BULK_RESPONSE_URI);
+//        return bulkResponseData;
+        return null;
     }
 
 
-   private BulkResponseContent getBulkResponseContent
-           (BulkRequestContent bulkRequestContent, ResourceManager resourceManager)
-           throws BadRequestException {
+    private BulkResponseContent getBulkResponseContent
+    (BulkRequestContent bulkRequestContent, ResourceManager resourceManager)
+    throws BadRequestException {
 
-       BulkResponseContent bulkResponseContent = null;
-       SCIMResponse response;
+        BulkResponseContent bulkResponseContent = null;
+        SCIMResponse response;
 
-       if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
-
-           response = resourceManager.create
-                   (bulkRequestContent.getData(), userManager, null, null);
-           bulkResponseContent = createBulkResponseContent
-                   (response, SCIMConstants.OperationalConstants.POST, bulkRequestContent);
-           errorsCheck(response);
-
-       } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
-
-           String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.updateWithPUT
-                   (resourceId, bulkRequestContent.getData(), userManager, null, null);
-           bulkResponseContent = createBulkResponseContent
-                   (response, SCIMConstants.OperationalConstants.PUT, bulkRequestContent);
-           errorsCheck(response);
-
-       } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
-
-           String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.updateWithPATCH
-                   (resourceId, bulkRequestContent.getData(), userManager, null, null);
-           bulkResponseContent = createBulkResponseContent
-                   (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
-           errorsCheck(response);
-
-       } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
-           String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.delete(resourceId, userManager);
-           bulkResponseContent = createBulkResponseContent
-                   (response, SCIMConstants.OperationalConstants.DELETE, bulkRequestContent);
-           errorsCheck(response);
-       }
-       return bulkResponseContent;
-   }
+        // TODO rebuild
+//        if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
+//
+//            response = resourceManager.create
+//                                       (bulkRequestContent.getData(), userManager, null, null);
+//            bulkResponseContent = createBulkResponseContent
+//                                  (response, SCIMConstants.OperationalConstants.POST, bulkRequestContent);
+//            errorsCheck(response);
+//
+//        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
+//
+//            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+//            response = resourceManager.updateWithPUT
+//                                       (resourceId, bulkRequestContent.getData(), userManager, null, null);
+//            bulkResponseContent = createBulkResponseContent
+//                                  (response, SCIMConstants.OperationalConstants.PUT, bulkRequestContent);
+//            errorsCheck(response);
+//
+//        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
+//
+//            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+//            response = resourceManager.updateWithPATCH
+//                                       (resourceId, bulkRequestContent.getData(), userManager, null, null);
+//            bulkResponseContent = createBulkResponseContent
+//                                  (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
+//            errorsCheck(response);
+//
+//        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
+//            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+//            response = resourceManager.delete(resourceId, userManager);
+//            bulkResponseContent = createBulkResponseContent
+//                                  (response, SCIMConstants.OperationalConstants.DELETE, bulkRequestContent);
+//            errorsCheck(response);
+//        }
+//        return bulkResponseContent;
+        return null;
+    }
 
     private String extractIDFromPath(String path) throws BadRequestException {
-        String [] parts = path.split("[/]");
+        String[] parts = path.split("[/]");
         if (parts[2] != null) {
             return parts[2];
         } else {
             throw new BadRequestException
-                    ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
+                  ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
         }
     }
 
@@ -193,7 +198,7 @@ public class BulkRequestProcessor {
 
     private void errorsCheck(SCIMResponse response) {
         if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
-                response.getResponseStatus() != 204) {
+            response.getResponseStatus() != 204) {
             errors++;
         }
     }

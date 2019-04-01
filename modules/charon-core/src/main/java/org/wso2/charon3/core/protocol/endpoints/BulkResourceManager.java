@@ -15,13 +15,12 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
-import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.extensions.ResourceHandler;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -38,9 +37,9 @@ import java.util.Map;
  * Any SCIM service provider can call this API perform bulk operations,
  * based on the HTTP requests received by SCIM Client.
  */
-public class BulkResourceManager extends AbstractResourceManager {
+public class BulkResourceManager extends ResourceManager {
 
-    private Log logger = LogFactory.getLog(BulkResourceManager.class);
+    private Logger logger = LoggerFactory.getLogger(BulkResourceManager.class);
     private JSONEncoder encoder;
     private JSONDecoder decoder;
     private BulkRequestProcessor bulkRequestProcessor;
@@ -71,59 +70,56 @@ public class BulkResourceManager extends AbstractResourceManager {
             String finalEncodedResponse = encoder.encodeBulkResponseData(bulkResponseData);
 
             //careate SCIM response message
-            Map<String, String> responseHeaders = new HashMap<String, String>();
+            Map<String, String> responseHeaders = new HashMap<>();
             //add location header
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             //create the final response
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, finalEncodedResponse, responseHeaders);
 
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
-
     @Override
-    public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
+    public SCIMResponse get(ResourceHandler resourceHandler, String id, String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String
-            excludeAttributes) {
+    public SCIMResponse create(ResourceHandler resourceHandler, String scimObjectString, String attributes,
+                               String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse delete(String id, UserManager userManager) {
+    public SCIMResponse delete(ResourceHandler resourceHandler, String id) {
         return null;
     }
 
     @Override
-    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
-                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(ResourceHandler resourceHandler, String filter, int startIndex, int count,
+                                    String sortBy, String sortOrder, String domainName, String attributes,
+                                    String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
+    public SCIMResponse listWithPOST(ResourceHandler resourceHandler, String resourceString) {
         return null;
     }
 
     @Override
-    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
-            attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPUT(ResourceHandler resourceHandler, String existingId, String scimObjectString,
+                                      String attributes, String excludeAttributes) {
         return null;
     }
 
     @Override
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
-            attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(ResourceHandler resourceHandler, String existingId, String scimObjectString,
+                                        String attributes, String excludeAttributes) {
         return null;
     }
+
 }

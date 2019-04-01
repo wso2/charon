@@ -17,7 +17,6 @@ package org.wso2.charon3.core.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon3.core.exceptions.CharonException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +33,7 @@ public class CopyUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CopyUtil.class);
 
-    public static Object deepCopy(Object oldObject) throws CharonException {
+    public static Object deepCopy(Object oldObject) {
         ObjectOutputStream objOutPutStream;
         ObjectInputStream objInputStream;
         Object newObject = null;
@@ -48,7 +47,7 @@ public class CopyUtil {
 
             //create a byte array input stream from the content of the byte array output stream
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-                    byteArrayOutPutStream.toByteArray());
+            byteArrayOutPutStream.toByteArray());
 
             objInputStream = new ObjectInputStream(byteArrayInputStream);
             newObject = objInputStream.readObject();

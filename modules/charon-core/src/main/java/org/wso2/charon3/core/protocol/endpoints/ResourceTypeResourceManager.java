@@ -41,14 +41,14 @@ import java.util.Map;
  * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
  * ResourceTypeResourceManager
  */
-public class ResourceTypeResourceManager extends AbstractResourceManager {
+public class ResourceTypeResourceManager extends ResourceManager {
 
     /*
      * Retrieves a resource type
      *
      * @return SCIM response to be returned.
      */
-    @Override
+//    @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
 
         return getResourceType();
@@ -120,7 +120,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         }
     }
 
-    @Override
     public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String
             excludeAttributes) {
 
@@ -129,7 +128,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    @Override
     public SCIMResponse delete(String id, UserManager userManager) {
 
         String error = "Request is undefined";
@@ -137,7 +135,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
                                     String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
@@ -146,7 +143,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    @Override
     public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
 
         String error = "Request is undefined";
@@ -154,7 +150,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    @Override
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 
@@ -163,7 +158,6 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    @Override
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 

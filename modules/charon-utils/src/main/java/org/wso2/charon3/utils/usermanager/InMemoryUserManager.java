@@ -1,26 +1,25 @@
 /*
-*  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
+ *  Copyright (c) 2005-2010, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ *  WSO2 Inc. licenses this file to you under the Apache License,
+ *  Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.wso2.charon3.utils.usermanager;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -42,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This is a sample dynamic user store.
  */
 public class InMemoryUserManager implements UserManager {
+
     private static final Logger logger = LoggerFactory.getLogger(InMemoryUserManager.class);
     //in memory user manager stores users
     ConcurrentHashMap<String, User> inMemoryUserList = new ConcurrentHashMap<String, User>();
@@ -50,7 +50,7 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public User createUser(User user, Map<String, Boolean> map)
-            throws CharonException, ConflictException, BadRequestException {
+    throws CharonException, ConflictException, BadRequestException {
         if (inMemoryUserList.get(user.getId()) != null) {
             throw new ConflictException("User with the id : " + user.getId() + "already exists");
         } else {
@@ -61,17 +61,17 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public User getUser(String id, Map<String, Boolean> map)
-            throws CharonException, BadRequestException, NotFoundException {
-       if (inMemoryUserList.get(id) != null) {
-           return (User) CopyUtil.deepCopy(inMemoryUserList.get(id));
-       } else {
-           throw new NotFoundException("No user with the id : " + id);
-       }
+    throws CharonException, BadRequestException, NotFoundException {
+        if (inMemoryUserList.get(id) != null) {
+            return (User) CopyUtil.deepCopy(inMemoryUserList.get(id));
+        } else {
+            throw new NotFoundException("No user with the id : " + id);
+        }
     }
 
     @Override
     public void deleteUser(String id)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
+    throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
         if (inMemoryUserList.get(id) == null) {
             throw new NotFoundException("No user with the id : " + id);
         } else {
@@ -82,10 +82,10 @@ public class InMemoryUserManager implements UserManager {
     @Override
     public List<Object> listUsersWithGET(Node rootNode, int startIndex, int count, String sortBy,
                                          String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+    throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
-        }  else if (startIndex != 1) {
+        } else if (startIndex != 1) {
             throw new NotImplementedException("Pagination is not supported");
         } else if (rootNode != null) {
             throw new NotImplementedException("Filtering is not supported");
@@ -102,69 +102,63 @@ public class InMemoryUserManager implements UserManager {
             userList.add(entry.getValue());
         }
         userList.set(0, userList.size() - 1);
-        try {
-            return (List<Object>) CopyUtil.deepCopy(userList);
-        } catch (CharonException e) {
-            logger.error("Error in listing users");
-            return  null;
-        }
-
+        return (List<Object>) CopyUtil.deepCopy(userList);
     }
 
     @Override
     public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+    throws CharonException, NotImplementedException, BadRequestException {
 
         return listUsersWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(), searchRequest.getCount(),
-                searchRequest.getSortBy(), searchRequest.getSortOder(), searchRequest.getDomainName(),
-                requiredAttributes);
+                                searchRequest.getSortBy(), searchRequest.getSortOder(), searchRequest.getDomainName(),
+                                requiredAttributes);
     }
 
     @Override
     public User updateUser(User user, Map<String, Boolean> map)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
-       if (user.getId() != null) {
-           inMemoryUserList.replace(user.getId(), user);
-           return (User) CopyUtil.deepCopy(user);
-       } else {
-           throw new NotFoundException("No user with the id : " + user.getId());
-       }
+    throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
+        if (user.getId() != null) {
+            inMemoryUserList.replace(user.getId(), user);
+            return (User) CopyUtil.deepCopy(user);
+        } else {
+            throw new NotFoundException("No user with the id : " + user.getId());
+        }
     }
 
     @Override
     public User getMe(String s, Map<String, Boolean> map)
-            throws CharonException, BadRequestException, NotFoundException {
+    throws CharonException, BadRequestException, NotFoundException {
         return null;
     }
 
     @Override
     public User createMe(User user, Map<String, Boolean> map)
-            throws CharonException, ConflictException, BadRequestException {
+    throws CharonException, ConflictException, BadRequestException {
         return null;
     }
 
     @Override
     public void deleteMe(String s)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
+    throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
 
     }
 
     @Override
     public User updateMe(User user, Map<String, Boolean> map)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
+    throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
         return null;
     }
 
     @Override
     public Group createGroup(Group group, Map<String, Boolean> map)
-            throws CharonException, ConflictException, NotImplementedException, BadRequestException {
+    throws CharonException, ConflictException, NotImplementedException, BadRequestException {
         inMemoryGroupList.put(group.getId(), group);
         return (Group) CopyUtil.deepCopy(group);
     }
 
     @Override
     public Group getGroup(String id, Map<String, Boolean> map)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+    throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
         if (inMemoryGroupList.get(id) != null) {
             return (Group) CopyUtil.deepCopy(inMemoryGroupList.get(id));
         } else {
@@ -174,7 +168,7 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public void deleteGroup(String id)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
+    throws NotFoundException, CharonException, NotImplementedException, BadRequestException {
         if (inMemoryGroupList.get(id) == null) {
             throw new NotFoundException("No user with the id : " + id);
         } else {
@@ -185,10 +179,10 @@ public class InMemoryUserManager implements UserManager {
     @Override
     public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
                                           String domainName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
+    throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
-        }  else if (startIndex != 1) {
+        } else if (startIndex != 1) {
             throw new NotImplementedException("Pagination is not supported");
         } else if (rootNode != null) {
             throw new NotImplementedException("Filtering is not supported");
@@ -204,18 +198,12 @@ public class InMemoryUserManager implements UserManager {
             groupList.add(group);
         }
         groupList.set(0, groupList.size() - 1);
-        try {
-            return (List<Object>) CopyUtil.deepCopy(groupList);
-        } catch (CharonException e) {
-            logger.error("Error in listing groups");
-            return  null;
-        }
-
+        return (List<Object>) CopyUtil.deepCopy(groupList);
     }
 
     @Override
     public Group updateGroup(Group group, Group group1, Map<String, Boolean> map)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+    throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
         if (group.getId() != null) {
             inMemoryGroupList.replace(group.getId(), group);
             return (Group) CopyUtil.deepCopy(group);
@@ -226,10 +214,10 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException {
+    throws NotImplementedException, BadRequestException, CharonException {
 
         return listGroupsWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(),
-                searchRequest.getCount(), searchRequest.getSortBy(), searchRequest.getSortOder(),
-                searchRequest.getDomainName(), requiredAttributes);
+                                 searchRequest.getCount(), searchRequest.getSortBy(), searchRequest.getSortOder(),
+                                 searchRequest.getDomainName(), requiredAttributes);
     }
 }

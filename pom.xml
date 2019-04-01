@@ -42,8 +42,8 @@
     <modules>
         <module>modules/charon-core</module>
         <module>modules/charon-utils</module>
-        <module>modules/charon-impl</module>
-        <module>modules/charon-samples</module>
+<!--        <module>modules/charon-impl</module>-->
+<!--        <module>modules/charon-samples</module>-->
     </modules>
 
     <dependencyManagement>
