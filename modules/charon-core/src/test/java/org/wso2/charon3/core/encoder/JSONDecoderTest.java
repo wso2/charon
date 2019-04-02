@@ -11,6 +11,8 @@ import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.EnterpriseUser;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
+import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.objects.plainobjects.ScimAddress;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -42,9 +44,9 @@ public class JSONDecoderTest implements FileReferences {
      * this test will verify that the decoding of resources does work
      */
     @ParameterizedTest
-    @ValueSource(strings = {CREATE_USER_MAXILEIN_FILE, CREATE_ENTERPRISE_USER_MAXILEIN_FILE})
+    @ValueSource(strings = { CREATE_USER_MAXILEIN_FILE, CREATE_ENTERPRISE_USER_MAXILEIN_FILE })
     public void testDecodeUser(String fileResource)
-            throws InternalErrorException, BadRequestException, CharonException {
+        throws InternalErrorException, BadRequestException, CharonException {
         // first remove extension schema from user schema in order for the other tests to work the schema must be
         // added again at the end of this test
         SCIMSchemaDefinitions.SCIM_USER_SCHEMA.getExtensions().clear();
@@ -52,7 +54,7 @@ public class JSONDecoderTest implements FileReferences {
             testUserDecoding(fileResource);
         } finally {
             SCIMSchemaDefinitions.SCIM_USER_SCHEMA.getExtensions()
-                    .add(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA);
+                                                  .add(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA);
         }
     }
 
@@ -60,7 +62,7 @@ public class JSONDecoderTest implements FileReferences {
      * does the checks for {@link #testDecodeUser(String)}
      */
     private void testUserDecoding(String fileResource)
-            throws BadRequestException, CharonException, InternalErrorException {
+        throws BadRequestException, CharonException, InternalErrorException {
         String groupJson = readResourceFile(fileResource);
         User user = JSON_DECODER.decodeResource(groupJson, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
         Assertions.assertEquals(1, user.getSchemaList().size());
@@ -121,8 +123,8 @@ public class JSONDecoderTest implements FileReferences {
         MultiValuedComplexType group1 = groups.get(0);
         Assertions.assertEquals("e9e30dba-f08f-4109-8486-d5c6a331660a", group1.getValue());
         Assertions.assertEquals("Tour Guides", group1.getDisplay());
-        Assertions.assertEquals("https://example.com/v2/Groups/e9e30dba-f08f-4109-8486-d5c6a331660a",
-                group1.getReference());
+        Assertions
+            .assertEquals("https://example.com/v2/Groups/e9e30dba-f08f-4109-8486-d5c6a331660a", group1.getReference());
         Assertions.assertNull(group1.getType());
         Assertions.assertFalse(group1.isPrimary());
 
@@ -130,16 +132,16 @@ public class JSONDecoderTest implements FileReferences {
         MultiValuedComplexType group2 = groups.get(1);
         Assertions.assertEquals("fc348aa8-3835-40eb-a20b-c726e15c55b5", group2.getValue());
         Assertions.assertEquals("Employees", group2.getDisplay());
-        Assertions.assertEquals("https://example.com/v2/Groups/fc348aa8-3835-40eb-a20b-c726e15c55b5",
-                group2.getReference());
+        Assertions
+            .assertEquals("https://example.com/v2/Groups/fc348aa8-3835-40eb-a20b-c726e15c55b5", group2.getReference());
         Assertions.assertNull(group2.getType());
         Assertions.assertFalse(group2.isPrimary());
 
         MultiValuedComplexType group3 = groups.get(2);
         Assertions.assertEquals("71ddacd2-a8e7-49b8-a5db-ae50d0a5bfd7", group3.getValue());
         Assertions.assertEquals("US Employees", group3.getDisplay());
-        Assertions.assertEquals("https://example.com/v2/Groups/71ddacd2-a8e7-49b8-a5db-ae50d0a5bfd7",
-                group3.getReference());
+        Assertions
+            .assertEquals("https://example.com/v2/Groups/71ddacd2-a8e7-49b8-a5db-ae50d0a5bfd7", group3.getReference());
         Assertions.assertNull(group3.getType());
         Assertions.assertFalse(group3.isPrimary());
 
@@ -170,5 +172,41 @@ public class JSONDecoderTest implements FileReferences {
         Assertions.assertEquals("26118915-6090-4610-87e4-49d8ca9f808d", manager.getValue());
         Assertions.assertEquals("John Smith", manager.getDisplay());
         Assertions.assertEquals("../Users/26118915-6090-4610-87e4-49d8ca9f808d", manager.getReference());
+    }
+
+    /**
+     * this test will show that the bulk request can be decoded correctly if a single operation is present
+     */
+    @Test
+    public void testDecodeBulkRequestData() throws BadRequestException {
+        String bulkRequestString = readResourceFile(SINGLE_BULK_REQUEST_FILE);
+        BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequestString);
+        Assertions.assertEquals(1, bulkRequestData.getOperationRequests().size());
+        BulkRequestContent bulkRequestContent = bulkRequestData.getOperationRequests().get(0);
+        Assertions.assertEquals("POST", bulkRequestContent.getMethod());
+        Assertions.assertEquals(SCIMConstants.USER_ENDPOINT, bulkRequestContent.getPath());
+        Assertions.assertEquals("qwerty", bulkRequestContent.getBulkID());
+        Assertions.assertNotNull(bulkRequestContent.getData());
+    }
+
+    /**
+     * this test will show that the bulk request can be decoded correctly if a single operation is present
+     */
+    @Test
+    public void testDecodeBulkRequestDataWithTwoOperations() throws BadRequestException {
+        String bulkRequestString = readResourceFile(TWO_BULK_REQUEST_FILE);
+        BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequestString);
+        Assertions.assertEquals(2, bulkRequestData.getOperationRequests().size());
+        BulkRequestContent bulkRequestContent = bulkRequestData.getOperationRequests().get(0);
+        Assertions.assertEquals("POST", bulkRequestContent.getMethod());
+        Assertions.assertEquals(SCIMConstants.GROUP_ENDPOINT, bulkRequestContent.getPath());
+        Assertions.assertEquals("ytrewq", bulkRequestContent.getBulkID());
+        Assertions.assertNotNull(bulkRequestContent.getData());
+
+        bulkRequestContent = bulkRequestData.getOperationRequests().get(1);
+        Assertions.assertEquals("POST", bulkRequestContent.getMethod());
+        Assertions.assertEquals(SCIMConstants.USER_ENDPOINT, bulkRequestContent.getPath());
+        Assertions.assertEquals("qwerty", bulkRequestContent.getBulkID());
+        Assertions.assertNotNull(bulkRequestContent.getData());
     }
 }

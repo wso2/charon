@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 
 /**
- * author Pascal Knueppel <br>
+ * @author Pascal Knueppel <br>
  */
 public interface FileReferences {
 
@@ -46,6 +46,18 @@ public interface FileReferences {
      */
     public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE =
         BASE_PATH + "user/create-enterprise-user" + "-maxilein.json";
+
+    /**
+     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
+     * enterprise extension
+     */
+    public static final String SINGLE_BULK_REQUEST_FILE = BASE_PATH + "bulk/single-bulk-request.json";
+
+    /**
+     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
+     * enterprise extension
+     */
+    public static final String TWO_BULK_REQUEST_FILE = BASE_PATH + "bulk/two-bulk-request.json";
 
     /**
      * reads a file from the test-resources
