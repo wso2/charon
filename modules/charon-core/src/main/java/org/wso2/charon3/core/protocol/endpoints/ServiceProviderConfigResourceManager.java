@@ -46,8 +46,10 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceProviderConfigResourceManager.class);
 
-    public ServiceProviderConfigResourceManager() {
+    public ServiceProviderConfigResourceManager(ResourceHandler resourceHandler) {
+        super(resourceHandler);
     }
+
 
     /*
      * Retrieves a service provider config
@@ -55,7 +57,7 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
      * @return SCIM response to be returned.
      */
     @Override
-    public SCIMResponse get(ResourceHandler resourceHandler, String id, String attributes, String excludeAttributes) {
+    public SCIMResponse get(String id, String attributes, String excludeAttributes) {
         return getServiceProviderConfig();
     }
 
@@ -68,14 +70,14 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
             JSONDecoder decoder = getDecoder();
 
             // get the service provider config schema
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance()
-                                                                     .getServiceProviderConfigResourceSchema();
+            SCIMResourceTypeSchema schema =
+                SCIMResourceSchemaManager.getInstance().getServiceProviderConfigResourceSchema();
             //create a string in json format with relevant values
-            String scimObjectString = encoder.buildServiceProviderConfigJsonBody(CharonConfiguration.getInstance()
-                                                                                                    .getConfig());
+            String scimObjectString =
+                encoder.buildServiceProviderConfigJsonBody(CharonConfiguration.getInstance().getConfig());
             //decode the SCIM service provider config object, encoded in the submitted payload.
-            AbstractSCIMObject serviceProviderConfigObject = (AbstractSCIMObject) decoder.decodeResource(
-            scimObjectString, schema, new AbstractSCIMObject());
+            AbstractSCIMObject serviceProviderConfigObject =
+                (AbstractSCIMObject) decoder.decodeResource(scimObjectString, schema, new AbstractSCIMObject());
 
             //encode the newly created SCIM service provider config object and add id attribute to Location header.
             String encodedObject;
@@ -86,8 +88,8 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
                 AbstractSCIMObject copiedObject = (AbstractSCIMObject) CopyUtil.deepCopy(serviceProviderConfigObject);
                 encodedObject = encoder.encodeSCIMObject(copiedObject);
                 //add location header
-                responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT));
+                responseHeaders.put(SCIMConstants.LOCATION_HEADER,
+                                    getResourceEndpointURL(SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT));
                 responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -95,8 +97,7 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
                 throw new InternalErrorException(error);
             }
             //put the uri of the service provider config object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_OK,
-                                    encodedObject, responseHeaders);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
         } catch (CharonException e) {
             return encodeSCIMException(e);
         } catch (BadRequestException e) {
@@ -111,31 +112,29 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
     }
 
     @Override
-    public SCIMResponse create(ResourceHandler resourceHandler, String scimObjectString, String attributes, String
-                                                                                                            excludeAttributes) {
+    public SCIMResponse create(String scimObjectString, String attributes, String excludeAttributes) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
     @Override
-    public SCIMResponse delete(ResourceHandler resourceHandler, String id) {
+    public SCIMResponse delete(String id) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
     @Override
-    public SCIMResponse listWithGET(ResourceHandler resourceHandler, String filter, int startIndex, int count,
-                                    String sortBy, String sortOrder, String domainName, String attributes,
-                                    String excludeAttributes) {
+    public SCIMResponse listWithGET(String filter, int startIndex, int count, String sortBy, String sortOrder,
+                                    String domainName, String attributes, String excludeAttributes) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
     @Override
-    public SCIMResponse listWithPOST(ResourceHandler resourceHandler, String resourceString) {
+    public SCIMResponse listWithPOST(String resourceString) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -143,16 +142,16 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
 
 
     @Override
-    public SCIMResponse updateWithPUT(ResourceHandler resourceHandler, String existingId, String scimObjectString,
-                                      String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, String attributes,
+                                      String excludeAttributes) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
     @Override
-    public SCIMResponse updateWithPATCH(ResourceHandler resourceHandler, String existingId, String scimObjectString,
-                                        String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String attributes,
+                                        String excludeAttributes) {
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);

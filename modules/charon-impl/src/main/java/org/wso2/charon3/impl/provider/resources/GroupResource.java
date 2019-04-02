@@ -100,9 +100,9 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse scimResponse = groupResourceManager.get(groupHandler, id, attribute, excludedAttributes);
+            SCIMResponse scimResponse = groupResourceManager.get(id, attribute, excludedAttributes);
             // needs to check the code of the response and return 201 Ok or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -135,10 +135,9 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse response = groupResourceManager.create(groupHandler, resourceString,
-                    attribute, excludedAttributes);
+            SCIMResponse response = groupResourceManager.create(resourceString, attribute, excludedAttributes);
 
             return buildResponse(response);
 
@@ -168,9 +167,9 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse scimResponse = groupResourceManager.delete(groupHandler, id);
+            SCIMResponse scimResponse = groupResourceManager.delete(id);
             // needs to check the code of the response and return 200 0k or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -206,10 +205,10 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse response = groupResourceManager.updateWithPUT(
-                    groupHandler, id, resourceString, attribute, excludedAttributes);
+            SCIMResponse response = groupResourceManager.updateWithPUT(id, resourceString, attribute,
+                                                                       excludedAttributes);
 
             return buildResponse(response);
 
@@ -239,9 +238,9 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse scimResponse = groupResourceManager.listWithPOST(groupHandler, resourceString);
+            SCIMResponse scimResponse = groupResourceManager.listWithPOST(resourceString);
 
             return buildResponse(scimResponse);
 
@@ -284,9 +283,9 @@ public class GroupResource extends AbstractResource {
             ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
-            GroupResourceManager groupResourceManager = new GroupResourceManager();
+            GroupResourceManager groupResourceManager = new GroupResourceManager(groupHandler);
 
-            SCIMResponse scimResponse = groupResourceManager.listWithGET(groupHandler, filter, startIndex, count,
+            SCIMResponse scimResponse = groupResourceManager.listWithGET(filter, startIndex, count,
                     sortBy, sortOrder, domainName, attribute, excludedAttributes);
 
             return buildResponse(scimResponse);
@@ -298,6 +297,9 @@ public class GroupResource extends AbstractResource {
 
     public static class GroupResourceManager extends ResourceManager<Group> {
 
+        public GroupResourceManager(ResourceHandler<Group> resourceHandler) {
+            super(resourceHandler);
+        }
     }
 }
 

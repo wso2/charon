@@ -8,13 +8,6 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
@@ -26,7 +19,6 @@ import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.extensions.ResourceHandler;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
-import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -42,672 +34,494 @@ import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 
 /**
  * implementation for SCIM resource endpoints.
  */
-public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResourceManager
-{
+public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResourceManager {
 
-  private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
 
-  private static final String INTERNAL_ERROR_MESSAGE = "an internal error occurred";
+    private static final String INTERNAL_ERROR_MESSAGE = "an internal error occurred";
 
-  private static final String NULL_RESOURCE_HANDLER = "provided resource handler is null";
+    /**
+     * the handler that will handle the scim resources
+     */
+    private ResourceHandler<R> resourceHandler;
 
-  /**
-   * holds the generic type of this implementation
-   */
-  private Class<R> genericType;
+    /**
+     * holds the generic type of this implementation
+     */
+    private Class<R> genericType;
 
-  public ResourceManager()
-  {
-    this.genericType = (Class<R>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-  }
-
-  /**
-   * Method of resource endpoint which is mapped to HTTP GET request.
-   *
-   * @param resourceHandler - the resource handler that will handle the resource
-   * @param id - unique resource id
-   */
-  public SCIMResponse get(ResourceHandler<R> resourceHandler,
-                          String id,
-                          String attributes,
-                          String excludeAttributes)
-  {
-    JSONEncoder encoder = null;
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
-
-      // obtain the correct encoder according to the format requested.
-      encoder = getEncoder();
-      // returns core-group schema
-      // get the URIs of required attributes which must be given a value
-      SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
-      Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)CopyUtil.deepCopy(schema),
-                                                                                                  attributes,
-                                                                                                  excludeAttributes);
-
-      // API user should pass a usermanager usermanager to GroupResourceEndpoint.
-      // retrieve the group from the provided usermanager.
-      R resource = resourceHandler.get(id, requiredAttributes);
-
-      // if group not found, return an error in relevant format.
-      if (resource == null)
-      {
-        String message = "resource not found in the store.";
-        throw new NotFoundException(message);
-      }
-
-      ServerSideValidator.validateRetrievedSCIMObjectInList(resource, schema, attributes, excludeAttributes);
-      // convert the group into specific format.
-      String encodedGroup = encoder.encodeSCIMObject(resource);
-      // if there are any http headers to be added in the response header.
-      Map<String, String> httpHeaders = new HashMap<>();
-      httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-      httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                      getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" + resource.getId());
-      return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+    public ResourceManager(ResourceHandler<R> resourceHandler) {
+        this.resourceHandler = Objects.requireNonNull(resourceHandler, "resource handler must not be null!");
+        this.genericType =
+            (Class<R>) ( (ParameterizedType) getClass().getGenericSuperclass() ).getActualTypeArguments()[0];
     }
-    catch (AbstractCharonException e)
-    {
-      return encodeSCIMException(e);
-    }
-    catch (RuntimeException e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
 
-  /**
-   * Method of resource endpoint which is mapped to HTTP POST request.
-   *
-   * @param resourceHandler - the resource handler that will handle the resource
-   * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
-   * @return SCIMResponse - From Spec: {Since the server is free to alter and/or ignore POSTed content,
-   *         returning the full representation can be useful to the client, enabling it to correlate the
-   *         client and server views of the new Resource. When a Resource is created, its uri must be returned
-   *         in the response Location header.}
-   */
-  public SCIMResponse create(ResourceHandler<R> resourceHandler,
-                             String scimObjectString,
-                             String attributes,
-                             String excludeAttributes)
-  {
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
+    /**
+     * Method of resource endpoint which is mapped to HTTP GET request.
+     *
+     * @param id - unique resource id
+     */
+    public SCIMResponse get(String id, String attributes, String excludeAttributes) {
+        JSONEncoder encoder = null;
+        try {
+            // obtain the correct encoder according to the format requested.
+            encoder = getEncoder();
+            // returns core-group schema
+            // get the URIs of required attributes which must be given a value
+            SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-      // returns core-group schema
-      SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
-      // get the URIs of required attributes which must be given a value
-      Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)CopyUtil.deepCopy(schema),
-                                                                                                  attributes,
-                                                                                                  excludeAttributes);
-      // decode the SCIM group object, encoded in the submitted payload.
-      R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
-      // validate decoded group
-      ServerSideValidator.validateCreatedSCIMObject(resource, schema);
-      // need to send back the newly created group in the response payload
-      R createdResource = resourceHandler.create(resource, requiredAttributes);
+            // API user should pass a usermanager usermanager to GroupResourceEndpoint.
+            // retrieve the group from the provided usermanager.
+            R resource = resourceHandler.get(id, requiredAttributes);
 
-      // encode the newly created SCIM group object and add id attribute to Location header.
-      String encodedGroup;
-      Map<String, String> httpHeaders = new HashMap<String, String>();
-      if (createdResource != null)
-      {
+            // if group not found, return an error in relevant format.
+            if (resource == null) {
+                String message = "resource not found in the store.";
+                throw new NotFoundException(message);
+            }
 
-        encodedGroup = getEncoder().encodeSCIMObject(createdResource);
-        // add location header
-        httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                        getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT) + "/" + createdResource.getId());
-        httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-
-      }
-      else
-      {
-        String message = "Newly created resource is null..";
-        throw new InternalErrorException(message);
-      }
-
-      // put the uri of the Group object in the response header parameter.
-      return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedGroup, httpHeaders);
-
-    }
-    catch (AbstractCharonException e)
-    {
-      return encodeSCIMException(e);
-    }
-    catch (Exception e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
-
-  /**
-   * Method of the ResourceManager that is mapped to HTTP Delete method..
-   *
-   * @param resourceHandler - the resource handler that will handle the resource
-   * @param id unique resource id
-   */
-  public SCIMResponse delete(ResourceHandler<R> resourceHandler, String id)
-  {
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
-
-      /* handover the SCIM User object to the user usermanager provided by the SP for the delete operation */
-      resourceHandler.delete(id);
-      // on successful deletion SCIMResponse only has 204 No Content status code.
-      return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
-    }
-    catch (AbstractCharonException e)
-    {
-      return AbstractResourceManager.encodeSCIMException(e);
-    }
-    catch (RuntimeException e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
-
-  /**
-   * get resources
-   *
-   * @param resourceHandler the resource handler that will load the resources
-   * @param filter the filter expression
-   * @param startIndex index of the first entry
-   * @param count number of resources to return in the request
-   * @param sortBy a string indicating the attribute whose value SHALL be used to order the returned responses
-   * @param sortOrder sortOrder A string indicating the order in which the "sortBy" parameter is applied
-   * @param domainName specific parameter for charon idp
-   * @param attributes A multi-valued list of strings indicating the names of resource attributes to in the
-   *          response, overriding the set of attributes that would be returned by default.
-   * @param excludeAttributes A multi-valued list of strings indicating the names of resource attributes to be
-   *          removed from the default set of attributes to return
-   */
-  public SCIMResponse listWithGET(ResourceHandler<R> resourceHandler,
-                                  String filter,
-                                  int startIndex,
-                                  int count,
-                                  String sortBy,
-                                  String sortOrder,
-                                  String domainName,
-                                  String attributes,
-                                  String excludeAttributes)
-  {
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
-
-      Node rootNode = null;
-      if (filter != null)
-      {
-        FilterTreeManager filterTreeManager = new FilterTreeManager(filter,
-                                                                    resourceHandler.getResourceSchema());
-        rootNode = filterTreeManager.buildTree();
-      }
-
-      return listResources(resourceHandler,
-                           startIndex,
-                           count,
-                           sortBy,
-                           sortOrder,
-                           domainName,
-                           attributes,
-                           excludeAttributes,
-                           rootNode);
-
-    }
-    catch (IOException e)
-    {
-      String error = "Error in tokenization of the input filter";
-      CharonException charonException = new CharonException(error);
-      return AbstractResourceManager.encodeSCIMException(charonException);
-    }
-    catch (Exception e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
-
-  /**
-   * does the actual work for the methods
-   * {@link #listWithGET(ResourceHandler, String, int, int, String, String, String, String, String)} and
-   * {@link #listWithPOST(ResourceHandler, String)}
-   */
-  private SCIMResponse listResources(ResourceHandler<R> resourceHandler,
-                                     int startIndex,
-                                     int count,
-                                     String sortBy,
-                                     String sortOrder,
-                                     String domainName,
-                                     String attributes,
-                                     String excludeAttributes,
-                                     Node rootNode)
-  {
-    try
-    {
-      // According to SCIM 2.0 spec minus values will be considered as 0
-      count = ResourceManagerUtil.processCount(String.valueOf(count));
-      // According to SCIM 2.0 spec minus values will be considered as 1
-      startIndex = ResourceManagerUtil.processStartIndex(String.valueOf(startIndex));
-      if (sortOrder != null)
-      {
-        if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-              || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING)))
-        {
-          String error = " Invalid sortOrder value is specified";
-          throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+            ServerSideValidator.validateRetrievedSCIMObjectInList(resource, schema, attributes, excludeAttributes);
+            // convert the group into specific format.
+            String encodedGroup = encoder.encodeSCIMObject(resource);
+            // if there are any http headers to be added in the response header.
+            Map<String, String> httpHeaders = new HashMap<>();
+            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                            getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" + resource.getId());
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+        } catch (AbstractCharonException e) {
+            return encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
         }
-      }
-      // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
-      // ascending.
-      if (sortOrder == null && sortBy != null)
-      {
-        sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
-      }
+    }
 
-      // unless configured returns core-user schema or else returns extended user schema)
-      SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
+    /**
+     * Method of resource endpoint which is mapped to HTTP POST request.
+     *
+     * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
+     * @return SCIMResponse - From Spec: {Since the server is free to alter and/or ignore POSTed content,
+     *         returning the full representation can be useful to the client, enabling it to correlate the
+     *         client and server views of the new Resource. When a Resource is created, its uri must be returned
+     *         in the response Location header.}
+     */
+    public SCIMResponse create(String scimObjectString, String attributes, String excludeAttributes) {
+        try {
+            // returns core-group schema
+            SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
+            // get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+            // decode the SCIM group object, encoded in the submitted payload.
+            R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
+            // validate decoded group
+            ServerSideValidator.validateCreatedSCIMObject(resource, schema);
+            // need to send back the newly created group in the response payload
+            R createdResource = resourceHandler.create(resource, requiredAttributes);
 
-      // get the URIs of required attributes which must be given a value
-      Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)CopyUtil.deepCopy(schema),
-                                                                                                  attributes,
-                                                                                                  excludeAttributes);
+            // encode the newly created SCIM group object and add id attribute to Location header.
+            String encodedGroup;
+            Map<String, String> httpHeaders = new HashMap<>();
+            if (createdResource != null) {
 
-      int totalResults = 0;
-      // API user should pass a usermanager usermanager to UserResourceEndpoint.
-      List<Object> resources = resourceHandler.listResources(rootNode,
-                                                             startIndex,
-                                                             count,
-                                                             sortBy,
-                                                             sortOrder,
-                                                             domainName,
-                                                             requiredAttributes);
+                encodedGroup = getEncoder().encodeSCIMObject(createdResource);
+                // add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                                getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT) + "/" + createdResource.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
-      if (resources == null)
-      {
-        resources = Collections.emptyList();
-      }
+            } else {
+                String message = "Newly created resource is null..";
+                throw new InternalErrorException(message);
+            }
 
-      try
-      {
-        totalResults = (int)resources.get(0);
-        resources.remove(0);
-      }
-      catch (IndexOutOfBoundsException e)
-      {
-        if (logger.isDebugEnabled())
-        {
-          logger.debug("resource result list is empty.");
+            // put the uri of the Group object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedGroup, httpHeaders);
+
+        } catch (AbstractCharonException e) {
+            return encodeSCIMException(e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
         }
-        totalResults = resources.size();
-      }
-      catch (ClassCastException ex)
-      {
-        logger.debug("Parse error while getting the resource result count. Setting result count as: "
-                     + resources.size(),
-                     ex);
-        totalResults = resources.size();
-      }
-
-      for ( Object resource : resources )
-      {
-        // perform service provider side validation.
-        ServerSideValidator.validateRetrievedSCIMObjectInList((R)resource,
-                                                              schema,
-                                                              attributes,
-                                                              excludeAttributes);
-      }
-      // create a listed resource object out of the returned users list.
-      ListedResource listedResource = createListedResource(resources, startIndex, totalResults);
-      // convert the listed resource into specific format.
-      String encodedListedResource = getEncoder().encodeSCIMObject(listedResource);
-      // if there are any http headers to be added in the response header.
-      Map<String, String> responseHeaders = new HashMap<>();
-      responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-      return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
     }
-    catch (AbstractCharonException e)
-    {
-      return AbstractResourceManager.encodeSCIMException(e);
-    }
-    catch (RuntimeException e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
 
-  /**
-   * query resources
-   *
-   * @param resourceString the request body
-   * @param resourceHandler the resource handler that will load the resource
-   */
-  public SCIMResponse listWithPOST(ResourceHandler<R> resourceHandler, String resourceString)
-  {
-    try
-    {
-      // create the search request object
-      SearchRequest searchRequest = getDecoder().decodeSearchRequestBody(resourceString,
-                                                                         resourceHandler.getResourceSchema());
-      searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-      searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
-
-      if (searchRequest.getSchema() != null
-          && !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI))
-      {
-        throw new BadRequestException("Provided schema is invalid", ResponseCodeConstants.INVALID_VALUE);
-      }
-
-      return listResources(resourceHandler,
-                           searchRequest.getStartIndex(),
-                           searchRequest.getCount(),
-                           searchRequest.getSortBy(),
-                           searchRequest.getSortOder(),
-                           searchRequest.getDomainName(),
-                           searchRequest.getExcludedAttributesAsString(),
-                           searchRequest.getExcludedAttributesAsString(),
-                           searchRequest.getFilter());
-    }
-    catch (AbstractCharonException e)
-    {
-      return AbstractResourceManager.encodeSCIMException(e);
-    }
-    catch (RuntimeException e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
-
-  /**
-   * To update the user by giving entire attribute set
-   *
-   * @param resourceHandler the resource handler that will update the given resource
-   * @param existingId the id of the user to update
-   * @param scimObjectString the request body
-   * @param attributes A multi-valued list of strings indicating the names of resource attributes to in the
-   *          response, overriding the set of attributes that would be returned by default.
-   * @param excludeAttributes A multi-valued list of strings indicating the names of resource attributes to be
-   *          removed from the default set of attributes to return
-   */
-
-  public SCIMResponse updateWithPUT(ResourceHandler<R> resourceHandler,
-                                    String existingId,
-                                    String scimObjectString,
-                                    String attributes,
-                                    String excludeAttributes)
-  {
-
-
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
-
-      SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
-      // get the URIs of required attributes which must be given a value
-      Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)CopyUtil.deepCopy(schema),
-                                                                                                  attributes,
-                                                                                                  excludeAttributes);
-      // decode the SCIM User object, encoded in the submitted payload.
-      R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
-      R updatedResource;
-      // retrieve the old object
-      R oldResource = resourceHandler.get(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
-      if (oldResource != null)
-      {
-        R validatedResource = (R)ServerSideValidator.validateUpdatedSCIMObject(oldResource, resource, schema);
-        updatedResource = resourceHandler.update(validatedResource, requiredAttributes);
-
-      }
-      else
-      {
-        String error = "No resource exists with the given id: " + existingId;
-        throw new NotFoundException(error);
-      }
-
-      // encode the newly created SCIM user object and add id attribute to Location header.
-      String encodedGroup;
-      Map<String, String> httpHeaders = new HashMap<String, String>();
-      if (updatedResource != null)
-      {
-        // create a deep copy of the user object since we are going to change it.
-        R copiedGroup = (R)CopyUtil.deepCopy(updatedResource);
-        // need to remove password before returning
-        ServerSideValidator.validateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
-        encodedGroup = getEncoder().encodeSCIMObject(copiedGroup);
-        // add location header
-        httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                        getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/"
-                                                       + updatedResource.getId());
-        httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-
-      }
-      else
-      {
-        String error = "Updated resource is null.";
-        throw new InternalErrorException(error);
-      }
-
-      // put the uri of the User object in the response header parameter.
-      return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
-
-    }
-    catch (AbstractCharonException e)
-    {
-      return AbstractResourceManager.encodeSCIMException(e);
-    }
-    catch (Exception e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
-
-  /**
-   * will update an existing resource with the patch operation
-   *
-   * @param resourceHandler the resource handler that will delete the resource
-   * @param existingId the id of the resource that should be updated
-   * @param scimObjectString the request body
-   */
-  public SCIMResponse updateWithPATCH(ResourceHandler<R> resourceHandler,
-                                      String existingId,
-                                      String scimObjectString,
-                                      String attributes,
-                                      String excludeAttributes)
-  {
-    try
-    {
-      if (resourceHandler == null)
-      {
-        throw new InternalErrorException(NULL_RESOURCE_HANDLER);
-      }
-
-      // obtain the json decoder.
-      JSONDecoder decoder = getDecoder();
-      // decode the SCIM User object, encoded in the submitted payload.
-      List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
-
-      SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-      // get the user from the user core
-      R oldResource = resourceHandler.get(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
-      if (oldResource == null)
-      {
-        throw new NotFoundException("No resource with the id : " + existingId + " in the store.");
-      }
-      // make a copy of the original user
-      R copyOfOldResource = (R)CopyUtil.deepCopy(oldResource);
-      // make another copy of original user.
-      // this will be used to restore to the original condition if failure occurs.
-      R originalResource = (R)CopyUtil.deepCopy(copyOfOldResource);
-
-      R newResource = null;
-
-      for ( PatchOperation operation : opList )
-      {
-
-        if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD))
-        {
-          if (newResource == null)
-          {
-            newResource = (R)PatchOperationUtil.doPatchAdd(operation,
-                                                           getDecoder(),
-                                                           oldResource,
-                                                           copyOfOldResource,
-                                                           schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
-
-          }
-          else
-          {
-            newResource = (R)PatchOperationUtil.doPatchAdd(operation,
-                                                           getDecoder(),
-                                                           newResource,
-                                                           copyOfOldResource,
-                                                           schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
-
-          }
+    /**
+     * Method of the ResourceManager that is mapped to HTTP Delete method..
+     *
+     * @param id unique resource id
+     */
+    public SCIMResponse delete(String id) {
+        try {
+            /* handover the SCIM User object to the user usermanager provided by the SP for the delete operation */
+            resourceHandler.delete(id);
+            // on successful deletion SCIMResponse only has 204 No Content status code.
+            return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
         }
-        else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE))
-        {
-          if (newResource == null)
-          {
-            newResource = (R)PatchOperationUtil.doPatchRemove(operation,
-                                                              oldResource,
-                                                              copyOfOldResource,
+    }
+
+    /**
+     * get resources
+     *
+     * @param filter the filter expression
+     * @param startIndex index of the first entry
+     * @param count number of resources to return in the request
+     * @param sortBy a string indicating the attribute whose value SHALL be used to order the returned responses
+     * @param sortOrder sortOrder A string indicating the order in which the "sortBy" parameter is applied
+     * @param domainName specific parameter for charon idp
+     * @param attributes A multi-valued list of strings indicating the names of resource attributes to in the
+     *          response, overriding the set of attributes that would be returned by default.
+     * @param excludeAttributes A multi-valued list of strings indicating the names of resource attributes to be
+     *          removed from the default set of attributes to return
+     */
+    public SCIMResponse listWithGET(String filter, int startIndex, int count, String sortBy, String sortOrder,
+                                    String domainName, String attributes, String excludeAttributes) {
+        try {
+            Node rootNode = null;
+            if (filter != null) {
+                FilterTreeManager filterTreeManager =
+                    new FilterTreeManager(filter, resourceHandler.getResourceSchema());
+                rootNode = filterTreeManager.buildTree();
+            }
+
+            return listResources(startIndex, count, sortBy, sortOrder, domainName, attributes, excludeAttributes,
+                                 rootNode);
+
+        } catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException = new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
+        }
+    }
+
+    /**
+     * does the actual work for the methods
+     * {@link #listWithGET(String, int, int, String, String, String, String, String)} and
+     * {@link #listWithGET(String, int, int, String, String, String, String, String)}
+     */
+    private SCIMResponse listResources(int startIndex, int count, String sortBy, String sortOrder, String domainName,
+                                       String attributes, String excludeAttributes, Node rootNode) {
+        try {
+            // According to SCIM 2.0 spec minus values will be considered as 0
+            count = ResourceManagerUtil.processCount(String.valueOf(count));
+            // According to SCIM 2.0 spec minus values will be considered as 1
+            startIndex = ResourceManagerUtil.processStartIndex(String.valueOf(startIndex));
+            if (sortOrder != null) {
+                if (!( sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) ||
+                       sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING) )) {
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+            // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (sortOrder == null && sortBy != null) {
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
+
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
+
+            // get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+            int totalResults = 0;
+            // API user should pass a usermanager usermanager to UserResourceEndpoint.
+            List<Object> resources = resourceHandler
+                                         .listResources(rootNode, startIndex, count, sortBy, sortOrder, domainName,
+                                                        requiredAttributes);
+
+            if (resources == null) {
+                resources = Collections.emptyList();
+            }
+
+            try {
+                totalResults = (int) resources.get(0);
+                resources.remove(0);
+            } catch (IndexOutOfBoundsException e) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("resource result list is empty.");
+                }
+                totalResults = resources.size();
+            } catch (ClassCastException ex) {
+                logger.debug(
+                    "Parse error while getting the resource result count. Setting result count as: " + resources.size(),
+                    ex);
+                totalResults = resources.size();
+            }
+
+            for (Object resource : resources) {
+                // perform service provider side validation.
+                ServerSideValidator
+                    .validateRetrievedSCIMObjectInList((R) resource, schema, attributes, excludeAttributes);
+            }
+            // create a listed resource object out of the returned users list.
+            ListedResource listedResource = createListedResource(resources, startIndex, totalResults);
+            // convert the listed resource into specific format.
+            String encodedListedResource = getEncoder().encodeSCIMObject(listedResource);
+            // if there are any http headers to be added in the response header.
+            Map<String, String> responseHeaders = new HashMap<>();
+            responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
+        }
+    }
+
+    /**
+     * query resources
+     *
+     * @param resourceString the request body
+     */
+    public SCIMResponse listWithPOST(String resourceString) {
+        try {
+            // create the search request object
+            SearchRequest searchRequest =
+                getDecoder().decodeSearchRequestBody(resourceString, resourceHandler.getResourceSchema());
+            searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+
+            if (searchRequest.getSchema() != null &&
+                !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI)) {
+                throw new BadRequestException("Provided schema is invalid", ResponseCodeConstants.INVALID_VALUE);
+            }
+
+            return listResources(searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getSortBy(),
+                                 searchRequest.getSortOder(), searchRequest.getDomainName(),
+                                 searchRequest.getExcludedAttributesAsString(),
+                                 searchRequest.getExcludedAttributesAsString(), searchRequest.getFilter());
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
+        }
+    }
+
+    /**
+     * To update the user by giving entire attribute set
+     *
+     * @param existingId the id of the user to update
+     * @param scimObjectString the request body
+     * @param attributes A multi-valued list of strings indicating the names of resource attributes to in the
+     *          response, overriding the set of attributes that would be returned by default.
+     * @param excludeAttributes A multi-valued list of strings indicating the names of resource attributes to be
+     *          removed from the default set of attributes to return
+     */
+
+    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, String attributes,
+                                      String excludeAttributes) {
+
+
+        try {
+            SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
+            // get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+            // decode the SCIM User object, encoded in the submitted payload.
+            R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
+            R updatedResource;
+            // retrieve the old object
+            R oldResource = resourceHandler.get(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
+            if (oldResource != null) {
+                R validatedResource = (R) ServerSideValidator.validateUpdatedSCIMObject(oldResource, resource, schema);
+                updatedResource = resourceHandler.update(validatedResource, requiredAttributes);
+
+            } else {
+                String error = "No resource exists with the given id: " + existingId;
+                throw new NotFoundException(error);
+            }
+
+            // encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedGroup;
+            Map<String, String> httpHeaders = new HashMap<>();
+            if (updatedResource != null) {
+                // create a deep copy of the user object since we are going to change it.
+                R copiedGroup = (R) CopyUtil.deepCopy(updatedResource);
+                // need to remove password before returning
+                ServerSideValidator.validateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
+                encodedGroup = getEncoder().encodeSCIMObject(copiedGroup);
+                // add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                                getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" +
+                                updatedResource.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated resource is null.";
+                throw new InternalErrorException(error);
+            }
+
+            // put the uri of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
+        }
+    }
+
+    /**
+     * will update an existing resource with the patch operation
+     *
+     * @param existingId the id of the resource that should be updated
+     * @param scimObjectString the request body
+     */
+    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, String attributes,
+                                        String excludeAttributes) {
+        try {
+            // obtain the json decoder.
+            JSONDecoder decoder = getDecoder();
+            // decode the SCIM User object, encoded in the submitted payload.
+            List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            // get the user from the user core
+            R oldResource = resourceHandler.get(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
+            if (oldResource == null) {
+                throw new NotFoundException("No resource with the id : " + existingId + " in the store.");
+            }
+            // make a copy of the original user
+            R copyOfOldResource = (R) CopyUtil.deepCopy(oldResource);
+            // make another copy of original user.
+            // this will be used to restore to the original condition if failure occurs.
+            R originalResource = (R) CopyUtil.deepCopy(copyOfOldResource);
+
+            R newResource = null;
+
+            for (PatchOperation operation : opList) {
+
+                if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
+                    if (newResource == null) {
+                        newResource = (R) PatchOperationUtil
+                                              .doPatchAdd(operation, getDecoder(), oldResource, copyOfOldResource,
+                                                          schema);
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
+
+                    } else {
+                        newResource = (R) PatchOperationUtil
+                                              .doPatchAdd(operation, getDecoder(), newResource, copyOfOldResource,
+                                                          schema);
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
+
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
+                    if (newResource == null) {
+                        newResource =
+                            (R) PatchOperationUtil.doPatchRemove(operation, oldResource, copyOfOldResource, schema);
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
+
+                    } else {
+                        newResource =
+                            (R) PatchOperationUtil.doPatchRemove(operation, newResource, copyOfOldResource, schema);
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
+                    }
+                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
+                    if (newResource == null) {
+                        newResource = (R) PatchOperationUtil
+                                              .doPatchReplace(operation, getDecoder(), oldResource, copyOfOldResource,
                                                               schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
 
-          }
-          else
-          {
-            newResource = (R)PatchOperationUtil.doPatchRemove(operation,
-                                                              newResource,
-                                                              copyOfOldResource,
+                    } else {
+                        newResource = (R) PatchOperationUtil
+                                              .doPatchReplace(operation, getDecoder(), newResource, copyOfOldResource,
                                                               schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
-          }
+                        copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
+                    }
+                } else {
+                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+            }
+
+            // get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+
+            R validatedResource =
+                (R) ServerSideValidator.validateUpdatedSCIMObject(originalResource, newResource, schema);
+            newResource = resourceHandler.update(validatedResource, requiredAttributes);
+
+            // encode the newly created SCIM user object and add id attribute to Location header.
+            String encodedResource;
+            Map<String, String> httpHeaders = new HashMap<>();
+            if (newResource != null) {
+                // create a deep copy of the user object since we are going to change it.
+                R copiedResource = (R) CopyUtil.deepCopy(newResource);
+                // need to remove password before returning
+                ServerSideValidator.validateReturnedAttributes(copiedResource, attributes, excludeAttributes);
+                encodedResource = getEncoder().encodeSCIMObject(copiedResource);
+                // add location header
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                                getResourceEndpointURL(SCIMConstants.USER_ENDPOINT) + "/" + newResource.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Updated resource is null.";
+                throw new CharonException(error);
+            }
+            // put the URI of the User object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedResource, httpHeaders);
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage(), e);
+            return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
         }
-        else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE))
-        {
-          if (newResource == null)
-          {
-            newResource = (R)PatchOperationUtil.doPatchReplace(operation,
-                                                               getDecoder(),
-                                                               oldResource,
-                                                               copyOfOldResource,
-                                                               schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
+    }
 
-          }
-          else
-          {
-            newResource = (R)PatchOperationUtil.doPatchReplace(operation,
-                                                               getDecoder(),
-                                                               newResource,
-                                                               copyOfOldResource,
-                                                               schema);
-            copyOfOldResource = (R)CopyUtil.deepCopy(newResource);
-          }
+
+    /**
+     * Creates the Listed Resource.
+     *
+     * @param resources the list of resources that should be listed to the client
+     * @param startIndex the start index (do not confuse with index of the given list)
+     * @param totalResults the total number of results
+     * @return the listed resource
+     */
+    public ListedResource createListedResource(List<Object> resources, int startIndex, int totalResults) {
+        ListedResource listedResource = new ListedResource();
+        listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        listedResource.setTotalResults(totalResults);
+        listedResource.setStartIndex(startIndex);
+        listedResource.setItemsPerPage(resources.size());
+        for (Object resource : resources) {
+            listedResource.addResource((R) resource);
         }
-        else
-        {
-          throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
-        }
-      }
-
-      // get the URIs of required attributes which must be given a value
-      Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)CopyUtil.deepCopy(schema),
-                                                                                                  attributes,
-                                                                                                  excludeAttributes);
-
-
-      R validatedResource = (R)ServerSideValidator.validateUpdatedSCIMObject(originalResource,
-                                                                             newResource,
-                                                                             schema);
-      newResource = resourceHandler.update(validatedResource, requiredAttributes);
-
-      // encode the newly created SCIM user object and add id attribute to Location header.
-      String encodedResource;
-      Map<String, String> httpHeaders = new HashMap<String, String>();
-      if (newResource != null)
-      {
-        // create a deep copy of the user object since we are going to change it.
-        R copiedResource = (R)CopyUtil.deepCopy(newResource);
-        // need to remove password before returning
-        ServerSideValidator.validateReturnedAttributes(copiedResource, attributes, excludeAttributes);
-        encodedResource = getEncoder().encodeSCIMObject(copiedResource);
-        // add location header
-        httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                        getResourceEndpointURL(SCIMConstants.USER_ENDPOINT) + "/" + newResource.getId());
-        httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-
-      }
-      else
-      {
-        String error = "Updated resource is null.";
-        throw new CharonException(error);
-      }
-      // put the URI of the User object in the response header parameter.
-      return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedResource, httpHeaders);
+        return listedResource;
     }
-    catch (AbstractCharonException e)
-    {
-      return AbstractResourceManager.encodeSCIMException(e);
-    }
-    catch (RuntimeException e)
-    {
-      logger.error(e.getMessage(), e);
-      return encodeSCIMException(new CharonException(INTERNAL_ERROR_MESSAGE));
-    }
-  }
 
-
-  /**
-   * Creates the Listed Resource.
-   *
-   * @param resources the list of resources that should be listed to the client
-   * @param startIndex the start index (do not confuse with index of the given list)
-   * @param totalResults the total number of results
-   * @return the listed resource
-   */
-  public ListedResource createListedResource(List<Object> resources, int startIndex, int totalResults)
-  {
-    ListedResource listedResource = new ListedResource();
-    listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-    listedResource.setTotalResults(totalResults);
-    listedResource.setStartIndex(startIndex);
-    listedResource.setItemsPerPage(resources.size());
-    for ( Object resource : resources )
-    {
-      listedResource.addResource((R)resource);
+    public ResourceHandler<R> getResourceHandler() {
+        return resourceHandler;
     }
-    return listedResource;
-  }
 }

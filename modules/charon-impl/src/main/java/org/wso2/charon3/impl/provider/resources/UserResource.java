@@ -93,9 +93,9 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user endpoint and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse scimResponse = userResourceManager.get(userManager, id, attribute, excludedAttributes);
+            SCIMResponse scimResponse = userResourceManager.get(id, attribute, excludedAttributes);
             // needs to check the code of the response and return 200 0k or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -128,9 +128,9 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user endpoint and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse response = userResourceManager.create(userManager, resourceString,
+            SCIMResponse response = userResourceManager.create(resourceString,
                     attribute, excludedAttributes);
 
             return buildResponse(response);
@@ -161,9 +161,9 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user resource manager and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse scimResponse = userResourceManager.delete(userManager, id);
+            SCIMResponse scimResponse = userResourceManager.delete(id);
             // needs to check the code of the response and return 200 0k or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -206,9 +206,9 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user resource manager and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse scimResponse = userResourceManager.listWithGET(userManager, filter, startIndex, count,
+            SCIMResponse scimResponse = userResourceManager.listWithGET(filter, startIndex, count,
                     sortBy, sortOrder, domainName, attribute, excludedAttributes);
 
             return buildResponse(scimResponse);
@@ -239,9 +239,9 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user resource manager and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse scimResponse = userResourceManager.listWithPOST(userManager, resourceString);
+            SCIMResponse scimResponse = userResourceManager.listWithPOST(resourceString);
 
             return buildResponse(scimResponse);
 
@@ -275,10 +275,10 @@ public class UserResource extends AbstractResource {
             ResourceHandler<User> userManager = DefaultCharonManager.getInstance().getUserResourceHandler();
 
             // create charon-SCIM user endpoint and hand-over the request.
-            UserResourceManager userResourceManager = new UserResourceManager();
+            UserResourceManager userResourceManager = new UserResourceManager(userManager);
 
-            SCIMResponse response = userResourceManager.updateWithPUT(
-                    userManager, id, resourceString, attribute, excludedAttributes);
+            SCIMResponse response = userResourceManager.updateWithPUT(id, resourceString, attribute,
+                                                                      excludedAttributes);
 
             return buildResponse(response);
 
@@ -289,5 +289,8 @@ public class UserResource extends AbstractResource {
 
     public static class UserResourceManager extends ResourceManager<User> {
 
+        public UserResourceManager(ResourceHandler<User> resourceHandler) {
+            super(resourceHandler);
+        }
     }
 }

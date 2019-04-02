@@ -43,6 +43,11 @@ import java.util.Map;
  */
 public class ResourceTypeResourceManager extends ResourceManager {
 
+
+    public ResourceTypeResourceManager(ResourceHandler resourceHandler) {
+        super(resourceHandler);
+    }
+
     /*
      * Retrieves a resource type
      *
