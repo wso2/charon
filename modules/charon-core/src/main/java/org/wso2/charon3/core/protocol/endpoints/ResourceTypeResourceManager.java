@@ -24,7 +24,7 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.extensions.ResourceHandler;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -48,8 +48,8 @@ public class ResourceTypeResourceManager extends ResourceManager {
      *
      * @return SCIM response to be returned.
      */
-//    @Override
-    public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
+    //    @Override
+    public SCIMResponse get(String id, ResourceHandler resourceHandler, String attributes, String excludeAttributes) {
 
         return getResourceType();
     }
@@ -75,18 +75,18 @@ public class ResourceTypeResourceManager extends ResourceManager {
             //create a string in json format for group resource type with relevant values
             String scimGroupObjectString = encoder.buildGroupResourceTypeJsonBody();
             //build the user abstract scim object
-            AbstractSCIMObject userResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
-                    scimUserObjectString, schema, new AbstractSCIMObject());
+            AbstractSCIMObject userResourceTypeObject =
+                (AbstractSCIMObject) decoder.decodeResource(scimUserObjectString, schema, new AbstractSCIMObject());
             //add meta data
             userResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(userResourceTypeObject);
             //build the group abstract scim object
-            AbstractSCIMObject groupResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
-                    scimGroupObjectString, schema, new AbstractSCIMObject());
+            AbstractSCIMObject groupResourceTypeObject =
+                (AbstractSCIMObject) decoder.decodeResource(scimGroupObjectString, schema, new AbstractSCIMObject());
             //add meta data
             groupResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(groupResourceTypeObject);
             //build the root abstract scim object
-            AbstractSCIMObject resourceTypeObject = buildCombinedResourceType(userResourceTypeObject,
-                    groupResourceTypeObject);
+            AbstractSCIMObject resourceTypeObject =
+                buildCombinedResourceType(userResourceTypeObject, groupResourceTypeObject);
             //encode the newly created SCIM Resource Type object.
             String encodedObject;
             Map<String, String> responseHeaders = new HashMap<String, String>();
@@ -96,8 +96,8 @@ public class ResourceTypeResourceManager extends ResourceManager {
                 AbstractSCIMObject copiedObject = (AbstractSCIMObject) CopyUtil.deepCopy(resourceTypeObject);
                 encodedObject = encoder.encodeSCIMObject(copiedObject);
                 //add location header
-                responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.RESOURCE_TYPE_ENDPOINT));
+                responseHeaders
+                    .put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT));
                 responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -105,8 +105,7 @@ public class ResourceTypeResourceManager extends ResourceManager {
                 throw new InternalErrorException(error);
             }
             //put the uri of the resource type object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_OK,
-                    encodedObject, responseHeaders);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
         } catch (CharonException e) {
             return encodeSCIMException(e);
         } catch (BadRequestException e) {
@@ -120,46 +119,47 @@ public class ResourceTypeResourceManager extends ResourceManager {
         }
     }
 
-    public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String
-            excludeAttributes) {
+    public SCIMResponse create(ResourceHandler userManager, String scimObjectString, String attributes,
+                               String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse delete(String id, UserManager userManager) {
+    public SCIMResponse delete(ResourceHandler userManager, String id) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
-                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(ResourceHandler userManager, String filter, int startIndex, int count,
+                                    String sortBy, String sortOrder, String domainName, String attributes,
+                                    String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
+    public SCIMResponse listWithPOST(ResourceHandler userManager, String resourceString) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
-            attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPUT(ResourceHandler userManager, String existingId, String scimObjectString,
+                                      String attributes, String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
-            attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(ResourceHandler userManager, String existingId, String scimObjectString,
+                                        String attributes, String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
@@ -176,11 +176,11 @@ public class ResourceTypeResourceManager extends ResourceManager {
      * @throws CharonException
      */
     private AbstractSCIMObject buildCombinedResourceType(AbstractSCIMObject userObject, AbstractSCIMObject groupObject)
-            throws CharonException {
+        throws CharonException {
 
         AbstractSCIMObject rootObject = new AbstractSCIMObject();
-        MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(
-                SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+        MultiValuedAttribute multiValuedAttribute =
+            new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
 
         userObject.getSchemaList().clear();
         userObject.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);

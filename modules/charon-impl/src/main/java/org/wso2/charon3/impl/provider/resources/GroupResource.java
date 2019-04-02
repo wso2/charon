@@ -25,14 +25,14 @@ import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
-import org.osgi.service.component.annotations.Component;
 
 
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
-import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.extensions.ResourceHandler;
+import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.protocol.SCIMResponse;
-import org.wso2.charon3.core.protocol.endpoints.GroupResourceManager;
+import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
 import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.charon3.utils.DefaultCharonManager;
 import org.wso2.msf4j.Microservice;
@@ -97,12 +97,12 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
-            SCIMResponse scimResponse = groupResourceManager.get(id, userManager, attribute, excludedAttributes);
+            SCIMResponse scimResponse = groupResourceManager.get(groupHandler, id, attribute, excludedAttributes);
             // needs to check the code of the response and return 201 Ok or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -132,12 +132,12 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
-            SCIMResponse response = groupResourceManager.create(resourceString, userManager,
+            SCIMResponse response = groupResourceManager.create(groupHandler, resourceString,
                     attribute, excludedAttributes);
 
             return buildResponse(response);
@@ -165,12 +165,12 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
-            SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
+            SCIMResponse scimResponse = groupResourceManager.delete(groupHandler, id);
             // needs to check the code of the response and return 200 0k or other error codes
             // appropriately.
             return buildResponse(scimResponse);
@@ -203,13 +203,13 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
             SCIMResponse response = groupResourceManager.updateWithPUT(
-                    id, resourceString, userManager, attribute, excludedAttributes);
+                    groupHandler, id, resourceString, attribute, excludedAttributes);
 
             return buildResponse(response);
 
@@ -236,12 +236,12 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
-            SCIMResponse scimResponse = groupResourceManager.listWithPOST(resourceString, userManager);
+            SCIMResponse scimResponse = groupResourceManager.listWithPOST(groupHandler, resourceString);
 
             return buildResponse(scimResponse);
 
@@ -281,12 +281,12 @@ public class GroupResource extends AbstractResource {
 
         try {
             // obtain the user store manager
-            UserManager userManager = DefaultCharonManager.getInstance().getUserManager();
+            ResourceHandler<Group> groupHandler = DefaultCharonManager.getInstance().getGroupResourceHandler();
 
             // create charon-SCIM group endpoint and hand-over the request.
             GroupResourceManager groupResourceManager = new GroupResourceManager();
 
-            SCIMResponse scimResponse = groupResourceManager.listWithGET(userManager, filter, startIndex, count,
+            SCIMResponse scimResponse = groupResourceManager.listWithGET(groupHandler, filter, startIndex, count,
                     sortBy, sortOrder, domainName, attribute, excludedAttributes);
 
             return buildResponse(scimResponse);
@@ -296,5 +296,8 @@ public class GroupResource extends AbstractResource {
         }
     }
 
+    public static class GroupResourceManager extends ResourceManager<Group> {
+
+    }
 }
 

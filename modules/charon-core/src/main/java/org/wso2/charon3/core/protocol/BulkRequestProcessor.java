@@ -18,81 +18,70 @@
 package org.wso2.charon3.core.protocol;
 
 
-import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.extensions.UserManager;
-import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
-import org.wso2.charon3.core.objects.bulk.BulkRequestData;
-import org.wso2.charon3.core.objects.bulk.BulkResponseContent;
-import org.wso2.charon3.core.objects.bulk.BulkResponseData;
-import org.wso2.charon3.core.protocol.endpoints.GroupResourceManager;
-import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
-import org.wso2.charon3.core.protocol.endpoints.UserResourceManager;
-import org.wso2.charon3.core.schema.SCIMConstants;
-
 /**
  *
  */
 public class BulkRequestProcessor {
 
-    private UserResourceManager userResourceManager;
-    private GroupResourceManager groupResourceManager;
-    private int failOnError;
-    private int errors;
-    private UserManager userManager;
+//    private UserResourceManager userResourceManager;
+//    private GroupResourceManager groupResourceManager;
+//    private int failOnError;
+//    private int errors;
+//    private UserManager userManager;
+//
+//
+//    public UserResourceManager getUserResourceManager() {
+//        return userResourceManager;
+//    }
+//
+//    public void setUserResourceManager(UserResourceManager userResourceManager) {
+//        this.userResourceManager = userResourceManager;
+//    }
+//
+//    public GroupResourceManager getGroupResourceManager() {
+//        return groupResourceManager;
+//    }
+//
+//    public void setGroupResourceManager(GroupResourceManager groupResourceManager) {
+//        this.groupResourceManager = groupResourceManager;
+//    }
+//
+//    public int getFailOnError() {
+//        return failOnError;
+//    }
+//
+//    public void setFailOnError(int failOnError) {
+//        this.failOnError = failOnError;
+//    }
+//
+//    public int getErrors() {
+//        return errors;
+//    }
+//
+//    public void setErrors(int errors) {
+//        this.errors = errors;
+//    }
+//
+//    public UserManager getUserManager() {
+//        return userManager;
+//    }
+//
+//    public void setUserManager(UserManager userManager) {
+//        this.userManager = userManager;
+//    }
+//
+//    public BulkRequestProcessor() {
+//        userResourceManager = new UserResourceManager();
+//        groupResourceManager = new GroupResourceManager();
+//        failOnError = 0;
+//        errors = 0;
+//        userManager = null;
+//    }
+//
+//    public BulkResponseData processBulkRequests(BulkRequestData bulkRequestData) throws BadRequestException {
 
-
-    public UserResourceManager getUserResourceManager() {
-        return userResourceManager;
-    }
-
-    public void setUserResourceManager(UserResourceManager userResourceManager) {
-        this.userResourceManager = userResourceManager;
-    }
-
-    public GroupResourceManager getGroupResourceManager() {
-        return groupResourceManager;
-    }
-
-    public void setGroupResourceManager(GroupResourceManager groupResourceManager) {
-        this.groupResourceManager = groupResourceManager;
-    }
-
-    public int getFailOnError() {
-        return failOnError;
-    }
-
-    public void setFailOnError(int failOnError) {
-        this.failOnError = failOnError;
-    }
-
-    public int getErrors() {
-        return errors;
-    }
-
-    public void setErrors(int errors) {
-        this.errors = errors;
-    }
-
-    public UserManager getUserManager() {
-        return userManager;
-    }
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    public BulkRequestProcessor() {
-        userResourceManager = new UserResourceManager();
-        groupResourceManager = new GroupResourceManager();
-        failOnError = 0;
-        errors = 0;
-        userManager = null;
-    }
-
-    public BulkResponseData processBulkRequests(BulkRequestData bulkRequestData) throws BadRequestException {
-
-        BulkResponseData bulkResponseData = new BulkResponseData();
-        SCIMResponse response = null;
+//        BulkResponseData bulkResponseData = new BulkResponseData();
+//        SCIMResponse response = null;
 
         // TODO rebuild
 //        for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
@@ -121,18 +110,18 @@ public class BulkRequestProcessor {
 //        }
 //        bulkResponseData.setSchema(SCIMConstants.BULK_RESPONSE_URI);
 //        return bulkResponseData;
-        return null;
-    }
-
-
-    private BulkResponseContent getBulkResponseContent
-    (BulkRequestContent bulkRequestContent, ResourceManager resourceManager)
-    throws BadRequestException {
-
-        BulkResponseContent bulkResponseContent = null;
-        SCIMResponse response;
-
-        // TODO rebuild
+//        return null;
+//    }
+//
+//
+//    private BulkResponseContent getBulkResponseContent
+//    (BulkRequestContent bulkRequestContent, ResourceManager resourceManager)
+//    throws BadRequestException {
+//
+//        BulkResponseContent bulkResponseContent = null;
+//        SCIMResponse response;
+//
+//         // TODO rebuild
 //        if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
 //
 //            response = resourceManager.create
@@ -167,40 +156,40 @@ public class BulkRequestProcessor {
 //            errorsCheck(response);
 //        }
 //        return bulkResponseContent;
-        return null;
-    }
-
-    private String extractIDFromPath(String path) throws BadRequestException {
-        String[] parts = path.split("[/]");
-        if (parts[2] != null) {
-            return parts[2];
-        } else {
-            throw new BadRequestException
-                  ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
-        }
-    }
-
-    private BulkResponseContent createBulkResponseContent(SCIMResponse response, String method,
-                                                          BulkRequestContent requestContent) {
-        BulkResponseContent bulkResponseContent = new BulkResponseContent();
-
-        bulkResponseContent.setScimResponse(response);
-        bulkResponseContent.setMethod(method);
-        if (response.getHeaderParamMap() != null) {
-            bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
-        }
-        bulkResponseContent.setBulkID(requestContent.getBulkID());
-        bulkResponseContent.setVersion(requestContent.getVersion());
-
-        return bulkResponseContent;
-
-    }
-
-    private void errorsCheck(SCIMResponse response) {
-        if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
-            response.getResponseStatus() != 204) {
-            errors++;
-        }
-    }
+//        return null;
+//    }
+//
+//    private String extractIDFromPath(String path) throws BadRequestException {
+//        String[] parts = path.split("[/]");
+//        if (parts[2] != null) {
+//            return parts[2];
+//        } else {
+//            throw new BadRequestException
+//                  ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
+//        }
+//    }
+//
+//    private BulkResponseContent createBulkResponseContent(SCIMResponse response, String method,
+//                                                          BulkRequestContent requestContent) {
+//        BulkResponseContent bulkResponseContent = new BulkResponseContent();
+//
+//        bulkResponseContent.setScimResponse(response);
+//        bulkResponseContent.setMethod(method);
+//        if (response.getHeaderParamMap() != null) {
+//            bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
+//        }
+//        bulkResponseContent.setBulkID(requestContent.getBulkID());
+//        bulkResponseContent.setVersion(requestContent.getVersion());
+//
+//        return bulkResponseContent;
+//
+//    }
+//
+//    private void errorsCheck(SCIMResponse response) {
+//        if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
+//            response.getResponseStatus() != 204) {
+//            errors++;
+//        }
+//    }
 
 }

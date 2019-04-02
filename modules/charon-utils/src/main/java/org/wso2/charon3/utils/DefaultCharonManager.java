@@ -21,8 +21,11 @@ import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
-import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.extensions.ResourceHandler;
+import org.wso2.charon3.core.objects.Group;
+import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
+import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.utils.usermanager.InMemoryUserManager;
 
@@ -38,7 +41,8 @@ public class DefaultCharonManager {
 
     private static volatile DefaultCharonManager defaultCharonManager;
     private static Map<String, String> endpointURLs = new HashMap<String, String>();
-    private static UserManager userManager = new InMemoryUserManager();
+    private static ResourceHandler<User> userResourceHandler;
+    private static ResourceHandler<Group> groupResourceHandler;
     private static JSONDecoder jsonDecoder = new JSONDecoder();
     private static JSONEncoder jsonEncoder = new JSONEncoder();
 
@@ -99,14 +103,18 @@ public class DefaultCharonManager {
         return jsonEncoder;
     }
 
-    public UserManager getUserManager() throws CharonException {
-        return userManager;
-    }
-
     private void registerEndpointURLs() {
         if (endpointURLs != null && endpointURLs.size() != 0) {
             AbstractResourceManager.setEndpointURLMap(endpointURLs);
         }
+    }
+
+    public ResourceHandler<User> getUserResourceHandler() {
+        return userResourceHandler;
+    }
+
+    public ResourceHandler<Group> getGroupResourceHandler() {
+        return groupResourceHandler;
     }
 }
 

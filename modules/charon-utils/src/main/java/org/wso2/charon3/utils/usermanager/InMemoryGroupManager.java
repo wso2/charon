@@ -18,14 +18,10 @@
 package org.wso2.charon3.utils.usermanager;
 
 
-import org.wso2.charon3.core.exceptions.AbstractCharonException;
-import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.ResourceHandler;
-import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
@@ -40,26 +36,21 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This is a sample dynamic user store.
  */
-public class InMemoryUserManager implements ResourceHandler<User> {
+public class InMemoryGroupManager implements ResourceHandler<Group> {
 
     //in memory user manager stores users
-    ConcurrentHashMap<String, User> inMemoryUserList = new ConcurrentHashMap<String, User>();
-
+    ConcurrentHashMap<String, Group> inMemoryGroupList = new ConcurrentHashMap<String, Group>();
 
     @Override
-    public User create(User user, Map<String, Boolean> map) throws AbstractCharonException {
-        if (inMemoryUserList.get(user.getId()) != null) {
-            throw new ConflictException("User with the id : " + user.getId() + "already exists");
-        } else {
-            inMemoryUserList.put(user.getId(), user);
-            return (User) CopyUtil.deepCopy(user);
-        }
+    public Group create(Group group, Map<String, Boolean> map) {
+        inMemoryGroupList.put(group.getId(), group);
+        return (Group) CopyUtil.deepCopy(group);
     }
 
     @Override
-    public User get(String id, Map<String, Boolean> map) throws NotFoundException {
-        if (inMemoryUserList.get(id) != null) {
-            return (User) CopyUtil.deepCopy(inMemoryUserList.get(id));
+    public Group get(String id, Map<String, Boolean> map) throws NotFoundException {
+        if (inMemoryGroupList.get(id) != null) {
+            return (Group) CopyUtil.deepCopy(inMemoryGroupList.get(id));
         } else {
             throw new NotFoundException("No user with the id : " + id);
         }
@@ -67,10 +58,10 @@ public class InMemoryUserManager implements ResourceHandler<User> {
 
     @Override
     public void delete(String id) throws NotFoundException {
-        if (inMemoryUserList.get(id) == null) {
+        if (inMemoryGroupList.get(id) == null) {
             throw new NotFoundException("No user with the id : " + id);
         } else {
-            inMemoryUserList.remove(id);
+            inMemoryGroupList.remove(id);
         }
     }
 
@@ -85,39 +76,37 @@ public class InMemoryUserManager implements ResourceHandler<User> {
         } else if (rootNode != null) {
             throw new NotImplementedException("Filtering is not supported");
         } else {
-            return listUsers(requiredAttributes);
+            return listGroups(requiredAttributes);
         }
     }
 
-    private List<Object> listUsers(Map<String, Boolean> requiredAttributes) {
-        List<Object> userList = new ArrayList<>();
-        userList.add(0);
-        //first item should contain the number of total results
-        for (Map.Entry<String, User> entry : inMemoryUserList.entrySet()) {
-            userList.add(entry.getValue());
+    private List<Object> listGroups(Map<String, Boolean> requiredAttributes) {
+        List<Object> groupList = new ArrayList<>();
+        groupList.add(0, 0);
+        for (Group group : inMemoryGroupList.values()) {
+            groupList.add(group);
         }
-        userList.set(0, userList.size() - 1);
-        return (List<Object>) CopyUtil.deepCopy(userList);
+        groupList.set(0, groupList.size() - 1);
+        return (List<Object>) CopyUtil.deepCopy(groupList);
     }
 
     @Override
-    public User update(User user, Map<String, Boolean> map)
-      throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
-        if (user.getId() != null) {
-            inMemoryUserList.replace(user.getId(), user);
-            return (User) CopyUtil.deepCopy(user);
+    public Group update(Group group, Map<String, Boolean> map) throws NotFoundException {
+        if (group.getId() != null) {
+            inMemoryGroupList.replace(group.getId(), group);
+            return (Group) CopyUtil.deepCopy(group);
         } else {
-            throw new NotFoundException("No user with the id : " + user.getId());
+            throw new NotFoundException("No user with the id : " + group.getId());
         }
     }
 
     @Override
     public String getResourceEndpoint() {
-        return SCIMConstants.USER_ENDPOINT;
+        return SCIMConstants.GROUP_ENDPOINT;
     }
 
     @Override
     public SCIMResourceTypeSchema getResourceSchema() {
-        return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
+        return SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA;
     }
 }
