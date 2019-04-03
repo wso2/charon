@@ -286,7 +286,7 @@
         <json.version>20180813</json.version>
         <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.22</axiom.api.version>
-        <axiom.impl.version>1.2.11</axiom.impl.version>
+        <axiom.impl.version>1.2.22</axiom.impl.version>
         <junit.version>4.8.1</junit.version>
         <servlet.api.version>2.5</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
