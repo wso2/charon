@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -49,7 +48,6 @@ public abstract class AbstractResourceManager {
      * Returns the encoder for json.
      *
      * @return JSONEncoder - An json encoder for encoding data
-     * @throws CharonException
      */
     public static JSONEncoder getEncoder() {
         return encoder;
@@ -60,7 +58,6 @@ public abstract class AbstractResourceManager {
      *
      *
      * @return JSONDecoder - An json decoder for decoding data
-     * @throws CharonException
      */
     public static JSONDecoder getDecoder() {
         return decoder;
