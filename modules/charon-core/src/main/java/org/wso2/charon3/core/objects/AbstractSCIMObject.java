@@ -74,11 +74,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      * @param newAttribute
      */
     public void setAttribute(Attribute newAttribute) {
-        if (newAttribute == null) {
-            rethrowSupplier(() -> {
-                throw new InternalErrorException("an expected attribute is missing");
-            }).get();
-        }
         //add the attribute to attribute map
         if (!isAttributeExist(newAttribute.getName())) {
             attributeList.put(newAttribute.getName(), newAttribute);
