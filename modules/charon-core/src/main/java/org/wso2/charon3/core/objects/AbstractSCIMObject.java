@@ -447,14 +447,15 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                 for (Attribute subSubAttribute : subSubAttributes.values()) {
                                     if (subSubAttribute instanceof SimpleAttribute) {
 
-                                        complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                                  (Attribute) ((SimpleAttribute) subSubAttribute));
+                                        complexSubValue = simpleAttributeToString(complexSubValue, subSubAttribute);
 
                                     } else if (subSubAttribute instanceof MultiValuedAttribute) {
-                                        complexSubValue =
-                                            multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
-                                                                                      .getAttributePrimitiveValues(),
-                                                                                  subSubAttribute.getName());
+                                        MultiValuedAttribute multiValuedAttribute =
+                                            (MultiValuedAttribute) subSubAttribute;
+                                        List<Object> primitives = multiValuedAttribute.getAttributePrimitiveValues();
+                                        complexSubValue = multiValuedPrimitiveAttributeToString(primitives,
+                                                                                                subSubAttribute
+                                                                                                    .getName());
                                     }
                                 }
                                 complexSubValue = "{" + complexSubValue + "}";
@@ -484,8 +485,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
 
                         for (Attribute subSubAttribute : subSubAttributes.values()) {
                             if (subSubAttribute instanceof SimpleAttribute) {
-                                complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                          (Attribute) ((SimpleAttribute) subSubAttribute));
+                                complexSubValue = simpleAttributeToString(complexSubValue, subSubAttribute);
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
                                 complexSubValue =
@@ -525,8 +525,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                         for (Attribute subSubAttribute : subSubAttributes.values()) {
                             if (subSubAttribute instanceof SimpleAttribute) {
 
-                                complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                          (Attribute) ((SimpleAttribute) subSubAttribute));
+                                complexSubValue = simpleAttributeToString(complexSubValue, subSubAttribute);
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
                                 complexSubValue =

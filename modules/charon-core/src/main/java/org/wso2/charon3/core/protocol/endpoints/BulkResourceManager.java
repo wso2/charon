@@ -81,8 +81,8 @@ public class BulkResourceManager {
      * @return a map of resource managers where the key is the endpoint-path of the resource
      */
     private Map<String, ResourceManager> createResourceManagerMap(List<ResourceManager> resourceManagerList) {
-        return resourceManagerList.stream().collect(Collectors.toMap(r -> r.getResourceHandler().getResourceEndpoint(),
-                                                                     r -> r));
+        return resourceManagerList.stream().collect(
+            Collectors.toMap(r -> r.getResourceHandler().getResourceEndpoint(), r -> r));
     }
 
     public SCIMResponse processBulkData(String data) {
@@ -92,9 +92,9 @@ public class BulkResourceManager {
 
             BulkResponseData bulkResponseData = new BulkResponseData();
             for (BulkRequestContent bulkRequestContent : bulkRequestData.getOperationRequests()) {
-                if (( failOnErrors == 0 && errorCount > 0 ) || ( errorCount > 0 && errorCount >= failOnErrors )) {
+                if ((failOnErrors == 0 && errorCount > 0) || (errorCount > 0 && errorCount >= failOnErrors)) {
                     throw new BadRequestException("bulk request has failed for too many errors: " + errorCount,
-                                                  "too_many_errors");
+                        "too_many_errors");
                 }
                 Optional<ResourceManager> resourceManagerOptional = findResourceManager(bulkRequestContent);
                 if (resourceManagerOptional.isPresent()) {
@@ -127,40 +127,35 @@ public class BulkResourceManager {
         if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
 
             SCIMResponse response = resourceManager.create(bulkRequestContent.getData(), null, null);
-            bulkResponseContent = createBulkResponseContent(response,
-                                                            SCIMConstants.OperationalConstants.POST,
-                                                            bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
+                bulkRequestContent);
             errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
 
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), null, null);
-            bulkResponseContent = createBulkResponseContent(response,
-                                                            SCIMConstants.OperationalConstants.PUT,
-                                                            bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
+                bulkRequestContent);
             errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
 
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-            SCIMResponse response = resourceManager.updateWithPATCH(resourceId,
-                                                                    bulkRequestContent.getData(),
-                                                                    null,
-                                                                    null);
-            bulkResponseContent = createBulkResponseContent(response,
-                                                            SCIMConstants.OperationalConstants.PATCH,
-                                                            bulkRequestContent);
+            SCIMResponse response = resourceManager.updateWithPATCH(resourceId, bulkRequestContent.getData(), null,
+                null);
+            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
+                bulkRequestContent);
             errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.delete(resourceId);
-            bulkResponseContent = createBulkResponseContent(response,
-                                                            SCIMConstants.OperationalConstants.DELETE,
-                                                            bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
+                bulkRequestContent);
             errorsCheck(response);
-        } return bulkResponseContent;
+        }
+        return bulkResponseContent;
     }
 
     private BulkResponseContent createBulkResponseContent(SCIMResponse response,
@@ -207,11 +202,10 @@ public class BulkResourceManager {
         ResourceManager resourceManager = resourceManagerMap.get(resourceType);
         if (resourceManager == null) {
             logger.debug("cannot process bulk operation for endpoint '{}', missing resource manager",
-                         bulkRequestContent.getPath());
+                bulkRequestContent.getPath());
         } else {
             logger.trace("will process bulk operation for path '{}' in resource manager: '{}'",
-                         bulkRequestContent.getPath(),
-                         resourceManager);
+                bulkRequestContent.getPath(), resourceManager);
         }
         return Optional.ofNullable(resourceManager);
     }
