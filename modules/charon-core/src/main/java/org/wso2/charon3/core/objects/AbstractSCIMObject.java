@@ -22,7 +22,6 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
-import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
@@ -34,8 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 
 /**

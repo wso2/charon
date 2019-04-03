@@ -5,16 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
-import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.setup.resourcehandler.GroupResourceHandler;
 import org.wso2.charon3.core.setup.resourcehandler.UserResourceHandler;
 import org.wso2.charon3.core.setup.resourcemanagers.GroupManager;
 import org.wso2.charon3.core.setup.resourcemanagers.UserManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -17,19 +17,15 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
-import org.wso2.charon3.core.objects.Group;
-import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
