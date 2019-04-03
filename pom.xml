@@ -182,7 +182,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>2.1</version>
+                <version>3.3.2</version>
             </extension>
         </extensions>
         <pluginManagement>
@@ -283,9 +283,9 @@
         <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
-        <json.version>20090211</json.version>
+        <json.version>20180813</json.version>
         <commons.logging.version>1.2</commons.logging.version>
-        <axiom.api.version>1.2.11</axiom.api.version>
+        <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
         <junit.version>4.8.1</junit.version>
         <servlet.api.version>2.3</servlet.api.version>
@@ -300,8 +300,10 @@
 
         <src.java.version>1.8</src.java.version>
         <target.java.version>1.8</target.java.version>
+
         <msf4j.version>2.7.0</msf4j.version>
-        <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
+        <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
+  
         <log4j.version>1.2.16</log4j.version>
         <slf4j.version>1.7.21</slf4j.version>
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
