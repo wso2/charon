@@ -44,6 +44,8 @@ import java.util.Objects;
 
 /**
  * implementation for SCIM resource endpoints.
+ *
+ * @param <R> the scim object type that should be handled by this manager
  */
 public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResourceManager {
 
@@ -64,7 +66,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     public ResourceManager(ResourceHandler<R> resourceHandler) {
         this.resourceHandler = Objects.requireNonNull(resourceHandler, "resource handler must not be null!");
         this.genericType =
-            (Class<R>) ( (ParameterizedType) getClass().getGenericSuperclass() ).getActualTypeArguments()[0];
+            (Class<R>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     /**
@@ -82,7 +84,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
             Map<String, Boolean> requiredAttributes =
                 ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema),
-                                                                  attributes, excludeAttributes);
+                                                                  attributes,
+                                                                  excludeAttributes);
 
             // retrieve the resource
             R resource = resourceHandler.get(id, requiredAttributes);
@@ -126,7 +129,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             // get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes =
                 ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema),
-                                                                  attributes, excludeAttributes);
+                                                                  attributes,
+                                                                  excludeAttributes);
             // decode the SCIM resource object, encoded in the submitted payload.
             R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
             // validate decoded resource
@@ -143,7 +147,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
                 // add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER,
                                 getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" +
-                                createdResource.getId());
+                                    createdResource.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -207,12 +211,18 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
         try {
             Node rootNode = null;
             if (filter != null) {
-                FilterTreeManager filterTreeManager =
-                    new FilterTreeManager(filter, resourceHandler.getResourceSchema());
+                FilterTreeManager filterTreeManager = new FilterTreeManager(filter,
+                                                                            resourceHandler.getResourceSchema());
                 rootNode = filterTreeManager.buildTree();
             }
 
-            return listResources(startIndex, count, sortBy, sortOrder, domainName, attributes, excludeAttributes,
+            return listResources(startIndex,
+                                 count,
+                                 sortBy,
+                                 sortOrder,
+                                 domainName,
+                                 attributes,
+                                 excludeAttributes,
                                  rootNode);
 
         } catch (IOException e) {
@@ -244,8 +254,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             // According to SCIM 2.0 spec minus values will be considered as 1
             startIndex = ResourceManagerUtil.processStartIndex(startIndex == null ? null : String.valueOf(startIndex));
             if (sortOrder != null) {
-                if (!( sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) ||
-                       sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING) )) {
+                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) ||
+                          sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
@@ -262,13 +272,18 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             // get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes =
                 ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema),
-                                                                  attributes, excludeAttributes);
+                                                                  attributes,
+                                                                  excludeAttributes);
 
             int totalResults = 0;
             // API resource should pass a resourcemanager resourcemanager to resourceResourceEndpoint.
-            List<Object> resources =
-                resourceHandler.listResources(rootNode, startIndex, count, sortBy, sortOrder, domainName,
-                                              requiredAttributes);
+            List<Object> resources = resourceHandler.listResources(rootNode,
+                                                                   startIndex,
+                                                                   count,
+                                                                   sortBy,
+                                                                   sortOrder,
+                                                                   domainName,
+                                                                   requiredAttributes);
 
             if (resources == null) {
                 resources = Collections.emptyList();
@@ -291,7 +306,9 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
             for (Object resource : resources) {
                 // perform service provider side validation.
-                ServerSideValidator.validateRetrievedSCIMObjectInList((R) resource, schema, attributes,
+                ServerSideValidator.validateRetrievedSCIMObjectInList((R) resource,
+                                                                      schema,
+                                                                      attributes,
                                                                       excludeAttributes);
             }
             // create a listed resource object out of the returned resources list.
@@ -318,20 +335,24 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     public SCIMResponse listWithPOST(String resourceString) {
         try {
             // create the search request object
-            SearchRequest searchRequest =
-                getDecoder().decodeSearchRequestBody(resourceString, resourceHandler.getResourceSchema());
+            SearchRequest searchRequest = getDecoder().decodeSearchRequestBody(resourceString,
+                                                                               resourceHandler.getResourceSchema());
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
             searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
 
             if (searchRequest.getSchema() != null &&
-                !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI)) {
+                    !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI)) {
                 throw new BadRequestException("Provided schema is invalid", ResponseCodeConstants.INVALID_VALUE);
             }
 
-            return listResources(searchRequest.getStartIndex(), searchRequest.getCount(), searchRequest.getSortBy(),
-                                 searchRequest.getSortOder(), searchRequest.getDomainName(),
+            return listResources(searchRequest.getStartIndex(),
+                                 searchRequest.getCount(),
+                                 searchRequest.getSortBy(),
+                                 searchRequest.getSortOder(),
+                                 searchRequest.getDomainName(),
                                  searchRequest.getExcludedAttributesAsString(),
-                                 searchRequest.getExcludedAttributesAsString(), searchRequest.getFilter());
+                                 searchRequest.getExcludedAttributesAsString(),
+                                 searchRequest.getFilter());
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
@@ -362,7 +383,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             // get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes =
                 ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema),
-                                                                  attributes, excludeAttributes);
+                                                                  attributes,
+                                                                  excludeAttributes);
             // decode the SCIM resource object, encoded in the submitted payload.
             R resource = getDecoder().decodeResource(scimObjectString, schema, genericType.newInstance());
             R updatedResource;
@@ -389,7 +411,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
                 // add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER,
                                 getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" +
-                                updatedResource.getId());
+                                    updatedResource.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
@@ -442,38 +464,52 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
                 if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
                     if (newResource == null) {
-                        newResource =
-                            (R) PatchOperationUtil.doPatchAdd(operation, getDecoder(), oldResource, copyOfOldResource,
-                                                              schema);
+                        newResource = (R) PatchOperationUtil.doPatchAdd(operation,
+                                                                        getDecoder(),
+                                                                        oldResource,
+                                                                        copyOfOldResource,
+                                                                        schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
 
                     } else {
-                        newResource =
-                            (R) PatchOperationUtil.doPatchAdd(operation, getDecoder(), newResource, copyOfOldResource,
-                                                              schema);
+                        newResource = (R) PatchOperationUtil.doPatchAdd(operation,
+                                                                        getDecoder(),
+                                                                        newResource,
+                                                                        copyOfOldResource,
+                                                                        schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
 
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
                     if (newResource == null) {
-                        newResource =
-                            (R) PatchOperationUtil.doPatchRemove(operation, oldResource, copyOfOldResource, schema);
+                        newResource = (R) PatchOperationUtil.doPatchRemove(operation,
+                                                                           oldResource,
+                                                                           copyOfOldResource,
+                                                                           schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
 
                     } else {
-                        newResource =
-                            (R) PatchOperationUtil.doPatchRemove(operation, newResource, copyOfOldResource, schema);
+                        newResource = (R) PatchOperationUtil.doPatchRemove(operation,
+                                                                           newResource,
+                                                                           copyOfOldResource,
+                                                                           schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
                     if (newResource == null) {
-                        newResource = (R) PatchOperationUtil.doPatchReplace(operation, getDecoder(), oldResource,
-                                                                            copyOfOldResource, schema);
+                        newResource = (R) PatchOperationUtil.doPatchReplace(operation,
+                                                                            getDecoder(),
+                                                                            oldResource,
+                                                                            copyOfOldResource,
+                                                                            schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
 
                     } else {
-                        newResource = (R) PatchOperationUtil.doPatchReplace(operation, getDecoder(), newResource,
-                                                                            copyOfOldResource, schema);
+                        newResource = (R) PatchOperationUtil.doPatchReplace(operation,
+                                                                            getDecoder(),
+                                                                            newResource,
+                                                                            copyOfOldResource,
+                                                                            schema);
                         copyOfOldResource = (R) CopyUtil.deepCopy(newResource);
                     }
                 } else {
@@ -484,11 +520,13 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             // get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes =
                 ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema),
-                                                                  attributes, excludeAttributes);
+                                                                  attributes,
+                                                                  excludeAttributes);
 
 
-            R validatedResource =
-                (R) ServerSideValidator.validateUpdatedSCIMObject(originalResource, newResource, schema);
+            R validatedResource = (R) ServerSideValidator.validateUpdatedSCIMObject(originalResource,
+                                                                                    newResource,
+                                                                                    schema);
             newResource = resourceHandler.update(validatedResource, requiredAttributes);
 
             // encode the newly created SCIM resource object and add id attribute to Location header.
@@ -503,7 +541,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
                 // add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER,
                                 getResourceEndpointURL(resourceHandler.getResourceEndpoint()) + "/" +
-                                newResource.getId());
+                                    newResource.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
             } else {
