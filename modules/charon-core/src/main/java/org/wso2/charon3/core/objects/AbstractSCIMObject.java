@@ -123,7 +123,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      */
     public void deleteSubAttribute(String parentAttribute, String childAttribute) {
         if (attributeList.containsKey(parentAttribute)) {
-            ( (ComplexAttribute) ( attributeList.get(parentAttribute) ) ).removeSubAttribute(childAttribute);
+            ((ComplexAttribute) (attributeList.get(parentAttribute))).removeSubAttribute(childAttribute);
         }
     }
 
@@ -139,8 +139,8 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         throws CharonException {
         if (attributeList.containsKey(grandParentAttribute)) {
             ComplexAttribute grandParent = (ComplexAttribute) attributeList.get(grandParentAttribute);
-            Attribute parent = ( (ComplexAttribute) grandParent ).getSubAttribute(parentAttribute);
-            ( (ComplexAttribute) ( parent ) ).removeSubAttribute(childAttribute);
+            Attribute parent = ((ComplexAttribute) grandParent).getSubAttribute(parentAttribute);
+            ((ComplexAttribute) (parent)).removeSubAttribute(childAttribute);
 
         }
     }
@@ -150,11 +150,11 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      */
     public void deleteValuesSubAttribute(String attribute, String subAttribute, String subSimpleAttribute) {
         if (attributeList.containsKey(attribute)) {
-            MultiValuedAttribute parentAttribute = ( (MultiValuedAttribute) attributeList.get(attribute) );
+            MultiValuedAttribute parentAttribute = ((MultiValuedAttribute) attributeList.get(attribute));
             List<Attribute> attributeValues = parentAttribute.getAttributeValues();
             for (Attribute subValue : attributeValues) {
                 if (subAttribute.equals(subValue.getName())) {
-                    ( (ComplexAttribute) subValue ).removeSubAttribute(subSimpleAttribute);
+                    ((ComplexAttribute) subValue).removeSubAttribute(subSimpleAttribute);
                     break;
                 }
             }
@@ -173,7 +173,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
             List<Attribute> parentAttributeList = parent.getAttributeValues();
             for (Attribute parentsSubValue : parentAttributeList) {
                 if (subValue.equals(parentsSubValue.getName())) {
-                    ( (ComplexAttribute) parentsSubValue ).removeSubAttribute(childAttribute);
+                    ((ComplexAttribute) parentsSubValue).removeSubAttribute(childAttribute);
                 }
             }
 
@@ -418,15 +418,14 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                     if (subAttribute instanceof SimpleAttribute) {
 
                         complexValue = simpleAttributeToString(complexValue,
-                                                               (Attribute) ( (SimpleAttribute) subAttribute ));
+                                                               (Attribute) ((SimpleAttribute) subAttribute));
 
                     } else if (subAttribute instanceof MultiValuedAttribute) {
                         if (!subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             String primitiveValue = null;
-                            primitiveValue =
-                                multiValuedPrimitiveAttributeToString(( (MultiValuedAttribute) subAttribute )
-                                                                          .getAttributePrimitiveValues(),
-                                                                      subAttribute.getName());
+                            primitiveValue = multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subAttribute)
+                                                                                       .getAttributePrimitiveValues(),
+                                                                                   subAttribute.getName());
                             if (complexValue == null) {
                                 complexValue = primitiveValue;
                             } else {
@@ -437,7 +436,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                             String multiValue = null;
 
                             List<Attribute> subAttributeList =
-                                ( (MultiValuedAttribute) ( subAttribute ) ).getAttributeValues();
+                                ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
 
                             for (Attribute subValue : subAttributeList) {
 
@@ -449,11 +448,11 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                     if (subSubAttribute instanceof SimpleAttribute) {
 
                                         complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                                  (Attribute) ( (SimpleAttribute) subSubAttribute ));
+                                                                                  (Attribute) ((SimpleAttribute) subSubAttribute));
 
                                     } else if (subSubAttribute instanceof MultiValuedAttribute) {
                                         complexSubValue =
-                                            multiValuedPrimitiveAttributeToString(( (MultiValuedAttribute) subSubAttribute )
+                                            multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
                                                                                       .getAttributePrimitiveValues(),
                                                                                   subSubAttribute.getName());
                                     }
@@ -486,11 +485,11 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                         for (Attribute subSubAttribute : subSubAttributes.values()) {
                             if (subSubAttribute instanceof SimpleAttribute) {
                                 complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                          (Attribute) ( (SimpleAttribute) subSubAttribute ));
+                                                                          (Attribute) ((SimpleAttribute) subSubAttribute));
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
                                 complexSubValue =
-                                    multiValuedPrimitiveAttributeToString(( (MultiValuedAttribute) subSubAttribute )
+                                    multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
                                                                               .getAttributePrimitiveValues(),
                                                                           subSubAttribute.getName());
                             }
@@ -527,11 +526,11 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                             if (subSubAttribute instanceof SimpleAttribute) {
 
                                 complexSubValue = simpleAttributeToString(complexSubValue,
-                                                                          (Attribute) ( (SimpleAttribute) subSubAttribute ));
+                                                                          (Attribute) ((SimpleAttribute) subSubAttribute));
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
                                 complexSubValue =
-                                    multiValuedPrimitiveAttributeToString(( (MultiValuedAttribute) subSubAttribute )
+                                    multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
                                                                               .getAttributePrimitiveValues(),
                                                                           subSubAttribute.getName());
                             }
