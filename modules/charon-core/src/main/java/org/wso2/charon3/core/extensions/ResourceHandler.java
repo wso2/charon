@@ -62,7 +62,7 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
      *                          in the response, overriding the set of attributes that would be returned by default.
      * @return a list of all resources that are matchuing the given conditions
      */
-    public List<Object> listResources(Node node, int startIndex, int count, String sortBy, String sortOrder,
+    public List<Object> listResources(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder,
                                       String domainName, Map<String, Boolean> requiredAttributes)
     throws AbstractCharonException;
 

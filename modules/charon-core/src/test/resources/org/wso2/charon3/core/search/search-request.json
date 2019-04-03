@@ -1,0 +1,12 @@
+{
+  "schemas": [
+    "urn:ietf:params:scim:api:messages:2.0:SearchRequest"
+  ],
+  "attributes": [
+    "displayName",
+    "userName"
+  ],
+  "filter": "displayName sw \"smith\"",
+  "startIndex": 1,
+  "count": 10
+}

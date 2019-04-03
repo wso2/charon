@@ -68,6 +68,11 @@ public interface FileReferences {
      */
     public static final String DELETE_BULK_REQUEST_FILE = BASE_PATH + "bulk/delete-bulk-request.json";
 
+    /**
+     * a search request json structure
+     */
+    public static final String SEARCH_REQUEST_FILE = BASE_PATH + "search/search-request.json";
+
 
     /**
      * reads a file from the test-resources

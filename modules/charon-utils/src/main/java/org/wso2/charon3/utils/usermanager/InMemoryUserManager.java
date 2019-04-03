@@ -75,9 +75,13 @@ public class InMemoryUserManager implements ResourceHandler<User> {
     }
 
     @Override
-    public List<Object> listResources(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
-                                      String domainName, Map<String, Boolean> requiredAttributes)
-      throws NotImplementedException {
+    public List<Object> listResources(Node rootNode,
+                                      Integer startIndex,
+                                      Integer count,
+                                      String sortBy,
+                                      String sortOrder,
+                                      String domainName,
+                                      Map<String, Boolean> requiredAttributes) throws NotImplementedException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
         } else if (startIndex != 1) {
@@ -102,7 +106,7 @@ public class InMemoryUserManager implements ResourceHandler<User> {
 
     @Override
     public User update(User user, Map<String, Boolean> map)
-      throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
+        throws NotImplementedException, CharonException, BadRequestException, NotFoundException {
         if (user.getId() != null) {
             inMemoryUserList.replace(user.getId(), user);
             return (User) CopyUtil.deepCopy(user);

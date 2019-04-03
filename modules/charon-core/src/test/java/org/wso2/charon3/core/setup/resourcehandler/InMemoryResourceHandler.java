@@ -73,15 +73,22 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
      */
     @Override
     public List<Object> listResources(Node node,
-                                      int startIndex,
-                                      int count,
+                                      Integer startIndex,
+                                      Integer count,
                                       String sortBy,
                                       String sortOrder,
                                       String domainName,
                                       Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
         List<Object> resources = new ArrayList<>(resourceStore.values());
+        if (resources.isEmpty()) {
+            return resources;
+        }
         // startIndex must be at least 1 due to specification
-        resources = resources.subList(startIndex - 1, startIndex - 1 + count);
+        int fromIndex = startIndex - 1;
+        fromIndex =  fromIndex >= resources.size() ? resources.size() - 1 : fromIndex;
+        int toIndex = startIndex - 1 + count;
+        toIndex = toIndex >= resources.size() ? resources.size() - 1 : toIndex;
+        resources = resources.subList(fromIndex, toIndex);
         return resources;
     }
 

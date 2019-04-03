@@ -8,6 +8,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
@@ -197,8 +198,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      *          removed from the default set of attributes to return
      */
     public SCIMResponse listWithGET(String filter,
-                                    int startIndex,
-                                    int count,
+                                    Integer startIndex,
+                                    Integer count,
                                     String sortBy,
                                     String sortOrder,
                                     String domainName,
@@ -227,11 +228,11 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
     /**
      * does the actual work for the methods
-     * {@link #listWithGET(String, int, int, String, String, String, String, String)} and
-     * {@link #listWithGET(String, int, int, String, String, String, String, String)}
+     * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)} and
+     * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)}
      */
-    private SCIMResponse listResources(int startIndex,
-                                       int count,
+    private SCIMResponse listResources(Integer startIndex,
+                                       Integer count,
                                        String sortBy,
                                        String sortOrder,
                                        String domainName,
@@ -240,9 +241,9 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
                                        Node rootNode) {
         try {
             // According to SCIM 2.0 spec minus values will be considered as 0
-            count = ResourceManagerUtil.processCount(String.valueOf(count));
+            count = ResourceManagerUtil.processCount(count == null ? null : String.valueOf(count));
             // According to SCIM 2.0 spec minus values will be considered as 1
-            startIndex = ResourceManagerUtil.processStartIndex(String.valueOf(startIndex));
+            startIndex = ResourceManagerUtil.processStartIndex(startIndex == null ? null : String.valueOf(startIndex));
             if (sortOrder != null) {
                 if (!( sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) ||
                        sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING) )) {

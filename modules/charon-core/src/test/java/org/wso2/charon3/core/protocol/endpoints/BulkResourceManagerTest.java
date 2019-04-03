@@ -15,10 +15,6 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.setup.CharonInitializer;
-import org.wso2.charon3.core.setup.resourcehandler.GroupResourceHandler;
-import org.wso2.charon3.core.setup.resourcehandler.UserResourceHandler;
-import org.wso2.charon3.core.setup.resourcemanagers.GroupManager;
-import org.wso2.charon3.core.setup.resourcemanagers.UserManager;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 import java.util.ArrayList;
@@ -40,27 +36,17 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
      */
     private BulkResourceManager bulkResourceManager;
 
-    /**
-     * the user resource handler that represents the user implementation
-     */
-    private UserResourceHandler userResourceHandler;
-
-    /**
-     * the group resource handler that represents the group implementation
-     */
-    private GroupResourceHandler groupResourceHandler;
-
     @BeforeEach
+    @Override
     public void initialize() {
-        this.userResourceHandler = Mockito.spy(new UserResourceHandler());
-        this.groupResourceHandler = Mockito.spy(new GroupResourceHandler());
+        super.initialize();
         bulkResourceManager = new BulkResourceManager(createResourceManagers());
     }
 
-    private List<ResourceManager> createResourceManagers() {
+    protected List<ResourceManager> createResourceManagers() {
         List<ResourceManager> resourceManagerList = new ArrayList<>();
-        resourceManagerList.add(new UserManager(userResourceHandler));
-        resourceManagerList.add(new GroupManager(groupResourceHandler));
+        resourceManagerList.add(userManager);
+        resourceManagerList.add(groupManager);
         return resourceManagerList;
     }
 
