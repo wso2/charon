@@ -45,19 +45,29 @@ public interface FileReferences {
      * enterprise extension
      */
     public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE =
-        BASE_PATH + "user/create-enterprise-user" + "-maxilein.json";
+        BASE_PATH + "user/create-enterprise-user-maxilein.json";
 
     /**
-     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
-     * enterprise extension
+     * a bulk request file that will create an user
      */
-    public static final String SINGLE_BULK_REQUEST_FILE = BASE_PATH + "bulk/single-bulk-request.json";
+    public static final String POST_BULK_REQUEST_FILE = BASE_PATH + "bulk/post-bulk-request.json";
 
     /**
-     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
-     * enterprise extension
+     * a bulk request file that will create an user and a group
      */
-    public static final String TWO_BULK_REQUEST_FILE = BASE_PATH + "bulk/two-bulk-request.json";
+    public static final String USER_AND_GROUP_POST_BULK_REQUEST_FILE =
+        BASE_PATH + "bulk/user-and-group-post-bulk-request.json";
+
+    /**
+     * a bulk request file that will update an user
+     */
+    public static final String PUT_BULK_REQUEST_FILE = BASE_PATH + "bulk/put-bulk-request.json";
+
+    /**
+     * a bulk request file that will delete an user
+     */
+    public static final String DELETE_BULK_REQUEST_FILE = BASE_PATH + "bulk/delete-bulk-request.json";
+
 
     /**
      * reads a file from the test-resources

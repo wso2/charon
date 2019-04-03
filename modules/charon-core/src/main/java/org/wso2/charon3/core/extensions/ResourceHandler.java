@@ -43,10 +43,10 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
     /**
      * deletes the resource with the given id
      *
-     * @param userId the id of the resource to delete
+     * @param id the id of the resource to delete
      * @throws org.wso2.charon3.core.exceptions.NotFoundException if the resource does not exit
      */
-    public void delete(String userId)
+    public void delete(String id)
     throws AbstractCharonException;
 
     /**

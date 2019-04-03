@@ -24,6 +24,7 @@ import org.wso2.charon3.core.protocol.SCIMResponse;
  *
  */
 public class BulkResponseContent {
+    
     private String bulkID;
     private SCIMResponse scimResponse;
     private String version;

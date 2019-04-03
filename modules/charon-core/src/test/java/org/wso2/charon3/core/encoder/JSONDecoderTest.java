@@ -179,7 +179,7 @@ public class JSONDecoderTest implements FileReferences {
      */
     @Test
     public void testDecodeBulkRequestData() throws BadRequestException {
-        String bulkRequestString = readResourceFile(SINGLE_BULK_REQUEST_FILE);
+        String bulkRequestString = readResourceFile(POST_BULK_REQUEST_FILE);
         BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequestString);
         Assertions.assertEquals(1, bulkRequestData.getOperationRequests().size());
         BulkRequestContent bulkRequestContent = bulkRequestData.getOperationRequests().get(0);
@@ -194,7 +194,7 @@ public class JSONDecoderTest implements FileReferences {
      */
     @Test
     public void testDecodeBulkRequestDataWithTwoOperations() throws BadRequestException {
-        String bulkRequestString = readResourceFile(TWO_BULK_REQUEST_FILE);
+        String bulkRequestString = readResourceFile(USER_AND_GROUP_POST_BULK_REQUEST_FILE);
         BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequestString);
         Assertions.assertEquals(2, bulkRequestData.getOperationRequests().size());
         BulkRequestContent bulkRequestContent = bulkRequestData.getOperationRequests().get(0);

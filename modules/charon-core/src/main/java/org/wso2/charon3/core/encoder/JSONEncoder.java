@@ -444,8 +444,7 @@ public class JSONEncoder {
      */
     public String encodeBulkResponseData(BulkResponseData bulkResponseData) throws InternalErrorException {
         String encodedString = "";
-        List<BulkResponseContent> userResponseDataList = bulkResponseData.getUserOperationResponse();
-        List<BulkResponseContent> groupResponseDataList = bulkResponseData.getGroupOperationResponse();
+        List<BulkResponseContent> responseDataList = bulkResponseData.getOperationResponseList();
         JSONObject rootObject = new JSONObject();
 
         //encode schemas
@@ -457,12 +456,8 @@ public class JSONEncoder {
             //[Operations] - multi value attribute
             ArrayList<JSONObject> operationResponseList = new ArrayList<>();
 
-            for (BulkResponseContent userOperationResponse : userResponseDataList) {
-                encodeResponseContent(userOperationResponse, operationResponseList);
-            }
-
-            for (BulkResponseContent groupOperationResponse : groupResponseDataList) {
-                encodeResponseContent(groupOperationResponse, operationResponseList);
+            for (BulkResponseContent operationResponse : responseDataList) {
+                encodeResponseContent(operationResponse, operationResponseList);
             }
             //set operations
             this.encodeArrayOfValues(SCIMConstants.OperationalConstants.OPERATIONS,
@@ -483,16 +478,12 @@ public class JSONEncoder {
             throws JSONException {
 
         JSONObject operationObject = new JSONObject();
-
-        JSONObject status = new JSONObject();
         int statusCode = responseContent.getScimResponse().getResponseStatus();
-        status.put(SCIMConstants.OperationalConstants.CODE, statusCode);
-
 
         operationObject.put(SCIMConstants.CommonSchemaConstants.LOCATION, responseContent.getLocation());
         operationObject.put(SCIMConstants.OperationalConstants.METHOD, responseContent.getMethod());
         operationObject.put(SCIMConstants.OperationalConstants.BULK_ID, responseContent.getBulkID());
-        operationObject.put(SCIMConstants.OperationalConstants.STATUS, status);
+        operationObject.put(SCIMConstants.OperationalConstants.STATUS, statusCode);
 
         //When indicating a response with an HTTP status other than a 200-series response,
         // the response body MUST be included.

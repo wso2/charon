@@ -93,6 +93,24 @@
                 <version>${junit.platform.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-junit</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${log4j2.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>javax.servlet</groupId>
@@ -130,11 +148,6 @@
                 <version>${fasterxml.jackson.core.version}</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
@@ -162,6 +175,23 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
         </dependency>
         <!-- for maven to execute junit jupiter tests -->
         <dependency>
@@ -341,6 +371,9 @@
         <axiom.impl.version>1.2.11</axiom.impl.version>
         <junit.jupiter.version>5.4.0</junit.jupiter.version>
         <junit.platform.version>1.4.0</junit.platform.version>
+        <mockito.version>2.25.1</mockito.version>
+        <hamcrest.version>2.0.0.0</hamcrest.version>
+        <log4j2.version>2.11.2</log4j2.version>
         <servlet.api.version>2.3</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
@@ -356,7 +389,7 @@
         <msf4j.version>2.1.0</msf4j.version>
         <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
         <log4j.version>1.2.16</log4j.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
 
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
 
