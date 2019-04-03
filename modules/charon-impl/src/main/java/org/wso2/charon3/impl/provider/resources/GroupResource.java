@@ -35,7 +35,6 @@ import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
 import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.charon3.utils.DefaultCharonManager;
-import org.wso2.msf4j.Microservice;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -54,12 +53,6 @@ import javax.ws.rs.core.Response;
  * the requests from the remote clients and hand over the request to respective operation performer.
  *
  */
-
-@Component(
-        name = "org.wso2.carbon.identity.inbound.provisioning.scim2.provider.resources.GroupResource",
-        service = Microservice.class,
-        immediate = true
-)
 
 @Api(value = "scim/v2/Groups")
 @SwaggerDefinition(
