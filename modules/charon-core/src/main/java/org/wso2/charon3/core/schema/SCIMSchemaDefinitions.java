@@ -1363,7 +1363,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_URI,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS,
-                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMDefinitions.DataType.COMPLEX, true,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
