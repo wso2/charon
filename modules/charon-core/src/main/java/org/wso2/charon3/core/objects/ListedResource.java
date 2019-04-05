@@ -174,8 +174,12 @@ public class ListedResource extends AbstractSCIMObject {
      */
     public void addResource(SCIMObject scimResourceType) {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
-            MultiValuedAttribute resourcesAttribute = new MultiValuedAttribute(
-                SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            MultiValuedAttribute resourcesAttribute = rethrowSupplier(() -> {
+                return (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(
+                    SCIMSchemaDefinitions.ListedResourceSchemaDefinition.RESOURCES,
+                    new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES));
+            }).get();
+
             resourcesAttribute.setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
             attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
         } else {
