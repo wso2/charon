@@ -647,24 +647,24 @@ public class SCIMConstants {
     public static class ResourceTypeSchemaConstants {
         public static final String RESOURCE_TYPE = "resourceType";
         public static final String ID = "id";
-        public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:id";
+        public static final String ID_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:id";
         public static final String NAME = "name";
-        public static final String NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:name";
+        public static final String NAME_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:name";
         public static final String DESCRIPTION = "description";
-        public static final String DESCRIPTION_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:description";
+        public static final String DESCRIPTION_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:description";
         public static final String ENDPOINT = "endpoint";
-        public static final String ENDPOINT_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:endpoint";
+        public static final String ENDPOINT_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:endpoint";
         public static final String SCHEMA = "schema";
-        public static final String SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:schema";
+        public static final String SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schema";
         public static final String SCHEMA_EXTENSIONS = "schemaExtensions";
         public static final String SCHEMA_EXTENSIONS_URI =
-                "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:schemaExtensions";
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtensions";
         public static final String SCHEMA_EXTENSIONS_SCHEMA = "schema";
         public static final String SCHEMA_EXTENSIONS_SCHEMA_URI =
-                "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:schemaExtension.schema";
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtension.schema";
         public static final String SCHEMA_EXTENSIONS_REQUIRED = "required";
         public static final String SCHEMA_EXTENSIONS_REQUIRED_URI =
-                "urn:ietf:params:scim:schemas:core:2.0:RESOURCE_TYPE:schemaExtension.required";
+                "urn:ietf:params:scim:schemas:core:2.0:ResourceType:schemaExtension.required";
 
         public static final String NAME_DESC = "The resource type name.  When applicable, service providers MUST " +
                 "specify the name, e.g., 'User'.\"";

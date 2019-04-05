@@ -90,7 +90,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     public void setSchema(String schema) {
-        schemaList.add(schema);
+        if (!schemaList.contains(schema)) {
+            schemaList.add(schema);
+        }
     }
 
     public List<String> getSchemaList() {

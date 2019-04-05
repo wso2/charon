@@ -2,18 +2,22 @@ package org.wso2.charon3.core.resourcetypes;
 
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.plainobjects.ResourceTypeSchemaExtension;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
+import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
  * this class represents a resource type as it was defined in RFC7643 section 6
@@ -25,6 +29,10 @@ public class ResourceType extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 1263327926680608288L;
 
+    public ResourceType() {
+        super.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+    }
+
     /**
      * The resource type's server unique id.  This is often the same
      * value as the "name" attribute.  OPTIONAL.
@@ -34,6 +42,17 @@ public class ResourceType extends AbstractSCIMObject {
         SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.ID;
         return getSimpleAttribute(idDefinition).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(null);
     }
+
+    /**
+     * The resource type's server unique id.  This is often the same
+     * value as the "name" attribute.  OPTIONAL.
+     */
+    @Override
+    public void replaceId(String id) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.ID;
+        replaceSimpleAttribute(idDefinition, id);
+    }
+
 
     /**
      * The resource type name.  When applicable, service providers MUST
@@ -47,12 +66,32 @@ public class ResourceType extends AbstractSCIMObject {
     }
 
     /**
+     * The resource type name.  When applicable, service providers MUST
+     * specify the name, e.g., "User" or "Group".  This name is
+     * referenced by the "meta.resourceType" attribute in all resources.
+     * REQUIRED.
+     */
+    public void replaceName(String name) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.NAME;
+        replaceSimpleAttribute(idDefinition, name);
+    }
+
+    /**
      * The resource type's human-readable description.  When applicable,
      * service providers MUST specify the description.  OPTIONAL.
      */
     public String getDescription() {
         SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.DESCRIPTION;
         return getSimpleAttribute(idDefinition).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(null);
+    }
+
+    /**
+     * The resource type's human-readable description.  When applicable,
+     * service providers MUST specify the description.  OPTIONAL.
+     */
+    public void replaceDescription(String description) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.DESCRIPTION;
+        replaceSimpleAttribute(idDefinition, description);
     }
 
     /**
@@ -65,6 +104,15 @@ public class ResourceType extends AbstractSCIMObject {
     }
 
     /**
+     * The resource type's HTTP-addressable endpoint relative to the Base
+     * URL of the service provider, e.g., "Users".  REQUIRED.
+     */
+    public void replaceEndpoint(String endpoint) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.ENDPOINT;
+        replaceSimpleAttribute(idDefinition, endpoint);
+    }
+
+    /**
      * The resource type's primary/base schema URI, e.g.,
      * "urn:ietf:params:scim:schemas:core:2.0:User".  This MUST be equal
      * to the "id" attribute of the associated "Schema" resource.
@@ -73,6 +121,17 @@ public class ResourceType extends AbstractSCIMObject {
     public String getSchema() {
         SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA;
         return (String) getSimpleAttribute(idDefinition).map(rethrowFunction(SimpleAttribute::getValue)).orElse(null);
+    }
+
+    /**
+     * The resource type's primary/base schema URI, e.g.,
+     * "urn:ietf:params:scim:schemas:core:2.0:User".  This MUST be equal
+     * to the "id" attribute of the associated "Schema" resource.
+     * REQUIRED.
+     */
+    public void replaceSchema(String schema) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA;
+        replaceSimpleAttribute(idDefinition, schema);
     }
 
     /**
@@ -102,6 +161,81 @@ public class ResourceType extends AbstractSCIMObject {
             resourceTypeExtensions.add(schemaExtension);
         }
         return resourceTypeExtensions;
+    }
+
+    /**
+     * The resource type's primary/base schema URI, e.g.,
+     * "urn:ietf:params:scim:schemas:core:2.0:User".  This MUST be equal
+     * to the "id" attribute of the associated "Schema" resource.
+     * REQUIRED.
+     */
+    public void replaceSchemaExtensions(List<ResourceTypeSchemaExtension> resourceTypeExtensions) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS;
+        MultiValuedAttribute extensions = getMultiValuedAttribute(idDefinition).orElse(null);
+        if (extensions != null) {
+            deleteAttribute(idDefinition.getName());
+        }
+
+        List<Attribute> extensionAttributes = new ArrayList<>();
+        for (ResourceTypeSchemaExtension resourceTypeExtension : resourceTypeExtensions) {
+            ComplexAttribute extension = getSchemaExtensionAttribute(resourceTypeExtension);
+            extensionAttributes.add(extension);
+        }
+
+        MultiValuedAttribute multiValuedAttribute = (MultiValuedAttribute) rethrowSupplier(() -> {
+            return DefaultAttributeFactory.createAttribute(idDefinition,
+                new MultiValuedAttribute(idDefinition.getName(), extensionAttributes));
+        }).get();
+
+        setAttribute(multiValuedAttribute);
+    }
+
+    /**
+     * creates a schema extension attribute as complex type
+     *
+     * @param resourceTypeExtension the payload data of the schema extension attribute
+     */
+    private ComplexAttribute getSchemaExtensionAttribute(ResourceTypeSchemaExtension resourceTypeExtension) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS;
+        ComplexAttribute extension = (ComplexAttribute) rethrowSupplier(() -> {
+            return DefaultAttributeFactory.createAttribute(idDefinition, new ComplexAttribute(idDefinition.getName()));
+        }).get();
+        SimpleAttribute required = (SimpleAttribute) rethrowSupplier(() -> {
+            SCIMAttributeSchema attributeSchema =
+                SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSION_REQUIRED;
+            return DefaultAttributeFactory.createAttribute(attributeSchema, new SimpleAttribute(
+                SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSION_REQUIRED.getName(),
+                resourceTypeExtension.isRequired()));
+        }).get();
+        SimpleAttribute schema = (SimpleAttribute) rethrowSupplier(() -> {
+            SCIMAttributeSchema attributeSchema =
+                SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSION_SCHEMA;
+            return DefaultAttributeFactory.createAttribute(attributeSchema, new SimpleAttribute(
+                SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSION_SCHEMA.getName(),
+                resourceTypeExtension.getSchema()));
+        }).get();
+        rethrowConsumer(o -> extension.setSubAttribute((Attribute) o)).accept(schema);
+        rethrowConsumer(o -> extension.setSubAttribute((Attribute) o)).accept(required);
+        return extension;
+    }
+
+    /**
+     * adds a new schema extension
+     *
+     * @param schema the schema uri
+     * @param required if the extension is required or not
+     */
+    public void addSchemaExtension(String schema, boolean required) {
+        SCIMAttributeSchema idDefinition = SCIMSchemaDefinitions.SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS;
+        MultiValuedAttribute extensions = getMultiValuedAttribute(idDefinition).orElse(null);
+
+        ResourceTypeSchemaExtension schemaExtension = new ResourceTypeSchemaExtension(schema, required);
+        if (extensions == null) {
+            replaceSchemaExtensions(Collections.singletonList(schemaExtension));
+            return;
+        }
+
+        extensions.getAttributeValues().add(getSchemaExtensionAttribute(schemaExtension));
     }
 
 }
