@@ -116,9 +116,24 @@ public class SCIMConstants {
     public static class ListedResourceSchemaConstants {
 
         public static final String TOTAL_RESULTS = "totalResults";
-        public static final String RESOURCES = "Resources";
-        public static final String ITEMS_PER_PAGE = "itemsPerPage";
+        public static final String TOTAL_RESULTS_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + TOTAL_RESULTS;
+        public static final String TOTAL_RESULTS_DESC = " The total number of results returned by the list or query " +
+                                                            "operation.";
+
         public static final String START_INDEX = "startIndex";
+        public static final String START_INDEX_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + START_INDEX;
+        public static final String START_INDEX_DESC = " The 1-based index of the first result in the current set " +
+                                                          "of list results.";
+
+        public static final String ITEMS_PER_PAGE = "itemsPerPage";
+        public static final String ITEMS_PER_PAGE_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + ITEMS_PER_PAGE;
+        public static final String ITEMS_PER_PAGE_DESC = "The number of resources returned in a list response " +
+                                                             "page.";
+
+        public static final String RESOURCES = "Resources";
+        public static final String RESOURCES_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + RESOURCES;
+        public static final String RESOURCES_DESC = "A multi-valued list of complex objects containing the " +
+                                                        "requested resources.  ";
     }
 
     /**
