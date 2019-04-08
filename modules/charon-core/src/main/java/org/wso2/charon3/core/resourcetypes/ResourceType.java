@@ -5,8 +5,11 @@ import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.plainobjects.ResourceTypeSchemaExtension;
+import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
+import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
@@ -14,6 +17,7 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
@@ -31,6 +35,49 @@ public class ResourceType extends AbstractSCIMObject {
 
     public ResourceType() {
         super.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
+    }
+
+    /**
+     *
+     * @param id The resource type's server unique id.  This is often the same
+     *       value as the "name" attribute.  OPTIONAL.
+     * @param name The resource type name.  When applicable, service providers MUST
+     *       specify the name, e.g., "User" or "Group".  This name is
+     *       referenced by the "meta.resourceType" attribute in all resources.
+     *       REQUIRED.
+     * @param description  The resource type's human-readable description.  When applicable,
+     *       service providers MUST specify the description.  OPTIONAL.
+     * @param endpointAddress The resource type's HTTP-addressable endpoint relative to the Base
+     *       URL of the service provider, e.g., "/Users" or "/Groups".  REQUIRED.
+     * @param resourceTypeSchema used to get the resource type schema and the schema extensions (all extensions will
+     *                           be set to non required by default. If you wish to change this do it manually)
+     */
+    public ResourceType(String id,
+                        String name,
+                        String description,
+                        String endpointAddress,
+                        ResourceTypeSchema resourceTypeSchema) {
+        this();
+        this.replaceId(id);
+        this.replaceName(Objects.requireNonNull(name, "name must not be null"));
+        this.replaceDescription(description);
+        Objects.requireNonNull(endpointAddress, "endpoint address must not be null");
+        if (!endpointAddress.startsWith("/")) {
+            rethrowSupplier(() -> {
+                throw new CharonException("endpoint address must start with \"/\"");
+            }).get();
+        }
+        String endpoint = rethrowSupplier(() -> AbstractResourceManager.getResourceEndpointURL(endpointAddress)).get();
+        this.replaceEndpoint(endpoint);
+        Objects.requireNonNull(resourceTypeSchema, "resource type schema must not be null");
+        this.replaceSchema(resourceTypeSchema.getSchemasList().get(0));
+        resourceTypeSchema.getExtensions().forEach(extension -> {
+            this.addSchemaExtension(extension.getSchema(), false);
+        });
+        String resourceTypeEndpoint = rethrowSupplier(
+            () -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get();
+        replaceLocation(resourceTypeEndpoint + endpointAddress);
+        replaceResourceType(endpointAddress.substring(1));
     }
 
     /**

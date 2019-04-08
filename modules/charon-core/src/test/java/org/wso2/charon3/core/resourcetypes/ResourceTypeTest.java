@@ -2,13 +2,22 @@ package org.wso2.charon3.core.resourcetypes;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.wso2.charon3.core.config.ResourceTypeRegistration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.objects.ListedResource;
+import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.testsetup.FileReferences;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -80,6 +89,37 @@ class ResourceTypeTest implements FileReferences {
         Assertions.assertEquals(1, userResourceType.getSchemaExtensions().size());
         Assertions.assertEquals(SCIMConstants.ENTERPRISE_USER_SCHEMA_URI,
             userResourceType.getSchemaExtensions().get(0).getSchema());
+    }
+
+    @Test
+    public void testCreateResourceTypeSchema() {
+        Assertions.assertThrows(NotFoundException.class,
+            () -> new ResourceType("User", "User", "description", SCIMConstants.USER_ENDPOINT,
+                SCIMSchemaDefinitions.SCIM_USER_SCHEMA));
+
+        String baseUri = "https://localhost:8443/charon/scim/v2";
+        Map<String, String> endpointMap = new HashMap<>();
+        endpointMap.put(SCIMConstants.USER_ENDPOINT, baseUri + SCIMConstants.USER_ENDPOINT);
+        endpointMap.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT, baseUri + SCIMConstants.RESOURCE_TYPE_ENDPOINT);
+        AbstractResourceManager.setEndpointURLMap(endpointMap);
+
+        Assertions.assertThrows(NullPointerException.class,
+            () -> new ResourceType("User", null, "description", SCIMConstants.USER_ENDPOINT,
+                SCIMSchemaDefinitions.SCIM_USER_SCHEMA));
+        Assertions.assertThrows(NullPointerException.class,
+            () -> new ResourceType("User", "User", "description", SCIMConstants.USER_ENDPOINT, null));
+        Assertions.assertThrows(NullPointerException.class,
+            () -> new ResourceType("User", "User", "description", null, SCIMSchemaDefinitions.SCIM_USER_SCHEMA));
+
+        ResourceType resourceType = new ResourceType("User", "User", "description", SCIMConstants.USER_ENDPOINT,
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA);
+        Assertions.assertThrows(ConflictException.class, () -> ResourceTypeRegistration.addResourceType(resourceType));
+
+        Assertions.assertEquals(2, ResourceTypeRegistration.getResourceTypeList().size());
+        List<String> resourceTypeNames = ResourceTypeRegistration.getResourceTypeList().stream().map(
+            ResourceType::getName).collect(Collectors.toList());
+        Assertions.assertTrue(resourceTypeNames.contains(SCIMConstants.USER));
+        Assertions.assertTrue(resourceTypeNames.contains(SCIMConstants.GROUP));
     }
 
 }
