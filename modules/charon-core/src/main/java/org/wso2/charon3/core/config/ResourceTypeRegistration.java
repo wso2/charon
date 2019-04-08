@@ -56,6 +56,13 @@ public final class ResourceTypeRegistration {
     }
 
     /**
+     *  @return the number of currently registered resource types
+     */
+    public static int getResouceTypeCount() {
+        return RESOURCE_TYPE_LIST.size();
+    }
+
+    /**
      * registeres a new resource type that will be returned from the resource types endpoint by the
      * {@link org.wso2.charon3.core.protocol.endpoints.ResourceTypeResourceManager}
      * @param resourceType the new resource type

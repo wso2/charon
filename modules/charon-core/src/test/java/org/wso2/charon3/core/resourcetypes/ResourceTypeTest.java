@@ -1,6 +1,7 @@
 package org.wso2.charon3.core.resourcetypes;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.wso2.charon3.core.config.ResourceTypeRegistration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -26,6 +27,15 @@ import java.util.stream.Collectors;
  * @author Pascal Knüppel
  */
 class ResourceTypeTest implements FileReferences {
+
+    @BeforeEach
+    public void registerEndpoints() {
+        String baseUri = "https://localhost:8443/charon/scim/v2";
+        Map<String, String> endpointMap = new HashMap<>();
+        endpointMap.put(SCIMConstants.USER_ENDPOINT, baseUri + SCIMConstants.USER_ENDPOINT);
+        endpointMap.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT, baseUri + SCIMConstants.RESOURCE_TYPE_ENDPOINT);
+        AbstractResourceManager.setEndpointURLMap(endpointMap);
+    }
 
     @Test
     public void testResourceTypeDecoding() throws BadRequestException, CharonException {
@@ -92,16 +102,29 @@ class ResourceTypeTest implements FileReferences {
     }
 
     @Test
+    public void testEncodeListedResponseWithResourceType() throws CharonException, BadRequestException {
+        ListedResource listedResource = new ListedResource();
+        listedResource.setTotalResults(ResourceTypeRegistration.getResouceTypeCount());
+        ResourceTypeRegistration.getResourceTypeList().forEach(listedResource::addResource);
+
+        String encodedResourceTypeList = JSON_ENCODER.encodeSCIMObject(listedResource);
+
+        ListedResource decodedList = JSON_DECODER.decodeListedResource(encodedResourceTypeList,
+            SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA, ResourceType.class);
+        Assertions.assertEquals(2, decodedList.getTotalResults());
+        Assertions.assertEquals(2, decodedList.getResources().size());
+    }
+
+    @Test
     public void testCreateResourceTypeSchema() {
+        // unregister endpoints to provoke exception
+        AbstractResourceManager.setEndpointURLMap(new HashMap<>());
+
         Assertions.assertThrows(NotFoundException.class,
             () -> new ResourceType("User", "User", "description", SCIMConstants.USER_ENDPOINT,
                 SCIMSchemaDefinitions.SCIM_USER_SCHEMA));
 
-        String baseUri = "https://localhost:8443/charon/scim/v2";
-        Map<String, String> endpointMap = new HashMap<>();
-        endpointMap.put(SCIMConstants.USER_ENDPOINT, baseUri + SCIMConstants.USER_ENDPOINT);
-        endpointMap.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT, baseUri + SCIMConstants.RESOURCE_TYPE_ENDPOINT);
-        AbstractResourceManager.setEndpointURLMap(endpointMap);
+        registerEndpoints();
 
         Assertions.assertThrows(NullPointerException.class,
             () -> new ResourceType("User", null, "description", SCIMConstants.USER_ENDPOINT,
@@ -119,7 +142,5 @@ class ResourceTypeTest implements FileReferences {
         List<String> resourceTypeNames = ResourceTypeRegistration.getResourceTypeList().stream().map(
             ResourceType::getName).collect(Collectors.toList());
         Assertions.assertTrue(resourceTypeNames.contains(SCIMConstants.USER));
-        Assertions.assertTrue(resourceTypeNames.contains(SCIMConstants.GROUP));
     }
-
 }

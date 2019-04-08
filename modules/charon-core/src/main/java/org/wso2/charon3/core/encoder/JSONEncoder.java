@@ -377,66 +377,6 @@ public class JSONEncoder {
     }
 
     /*
-     *  Build the user resource type json representation.
-     * @return
-     */
-    public String buildUserResourceTypeJsonBody() throws JSONException {
-        JSONObject userResourceTypeObject = new JSONObject();
-
-        userResourceTypeObject.put(
-                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.USER);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.USER);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.USER_ENDPOINT);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
-                SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
-
-        if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
-            JSONObject extensionSchemaObject = new JSONObject();
-
-            extensionSchemaObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
-                    SCIMResourceSchemaManager.getInstance().getExtensionURI());
-            extensionSchemaObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
-                    SCIMResourceSchemaManager.getInstance().getExtensionRequired());
-            userResourceTypeObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
-        }
-
-        return userResourceTypeObject.toString();
-    }
-
-    /**
-     *  Build the group resource type json representation.
-     * @return
-     */
-    public String buildGroupResourceTypeJsonBody() throws JSONException {
-        JSONObject groupResourceTypeObject = new JSONObject();
-
-        groupResourceTypeObject.put(
-                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.GROUP_ENDPOINT);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
-                SCIMConstants.ResourceTypeSchemaConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.GROUP_CORE_SCHEMA_URI);
-        return groupResourceTypeObject.toString();
-    }
-
-    /*
      * Encode given bulkResponseData object and return the encoded string
      *
      * @param bulkResponseData

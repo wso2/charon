@@ -74,10 +74,6 @@ public class ResourceType extends AbstractSCIMObject {
         resourceTypeSchema.getExtensions().forEach(extension -> {
             this.addSchemaExtension(extension.getSchema(), false);
         });
-        String resourceTypeEndpoint = rethrowSupplier(
-            () -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get();
-        replaceLocation(resourceTypeEndpoint + endpointAddress);
-        replaceResourceType(endpointAddress.substring(1));
     }
 
     /**
