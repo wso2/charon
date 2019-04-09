@@ -51,8 +51,26 @@ public final class ResourceTypeRegistration {
         return groupResourceType;
     }
 
+    /**
+     * the original resource type list that can be used to manipulate the list of resource types
+     *
+     * @return the original resource type list
+     */
     public static List<ResourceType> getResourceTypeList() {
         return RESOURCE_TYPE_LIST;
+    }
+
+    /**
+     * this method is used by the {@link org.wso2.charon3.core.protocol.endpoints.ResourceTypeResourceManager}
+     * because this manager is manipulating the meta data in the resource objects. Therefore we need to copy these
+     * objects because the meta data is immutable and the validation will not allow to override the value
+     *
+     * @return a list of copied resources
+     */
+    public static List<ResourceType> getResourceTypeListCopy() {
+        List<ResourceType> resourceTypeList = new ArrayList<>();
+        RESOURCE_TYPE_LIST.forEach(resourceType -> resourceTypeList.add((ResourceType) resourceType.copy()));
+        return resourceTypeList;
     }
 
     /**

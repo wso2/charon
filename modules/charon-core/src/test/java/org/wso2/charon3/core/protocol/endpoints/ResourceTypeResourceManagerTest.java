@@ -1,5 +1,6 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,12 @@ class ResourceTypeResourceManagerTest implements FileReferences {
         endpointMap.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT, baseUri + SCIMConstants.RESOURCE_TYPE_ENDPOINT);
         endpointMap.put(ClientSchemaConstants.CLIENTS_ENDPOINT, baseUri + ClientSchemaConstants.CLIENTS_ENDPOINT);
         AbstractResourceManager.setEndpointURLMap(endpointMap);
+    }
+
+    @AfterEach
+    public void removeAddedClientResourceType() {
+        ResourceTypeRegistration.getResourceTypeList().removeIf(
+            resourceType -> resourceType.getName().equals(ClientSchemaConstants.CLIENT_RESOURCE_TYPE));
     }
 
     @Test

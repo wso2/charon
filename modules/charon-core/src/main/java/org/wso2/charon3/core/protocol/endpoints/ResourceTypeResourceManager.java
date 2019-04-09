@@ -26,10 +26,12 @@ import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+import org.wso2.charon3.core.resourcetypes.ResourceType;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.wso2.charon3.core.schema.ServerSideValidator.validateResourceTypeSCIMObject;
@@ -59,16 +61,17 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
     private SCIMResponse getResourceType() {
 
         try {
-            ResourceTypeRegistration.getResourceTypeList().forEach(resourceType -> {
+            List<ResourceType> copiedResourceTypes = ResourceTypeRegistration.getResourceTypeListCopy();
+            copiedResourceTypes.forEach(resourceType -> {
                 LambdaExceptionUtils.rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt))
                                     .accept(resourceType);
             });
             //encode the newly created SCIM Resource Type object.
             ListedResource listedResource = new ListedResource();
             listedResource.setTotalResults(ResourceTypeRegistration.getResouceTypeCount());
-            ResourceTypeRegistration.getResourceTypeList().forEach(listedResource::addResource);
+            copiedResourceTypes.forEach(listedResource::addResource);
             String encodedObject = getEncoder().encodeSCIMObject(listedResource);
-            Map<String, String> responseHeaders = new HashMap<String, String>();
+            Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.LOCATION_HEADER,
                 getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT));
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);

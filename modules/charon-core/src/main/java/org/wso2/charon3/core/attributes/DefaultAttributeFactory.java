@@ -35,8 +35,8 @@ public class DefaultAttributeFactory {
      * @param attribute - attribute
      * @return Attribute
      */
-    public static Attribute createAttribute(AttributeSchema attributeSchema,
-                                            AbstractAttribute attribute) throws CharonException, BadRequestException {
+    public static Attribute createAttribute(AttributeSchema attributeSchema, AbstractAttribute attribute)
+        throws CharonException, BadRequestException {
 
         attribute.setMutability(attributeSchema.getMutability());
         attribute.setRequired(attributeSchema.getRequired());
@@ -75,9 +75,9 @@ public class DefaultAttributeFactory {
      * @throws CharonException
      * @throws BadRequestException
      */
-    protected static SimpleAttribute createSimpleAttribute
-                    (AttributeSchema attributeSchema, SimpleAttribute simpleAttribute)
-            throws CharonException, BadRequestException {
+    protected static SimpleAttribute createSimpleAttribute(AttributeSchema attributeSchema,
+                                                           SimpleAttribute simpleAttribute)
+        throws CharonException, BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
                 simpleAttribute.setType(attributeSchema.getType());
@@ -98,9 +98,8 @@ public class DefaultAttributeFactory {
      * @return boolean
      * @throws BadRequestException
      */
-    protected static boolean isAttributeDataTypeValid(Object attributeValue,
-                                                      SCIMDefinitions.DataType attributeDataType)
-                                                throws BadRequestException {
+    protected static boolean isAttributeDataTypeValid(Object attributeValue, SCIMDefinitions.DataType attributeDataType)
+        throws BadRequestException {
         switch (attributeDataType) {
             case STRING:
                 return attributeValue instanceof String;

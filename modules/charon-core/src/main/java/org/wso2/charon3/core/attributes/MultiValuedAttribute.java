@@ -37,7 +37,9 @@ public class MultiValuedAttribute extends AbstractAttribute {
         this.name = attributeName;
         this.attributeValues = attributeValues;
     }
-    public  MultiValuedAttribute(){}
+
+    public MultiValuedAttribute() {
+    }
 
     public MultiValuedAttribute(String attributeName) {
         this.name = attributeName;
@@ -72,7 +74,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
         attributeValues.clear();
     }
 
-     /*
+    /*
      * clear all primitive values
      * @throws CharonException
      */
@@ -124,4 +126,12 @@ public class MultiValuedAttribute extends AbstractAttribute {
         attributePrimitiveValues.add(obj);
     }
 
+    @Override
+    protected MultiValuedAttribute copyAttribute() {
+        MultiValuedAttribute attribute = new MultiValuedAttribute(this.name);
+        this.getAttributeValues().forEach(attr -> {
+            attribute.setAttributeValue(((AbstractAttribute) attr).copy());
+        });
+        return attribute;
+    }
 }
