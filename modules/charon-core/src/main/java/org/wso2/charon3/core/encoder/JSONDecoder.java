@@ -15,7 +15,6 @@
  */
 package org.wso2.charon3.core.encoder;
 
-import com.sun.javaws.exceptions.ErrorCodeResponseException;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;

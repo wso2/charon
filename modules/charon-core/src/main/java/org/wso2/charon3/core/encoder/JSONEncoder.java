@@ -35,7 +35,6 @@ import org.wso2.charon3.core.objects.bulk.BulkResponseData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
-import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
