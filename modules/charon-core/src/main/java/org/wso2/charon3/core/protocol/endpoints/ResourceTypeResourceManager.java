@@ -21,6 +21,7 @@ import org.wso2.charon3.core.config.ResourceTypeRegistration;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.ListedResource;
@@ -28,13 +29,14 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.resourcetypes.ResourceType;
 import org.wso2.charon3.core.schema.SCIMConstants;
-import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.wso2.charon3.core.schema.ServerSideValidator.validateResourceTypeSCIMObject;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
  * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
@@ -45,44 +47,31 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
     private static final Logger log = LoggerFactory.getLogger(ResourceTypeResourceManager.class);
 
     /**
-     * Retrieves a resource type
+     * Retrieves a single resource type with the specified id
      *
-     * @return SCIM response to be returned.
+     * @return the
      */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
 
-        return getResourceType();
-    }
-
-    /**
-     * return RESOURCE_TYPE schema
-     */
-    private SCIMResponse getResourceType() {
-
         try {
-            List<ResourceType> copiedResourceTypes = ResourceTypeRegistration.getResourceTypeListCopy();
-            copiedResourceTypes.forEach(resourceType -> {
-                LambdaExceptionUtils.rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt))
-                                    .accept(resourceType);
-            });
-            //encode the newly created SCIM Resource Type object.
-            ListedResource listedResource = new ListedResource();
-            listedResource.setTotalResults(ResourceTypeRegistration.getResouceTypeCount());
-            copiedResourceTypes.forEach(listedResource::addResource);
-            String encodedObject = getEncoder().encodeSCIMObject(listedResource);
+            ResourceType resourceType = ResourceTypeRegistration.getResourceTypeListCopy().stream().filter(
+                rt -> rt.getId().equals(id)).findAny().orElse(null);
+            if (resourceType == null) {
+                throw new NotFoundException("resource with id '" + id + "' does not exist");
+            }
+            rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt)).accept(resourceType);
+            String encodedObject = rethrowSupplier(() -> getEncoder().encodeSCIMObject(resourceType)).get();
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.LOCATION_HEADER,
-                getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT));
+                rethrowSupplier(() -> getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get());
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-
-            //put the uri of the resource type object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
-        } catch (AbstractCharonException e) {
-            return encodeSCIMException(e);
-        } catch (RuntimeException e) {
-            log.error(e.getMessage(), e);
-            CharonException charonException = new CharonException("an unexpected error occured: " + e.getMessage());
+        } catch (AbstractCharonException ex) {
+            return encodeSCIMException(ex);
+        } catch (RuntimeException ex) {
+            log.error(ex.getMessage(), ex);
+            CharonException charonException = new CharonException("an unexpected error occured: " + ex.getMessage());
             return encodeSCIMException(charonException);
         }
     }
@@ -117,9 +106,30 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
                                     String attributes,
                                     String excludeAttributes) {
 
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
+        try {
+            List<ResourceType> copiedResourceTypes = ResourceTypeRegistration.getResourceTypeListCopy();
+            copiedResourceTypes.forEach(resourceType -> {
+                rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt)).accept(resourceType);
+            });
+            //encode the newly created SCIM Resource Type object.
+            ListedResource listedResource = new ListedResource();
+            listedResource.setTotalResults(ResourceTypeRegistration.getResouceTypeCount());
+            copiedResourceTypes.forEach(listedResource::addResource);
+            String encodedObject = getEncoder().encodeSCIMObject(listedResource);
+            Map<String, String> responseHeaders = new HashMap<>();
+            responseHeaders.put(SCIMConstants.LOCATION_HEADER,
+                getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT));
+            responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            //put the uri of the resource type object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
+        } catch (AbstractCharonException e) {
+            return encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage(), e);
+            CharonException charonException = new CharonException("an unexpected error occured: " + e.getMessage());
+            return encodeSCIMException(charonException);
+        }
     }
 
     @Override
