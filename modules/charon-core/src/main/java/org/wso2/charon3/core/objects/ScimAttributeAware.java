@@ -596,18 +596,18 @@ public abstract class ScimAttributeAware {
      * returns a {@link BiConsumer} that will add a new {@link SimpleAttribute} to the given
      * {@link ComplexAttribute}
      *
-     * @param complexAttribute the {@link ComplexAttribute} that will be extended by a {@link SimpleAttribute}
+     * @param cAttr the {@link ComplexAttribute} that will be extended by a {@link SimpleAttribute}
      * @return the consumer that performs the execution of adding a {@link SimpleAttribute} to the given
      * {@link ComplexAttribute}
      */
-    protected BiConsumer<SCIMAttributeSchema, Supplier<Object>> getSetSubAttributeConsumer(ComplexAttribute complexAttribute) {
+    protected BiConsumer<SCIMAttributeSchema, Supplier<Object>> getSetSubAttributeConsumer(ComplexAttribute cAttr) {
 
         return (scimAttributeSchema, objectSupplier) -> {
             Optional.ofNullable(scimAttributeSchema).ifPresent(schema -> {
                 Optional.ofNullable(objectSupplier.get()).ifPresent(value -> {
                     SimpleAttribute valueAttribute = new SimpleAttribute(schema.getName(), objectSupplier.get());
                     rethrowBiConsumer(DefaultAttributeFactory::createAttribute).accept(schema, valueAttribute);
-                    rethrowConsumer(complexAttribute::setSubAttribute).accept(valueAttribute);
+                    rethrowConsumer(cAttr::setSubAttribute).accept(valueAttribute);
                 });
             });
         };
@@ -617,26 +617,26 @@ public abstract class ScimAttributeAware {
      * extracts a multi-valued-complex-type from the {@link #getResource()} object by the given attribute
      * definitions
      *
-     * @param multiValuedDefinition the multi valued complex type definition
+     * @param multiValuedDef the multi valued complex type definition
      * @param valueDefinition       the value-definition of the multi-valued-complex type
      * @param displayDefinition     the display-definition of the multi-valued-complex type
      * @param typeDefinition        the type-definition of the multi-valued-complex type
      * @param primaryDefinition     the primary-definition of the multi-valued-complex type
-     * @param referenceDefinition   the reference-definition of the multi-valued-complex type
+     * @param referenceDef   the reference-definition of the multi-valued-complex type
      * @return a list of the given {@link MultiValuedComplexType}s
      */
-    protected Optional<List<MultiValuedComplexType>> getMultivaluedComplexType(SCIMAttributeSchema multiValuedDefinition,
+    protected Optional<List<MultiValuedComplexType>> getMultivaluedComplexType(SCIMAttributeSchema multiValuedDef,
                                                                                SCIMAttributeSchema valueDefinition,
                                                                                SCIMAttributeSchema displayDefinition,
                                                                                SCIMAttributeSchema typeDefinition,
                                                                                SCIMAttributeSchema primaryDefinition,
-                                                                               SCIMAttributeSchema referenceDefinition) {
+                                                                               SCIMAttributeSchema referenceDef) {
 
-        return getMultiValuedAttribute(multiValuedDefinition).map(multiValuedAttribute -> {
+        return getMultiValuedAttribute(multiValuedDef).map(multiValuedAttribute -> {
             List<MultiValuedComplexType> multiValuedComplexTypes = new ArrayList<>();
             for (Attribute attributeValue : multiValuedAttribute.getAttributeValues()) {
                 getMultiValuedComplexType((ComplexAttribute) attributeValue, valueDefinition, displayDefinition,
-                    typeDefinition, primaryDefinition, referenceDefinition).ifPresent(multiValuedComplexType -> {
+                    typeDefinition, primaryDefinition, referenceDef).ifPresent(multiValuedComplexType -> {
                     multiValuedComplexTypes.add(multiValuedComplexType);
                 });
             }
@@ -819,7 +819,6 @@ public abstract class ScimAttributeAware {
      * @param extensionSchema the resource schema extension that should hold the attribute
      * @param attributeSchema the attribute to set
      * @param value the value to set into the attribute
-     * @return the value of the attribute or null
      * @throws ClassCastException if the attribute to extract is not of type {@link SimpleAttribute}
      */
     public void setExtensionAttribute(SCIMResourceTypeExtensionSchema extensionSchema,
