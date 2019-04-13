@@ -117,7 +117,8 @@ class EnterpriseUserTest implements FileReferences {
 
         String encodedUser = JSON_ENCODER.encodeSCIMObject(user);
         Assertions.assertFalse(
-            encodedUser.contains("\"" + SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA.getSchema() + "\""), encodedUser);
+            encodedUser.contains("\"" + SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA.getSchema() + "\""),
+            encodedUser);
     }
 
 }
