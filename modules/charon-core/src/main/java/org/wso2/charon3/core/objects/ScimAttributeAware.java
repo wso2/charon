@@ -937,8 +937,8 @@ public abstract class ScimAttributeAware {
     private void deleteAttributeOfComplexAttribute(ComplexAttribute complexAttribute,
                                                    SCIMAttributeSchema scimAttributeSchema) {
         Map<String, Attribute> attributeMap = complexAttribute.getSubAttributesList();
-        for (String attributeUri : attributeMap.keySet()) {
-            Attribute attribute = attributeMap.get(attributeUri);
+        for (Map.Entry<String, Attribute> stringAttributeEntry : attributeMap.entrySet()) {
+            Attribute attribute = attributeMap.get(stringAttributeEntry.getKey());
             if (attribute.getURI().equals(scimAttributeSchema.getURI())) {
                 complexAttribute.removeSubAttribute(attribute.getName());
                 return;
