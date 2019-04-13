@@ -394,21 +394,7 @@ public class JSONDecoder {
                 return scimObject;
             }
             AbstractSCIMObject scimExtension = decodeResource(resourceString, extension, new AbstractSCIMObject());
-            final SCIMAttributeSchema scimAttributeSchema =
-                    SCIMAttributeSchema.createSCIMAttributeSchema(
-                            extension.getSchema(),
-                            extension.getSchema(),
-                            COMPLEX,
-                            false,
-                            null,
-                            false,
-                            false,
-                            SCIMDefinitions.Mutability.READ_WRITE,
-                            SCIMDefinitions.Returned.DEFAULT,
-                            SCIMDefinitions.Uniqueness.NONE,
-                            null,
-                            null,
-                            null);
+            final SCIMAttributeSchema scimAttributeSchema = extension.getAsAttributeSchema();
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
             Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
                                                                                    complexAttribute);

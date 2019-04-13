@@ -18,11 +18,13 @@
 
 package org.wso2.charon3.core.objects;
 
+import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
@@ -39,6 +41,7 @@ import java.util.TimeZone;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import static org.wso2.charon3.core.attributes.DefaultAttributeFactory.createAttribute;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowBiConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
@@ -56,8 +59,7 @@ public abstract class ScimAttributeAware {
      *
      * @return true if the given attributes are equals, false else
      */
-    public static boolean attributesEquals(Attribute attribute,
-                                           Attribute attributeOther) {
+    public static boolean attributesEquals(Attribute attribute, Attribute attributeOther) {
 
         if (!attribute.getClass().equals(attributeOther.getClass())) {
             return false;
@@ -80,8 +82,7 @@ public abstract class ScimAttributeAware {
      *
      * @return if the meta-data is identical
      */
-    public static boolean attributeMetaEquals(Attribute attribute,
-                                              Attribute attributeOther) {
+    public static boolean attributeMetaEquals(Attribute attribute, Attribute attributeOther) {
 
         if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
             return false;
@@ -112,8 +113,7 @@ public abstract class ScimAttributeAware {
      *
      * @return true if the attributes are identical, false else
      */
-    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
-                                                SimpleAttribute attribute2) {
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1, SimpleAttribute attribute2) {
 
         if (!attribute1.getValue().equals(attribute2.getValue())) {
             return false;
@@ -139,7 +139,7 @@ public abstract class ScimAttributeAware {
             }
             return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
                 return otherAttribute.getAttributeValues().stream().anyMatch(
-                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
+                    otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
             });
         } else {
             return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
@@ -151,8 +151,7 @@ public abstract class ScimAttributeAware {
      *
      * @return true if the attributes are identical, false else
      */
-    public static boolean complexAttributeEquals(ComplexAttribute attribute,
-                                                 ComplexAttribute otherAttribute) {
+    public static boolean complexAttributeEquals(ComplexAttribute attribute, ComplexAttribute otherAttribute) {
 
         boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
         if (!metaDataEquals) {
@@ -216,8 +215,8 @@ public abstract class ScimAttributeAware {
 
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema resourceTypeDefinition = SCIMSchemaDefinitions.RESOURCE_TYPE;
-        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta)
-                .map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(null)).orElse(null);
+        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta).map(
+            rethrowFunction(SimpleAttribute::getStringValue)).orElse(null)).orElse(null);
     }
 
     /**
@@ -240,8 +239,8 @@ public abstract class ScimAttributeAware {
 
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema resourceTypeDefinition = SCIMSchemaDefinitions.LOCATION;
-        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta)
-                .map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(null)).orElse(null);
+        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta).map(
+            rethrowFunction(SimpleAttribute::getStringValue)).orElse(null)).orElse(null);
     }
 
     /**
@@ -264,9 +263,8 @@ public abstract class ScimAttributeAware {
 
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema resourceTypeDefinition = SCIMSchemaDefinitions.CREATED;
-        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta)
-                .map(rethrowFunction(simpleAttribute -> simpleAttribute.getDateValue().getTime())).orElse(null))
-                .orElse(null);
+        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta).map(
+            rethrowFunction(simpleAttribute -> simpleAttribute.getDateValue().getTime())).orElse(null)).orElse(null);
     }
 
     /**
@@ -278,8 +276,9 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         return getComplexAttribute(metaDefinition).map(meta -> {
             return getSimpleAttribute(createdDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
-                    .map(instant -> LocalDateTime.ofInstant(instant, TimeZone.getDefault().
-                            toZoneId())).orElse(null);
+                                                              .map(instant -> LocalDateTime.ofInstant(instant,
+                                                                  TimeZone.getDefault().
+                                                                                           toZoneId())).orElse(null);
         }).orElse(null);
     }
 
@@ -292,7 +291,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         return getComplexAttribute(metaDefinition).map(meta -> {
             return getSimpleAttribute(createdDefinition, meta).map(rethrowFunction(SimpleAttribute::getInstantValue))
-                    .orElse(null);
+                                                              .orElse(null);
         }).orElse(null);
     }
 
@@ -306,8 +305,8 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema createdDefinition = SCIMSchemaDefinitions.CREATED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
-        getSetSubAttributeConsumer(meta).accept(createdDefinition, () ->
-                createdDate.atZone(ZoneId.systemDefault()).toInstant());
+        getSetSubAttributeConsumer(meta).accept(createdDefinition,
+            () -> createdDate.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -346,11 +345,9 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         return getComplexAttribute(metaDefinition).map(meta -> {
-            return getSimpleAttribute(lastModifiedDefinition, meta)
-                    .map(rethrowFunction(SimpleAttribute::getInstantValue))
-                    .map(instant -> LocalDateTime
-                            .ofInstant(instant, TimeZone.getDefault().toZoneId()))
-                    .orElse(null);
+            return getSimpleAttribute(lastModifiedDefinition, meta).map(
+                rethrowFunction(SimpleAttribute::getInstantValue)).map(
+                instant -> LocalDateTime.ofInstant(instant, TimeZone.getDefault().toZoneId())).orElse(null);
         }).orElse(null);
     }
 
@@ -362,9 +359,8 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         return getComplexAttribute(metaDefinition).map(meta -> {
-            return getSimpleAttribute(lastModifiedDefinition, meta)
-                    .map(rethrowFunction(SimpleAttribute::getInstantValue))
-                    .orElse(null);
+            return getSimpleAttribute(lastModifiedDefinition, meta).map(
+                rethrowFunction(SimpleAttribute::getInstantValue)).orElse(null);
         }).orElse(null);
     }
 
@@ -375,11 +371,9 @@ public abstract class ScimAttributeAware {
 
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
-        return getComplexAttribute(metaDefinition).map(meta ->
-                getSimpleAttribute(lastModifiedDefinition, meta)
-                        .map(rethrowFunction(simpleAttribute -> simpleAttribute.getInstantValue().toEpochMilli()))
-                        .orElse(null))
-                .orElse(null);
+        return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(lastModifiedDefinition, meta).map(
+            rethrowFunction(simpleAttribute -> simpleAttribute.getInstantValue().toEpochMilli())).orElse(null)).orElse(
+            null);
     }
 
     /**
@@ -393,7 +387,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
         getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition,
-                () -> lastModifiedDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            () -> lastModifiedDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
@@ -421,7 +415,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema lastModifiedDefinition = SCIMSchemaDefinitions.LAST_MODIFIED;
         ComplexAttribute meta = getOrCrateComplexAttribute(metaDefinition);
         getSetSubAttributeConsumer(meta).accept(lastModifiedDefinition,
-                () -> Instant.ofEpochMilli(lastModifiedTimestamp));
+            () -> Instant.ofEpochMilli(lastModifiedTimestamp));
     }
 
     /**
@@ -452,8 +446,8 @@ public abstract class ScimAttributeAware {
             return Optional.empty();
         }
         return Optional.ofNullable(
-                rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
-                        .get());
+            rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                .get());
     }
 
     /**
@@ -471,8 +465,8 @@ public abstract class ScimAttributeAware {
             return Optional.empty();
         }
         return Optional.ofNullable(
-                rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
-                        .get()).map(simpleAttribute -> rethrowFunction(sa -> {
+            rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                .get()).map(simpleAttribute -> rethrowFunction(sa -> {
             if (SCIMDefinitions.DataType.REFERENCE.equals(scimAttributeSchema.getType())) {
                 return (String) simpleAttribute.getValue();
             } else {
@@ -543,8 +537,7 @@ public abstract class ScimAttributeAware {
      * @param scimAttributeSchema the attribute to set
      * @param value               the value that represents the attribute
      */
-    public void replaceSimpleAttribute(SCIMAttributeSchema scimAttributeSchema,
-                                       Object value) {
+    public void replaceSimpleAttribute(SCIMAttributeSchema scimAttributeSchema, Object value) {
 
         if (scimAttributeSchema == null || value == null) {
             if (scimAttributeSchema != null) {
@@ -587,7 +580,7 @@ public abstract class ScimAttributeAware {
             ComplexAttribute complexAttribute = new ComplexAttribute(complexDefinition.getName());
 
             BiConsumer<SCIMAttributeSchema, Supplier<Object>> setSubAttribute = getSetSubAttributeConsumer(
-                    complexAttribute);
+                complexAttribute);
 
             setSubAttribute.accept(valueDefinition, complexObject::getValue);
             setSubAttribute.accept(displayDefinition, complexObject::getDisplay);
@@ -607,8 +600,7 @@ public abstract class ScimAttributeAware {
      * @return the consumer that performs the execution of adding a {@link SimpleAttribute} to the given
      * {@link ComplexAttribute}
      */
-    protected BiConsumer<SCIMAttributeSchema, Supplier<Object>> getSetSubAttributeConsumer(
-            ComplexAttribute complexAttribute) {
+    protected BiConsumer<SCIMAttributeSchema, Supplier<Object>> getSetSubAttributeConsumer(ComplexAttribute complexAttribute) {
 
         return (scimAttributeSchema, objectSupplier) -> {
             Optional.ofNullable(scimAttributeSchema).ifPresent(schema -> {
@@ -633,21 +625,19 @@ public abstract class ScimAttributeAware {
      * @param referenceDefinition   the reference-definition of the multi-valued-complex type
      * @return a list of the given {@link MultiValuedComplexType}s
      */
-    protected Optional<List<MultiValuedComplexType>> getMultivaluedComplexType(
-            SCIMAttributeSchema multiValuedDefinition,
-            SCIMAttributeSchema valueDefinition,
-            SCIMAttributeSchema displayDefinition,
-            SCIMAttributeSchema typeDefinition,
-            SCIMAttributeSchema primaryDefinition,
-            SCIMAttributeSchema referenceDefinition) {
+    protected Optional<List<MultiValuedComplexType>> getMultivaluedComplexType(SCIMAttributeSchema multiValuedDefinition,
+                                                                               SCIMAttributeSchema valueDefinition,
+                                                                               SCIMAttributeSchema displayDefinition,
+                                                                               SCIMAttributeSchema typeDefinition,
+                                                                               SCIMAttributeSchema primaryDefinition,
+                                                                               SCIMAttributeSchema referenceDefinition) {
 
         return getMultiValuedAttribute(multiValuedDefinition).map(multiValuedAttribute -> {
             List<MultiValuedComplexType> multiValuedComplexTypes = new ArrayList<>();
             for (Attribute attributeValue : multiValuedAttribute.getAttributeValues()) {
-                getMultiValuedComplexType((ComplexAttribute) attributeValue,
-                        valueDefinition, displayDefinition, typeDefinition,
-                        primaryDefinition, referenceDefinition).ifPresent(multiValuedComplexType -> {
-                            multiValuedComplexTypes.add(multiValuedComplexType);
+                getMultiValuedComplexType((ComplexAttribute) attributeValue, valueDefinition, displayDefinition,
+                    typeDefinition, primaryDefinition, referenceDefinition).ifPresent(multiValuedComplexType -> {
+                    multiValuedComplexTypes.add(multiValuedComplexType);
                 });
             }
             return multiValuedComplexTypes;
@@ -673,23 +663,21 @@ public abstract class ScimAttributeAware {
         ComplexAttribute complexAttribute = attributeValue;
         MultiValuedComplexType multiValuedComplexType = new MultiValuedComplexType();
         getSimpleAttributeValue(valueDefinition, complexAttribute).ifPresent(multiValuedComplexType::setValue);
-        getSimpleAttributeValue(displayDefinition, complexAttribute)
-                .ifPresent(multiValuedComplexType::setDisplay);
+        getSimpleAttributeValue(displayDefinition, complexAttribute).ifPresent(multiValuedComplexType::setDisplay);
         getSimpleAttributeValue(typeDefinition, complexAttribute).ifPresent(multiValuedComplexType::setType);
-        getSimpleAttribute(primaryDefinition, complexAttribute)
-                .map(rethrowFunction(SimpleAttribute::getBooleanValue))
-                .ifPresent(multiValuedComplexType::setPrimary);
-        getSimpleAttribute(referenceDefinition, complexAttribute)
-                .map(simpleAttribute -> (String) simpleAttribute.getValue())
-                .ifPresent(multiValuedComplexType::setReference);
+        getSimpleAttribute(primaryDefinition, complexAttribute).map(rethrowFunction(SimpleAttribute::getBooleanValue))
+                                                               .ifPresent(multiValuedComplexType::setPrimary);
+        getSimpleAttribute(referenceDefinition, complexAttribute).map(
+            simpleAttribute -> (String) simpleAttribute.getValue()).ifPresent(multiValuedComplexType::setReference);
 
-        if (!(isBlank(multiValuedComplexType.getValue()) && isBlank(
-                multiValuedComplexType.getDisplay()) && isBlank(multiValuedComplexType.getType()) && isBlank(
-                multiValuedComplexType.getReference()) && !multiValuedComplexType.isPrimary())) {
+        if (!(isBlank(multiValuedComplexType.getValue()) && isBlank(multiValuedComplexType.getDisplay()) && isBlank(
+            multiValuedComplexType.getType()) && isBlank(multiValuedComplexType.getReference()) &&
+                  !multiValuedComplexType.isPrimary())) {
             return Optional.of(multiValuedComplexType);
         }
         return Optional.empty();
     }
+
 
     /**
      * this method is used to compare to scim objects
@@ -710,15 +698,15 @@ public abstract class ScimAttributeAware {
         if (!getResource().getSchemaList().equals(scimAttributeAware.getResource().getSchemaList())) {
             return false;
         }
-        if (!getResource().getAttributeList().keySet()
-                .equals(scimAttributeAware.getResource().getAttributeList().keySet())) {
+        if (!getResource().getAttributeList().keySet().equals(
+            scimAttributeAware.getResource().getAttributeList().keySet())) {
 
             return false;
         }
 
         return getResource().getAttributeList().keySet().stream().allMatch(attributeName -> {
             return attributesEquals(getResource().getAttribute(attributeName),
-                    scimAttributeAware.getResource().getAttribute(attributeName));
+                scimAttributeAware.getResource().getAttribute(attributeName));
         });
     }
 
@@ -772,6 +760,142 @@ public abstract class ScimAttributeAware {
         return getSimpleAttributeValue(attributeSchema, complexAttribute).orElse(null);
     }
 
+    public ComplexAttribute getComplexAttributeFromExtension(SCIMResourceTypeExtensionSchema extensionSchema,
+                                                             SCIMAttributeSchema attributeSchema) {
+        ComplexAttribute extensionAttribute = getComplexAttribute(extensionSchema.getSchema()).orElse(null);
+        if (extensionAttribute == null) {
+            return null;
+        }
+        if (!SCIMDefinitions.DataType.COMPLEX.equals(attributeSchema.getType())) {
+            rethrowSupplier(() -> {
+                throw new InternalErrorException(
+                    "cannot extract a complex type if the type is a simple type or a " + "multi valued type");
+            });
+        }
+        return getOrCreateComplexAttributeFromComplexAttribute(extensionAttribute, attributeSchema);
+    }
+
+    /**
+     * adds the given attribute to the extension schema of the current resource
+     *
+     * @param extensionSchema the extension definition
+     * @param attribute the attribute that should be added
+     */
+    public void addAttributeToSchemaExtension(SCIMResourceTypeExtensionSchema extensionSchema, Attribute attribute) {
+        ComplexAttribute extensionAttribute = getOrCreateExtensionAttribute(extensionSchema);
+        rethrowConsumer(o -> extensionAttribute.setSubAttribute((Attribute) o)).accept(attribute);
+    }
+
+    /**
+     * gets the desired extension as complex attribute
+     *
+     * @param extensionSchema the extension definition
+     * @return the extension as complex attribute
+     */
+    public ComplexAttribute getExtensionAttribute(SCIMResourceTypeExtensionSchema extensionSchema) {
+        return getComplexAttribute(extensionSchema.getSchema()).orElse(null);
+    }
+
+    /**
+     * gets or creates the desired schema extension of the current scim resource
+     *
+     * @param extensionSchema the extension definition
+     * @return the extension as complex attribute
+     */
+    public ComplexAttribute getOrCreateExtensionAttribute(SCIMResourceTypeExtensionSchema extensionSchema) {
+        ComplexAttribute schemaExtension = getExtensionAttribute(extensionSchema);
+        if (schemaExtension == null) {
+            schemaExtension = new ComplexAttribute(extensionSchema.getSchema());
+            rethrowConsumer(o -> createAttribute(extensionSchema.getAsAttributeSchema(), (AbstractAttribute) o)).accept(
+                schemaExtension);
+            getResource().setAttribute(schemaExtension);
+        }
+        return schemaExtension;
+    }
+
+    /**
+     * sets the value of the attribute in the given resource extension
+     *
+     * @param extensionSchema the resource schema extension that should hold the attribute
+     * @param attributeSchema the attribute to set
+     * @param value the value to set into the attribute
+     * @return the value of the attribute or null
+     * @throws ClassCastException if the attribute to extract is not of type {@link SimpleAttribute}
+     */
+    public void setExtensionAttribute(SCIMResourceTypeExtensionSchema extensionSchema,
+                                      SCIMAttributeSchema attributeSchema,
+                                      Object value) {
+
+        ComplexAttribute extensionAttribute = getOrCreateExtensionAttribute(extensionSchema);
+        if (SCIMDefinitions.DataType.COMPLEX.equals(attributeSchema.getType())) {
+            if (attributeSchema.getMultiValued()) {
+                rethrowSupplier(() -> {
+                    // this usecase should be implemented manually based on the specific application requirements
+                    throw new InternalErrorException("cannot set value of Multivalued complex type without knowing " +
+                                                         "which complex type should be updated.");
+                }).get();
+            } else {
+                ComplexAttribute attribute = getOrCreateComplexAttributeFromComplexAttribute(extensionAttribute,
+                    attributeSchema);
+                getSetSubAttributeConsumer(attribute).accept(attributeSchema, () -> value);
+            }
+        }
+        if (attributeSchema.getMultiValued()) {
+            getOrCreateMultiValuedAttributeOfComplexType(extensionAttribute, attributeSchema)
+                .setAttributePrimitiveValue(value);
+        } else {
+            getOrCreateSimpleAttributeOfComplexType(extensionAttribute, attributeSchema).setValue(value);
+        }
+    }
+
+    private ComplexAttribute getOrCreateComplexAttributeFromComplexAttribute(ComplexAttribute complexAttribute,
+                                                                             SCIMAttributeSchema scimAttributeSchema) {
+        Attribute attribute = rethrowSupplier(() -> complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                                  .get();
+        ComplexAttribute subComplexAttribute = (ComplexAttribute) attribute;
+        if (attribute == null) {
+            subComplexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
+            rethrowConsumer(o -> createAttribute(scimAttributeSchema, (AbstractAttribute) o)).accept(
+                subComplexAttribute);
+            rethrowConsumer(o -> complexAttribute.setSubAttribute((Attribute) o)).accept(subComplexAttribute);
+            return subComplexAttribute;
+        } else {
+            return subComplexAttribute;
+        }
+    }
+
+    private MultiValuedAttribute getOrCreateMultiValuedAttributeOfComplexType(ComplexAttribute complexAttribute,
+                                                                              SCIMAttributeSchema scimAttributeSchema) {
+        Attribute attribute = rethrowSupplier(() -> complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                                  .get();
+        MultiValuedAttribute subMultiValuedAttribute = (MultiValuedAttribute) attribute;
+        if (subMultiValuedAttribute == null) {
+            subMultiValuedAttribute = new MultiValuedAttribute(scimAttributeSchema.getName());
+            rethrowConsumer(o -> createAttribute(scimAttributeSchema, (AbstractAttribute) o)).accept(
+                subMultiValuedAttribute);
+            rethrowConsumer(o -> complexAttribute.setSubAttribute((Attribute) o)).accept(subMultiValuedAttribute);
+            return subMultiValuedAttribute;
+        } else {
+            return subMultiValuedAttribute;
+        }
+    }
+
+    private SimpleAttribute getOrCreateSimpleAttributeOfComplexType(ComplexAttribute complexAttribute,
+                                                                    SCIMAttributeSchema scimAttributeSchema) {
+        Attribute attribute = rethrowSupplier(() -> complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                                  .get();
+        SimpleAttribute subSimpleAttribute = (SimpleAttribute) attribute;
+        if (subSimpleAttribute == null) {
+            subSimpleAttribute = new SimpleAttribute(scimAttributeSchema.getName(), "");
+            rethrowConsumer(o -> createAttribute(scimAttributeSchema, (AbstractAttribute) o)).accept(
+                subSimpleAttribute);
+            rethrowConsumer(o -> complexAttribute.setSubAttribute((Attribute) o)).accept(subSimpleAttribute);
+            return subSimpleAttribute;
+        } else {
+            return subSimpleAttribute;
+        }
+    }
+
     /**
      * this method will extract a complex attribute from another complex-attribute that is defined just like a
      * {@link MultiValuedComplexType}. <br>
@@ -806,10 +930,10 @@ public abstract class ScimAttributeAware {
         }
         ComplexAttribute extensionAttribute = extensionAttributeOptional.get();
         Attribute extensionSubAttribute = rethrowFunction(name -> extensionAttribute.getSubAttribute((String) name))
-                .apply(attributeSchema.getName());
+                                              .apply(attributeSchema.getName());
         ComplexAttribute complexSubAttribute = (ComplexAttribute) extensionSubAttribute;
         return getMultiValuedComplexType(complexSubAttribute, valueDefinition, displayDefinition, typeDefinition,
-                                         primaryDefinition, referenceDefinition).orElse(null);
+            primaryDefinition, referenceDefinition).orElse(null);
     }
 
     /**
