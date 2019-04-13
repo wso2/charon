@@ -41,9 +41,8 @@ public class AttributeUtil {
      * @param dataType
      * @return Object
      */
-    public static Object getAttributeValueFromString(Object attributeValue,
-                                                     SCIMDefinitions.DataType dataType)
-            throws CharonException, BadRequestException {
+    public static Object getAttributeValueFromString(Object attributeValue, SCIMDefinitions.DataType dataType)
+        throws CharonException, BadRequestException {
         if (attributeValue == null) {
             return attributeValue;
         }
@@ -89,9 +88,8 @@ public class AttributeUtil {
      * @return
      * @throws CharonException
      */
-    public static String getStringValueOfAttribute(Object attributeValue,
-                                                   SCIMDefinitions.DataType dataType)
-            throws CharonException {
+    public static String getStringValueOfAttribute(Object attributeValue, SCIMDefinitions.DataType dataType)
+        throws CharonException {
         switch (dataType) {
             case STRING:
                 return String.valueOf(attributeValue);
@@ -122,8 +120,8 @@ public class AttributeUtil {
         try {
             return OffsetDateTime.parse(dateTimeString).toInstant();
         } catch (DateTimeException e) {
-            throw new CharonException("Error in parsing date time. " +
-                    "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+            throw new CharonException(
+                "Error in parsing date time. " + "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
         }
     }
 
@@ -165,21 +163,20 @@ public class AttributeUtil {
      * @param attributeName
      * @return
      */
-    public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema) throws
-            BadRequestException {
+    public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema)
+        throws BadRequestException {
 
-        Iterator<AttributeSchema> attributeSchemas = schema.getAttributesList().iterator();
-        while (attributeSchemas.hasNext()) {
-            AttributeSchema attributeSchema = attributeSchemas.next();
+        List<AttributeSchema> attributeSchemas = schema.getAttributesList();
+        schema.getExtensions().forEach(extension -> attributeSchemas.addAll(extension.getAttributesList()));
 
-            if (attributeSchema.getName().equalsIgnoreCase(attributeName) || attributeSchema.getURI().equals
-                    (attributeName)) {
+        for (AttributeSchema attributeSchema : attributeSchemas) {
+            if (attributeSchema.getName().equalsIgnoreCase(attributeName) || attributeSchema.getURI().equals(
+                attributeName)) {
                 return attributeSchema.getURI();
             }
             // check in sub attributes
-            String subAttributeURI =
-                    checkSCIMSubAttributeURIs(attributeSchema.getSubAttributeSchemas(),
-                            attributeSchema, attributeName);
+            String subAttributeURI = checkSCIMSubAttributeURIs(attributeSchema.getSubAttributeSchemas(),
+                attributeSchema, attributeName);
             if (subAttributeURI != null) {
                 return subAttributeURI;
             }
@@ -210,7 +207,8 @@ public class AttributeUtil {
      * @param attributeName   @return
      */
     private static String checkSCIMSubAttributeURIs(List<AttributeSchema> subAttributes,
-                                                    AttributeSchema attributeSchema, String attributeName) {
+                                                    AttributeSchema attributeSchema,
+                                                    String attributeName) {
         if (subAttributes != null) {
             Iterator<AttributeSchema> subsIterator = subAttributes.iterator();
 
@@ -228,7 +226,7 @@ public class AttributeUtil {
                         while (subSubsIterator.hasNext()) {
                             AttributeSchema subSubAttributeSchema = subSubsIterator.next();
                             if ((attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
-                                    subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
+                                     subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
                                     subAttributeSchema.getURI().equals(attributeName)) {
                                 return subSubAttributeSchema.getURI();
                             }
