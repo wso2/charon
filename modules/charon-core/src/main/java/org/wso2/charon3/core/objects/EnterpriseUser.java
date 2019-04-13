@@ -1,14 +1,9 @@
 package org.wso2.charon3.core.objects;
 
-import org.wso2.charon3.core.attributes.AbstractAttribute;
-import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
+import org.wso2.charon3.core.schema.SCIMResourceTypeExtensionSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
-
-import static org.wso2.charon3.core.attributes.DefaultAttributeFactory.createAttribute;
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
  * author Pascal Knueppel <br>
@@ -117,22 +112,15 @@ public class EnterpriseUser extends ScimAttributeAware {
 
     /**
      * sets an attribute within the manager complex type of the enterprise user
-     * @param ref the attribute schema definition
+     * @param simpleAttributeDefinition the attribute schema definition
      * @param value the value to set into the attribute
      */
-    private void setManagerAttribute(SCIMAttributeSchema ref, String value) {
-        ComplexAttribute extension = getOrCreateExtensionAttribute(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA);
-        ComplexAttribute manager = getComplexAttributeFromExtension(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
-            SCIMSchemaDefinitions.SCIMEnterpriseUserSchemaDefinition.MANAGER);
-        if (manager == null) {
-            manager = new ComplexAttribute(SCIMSchemaDefinitions.SCIMEnterpriseUserSchemaDefinition.MANAGER.getName());
-            rethrowConsumer(o -> createAttribute(SCIMSchemaDefinitions.SCIMEnterpriseUserSchemaDefinition.MANAGER,
-                (AbstractAttribute) o)).accept(manager);
-            rethrowConsumer(o -> extension.setSubAttribute((Attribute) o)).accept(manager);
-        }
-        getSetSubAttributeConsumer(manager).accept(ref, () -> value);
-    }
+    private void setManagerAttribute(SCIMAttributeSchema simpleAttributeDefinition, String value) {
+        SCIMResourceTypeExtensionSchema enterpriseExt = SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA;
+        SCIMAttributeSchema managerDef = SCIMSchemaDefinitions.SCIMEnterpriseUserSchemaDefinition.MANAGER;
 
+        addSubAttributeToComplexExtensionAttribute(enterpriseExt, managerDef, simpleAttributeDefinition, value);
+    }
 
     /**
      * {@inheritDoc}

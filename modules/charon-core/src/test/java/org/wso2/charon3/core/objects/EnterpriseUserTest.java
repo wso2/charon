@@ -101,8 +101,23 @@ class EnterpriseUserTest implements FileReferences {
         Assertions.assertEquals(managerValue, enterpriseUser.getManager().getValue());
         Assertions.assertEquals(managerDisplayname, enterpriseUser.getManager().getDisplay());
         Assertions.assertEquals(managerReference, enterpriseUser.getManager().getReference());
+    }
 
+    /**
+     * this test will make sure that the enterprise extension is not added to the user resource if the values are empty
+     */
+    @Test
+    public void testThatExtensionIsNotSerializedByEmptyValues() throws CharonException {
+        User user = new User();
+        user.replaceUsername("donkey_kong");
 
+        EnterpriseUser enterpriseUser = new EnterpriseUser(user);
+        enterpriseUser.setOrganization(null);
+        enterpriseUser.setManagerValue(null);
+
+        String encodedUser = JSON_ENCODER.encodeSCIMObject(user);
+        Assertions.assertFalse(
+            encodedUser.contains("\"" + SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA.getSchema() + "\""), encodedUser);
     }
 
 }

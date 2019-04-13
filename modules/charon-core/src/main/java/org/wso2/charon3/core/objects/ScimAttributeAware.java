@@ -18,6 +18,7 @@
 
 package org.wso2.charon3.core.objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
@@ -36,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.BiConsumer;
@@ -826,6 +828,19 @@ public abstract class ScimAttributeAware {
                                       Object value) {
 
         ComplexAttribute extensionAttribute = getOrCreateExtensionAttribute(extensionSchema);
+        setComplexTypeValue(extensionAttribute, attributeSchema, value);
+    }
+
+    /**
+     * sets the value of a complex attribute
+     *
+     * @param extensionAttribute the complex attribute that should be extended
+     * @param attributeSchema the attribute definition of the attribute that should be added to the complex attribute
+     * @param value the value
+     */
+    public void setComplexTypeValue(ComplexAttribute extensionAttribute,
+                                    SCIMAttributeSchema attributeSchema,
+                                    Object value) {
         if (SCIMDefinitions.DataType.COMPLEX.equals(attributeSchema.getType())) {
             if (attributeSchema.getMultiValued()) {
                 rethrowSupplier(() -> {
@@ -843,8 +858,32 @@ public abstract class ScimAttributeAware {
             getOrCreateMultiValuedAttributeOfComplexType(extensionAttribute, attributeSchema)
                 .setAttributePrimitiveValue(value);
         } else {
-            getOrCreateSimpleAttributeOfComplexType(extensionAttribute, attributeSchema).setValue(value);
+            if (value != null) {
+                getOrCreateSimpleAttributeOfComplexType(extensionAttribute, attributeSchema).setValue(value);
+            } else {
+                deleteAttributeOfComplexAttribute(extensionAttribute, attributeSchema);
+            }
         }
+        if (extensionAttribute.getSubAttributesList().isEmpty()) {
+            getResource().deleteAttribute(extensionAttribute.getName());
+        }
+    }
+
+    protected void addSubAttributeToComplexExtensionAttribute(SCIMResourceTypeExtensionSchema ext,
+                                                              SCIMAttributeSchema complexAttributeDef,
+                                                              SCIMAttributeSchema simpleAttributeDef,
+                                                              Object value) {
+        if (value == null || (value instanceof String && StringUtils.isBlank((String) value))) {
+            return;
+        }
+        ComplexAttribute extension = getOrCreateExtensionAttribute(ext);
+        ComplexAttribute complexAttribute = getComplexAttributeFromExtension(ext, complexAttributeDef);
+        if (complexAttribute == null) {
+            complexAttribute = new ComplexAttribute(complexAttributeDef.getName());
+            rethrowConsumer(o -> createAttribute(complexAttributeDef, (AbstractAttribute) o)).accept(complexAttribute);
+            rethrowConsumer(o -> extension.setSubAttribute((Attribute) o)).accept(complexAttribute);
+        }
+        getSetSubAttributeConsumer(complexAttribute).accept(simpleAttributeDef, () -> value);
     }
 
     private ComplexAttribute getOrCreateComplexAttributeFromComplexAttribute(ComplexAttribute complexAttribute,
@@ -892,6 +931,18 @@ public abstract class ScimAttributeAware {
             return subSimpleAttribute;
         } else {
             return subSimpleAttribute;
+        }
+    }
+
+    private void deleteAttributeOfComplexAttribute(ComplexAttribute complexAttribute,
+                                                   SCIMAttributeSchema scimAttributeSchema) {
+        Map<String, Attribute> attributeMap = complexAttribute.getSubAttributesList();
+        for (String attributeUri : attributeMap.keySet()) {
+            Attribute attribute = attributeMap.get(attributeUri);
+            if (attribute.getURI().equals(scimAttributeSchema.getURI())) {
+                complexAttribute.removeSubAttribute(attribute.getName());
+                return;
+            }
         }
     }
 
