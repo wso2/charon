@@ -36,6 +36,13 @@ public interface FileReferences {
     public static final String CREATE_GROUP_BREMEN_FILE = BASE_PATH + "group/create-group-bremen.json";
 
     /**
+     * the resource file path to the json structure with a creation representation of a group named "bremen" that has
+     * also a user member and another group member
+     */
+    public static final String CREATE_GROUP_BREMEN_WITH_MEMBERS_FILE =
+        BASE_PATH + "group/create-group-bremen-with-members.json";
+
+    /**
      * the resource file path to the json structure with a creation representation of an user named "maxilein"
      */
     public static final String CREATE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-user-maxilein.json";
@@ -46,6 +53,7 @@ public interface FileReferences {
      */
     public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-enterprise-user" +
             "-maxilein.json";
+
 
     /**
      * reads a file from the test-resources

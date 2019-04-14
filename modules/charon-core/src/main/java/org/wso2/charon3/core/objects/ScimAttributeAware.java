@@ -479,6 +479,27 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object
+     *
+     * @param scimAttributeSchema the attribute that should be read from the {@code complexAttribute}
+     * @param complexAttribute    the attribute that should be read from the {@code complexAttribute} if
+     *                            (scimAttributeSchema == null || complexAttribute == null) { return Optional.empty(); }
+     * @return the value from the {@code complexAttribute} or an empty
+     */
+    public Optional<Boolean> getSimpleAttributeBoolean(SCIMAttributeSchema scimAttributeSchema,
+                                                       ComplexAttribute complexAttribute) {
+
+        if (scimAttributeSchema == null || complexAttribute == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(
+            rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                .get()).map(simpleAttribute -> rethrowFunction(sa -> {
+            return simpleAttribute.getBooleanValue();
+        }).apply(simpleAttribute));
+    }
+
+    /**
      * gets a {@link ComplexAttribute} from the given {@link #getResource()} object
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
