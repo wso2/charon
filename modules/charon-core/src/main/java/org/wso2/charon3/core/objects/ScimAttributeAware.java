@@ -26,6 +26,7 @@ import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.objects.plainobjects.Meta;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
@@ -680,6 +681,50 @@ public abstract class ScimAttributeAware {
         return Optional.empty();
     }
 
+
+    /**
+     * @return the meta attribute from the current scim resource
+     */
+    public Meta getMeta() {
+        Optional<ComplexAttribute> metaAttribute = getComplexAttribute(SCIMSchemaDefinitions.META);
+        if (metaAttribute.isPresent()) {
+            ComplexAttribute metaComplex = metaAttribute.get();
+            Meta meta = new Meta();
+            getSimpleAttribute(SCIMSchemaDefinitions.CREATED, metaComplex).ifPresent(simpleAttribute -> {
+                meta.setCreated(rethrowSupplier(simpleAttribute::getInstantValue).get());
+            });
+            getSimpleAttribute(SCIMSchemaDefinitions.LAST_MODIFIED, metaComplex).ifPresent(simpleAttribute -> {
+                meta.setLastModified(rethrowSupplier(simpleAttribute::getInstantValue).get());
+            });
+            getSimpleAttributeValue(SCIMSchemaDefinitions.LOCATION, metaComplex).ifPresent(meta::setLocation);
+            getSimpleAttributeValue(SCIMSchemaDefinitions.RESOURCE_TYPE, metaComplex).ifPresent(meta::setResourceType);
+            getSimpleAttributeValue(SCIMSchemaDefinitions.VERSION, metaComplex).ifPresent(meta::setVersion);
+            return meta;
+        }
+        return null;
+    }
+
+    /**
+     * sets the meta attributes
+     */
+    public void setMeta(Meta meta) {
+        if (meta == null || meta.isEmpty()) {
+            getResource().deleteAttribute(SCIMSchemaDefinitions.META.getName());
+            return;
+        }
+        ComplexAttribute metaAttribute = getComplexAttribute(SCIMSchemaDefinitions.META).orElse(null);
+        if (metaAttribute == null) {
+            metaAttribute = new ComplexAttribute(SCIMSchemaDefinitions.META.getName());
+            rethrowConsumer(o -> DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.META,
+                (AbstractAttribute) o)).accept(metaAttribute);
+            getResource().setAttribute(metaAttribute);
+        }
+        getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.CREATED, meta::getCreated);
+        getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.LAST_MODIFIED, meta::getLastModified);
+        getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.RESOURCE_TYPE, meta::getResourceType);
+        getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.LOCATION, meta::getLocation);
+        getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.VERSION, meta::getVersion);
+    }
 
     /**
      * this method is used to compare to scim objects
