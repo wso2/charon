@@ -26,6 +26,7 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -166,7 +167,7 @@ public class AttributeUtil {
     public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema)
         throws BadRequestException {
 
-        List<AttributeSchema> attributeSchemas = schema.getAttributesList();
+        List<AttributeSchema> attributeSchemas = new ArrayList<>(schema.getAttributesList());
         schema.getExtensions().forEach(extension -> attributeSchemas.addAll(extension.getAttributesList()));
 
         for (AttributeSchema attributeSchema : attributeSchemas) {
