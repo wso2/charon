@@ -18,6 +18,8 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
  * this class representation can be used to easily add a multi valued complex type representation like an email
  * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
@@ -157,40 +159,20 @@ public class MultiValuedComplexType {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof MultiValuedComplexType)) {
             return false;
         }
-
         MultiValuedComplexType that = (MultiValuedComplexType) o;
-
-        if (primary != that.primary) {
-            return false;
-        }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
-            return false;
-        }
-        if (display != null ? !display.equals(that.display) : that.display != null) {
-            return false;
-        }
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-        return reference != null ? reference.equals(that.reference) : that.reference == null;
+        return Objects.equals(type, that.type) && Objects.equals(primary, that.primary) && Objects.equals(display,
+            that.display) && Objects.equals(value, that.value) && Objects.equals(reference, that.reference);
     }
 
     @Override
     public int hashCode() {
-
-        int result = type != null ? type.hashCode() : 0;
-        result = 31 * result + (primary ? 1 : 0);
-        result = 31 * result + (display != null ? display.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (reference != null ? reference.hashCode() : 0);
-        return result;
+        return Objects.hash(type, primary, display, value, reference);
     }
 
     @Override
