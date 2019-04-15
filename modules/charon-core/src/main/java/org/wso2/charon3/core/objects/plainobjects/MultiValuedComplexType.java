@@ -96,9 +96,9 @@ public class MultiValuedComplexType {
     /**
      * @see #primary
      */
-    public Boolean isPrimary() {
+    public boolean isPrimary() {
 
-        return primary;
+        return primary == null ? false : primary;
     }
 
     /**
