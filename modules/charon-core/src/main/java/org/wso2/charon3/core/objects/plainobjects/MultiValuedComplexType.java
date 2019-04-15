@@ -34,7 +34,7 @@ public class MultiValuedComplexType {
      * preferred mailing address or the primary email address. The primary attribute value "true" MUST appear
      * no more than once. If not specified, the value of "primary" SHALL be assumed to be "false".
      */
-    private boolean primary;
+    private Boolean primary;
 
     /**
      * A human-readable name, primarily used for display purposes and having a mutability of "immutable".
@@ -59,17 +59,20 @@ public class MultiValuedComplexType {
 
     }
 
-    public MultiValuedComplexType(String type,
-                                  boolean primary,
-                                  String display,
-                                  String value,
-                                  String reference) {
+    public MultiValuedComplexType(String type, Boolean primary, String display, String value, String reference) {
 
         this.type = type;
         this.primary = primary;
         this.display = display;
         this.value = value;
         this.reference = reference;
+    }
+
+    /**
+     * @return true if the values of this complex type are all null
+     */
+    public boolean isEmpty() {
+        return type == null && primary == null && display == null && value == null && reference == null;
     }
 
     /**
@@ -91,7 +94,7 @@ public class MultiValuedComplexType {
     /**
      * @see #primary
      */
-    public boolean isPrimary() {
+    public Boolean isPrimary() {
 
         return primary;
     }
@@ -99,7 +102,7 @@ public class MultiValuedComplexType {
     /**
      * @see #primary
      */
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
 
         this.primary = primary;
     }
@@ -188,5 +191,16 @@ public class MultiValuedComplexType {
         result = 31 * result + (value != null ? value.hashCode() : 0);
         result = 31 * result + (reference != null ? reference.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiValuedComplexType{" +
+                 "type='" + type + '\'' +
+                 ", primary=" + primary +
+                 ", display='" + display + '\'' +
+                 ", value='" + value + '\'' +
+                 ", reference='" + reference + '\'' +
+                 '}';
     }
 }
