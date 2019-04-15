@@ -303,7 +303,7 @@
         <src.java.version>1.8</src.java.version>
         <target.java.version>1.8</target.java.version>
 
-        <msf4j.version>2.7.0</msf4j.version>
+        <msf4j.version>2.7.3</msf4j.version>
         <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
   
         <log4j.version>1.2.16</log4j.version>
