@@ -556,6 +556,18 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * gets a {@link MultiValuedAttribute} from the given complex attribute
+     *
+     * @param scimAttributeSchema the attribute that should be read from the complex attribute
+     * @return the multivalued attribute from the complex attribute
+     */
+    public Optional<MultiValuedAttribute> getMultiValuedAttribute(ComplexAttribute complexAttribute,
+                                                                  SCIMAttributeSchema scimAttributeSchema) {
+        return Optional.ofNullable((MultiValuedAttribute) rethrowSupplier(
+            () -> complexAttribute.getSubAttribute(scimAttributeSchema.getName())).get());
+    }
+
+    /**
      * sets a {@link SimpleAttribute} for the given {@link #getResource()}
      *
      * @param scimAttributeSchema the attribute to set
@@ -736,8 +748,9 @@ public abstract class ScimAttributeAware {
         ComplexAttribute metaAttribute = getComplexAttribute(SCIMSchemaDefinitions.META).orElse(null);
         if (metaAttribute == null) {
             metaAttribute = new ComplexAttribute(SCIMSchemaDefinitions.META.getName());
-            rethrowConsumer(o -> DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.META,
-                (AbstractAttribute) o)).accept(metaAttribute);
+            rethrowConsumer(
+                o -> DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.META, (AbstractAttribute) o)).accept(
+                metaAttribute);
             getResource().setAttribute(metaAttribute);
         }
         getSetSubAttributeConsumer(metaAttribute).accept(SCIMSchemaDefinitions.CREATED, meta::getCreated);
