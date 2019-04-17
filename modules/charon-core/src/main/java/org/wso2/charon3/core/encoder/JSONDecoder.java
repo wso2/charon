@@ -391,7 +391,7 @@ public class JSONDecoder {
         for (SCIMResourceTypeExtensionSchema extension : resourceSchema.getExtensions()) {
             String resourceString;
             try {
-                resourceString = jsonObject.getString(extension.getSchema());
+                resourceString = jsonObject.optString(extension.getSchema());
             } catch (JSONException e) {
                 logger.debug(e.getMessage());
                 return scimObject;
