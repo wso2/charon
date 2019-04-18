@@ -17,10 +17,12 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.PayloadTooLargeException;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseContent;
@@ -48,13 +50,6 @@ public class BulkResourceManager {
 
     private JSONEncoder encoder = new JSONEncoder();
     private JSONDecoder decoder = new JSONDecoder();
-
-    /**
-     * An integer specifying the number of errors that the service provider will accept before the operation is
-     * terminated and an error response is returned.  OPTIONAL in a request.  Not valid in a response.<br><br>
-     * if not specified the server should process as many operations if possible even if each of them fails
-     */
-    //    private int failOnErrors = Integer.MAX_VALUE;
 
     /**
      * the number of errors that actually occurred
@@ -87,7 +82,9 @@ public class BulkResourceManager {
 
     public SCIMResponse processBulkData(String data) {
         try {
+            validatePayload(data);
             BulkRequestData bulkRequestData = decoder.decodeBulkData(data);
+            validateMaxOperations(bulkRequestData);
             int failOnErrors = bulkRequestData.getFailOnErrors();
 
             BulkResponseData bulkResponseData = new BulkResponseData();
@@ -116,6 +113,40 @@ public class BulkResourceManager {
 
         } catch (AbstractCharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
+    /**
+     * checks that the maximum payload is not exceeded
+     *
+     * @param requestBody the request body sent by the client
+     */
+    private void validatePayload(String requestBody) {
+        final int currentPayload = requestBody == null ? 0 : requestBody.getBytes().length;
+        final int maxPayload = CharonConfiguration.getInstance().getBulk().getMaxPayLoadSize();
+        if (currentPayload > maxPayload) {
+            rethrowSupplier(() -> {
+                throw new PayloadTooLargeException(
+                    "payload sent is too large. Maximum allowed payload is '" + maxPayload + "' but was '" +
+                        currentPayload + "'");
+            }).get();
+        }
+    }
+
+    /**
+     * checks that the maximum number of operations are not exceeded
+     *
+     * @param bulkRequestData the decoded bulk request
+     */
+    private void validateMaxOperations(BulkRequestData bulkRequestData) {
+        final int currentOperations = bulkRequestData.getOperationRequests().size();
+        final int maximumOperations = CharonConfiguration.getInstance().getBulk().getMaxOperations();
+        if (currentOperations > maximumOperations) {
+            rethrowSupplier(() -> {
+                throw new BadRequestException(
+                    "Too many operations. Maximum number of operations is '" + maximumOperations + "' but was '" +
+                        currentOperations + "'", ResponseCodeConstants.TOO_MANY);
+            }).get();
         }
     }
 

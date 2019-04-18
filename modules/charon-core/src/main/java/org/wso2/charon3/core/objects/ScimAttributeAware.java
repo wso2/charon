@@ -482,6 +482,48 @@ public abstract class ScimAttributeAware {
     }
 
     /**
+     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object
+     *
+     * @param scimAttributeSchema the attribute that should be read from the {@code complexAttribute}
+     * @param complexAttribute    the attribute that should be read from the {@code complexAttribute} if
+     *                            (scimAttributeSchema == null || complexAttribute == null) { return Optional.empty(); }
+     * @return the value from the {@code complexAttribute} or an empty
+     */
+    public Optional<Boolean> getSimpleAttributeBooleanValue(SCIMAttributeSchema scimAttributeSchema,
+                                                            ComplexAttribute complexAttribute) {
+
+        if (scimAttributeSchema == null || complexAttribute == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(
+                rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                        .get()).map(simpleAttribute -> rethrowFunction(sa -> {
+                return simpleAttribute.getBooleanValue();
+        }).apply(simpleAttribute));
+    }
+
+    /**
+     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object
+     *
+     * @param scimAttributeSchema the attribute that should be read from the {@code complexAttribute}
+     * @param complexAttribute    the attribute that should be read from the {@code complexAttribute} if
+     *                            (scimAttributeSchema == null || complexAttribute == null) { return Optional.empty(); }
+     * @return the value from the {@code complexAttribute} or an empty
+     */
+    public Optional<Integer> getSimpleAttributeIntegerValue(SCIMAttributeSchema scimAttributeSchema,
+                                                            ComplexAttribute complexAttribute) {
+
+        if (scimAttributeSchema == null || complexAttribute == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(
+                rethrowSupplier(() -> (SimpleAttribute) complexAttribute.getSubAttribute(scimAttributeSchema.getName()))
+                        .get()).map(simpleAttribute -> rethrowFunction(sa -> {
+                return (Integer) simpleAttribute.getValue();
+        }).apply(simpleAttribute));
+    }
+
+    /**
      * gets a {@link ComplexAttribute} from the given {@link #getResource()} object
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
@@ -520,6 +562,29 @@ public abstract class ScimAttributeAware {
             return attribute.get();
         } else {
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
+            rethrowBiConsumer(DefaultAttributeFactory::createAttribute).accept(scimAttributeSchema, complexAttribute);
+            getResource().setAttribute(complexAttribute);
+            return complexAttribute;
+        }
+    }
+
+    /**
+     * gets a {@link MultiValuedAttribute} from the given {@link #getResource()} object if it does exist and will
+     * create it if it does not exist
+     *
+     * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
+     * @return the attribute from the {@link #getResource()} or a new attribute that will also be added to the
+     * {@link #getResource()} object
+     */
+    public MultiValuedAttribute getOrCrateMultivaluedAttribute(SCIMAttributeSchema scimAttributeSchema) {
+        // @formatter:off
+        Optional<MultiValuedAttribute> attribute = Optional
+                .ofNullable((MultiValuedAttribute) getResource().getAttribute(scimAttributeSchema.getName()));
+        // @formatter:on
+        if (attribute.isPresent()) {
+            return attribute.get();
+        } else {
+            MultiValuedAttribute complexAttribute = new MultiValuedAttribute(scimAttributeSchema.getName());
             rethrowBiConsumer(DefaultAttributeFactory::createAttribute).accept(scimAttributeSchema, complexAttribute);
             getResource().setAttribute(complexAttribute);
             return complexAttribute;

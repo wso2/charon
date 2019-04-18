@@ -2,9 +2,13 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.charon3.core.config.FilterFeature;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.objects.EnterpriseUser;
 import org.wso2.charon3.core.objects.User;
@@ -170,12 +174,36 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
     }
 
-    @Test
-    public void testListUsersWithGet() throws AbstractCharonException {
-        SCIMResponse scimResponse = userManager.listWithGET(null, null, null, null, null, null, null, null);
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1 ,3 ,5, 50})
+    public void testListUsersWithGet(int numberOfResults) throws AbstractCharonException {
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, 50));
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, numberOfResults, null, null, null, null, null);
         Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
                                                                             Mockito.any(),
+                                                                            Mockito.eq(numberOfResults),
                                                                             Mockito.any(),
+                                                                            Mockito.any(),
+                                                                            Mockito.any(),
+                                                                            Mockito.any());
+        Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+    }
+
+    /**
+     * this test will assure that the count value is reduced to the maximum number of results that was setup in the
+     * service provider configuration if the client defined a value that is greater than the maximum number of results
+     * @throws AbstractCharonException
+     */
+    @ParameterizedTest
+    @ValueSource(ints = {5, 8, 13, 21, 50})
+    public void testMaximumResults(int count) throws AbstractCharonException {
+        final int maxNumberOfResults = 1;
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, maxNumberOfResults));
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, count, null, null, null, null,
+            null);
+        Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
+                                                                            Mockito.any(),
+                                                                            Mockito.eq(maxNumberOfResults),
                                                                             Mockito.any(),
                                                                             Mockito.any(),
                                                                             Mockito.any(),
@@ -185,11 +213,13 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
 
     @Test
     public void testListUsersWithPost() throws AbstractCharonException {
+        final int startIndex = 1;
+        final int count = CharonConfiguration.getInstance().getFilter().getMaxResults();
         String searchRequestString = readResourceFile(SEARCH_REQUEST_FILE);
         SCIMResponse scimResponse = userManager.listWithPOST(searchRequestString);
         Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
-                                                                            Mockito.eq(1),
-                                                                            Mockito.eq(10),
+                                                                            Mockito.eq(startIndex),
+                                                                            Mockito.eq(count),
                                                                             Mockito.any(),
                                                                             Mockito.any(),
                                                                             Mockito.any(),

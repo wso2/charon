@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * This class will act as a support class for endpoints.
  */
@@ -46,10 +47,10 @@ public class ResourceManagerUtil {
     public static Map<String, Boolean> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
                                                                      String requestedAttributes,
                                                                      String requestedExcludingAttributes)
-            throws CharonException {
+        throws CharonException {
 
-        ArrayList<AttributeSchema> attributeSchemaArrayList = (ArrayList<AttributeSchema>)
-                CopyUtil.deepCopy(schema.getAttributesList());
+        ArrayList<AttributeSchema> attributeSchemaArrayList = (ArrayList<AttributeSchema>) CopyUtil.deepCopy(
+            schema.getAttributesList());
 
         List<String> requestedAttributesList = null;
         List<String> requestedExcludingAttributesList = null;
@@ -81,10 +82,10 @@ public class ResourceManagerUtil {
                 if (requestedAttributes != null) {
                     //if attributes are set, delete all the request and default attributes
                     //and add only the requested attributes
-                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                            || attributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                            && (!requestedAttributesList.contains(attributeSchema.getName())
-                            && !isSubAttributeExistsInList(requestedAttributesList, attributeSchema))) {
+                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                             attributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
+                            (!requestedAttributesList.contains(attributeSchema.getName()) &&
+                                 !isSubAttributeExistsInList(requestedAttributesList, attributeSchema))) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
                 } else if (requestedExcludingAttributes != null) {
@@ -94,15 +95,14 @@ public class ResourceManagerUtil {
                     }
                     //if exclude attribute is set, set of exclude attributes need to be
                     // removed from the default set of attributes
-                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                            && requestedExcludingAttributesList.contains(attributeSchema.getName())) {
+                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
+                            requestedExcludingAttributesList.contains(attributeSchema.getName())) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
                 }
             }
-            getOnlyRequiredSubAttributesURIs(attributeSchema, attributeSchemaArrayList,
-                    requestedAttributes, requestedExcludingAttributes,
-                    requestedAttributesList, requestedExcludingAttributesList);
+            getOnlyRequiredSubAttributesURIs(attributeSchema, attributeSchemaArrayList, requestedAttributes,
+                requestedExcludingAttributes, requestedAttributesList, requestedExcludingAttributesList);
         }
         return convertSchemasToURIs(attributeSchemaArrayList);
     }
@@ -125,7 +125,7 @@ public class ResourceManagerUtil {
                                                          String requestedExcludingAttributes,
                                                          List<String> requestedAttributesList,
                                                          List<String> requestedExcludingAttributesList)
-            throws CharonException {
+        throws CharonException {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
             AttributeSchema realAttributeSchema = null;
@@ -157,13 +157,13 @@ public class ResourceManagerUtil {
                         if (requestedAttributes != null) {
                             //if attributes are set, delete all the request and default attributes
                             //and add only the requested attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                                    || subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                    && (!requestedAttributesList.contains(attributeSchema.getName() + "." +
-                                    subAttributeSchema.getName())
-                                    && !isSubSubAttributeExistsInList(requestedAttributesList,
-                                    attributeSchema, subAttributeSchema))
-                                    && (!requestedAttributesList.contains(attributeSchema.getName()))) {
+                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                                     subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
+                                    (!requestedAttributesList.contains(
+                                        attributeSchema.getName() + "." + subAttributeSchema.getName()) &&
+                                         !isSubSubAttributeExistsInList(requestedAttributesList, attributeSchema,
+                                             subAttributeSchema)) && (!requestedAttributesList.contains(
+                                attributeSchema.getName()))) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -173,17 +173,16 @@ public class ResourceManagerUtil {
                             }
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                    && requestedExcludingAttributesList.contains(attributeSchema.getName()
-                                    + "." + subAttributeSchema.getName())) {
+                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
+                                    requestedExcludingAttributesList.contains(
+                                        attributeSchema.getName() + "." + subAttributeSchema.getName())) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         }
                     }
-                    getOnlyRequiredSubSubAttributesURIs(attributeSchema, subAttributeSchema,
-                            attributeSchemaArrayList, requestedAttributes,
-                            requestedExcludingAttributes, requestedAttributesList,
-                            requestedExcludingAttributesList);
+                    getOnlyRequiredSubSubAttributesURIs(attributeSchema, subAttributeSchema, attributeSchemaArrayList,
+                        requestedAttributes, requestedExcludingAttributes, requestedAttributesList,
+                        requestedExcludingAttributesList);
                 }
             }
         }
@@ -209,7 +208,7 @@ public class ResourceManagerUtil {
                                                             String requestedExcludingAttributes,
                                                             List<String> requestedAttributesList,
                                                             List<String> requestedExcludingAttributesList)
-            throws CharonException {
+        throws CharonException {
 
         if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
@@ -247,13 +246,13 @@ public class ResourceManagerUtil {
                         if (requestedAttributes != null) {
                             //if attributes are set, delete all the request and default attributes
                             //and add only the requested attributes
-                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
-                                    || subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                    && (!requestedAttributesList.contains(attribute.getName() + "." +
-                                    subAttribute.getName() + "." + subSubAttributeSchema.getName()))
-                                    && (!requestedAttributesList.contains(attribute.getName()))
-                                    && (!requestedAttributesList.contains(attribute.getName() + "." + subAttribute
-                                    .getName()))) {
+                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                                     subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
+                                    (!requestedAttributesList.contains(
+                                        attribute.getName() + "." + subAttribute.getName() + "." +
+                                            subSubAttributeSchema.getName())) && (!requestedAttributesList.contains(
+                                attribute.getName())) && (!requestedAttributesList.contains(
+                                attribute.getName() + "." + subAttribute.getName()))) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -263,9 +262,10 @@ public class ResourceManagerUtil {
                             }
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
-                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                    && requestedExcludingAttributesList.contains(attribute.getName() +
-                                    "." + subAttribute.getName() + "." + subSubAttributeSchema.getName())) {
+                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
+                                    requestedExcludingAttributesList.contains(
+                                        attribute.getName() + "." + subAttribute.getName() + "." +
+                                            subSubAttributeSchema.getName())) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         }
@@ -282,8 +282,8 @@ public class ResourceManagerUtil {
      * @param attributeSchema
      * @return
      */
-    private static boolean isSubAttributeExistsInList(List<String> requestedAttributes, AttributeSchema
-            attributeSchema) {
+    private static boolean isSubAttributeExistsInList(List<String> requestedAttributes,
+                                                      AttributeSchema attributeSchema) {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
             List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
 
@@ -297,9 +297,8 @@ public class ResourceManagerUtil {
 
                     for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
                         if (requestedAttributes.contains(
-                                attributeSchema.getName() + "." +
-                                        subAttributeSchema.getName() + "." +
-                                        subSubAttributeSchema.getName())) {
+                            attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
+                                subSubAttributeSchema.getName())) {
                             return true;
                         }
                     }
@@ -327,8 +326,8 @@ public class ResourceManagerUtil {
             List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
             for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
-                if (requestedAttributes.contains(attributeSchema.getName() + "." +
-                        subAttributeSchema.getName() + "." + subSubAttributeSchema.getName())) {
+                if (requestedAttributes.contains(attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
+                                                     subSubAttributeSchema.getName())) {
                     return true;
                 }
             }
@@ -375,7 +374,7 @@ public class ResourceManagerUtil {
      * @throws CharonException
      */
     private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName)
-            throws CharonException {
+        throws CharonException {
         List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);
         int count = 0;
         for (AttributeSchema attributeSchema : tempList) {
@@ -398,19 +397,24 @@ public class ResourceManagerUtil {
      */
     public static int processCount(String countStr) throws BadRequestException {
 
-        int count;
         if (countStr == null || countStr.isEmpty()) {
-            count = CharonConfiguration.getInstance().getCountValueForPagination();
-        } else {
-            try {
-                count = Integer.parseInt(countStr);
-            } catch (NumberFormatException e) {
-                throw new BadRequestException("Value of parameter count is Invalid");
-            }
+            return CharonConfiguration.getInstance().getFilter().getMaxResults();
+        }
+
+        int count;
+        try {
+            count = Integer.parseInt(countStr);
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Value of parameter count is Invalid");
         }
 
         if (count < 0) {
             count = 0;
+        }
+
+        final int maximumResults = CharonConfiguration.getInstance().getFilter().getMaxResults();
+        if (count > maximumResults) {
+            count = maximumResults;
         }
 
         return count;

@@ -58,7 +58,7 @@ public class SCIMUserSchemaExtensionBuilder {
         return extensionSchema;
     }
 
-    /*
+    /**
      * Logic goes here
      * @throws CharonException
      */
@@ -82,7 +82,7 @@ public class SCIMUserSchemaExtensionBuilder {
         extensionSchema = attributeSchemas.get(extensionRootAttributeName);
     }
 
-    /*
+    /**
      * This method reads configuration file and stores in the memory as an
      * configuration map
      *
@@ -126,7 +126,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
 
-    /*
+    /**
      * Knows how to build a complex attribute
      *
      * @param config
@@ -158,7 +158,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
     }
 
-    /*
+    /**
      * Has the logic to iterate through child attributes
      *
      * @param config
@@ -174,7 +174,7 @@ public class SCIMUserSchemaExtensionBuilder {
         attributeSchemas.put(config.getName(), complexAttribute);
     }
 
-    /*
+    /**
      * Builds simple attribute schema
      *
      * @param config
@@ -189,7 +189,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
     }
 
-    /*
+    /**
      * create SCIM Attribute Schema
      * @param attribute
      * @param subAttributeList
@@ -359,7 +359,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
         }
 
-        /*
+        /**
          * this builds the relevant data types according to what has configured in config file
          * @param input
          * @return
@@ -386,7 +386,7 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /*
+        /**
          * this builds the relevant mutability according to what has configured in config file
          * @param input
          * @return
@@ -405,7 +405,7 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /*
+        /**
          * this builds the relevant returned type according to what has configured in config file
          * @param input
          * @return
@@ -424,7 +424,7 @@ public class SCIMUserSchemaExtensionBuilder {
             return type;
         }
 
-        /*
+        /**
          * this builds the relevant uniqueness according to what has configured in config file
          * @param input
          * @return
@@ -455,7 +455,7 @@ public class SCIMUserSchemaExtensionBuilder {
             return canonicalValues;
         }
 
-        /*
+        /**
          * this builds the relevant reference types according to what has configured in config file
          * @param input
          * @return
