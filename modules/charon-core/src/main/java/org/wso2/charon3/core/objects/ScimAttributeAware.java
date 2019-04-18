@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.BiConsumer;
@@ -597,31 +598,30 @@ public abstract class ScimAttributeAware {
      *
      * @return if the meta-data is identical
      */
-    public static boolean attributeMetaEquals(Attribute attribute,
-                                              Attribute attributeOther) {
+    public static boolean attributeMetaEquals(Attribute attribute, Attribute attributeOther) {
 
-        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
+        if (!Objects.equals(attribute.getMultiValued(), attributeOther.getMultiValued())) {
             return false;
         }
-        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
+        if (!Objects.equals(attribute.getCaseExact(), attributeOther.getCaseExact())) {
             return false;
         }
-        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
+        if (!Objects.equals(attribute.getRequired(), attributeOther.getRequired())) {
             return false;
         }
-        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
+        if (!Objects.equals(attribute.getMutability(), attributeOther.getMutability())) {
             return false;
         }
-        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
+        if (!Objects.equals(attribute.getReturned(), attributeOther.getReturned())) {
             return false;
         }
-        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
+        if (!Objects.equals(attribute.getUniqueness(), attributeOther.getUniqueness())) {
             return false;
         }
-        if (!attribute.getURI().equals(attributeOther.getURI())) {
+        if (!Objects.equals(attribute.getURI(), attributeOther.getURI())) {
             return false;
         }
-        return attribute.getType().equals(attributeOther.getType());
+        return Objects.equals(attribute.getType(), attributeOther.getType());
     }
 
     /**
