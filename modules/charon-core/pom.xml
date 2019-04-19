@@ -31,7 +31,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.json</groupId>
+            <groupId>org.json.wso2</groupId>
             <artifactId>json</artifactId>
         </dependency>
         <dependency>
