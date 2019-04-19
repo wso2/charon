@@ -618,7 +618,7 @@ public abstract class ScimAttributeAware {
         if (!Objects.equals(attribute.getUniqueness(), attributeOther.getUniqueness())) {
             return false;
         }
-        if (!Objects.equals(attribute.getURI(), attributeOther.getURI())) {
+        if (attribute.getURI() == null || !attribute.getURI().equals(attributeOther.getURI())) {
             return false;
         }
         return Objects.equals(attribute.getType(), attributeOther.getType());
@@ -629,10 +629,9 @@ public abstract class ScimAttributeAware {
      *
      * @return true if the attributes are identical, false else
      */
-    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
-                                                SimpleAttribute attribute2) {
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1, SimpleAttribute attribute2) {
 
-        if (!attribute1.getValue().equals(attribute2.getValue())) {
+        if (!Objects.equals(attribute1.getValue(), attribute2.getValue())) {
             return false;
         }
         return attributeMetaEquals(attribute1, attribute2);
