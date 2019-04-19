@@ -3,6 +3,8 @@ package org.wso2.charon3.core.schema;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
+
 /**
  * author Pascal Knueppel <br>
  * created at: 18.03.2019 - 12:50 <br>
@@ -65,6 +67,15 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     @Override
     public final void addExtension(SCIMResourceTypeExtensionSchema extension) {
         // do nothing
+    }
+
+    /**
+     * @return this extension as an attribute schema definition
+     */
+    public SCIMAttributeSchema getAsAttributeSchema() {
+        return SCIMAttributeSchema.createSCIMAttributeSchema(getSchema(), getSchema(), COMPLEX, false, null, false,
+            false, SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+            SCIMDefinitions.Uniqueness.NONE, null, null, null);
     }
 
     /**

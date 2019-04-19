@@ -18,6 +18,8 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
  * This class representation can be used to easily add a scim name to an
  * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
@@ -76,6 +78,14 @@ public class ScimName {
         this.middleName = middleName;
         this.honorificPrefix = honorificPrefix;
         this.honorificSuffix = honorificSuffix;
+    }
+
+    /**
+     * @return true if all values of this object are null
+     */
+    public boolean isEmpty() {
+        return formatted == null && familyName == null && givenName == null && middleName == null &&
+                   honorificPrefix == null && honorificSuffix == null;
     }
 
     /**
@@ -176,46 +186,29 @@ public class ScimName {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof ScimName)) {
             return false;
         }
-
         ScimName scimName = (ScimName) o;
-
-        if (formatted != null ? !formatted.equals(scimName.formatted) : scimName.formatted != null) {
-            return false;
-        }
-        if (familyName != null ? !familyName.equals(scimName.familyName) : scimName.familyName != null) {
-            return false;
-        }
-        if (givenName != null ? !givenName.equals(scimName.givenName) : scimName.givenName != null) {
-            return false;
-        }
-        if (middleName != null ? !middleName.equals(scimName.middleName) : scimName.middleName != null) {
-            return false;
-        }
-        if (honorificPrefix != null ? !honorificPrefix
-                .equals(scimName.honorificPrefix) : scimName.honorificPrefix != null) {
-            return false;
-        }
-        return honorificSuffix != null ? honorificSuffix
-                .equals(scimName.honorificSuffix) : scimName.honorificSuffix == null;
+        return Objects.equals(formatted, scimName.formatted) && Objects.equals(familyName, scimName.familyName) &&
+                   Objects.equals(givenName, scimName.givenName) && Objects.equals(middleName, scimName.middleName) &&
+                   Objects.equals(honorificPrefix, scimName.honorificPrefix) && Objects.equals(honorificSuffix,
+            scimName.honorificSuffix);
     }
 
     @Override
     public int hashCode() {
+        return Objects.hash(formatted, familyName, givenName, middleName, honorificPrefix, honorificSuffix);
+    }
 
-        int result = formatted != null ? formatted.hashCode() : 0;
-        result = 31 * result + (familyName != null ? familyName.hashCode() : 0);
-        result = 31 * result + (givenName != null ? givenName.hashCode() : 0);
-        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
-        result = 31 * result + (honorificPrefix != null ? honorificPrefix.hashCode() : 0);
-        result = 31 * result + (honorificSuffix != null ? honorificSuffix.hashCode() : 0);
-        return result;
+    @Override
+    public String toString() {
+        return "ScimName{" + "formatted='" + formatted + '\'' + ", familyName='" + familyName + '\'' + ", givenName='" +
+                   givenName + '\'' + ", middleName='" + middleName + '\'' + ", honorificPrefix='" + honorificPrefix +
+                   '\'' + ", honorificSuffix='" + honorificSuffix + '\'' + '}';
     }
 
     @Override
