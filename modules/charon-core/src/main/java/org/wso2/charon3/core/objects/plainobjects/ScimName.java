@@ -210,16 +210,4 @@ public class ScimName {
                    givenName + '\'' + ", middleName='" + middleName + '\'' + ", honorificPrefix='" + honorificPrefix +
                    '\'' + ", honorificSuffix='" + honorificSuffix + '\'' + '}';
     }
-
-    @Override
-    public String toString() {
-        return "ScimName{" +
-                 "formatted='" + formatted + '\'' +
-                 ", familyName='" + familyName + '\'' +
-                 ", givenName='" + givenName + '\'' +
-                 ", middleName='" + middleName + '\'' +
-                 ", honorificPrefix='" + honorificPrefix + '\'' +
-                 ", honorificSuffix='" + honorificSuffix + '\'' +
-                 '}';
-    }
 }

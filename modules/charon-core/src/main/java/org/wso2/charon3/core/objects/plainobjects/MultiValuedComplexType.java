@@ -185,15 +185,4 @@ public class MultiValuedComplexType {
                  ", reference='" + reference + '\'' +
                  '}';
     }
-
-    @Override
-    public String toString() {
-        return "MultiValuedComplexType{" +
-                 "type='" + type + '\'' +
-                 ", primary=" + primary +
-                 ", display='" + display + '\'' +
-                 ", value='" + value + '\'' +
-                 ", reference='" + reference + '\'' +
-                 '}';
-    }
 }

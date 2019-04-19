@@ -29,6 +29,8 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.resourcetypes.ResourceType;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
+import org.wso2.charon3.core.utils.codeutils.Node;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,14 +44,14 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
  * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
  * ResourceTypeResourceManager
  */
-public class ResourceTypeResourceManager extends ResourceManager {
+public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
 
-
-    public ResourceTypeResourceManager(ResourceHandler resourceHandler) {
-        super(resourceHandler);
-    }
 
     private static final Logger log = LoggerFactory.getLogger(ResourceTypeResourceManager.class);
+
+    public ResourceTypeResourceManager() {
+        super(new ResourceTypeHandler());
+    }
 
     /**
      * Retrieves a single resource type with the specified id
@@ -68,8 +70,8 @@ public class ResourceTypeResourceManager extends ResourceManager {
             rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt)).accept(resourceType);
             String encodedObject = rethrowSupplier(() -> getEncoder().encodeSCIMObject(resourceType)).get();
             Map<String, String> responseHeaders = new HashMap<>();
-                responseHeaders
-                    .put(SCIMConstants.LOCATION_HEADER, rethrowSupplier(() -> getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get());
+            responseHeaders.put(SCIMConstants.LOCATION_HEADER,
+                rethrowSupplier(() -> getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get());
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
         } catch (AbstractCharonException ex) {
@@ -81,7 +83,9 @@ public class ResourceTypeResourceManager extends ResourceManager {
         }
     }
 
-    public SCIMResponse create(ResourceHandler userManager, String scimObjectString, String attributes,
+    public SCIMResponse create(ResourceHandler userManager,
+                               String scimObjectString,
+                               String attributes,
                                String excludeAttributes) {
 
         String error = "Request is undefined";
@@ -100,7 +104,8 @@ public class ResourceTypeResourceManager extends ResourceManager {
                                     String filter,
                                     int startIndex,
                                     int count,
-                                    String sortBy, String sortOrder,
+                                    String sortBy,
+                                    String sortOrder,
                                     String domainName,
                                     String attributes,
                                     String excludeAttributes) {
@@ -138,19 +143,69 @@ public class ResourceTypeResourceManager extends ResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPUT(ResourceHandler userManager, String existingId, String scimObjectString,
-                                      String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPUT(ResourceHandler userManager,
+                                      String existingId,
+                                      String scimObjectString,
+                                      String attributes,
+                                      String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPATCH(ResourceHandler userManager, String existingId, String scimObjectString,
-                                        String attributes, String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(ResourceHandler userManager,
+                                        String existingId,
+                                        String scimObjectString,
+                                        String attributes,
+                                        String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
+    }
+
+    /**
+     * this class is a simple useless mockup that is used to prevent a NullPointerException on the parent constructor
+     */
+    public static class ResourceTypeHandler implements ResourceHandler<ResourceType> {
+
+        private ResourceTypeHandler() {
+        }
+
+        public ResourceType create(ResourceType resource, Map<String, Boolean> requiredAttributes)
+            throws AbstractCharonException {
+            return null;
+        }
+
+        public ResourceType get(String id, Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
+            return null;
+        }
+
+        public void delete(String id) throws AbstractCharonException {
+        }
+
+        public List<Object> listResources(Node node,
+                                          Integer startIndex,
+                                          Integer count,
+                                          String sortBy,
+                                          String sortOrder,
+                                          String domainName,
+                                          Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
+            return null;
+        }
+
+        public ResourceType update(ResourceType resourceUpdate, Map<String, Boolean> requiredAttributes)
+            throws AbstractCharonException {
+            return null;
+        }
+
+        public String getResourceEndpoint() {
+            return null;
+        }
+
+        public SCIMResourceTypeSchema getResourceSchema() {
+            return null;
+        }
     }
 }

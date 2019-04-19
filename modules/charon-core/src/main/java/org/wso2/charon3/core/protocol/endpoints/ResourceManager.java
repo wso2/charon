@@ -10,7 +10,6 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
@@ -41,8 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 
 /**
