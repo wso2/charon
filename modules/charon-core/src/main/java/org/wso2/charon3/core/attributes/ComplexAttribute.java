@@ -115,9 +115,8 @@ public class ComplexAttribute extends AbstractAttribute {
      * Set a sub attribute of the complex attribute's sub attribute list.
      *
      * @param subAttribute
-     * @throws CharonException
      */
-    public void setSubAttribute(Attribute subAttribute) throws CharonException {
+    public void setSubAttribute(Attribute subAttribute) {
         subAttributesList.put(subAttribute.getName(), subAttribute);
     }
 }

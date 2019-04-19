@@ -113,7 +113,8 @@ public class JSONDecoder {
 
         Optional<Integer> totalResults = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
-        Optional<Integer> startIndex = getIntValueFromJson(decodedJsonObj, SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+        Optional<Integer> startIndex = getIntValueFromJson(decodedJsonObj,
+            SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
         Optional<Integer> itemsPerPage = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
 
@@ -263,7 +264,7 @@ public class JSONDecoder {
         try {
             return Optional.of(jsonObject.getInt(name));
         } catch (JSONException e) {
-            logger.error("could not get '{}' value from scim resource", name);
+            logger.trace("could not get '{}' value from scim resource", name);
             return Optional.empty();
         }
     }
@@ -399,8 +400,7 @@ public class JSONDecoder {
                 continue;
             }
             AbstractSCIMObject scimExtension = decodeResource(resourceString, extension, new AbstractSCIMObject());
-            final SCIMAttributeSchema scimAttributeSchema =
-                extension.getAsAttributeSchema();
+            final SCIMAttributeSchema scimAttributeSchema = extension.getAsAttributeSchema();
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
             Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
                 complexAttribute);
@@ -518,6 +518,7 @@ public class JSONDecoder {
                     String error =
                         "Unknown JSON representation for the MultiValued attribute " + attributeSchema.getName() +
                             " which has data type as " + attributeSchema.getType();
+                    logger.error(error);
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
@@ -708,8 +709,17 @@ public class JSONDecoder {
                 if (subAttributeSchema.getMultiValued()) {
                     if (subAttributeValue instanceof JSONArray) {
 
-                        MultiValuedAttribute multiValuedAttribute = buildPrimitiveMultiValuedAttribute(
-                            subAttributeSchema, (JSONArray) subAttributeValue);
+                        JSONArray jsonArray = (JSONArray) subAttributeValue;
+                        MultiValuedAttribute multiValuedAttribute;
+                        // normally RFC7643 does not allow to place a complex type within another complex type
+                        // but there are two exceptions from which one must be handled here. This exception is the
+                        // schema definition for the schemas-endpoint. The subAttributes of a schema field definition
+                        // represents a complex type within a complex type, so this attribute must be handled here.
+                        if (jsonArray.length() > 0 && !(jsonArray.get(0) instanceof JSONObject)) {
+                            multiValuedAttribute = buildPrimitiveMultiValuedAttribute(subAttributeSchema, jsonArray);
+                        } else {
+                            multiValuedAttribute = buildComplexMultiValuedAttribute(subAttributeSchema, jsonArray);
+                        }
                         //let the attribute factory to set the sub attribute of a complex
                         // attribute to detect schema violations.
                         multiValuedAttribute = (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(
@@ -748,10 +758,10 @@ public class JSONDecoder {
      * @param scimResourceString
      * @return
      */
-    public ArrayList<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
+    public List<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
 
 
-        ArrayList<PatchOperation> operationList = new ArrayList<>();
+        List<PatchOperation> operationList = new ArrayList<>();
         try {
             //decode the string into json representation
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
@@ -815,8 +825,8 @@ public class JSONDecoder {
         try {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
             SearchRequest searchRequest = new SearchRequest();
-            ArrayList<String> attributes = new ArrayList<>();
-            ArrayList<String> excludedAttributes = new ArrayList<>();
+            List<String> attributes = new ArrayList<>();
+            List<String> excludedAttributes = new ArrayList<>();
 
             JSONArray attributesValues = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.ATTRIBUTES);
             JSONArray excludedAttributesValues = (JSONArray) decodedJsonObj.opt(

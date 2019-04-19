@@ -15,6 +15,8 @@
  */
 package org.wso2.charon3.core.objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
@@ -27,7 +29,6 @@ import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
-import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 
 /**
@@ -45,6 +48,9 @@ import java.util.Map;
 public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractSCIMObject.class);
+
     /**
      * Collection of attributes which constitute this resource.
      */
@@ -206,7 +212,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         } else {
             SimpleAttribute idAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.ID, id);
             idAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.ID,
-                                                                                    idAttribute);
+                idAttribute);
             this.setAttribute(idAttribute);
         }
 
@@ -221,7 +227,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      */
     public void setExternalId(String externalId) throws CharonException, BadRequestException {
         SimpleAttribute externalIdAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.EXTERNAL_ID,
-                                                                  externalId);
+            externalId);
         DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.EXTERNAL_ID, externalIdAttribute);
         this.setAttribute(externalIdAttribute);
     }
@@ -234,9 +240,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     public void setCreatedInstant(Instant created) throws CharonException, BadRequestException {
         //create the created date attribute as defined in schema.
         SimpleAttribute createdDateAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.CREATED,
-                                                                   created);
+            created);
         createdDateAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.CREATED,
-                                                                                         createdDateAttribute);
+            createdDateAttribute);
         //check meta complex attribute already exist.
         if (getMetaAttribute() != null) {
             ComplexAttribute metaAttribute = getMetaAttribute();
@@ -292,8 +298,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      */
     protected void createMetaAttribute() throws CharonException, BadRequestException {
         ComplexAttribute metaAttribute = (ComplexAttribute) DefaultAttributeFactory.createAttribute(
-            SCIMSchemaDefinitions.META,
-            new ComplexAttribute(SCIMConstants.CommonSchemaConstants.META));
+            SCIMSchemaDefinitions.META, new ComplexAttribute(SCIMConstants.CommonSchemaConstants.META));
         if (isMetaAttributeExist()) {
             String error = "Read only meta attribute is tried to modify";
             throw new CharonException(error);
@@ -422,14 +427,14 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                     if (subAttribute instanceof SimpleAttribute) {
 
                         complexValue = simpleAttributeToString(complexValue,
-                                                               (Attribute) ((SimpleAttribute) subAttribute));
+                            (Attribute) ((SimpleAttribute) subAttribute));
 
                     } else if (subAttribute instanceof MultiValuedAttribute) {
                         if (!subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                             String primitiveValue = null;
-                            primitiveValue = multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subAttribute)
-                                                                                       .getAttributePrimitiveValues(),
-                                                                                   subAttribute.getName());
+                            primitiveValue = multiValuedPrimitiveAttributeToString(
+                                ((MultiValuedAttribute) subAttribute).getAttributePrimitiveValues(),
+                                subAttribute.getName());
                             if (complexValue == null) {
                                 complexValue = primitiveValue;
                             } else {
@@ -458,8 +463,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                             (MultiValuedAttribute) subSubAttribute;
                                         List<Object> primitives = multiValuedAttribute.getAttributePrimitiveValues();
                                         complexSubValue = multiValuedPrimitiveAttributeToString(primitives,
-                                                                                                subSubAttribute
-                                                                                                    .getName());
+                                            subSubAttribute.getName());
                                     }
                                 }
                                 complexSubValue = "{" + complexSubValue + "}";
@@ -492,10 +496,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                 complexSubValue = simpleAttributeToString(complexSubValue, subSubAttribute);
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
-                                complexSubValue =
-                                    multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
-                                                                              .getAttributePrimitiveValues(),
-                                                                          subSubAttribute.getName());
+                                complexSubValue = multiValuedPrimitiveAttributeToString(
+                                    ((MultiValuedAttribute) subSubAttribute).getAttributePrimitiveValues(),
+                                    subSubAttribute.getName());
                             }
                         }
                         complexSubValue = subAttribute.getName() + ":{" + complexSubValue + "}";
@@ -532,10 +535,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                 complexSubValue = simpleAttributeToString(complexSubValue, subSubAttribute);
 
                             } else if (subSubAttribute instanceof MultiValuedAttribute) {
-                                complexSubValue =
-                                    multiValuedPrimitiveAttributeToString(((MultiValuedAttribute) subSubAttribute)
-                                                                              .getAttributePrimitiveValues(),
-                                                                          subSubAttribute.getName());
+                                complexSubValue = multiValuedPrimitiveAttributeToString(
+                                    ((MultiValuedAttribute) subSubAttribute).getAttributePrimitiveValues(),
+                                    subSubAttribute.getName());
                             }
                         }
                         complexSubValue = "{" + complexSubValue + "}";
@@ -558,7 +560,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                     List<Object> primitiveValueList = multiValuedAttribute.getAttributePrimitiveValues();
                     String complexValue = null;
                     complexValue = multiValuedPrimitiveAttributeToString(primitiveValueList,
-                                                                         multiValuedAttribute.getName());
+                        multiValuedAttribute.getName());
 
                     if (scimObjectStringValue == null) {
                         scimObjectStringValue = complexValue;
@@ -590,7 +592,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                 complexValue = (String) item;
 
             } else {
-                complexValue = complexValue + "," + (String) item;
+                complexValue = complexValue + "," + item;
             }
         }
         complexValue = complexValue + "]";
@@ -605,9 +607,10 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         try {
             copy = this.getClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LambdaExceptionUtils.rethrowSupplier(() -> {
+            rethrowSupplier(() -> {
+                log.error(e.getMessage(), e);
                 throw new CharonException(e.getMessage());
-            });
+            }).get();
         }
         final AbstractSCIMObject finalCopy = copy;
         this.getAttributeList().forEach(

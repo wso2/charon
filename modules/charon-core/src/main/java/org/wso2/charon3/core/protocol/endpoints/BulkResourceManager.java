@@ -31,6 +31,7 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +123,7 @@ public class BulkResourceManager {
      * @param requestBody the request body sent by the client
      */
     private void validatePayload(String requestBody) {
-        final int currentPayload = requestBody == null ? 0 : requestBody.getBytes().length;
+        final int currentPayload = requestBody == null ? 0 : requestBody.getBytes(StandardCharsets.UTF_8).length;
         final int maxPayload = CharonConfiguration.getInstance().getBulk().getMaxPayLoadSize();
         if (currentPayload > maxPayload) {
             rethrowSupplier(() -> {

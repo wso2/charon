@@ -35,6 +35,11 @@ class ResourceTypeResourceManagerTest implements FileReferences {
         String baseUri = "https://localhost:8443/charon/scim/v2";
         Map<String, String> endpointMap = new HashMap<>();
         endpointMap.put(SCIMConstants.USER_ENDPOINT, baseUri + SCIMConstants.USER_ENDPOINT);
+        endpointMap.put(SCIMConstants.GROUP_ENDPOINT, baseUri + SCIMConstants.GROUP_ENDPOINT);
+        endpointMap.put(SCIMConstants.USER_SCHEMA_ENDPOINT, baseUri + SCIMConstants.USER_SCHEMA_ENDPOINT);
+        endpointMap.put(SCIMConstants.ENTERPRISE_USER_SCHEMA_ENDPOINT,
+            baseUri + SCIMConstants.ENTERPRISE_USER_SCHEMA_ENDPOINT);
+        endpointMap.put(SCIMConstants.GROUP_SCHEMA_ENDPOINT, baseUri + SCIMConstants.GROUP_SCHEMA_ENDPOINT);
         endpointMap.put(SCIMConstants.RESOURCE_TYPE_ENDPOINT, baseUri + SCIMConstants.RESOURCE_TYPE_ENDPOINT);
         endpointMap.put(ClientSchemaConstants.CLIENTS_ENDPOINT, baseUri + ClientSchemaConstants.CLIENTS_ENDPOINT);
         AbstractResourceManager.setEndpointURLMap(endpointMap);
@@ -50,8 +55,8 @@ class ResourceTypeResourceManagerTest implements FileReferences {
     public void testGetResourcesFromResourceTypeEndpoint()
         throws BadRequestException, CharonException, NotFoundException {
         ResourceTypeResourceManager resourceManager = new ResourceTypeResourceManager();
-        SCIMResponse scimResponse = resourceManager.listWithGET(null, null, 0, Integer.MAX_VALUE, null, null, null,
-            null, null);
+        SCIMResponse scimResponse = resourceManager.listWithGET(null, 0, Integer.MAX_VALUE, null, null, null, null,
+            null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
 
         ListedResource listedResource = JSON_DECODER.decodeListedResource(scimResponse.getResponseMessage(),
@@ -81,7 +86,7 @@ class ResourceTypeResourceManagerTest implements FileReferences {
     public void testGetSingleResource() throws InternalErrorException, BadRequestException, CharonException {
         ResourceTypeResourceManager resourceManager = new ResourceTypeResourceManager();
         final String resourceId = SCIMConstants.USER;
-        SCIMResponse scimResponse = resourceManager.get(resourceId, null, null, null);
+        SCIMResponse scimResponse = resourceManager.get(resourceId, null, null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
         ResourceType resourceType = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
             SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA, new ResourceType());
@@ -92,7 +97,7 @@ class ResourceTypeResourceManagerTest implements FileReferences {
     public void testGetNotExistentResource() throws BadRequestException, CharonException {
         ResourceTypeResourceManager resourceManager = new ResourceTypeResourceManager();
         final String resourceId = "Unknown";
-        SCIMResponse scimResponse = resourceManager.get(resourceId, null, null, null);
+        SCIMResponse scimResponse = resourceManager.get(resourceId, null, null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND, scimResponse.getResponseStatus());
         NotFoundException notFoundException = JSON_DECODER.decodeCharonException(scimResponse.getResponseMessage(),
             NotFoundException.class);
@@ -108,8 +113,8 @@ class ResourceTypeResourceManagerTest implements FileReferences {
         ResourceTypeRegistration.addResourceType(clientType);
 
         ResourceTypeResourceManager resourceManager = new ResourceTypeResourceManager();
-        SCIMResponse scimResponse = resourceManager.listWithGET(null, null, 0, Integer.MAX_VALUE, null, null, null,
-            null, null);
+        SCIMResponse scimResponse = resourceManager.listWithGET(null, 0, Integer.MAX_VALUE, null, null, null, null,
+            null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
 
         ListedResource listedResource = JSON_DECODER.decodeListedResource(scimResponse.getResponseMessage(),

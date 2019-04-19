@@ -39,14 +39,25 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     /**
      * set of attributeList in the schema
      */
-    private ArrayList<AttributeSchema> attributeList = new ArrayList<>();
+    private List<AttributeSchema> attributeList = new ArrayList<>();
 
     /**
      * a list of extensions that can be added to this schema representation
      */
     private Set<SCIMResourceTypeExtensionSchema> extensions = new HashSet<>();
 
-    protected SCIMResourceTypeSchema(List<String> schemas, List<SCIMResourceTypeExtensionSchema> extensions,
+    /**
+     * an optional name for schemata
+     */
+    private String name;
+
+    /**
+     * an optional description for schemata
+     */
+    private String description;
+
+    protected SCIMResourceTypeSchema(List<String> schemas,
+                                     List<SCIMResourceTypeExtensionSchema> extensions,
                                      AttributeSchema[] attributeSchemas) {
         this.schemasList = schemas;
         if (extensions != null) {
@@ -55,6 +66,23 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
         if (attributeSchemas != null) {
             this.attributeList.addAll(Arrays.asList(attributeSchemas));
         }
+    }
+
+    /**
+     * Create a SCIMResourceTypeSchema according to the schema id and set of attributeList
+     *
+     * @param schemas          - json encoded string of user info
+     * @param attributeSchemas - SCIM defined user schema
+     * @return SCIMResourceTypeSchema
+     */
+    public static SCIMResourceTypeSchema createSCIMResourceSchema(List<String> schemas,
+                                                                  String name,
+                                                                  String description,
+                                                                  AttributeSchema... attributeSchemas) {
+        SCIMResourceTypeSchema resourceTypeSchema = new SCIMResourceTypeSchema(schemas, null, attributeSchemas);
+        resourceTypeSchema.setName(name);
+        resourceTypeSchema.setDescription(description);
+        return resourceTypeSchema;
     }
 
     /**
@@ -84,6 +112,25 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
+     * creates a new resource type schema together with a resource type schema extension
+     *
+     * @param schemas          - json encoded string of user info
+     * @param extensions       - a list of extension schemas for this resource type schema
+     * @param attributeSchemas - SCIM defined user schema
+     * @return
+     */
+    public static SCIMResourceTypeSchema createSCIMResourceSchema(List<String> schemas,
+                                                                  List<SCIMResourceTypeExtensionSchema> extensions,
+                                                                  String name,
+                                                                  String description,
+                                                                  AttributeSchema... attributeSchemas) {
+        SCIMResourceTypeSchema resourceTypeSchema = new SCIMResourceTypeSchema(schemas, extensions, attributeSchemas);
+        resourceTypeSchema.setName(name);
+        resourceTypeSchema.setDescription(description);
+        return resourceTypeSchema;
+    }
+
+    /**
      * schema list contains the specified schema?
      *
      * @param schema
@@ -105,11 +152,11 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
         this.schemasList.add(schema);
     }
 
-    public ArrayList<AttributeSchema> getAttributesList() {
+    public List<AttributeSchema> getAttributesList() {
         return attributeList;
     }
 
-    public void setAttributeList(ArrayList attributeList) {
+    public void setAttributeList(List attributeList) {
         this.attributeList = attributeList;
     }
 
@@ -138,5 +185,23 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
         if (extension != null) {
             this.extensions.add(extension);
         }
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

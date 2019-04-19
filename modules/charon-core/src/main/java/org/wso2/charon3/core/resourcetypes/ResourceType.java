@@ -1,5 +1,7 @@
 package org.wso2.charon3.core.resourcetypes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -33,6 +35,13 @@ public class ResourceType extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 1263327926680608288L;
 
+    private static final Logger log = LoggerFactory.getLogger(ResourceType.class);
+
+    /**
+     * the schema that is represented by this resource type
+     */
+    private ResourceTypeSchema resourceTypeSchema;
+
     public ResourceType() {
         super.setSchema(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
     }
@@ -64,6 +73,7 @@ public class ResourceType extends AbstractSCIMObject {
         Objects.requireNonNull(endpointAddress, "endpoint address must not be null");
         if (!endpointAddress.startsWith("/")) {
             rethrowSupplier(() -> {
+                log.error("endpoint address must start with '/' but was '{}'", endpointAddress);
                 throw new CharonException("endpoint address must start with \"/\"");
             }).get();
         }
@@ -74,6 +84,11 @@ public class ResourceType extends AbstractSCIMObject {
         resourceTypeSchema.getExtensions().forEach(extension -> {
             this.addSchemaExtension(extension.getSchema(), false);
         });
+        this.resourceTypeSchema = resourceTypeSchema;
+    }
+
+    public ResourceTypeSchema getResourceTypeSchema() {
+        return resourceTypeSchema;
     }
 
     /**

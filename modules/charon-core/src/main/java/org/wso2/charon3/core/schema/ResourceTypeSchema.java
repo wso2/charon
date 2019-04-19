@@ -15,7 +15,6 @@
  */
 package org.wso2.charon3.core.schema;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,10 +29,28 @@ public interface ResourceTypeSchema {
 
     public void setSchemasList(String schema);
 
-    public ArrayList<AttributeSchema> getAttributesList();
+    public List<AttributeSchema> getAttributesList();
 
-    public void setAttributeList(ArrayList attributeList);
+    public void setAttributeList(List attributeList);
 
     public Set<SCIMResourceTypeExtensionSchema> getExtensions();
+
+    /**
+     * an optional name for schemata
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
+     */
+    default String getName(){
+        return null;
+    }
+
+    /**
+     * an optional description value for schemata
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
+     */
+    default String getDescription(){
+        return null;
+    }
 
 }

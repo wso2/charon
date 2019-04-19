@@ -38,7 +38,6 @@ import java.util.Map;
 
 import static org.wso2.charon3.core.schema.ServerSideValidator.validateResourceTypeSCIMObject;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
  * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
@@ -59,7 +58,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
      * @return the
      */
     //    @Override
-    public SCIMResponse get(String id, ResourceHandler resourceHandler, String attributes, String excludeAttributes) {
+    public SCIMResponse get(String id, String attributes, String excludeAttributes) {
 
         try {
             ResourceType resourceType = ResourceTypeRegistration.getResourceTypeListCopy().stream().filter(
@@ -68,10 +67,10 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
                 throw new NotFoundException("resource with id '" + id + "' does not exist");
             }
             rethrowConsumer(rt -> validateResourceTypeSCIMObject((AbstractSCIMObject) rt)).accept(resourceType);
-            String encodedObject = rethrowSupplier(() -> getEncoder().encodeSCIMObject(resourceType)).get();
+            String encodedObject = getEncoder().encodeSCIMObject(resourceType);
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.LOCATION_HEADER,
-                rethrowSupplier(() -> getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).get());
+                getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT));
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedObject, responseHeaders);
         } catch (AbstractCharonException ex) {
@@ -83,10 +82,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         }
     }
 
-    public SCIMResponse create(ResourceHandler userManager,
-                               String scimObjectString,
-                               String attributes,
-                               String excludeAttributes) {
+    public SCIMResponse create(String scimObjectString, String attributes, String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
@@ -100,8 +96,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse listWithGET(ResourceHandler userManager,
-                                    String filter,
+    public SCIMResponse listWithGET(String filter,
                                     int startIndex,
                                     int count,
                                     String sortBy,
@@ -136,15 +131,14 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         }
     }
 
-    public SCIMResponse listWithPOST(ResourceHandler userManager, String resourceString) {
+    public SCIMResponse listWithPOST(String resourceString) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPUT(ResourceHandler userManager,
-                                      String existingId,
+    public SCIMResponse updateWithPUT(String existingId,
                                       String scimObjectString,
                                       String attributes,
                                       String excludeAttributes) {
@@ -154,8 +148,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse updateWithPATCH(ResourceHandler userManager,
-                                        String existingId,
+    public SCIMResponse updateWithPATCH(String existingId,
                                         String scimObjectString,
                                         String attributes,
                                         String excludeAttributes) {

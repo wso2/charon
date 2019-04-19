@@ -1108,7 +1108,7 @@ public abstract class AbstractValidator {
             BadRequestException {
 
         Map<String, Attribute> attributeList = scimObject.getAttributeList();
-        ArrayList<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
+        List<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
 
         for (AttributeSchema attributeSchema : attributeSchemaList) {
 

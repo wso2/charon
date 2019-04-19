@@ -71,5 +71,9 @@ public interface AttributeSchema {
 
     public void removeSubAttribute(String subAttributeName) throws CharonException;
 
+    public List<String> getCanonicalValues();
+
+    public List<SCIMDefinitions.ReferenceType> getReferenceTypes();
+
 }
 

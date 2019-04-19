@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -165,7 +166,7 @@ public class SCIMUserSchemaExtensionBuilder {
      */
     private void buildComplexSchema(ExtensionAttributeSchemaConfig config) {
         String[] subAttributeNames = config.getSubAttributes();
-        ArrayList<AttributeSchema> subAttributes = new ArrayList<AttributeSchema>();
+        List<AttributeSchema> subAttributes = new ArrayList<AttributeSchema>();
         for (String subAttributeName : subAttributeNames) {
             subAttributes.add(attributeSchemas.get(subAttributeName));
         }
@@ -180,7 +181,7 @@ public class SCIMUserSchemaExtensionBuilder {
      * @param config
      */
     private void buildSimpleAttributeSchema(ExtensionAttributeSchemaConfig config) {
-        ArrayList<AttributeSchema> subAttributeList = new ArrayList<AttributeSchema>();
+        List<AttributeSchema> subAttributeList = new ArrayList<AttributeSchema>();
         if (!attributeSchemas.containsKey(config.getName())) {
             AttributeSchema attributeSchema =
                     createSCIMAttributeSchema(config, subAttributeList);
@@ -196,7 +197,7 @@ public class SCIMUserSchemaExtensionBuilder {
      * @return
      */
     public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
-                                                         ArrayList<AttributeSchema> subAttributeList) {
+                                                         List<AttributeSchema> subAttributeList) {
 
         return SCIMAttributeSchema.createSCIMAttributeSchema
                 (attribute.getURI(), attribute.getName(), attribute.getType(),
@@ -230,10 +231,10 @@ public class SCIMUserSchemaExtensionBuilder {
         //A list specifying the contained attributes. OPTIONAL.
         private String[] subAttributes;
         //A collection of suggested canonical values that MAY be used -OPTIONAL
-        private ArrayList<String> canonicalValues;
+        private List<String> canonicalValues;
         //A multi-valued array of JSON strings that indicate the SCIM resource types that may be referenced
         //only applicable for attributes that are of type "reference"
-        private ArrayList<SCIMDefinitions.ReferenceType> referenceTypes;
+        private List<SCIMDefinitions.ReferenceType> referenceTypes;
 
         public String[] getSubAttributes() {
             return subAttributes;
@@ -319,12 +320,12 @@ public class SCIMUserSchemaExtensionBuilder {
             this.uniqueness = uniqueness;
         }
 
-        public ArrayList<String> getCanonicalValues() {
+        public List<String> getCanonicalValues() {
             return canonicalValues;
         }
 
 
-        public ArrayList<SCIMDefinitions.ReferenceType> getReferenceTypes() {
+        public List<SCIMDefinitions.ReferenceType> getReferenceTypes() {
             return referenceTypes;
         }
 
@@ -446,8 +447,8 @@ public class SCIMUserSchemaExtensionBuilder {
          * @param input
          * @return
          */
-        private ArrayList<String> setCanonicalValues(JSONArray input) throws JSONException {
-            ArrayList<String> canonicalValues = new ArrayList<String>();
+        private List<String> setCanonicalValues(JSONArray input) throws JSONException {
+            List<String> canonicalValues = new ArrayList<String>();
             JSONArray canonicalValuesList = input;
             for (int index = 0; index < canonicalValuesList.length(); ++index) {
                 canonicalValues.add((String) canonicalValuesList.get(index));
@@ -460,8 +461,8 @@ public class SCIMUserSchemaExtensionBuilder {
          * @param input
          * @return
          */
-        private ArrayList<SCIMDefinitions.ReferenceType> setReferenceTypes(JSONArray input) throws JSONException {
-            ArrayList<SCIMDefinitions.ReferenceType> referenceTypes = new ArrayList<SCIMDefinitions.ReferenceType>();
+        private List<SCIMDefinitions.ReferenceType> setReferenceTypes(JSONArray input) throws JSONException {
+            List<SCIMDefinitions.ReferenceType> referenceTypes = new ArrayList<>();
             JSONArray referenceTypesList = input;
 
             for (int index = 0; index < referenceTypesList.length(); ++index) {

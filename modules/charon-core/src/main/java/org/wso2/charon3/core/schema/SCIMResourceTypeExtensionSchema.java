@@ -32,6 +32,24 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
+     * creates a new extension schema
+     *
+     * @param schema           the identifier uri of the extension
+     * @param attributeSchemas the attributes that will be describes by this schema
+     * @return the new extension schema
+     */
+    public static SCIMResourceTypeExtensionSchema createSCIMResourcetypeExtension(String schema,
+                                                                                  String name,
+                                                                                  String description,
+                                                                                  AttributeSchema... attributeSchemas) {
+        SCIMResourceTypeExtensionSchema resourceTypeSchema = new SCIMResourceTypeExtensionSchema(schema,
+            attributeSchemas);
+        resourceTypeSchema.setName(name);
+        resourceTypeSchema.setDescription(description);
+        return resourceTypeSchema;
+    }
+
+    /**
      * @see SCIMResourceTypeSchema#schemasList
      */
     public String getSchema() {

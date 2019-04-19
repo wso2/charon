@@ -1,8 +1,10 @@
 package org.wso2.charon3.core.config;
 
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.objects.SchemaDefinition;
 import org.wso2.charon3.core.resourcetypes.ResourceType;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMResourceTypeExtensionSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
@@ -25,8 +27,8 @@ public final class ResourceTypeRegistration {
      * adds the default scim resources into the resource type list
      */
     static {
-        RESOURCE_TYPE_LIST.add(getUserResourceType());
-        RESOURCE_TYPE_LIST.add(getGroupResourceType());
+        addResourceType(getUserResourceType());
+        addResourceType(getGroupResourceType());
     }
 
     private ResourceTypeRegistration() {
@@ -94,5 +96,21 @@ public final class ResourceTypeRegistration {
             }).get();
         }
         RESOURCE_TYPE_LIST.add(resourceType);
+        addSchemataToSchemaRegistration(resourceType);
+    }
+
+    /**
+     * this method will add the resource schemas  to the {@link SchemaRegistration} in order to make them available
+     * from the schemas endpoint
+     *
+     * @param resourceType the current resource type that represents the schema definition that should be added
+     */
+    private static void addSchemataToSchemaRegistration(ResourceType resourceType) {
+        SchemaRegistration.getInstance().addSchemaDefinition(new SchemaDefinition(resourceType));
+        for (SCIMResourceTypeExtensionSchema extension : resourceType.getResourceTypeSchema().getExtensions()) {
+            ResourceType extensionType = new ResourceType(extension.getSchema(), extension.getName(),
+                extension.getDescription(), "/" + extension.getSchema(), extension);
+            SchemaRegistration.getInstance().addSchemaDefinition(new SchemaDefinition(extensionType));
+        }
     }
 }

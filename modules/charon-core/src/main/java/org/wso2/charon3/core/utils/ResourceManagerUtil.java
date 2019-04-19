@@ -49,7 +49,7 @@ public class ResourceManagerUtil {
                                                                      String requestedExcludingAttributes)
         throws CharonException {
 
-        ArrayList<AttributeSchema> attributeSchemaArrayList = (ArrayList<AttributeSchema>) CopyUtil.deepCopy(
+        List<AttributeSchema> attributeSchemaArrayList = (List<AttributeSchema>) CopyUtil.deepCopy(
             schema.getAttributesList());
 
         List<String> requestedAttributesList = null;
@@ -64,7 +64,7 @@ public class ResourceManagerUtil {
             requestedExcludingAttributesList = Arrays.asList(requestedExcludingAttributes.split(","));
         }
 
-        ArrayList<AttributeSchema> attributeList = schema.getAttributesList();
+        List<AttributeSchema> attributeList = schema.getAttributesList();
 
         for (AttributeSchema attributeSchema : attributeList) {
             //check for never/request attributes.
@@ -120,7 +120,7 @@ public class ResourceManagerUtil {
      * @throws CharonException
      */
     private static void getOnlyRequiredSubAttributesURIs(AttributeSchema attributeSchema,
-                                                         ArrayList<AttributeSchema> attributeSchemaArrayList,
+                                                         List<AttributeSchema> attributeSchemaArrayList,
                                                          String requestedAttributes,
                                                          String requestedExcludingAttributes,
                                                          List<String> requestedAttributesList,
@@ -203,7 +203,7 @@ public class ResourceManagerUtil {
      */
     private static void getOnlyRequiredSubSubAttributesURIs(AttributeSchema attribute,
                                                             AttributeSchema subAttribute,
-                                                            ArrayList<AttributeSchema> attributeSchemaArrayList,
+                                                            List<AttributeSchema> attributeSchemaArrayList,
                                                             String requestedAttributes,
                                                             String requestedExcludingAttributes,
                                                             List<String> requestedAttributesList,
