@@ -284,7 +284,7 @@
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>3.0.0.wso2v1</json.version>
-        <commons.logging.version>1.2</commons.logging.version>
+        <commons.logging.version>99.0-does-not-exist</commons.logging.version>
         <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
         <junit.version>4.8.1</junit.version>
