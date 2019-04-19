@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.objects;
 
+import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -26,6 +27,7 @@ import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
+import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -90,7 +92,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     public void setSchema(String schema) {
-        schemaList.add(schema);
+        if (!schemaList.contains(schema)) {
+            schemaList.add(schema);
+        }
     }
 
     public List<String> getSchemaList() {
@@ -591,6 +595,24 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         }
         complexValue = complexValue + "]";
         return complexValue;
+    }
+
+    /**
+     * creates a copy of this scim object
+     */
+    public AbstractSCIMObject copy() {
+        AbstractSCIMObject copy = null;
+        try {
+            copy = this.getClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LambdaExceptionUtils.rethrowSupplier(() -> {
+                throw new CharonException(e.getMessage());
+            });
+        }
+        final AbstractSCIMObject finalCopy = copy;
+        this.getAttributeList().forEach(
+            (name, attribute) -> finalCopy.setAttribute(((AbstractAttribute) attribute).copy()));
+        return finalCopy;
     }
 
     /**

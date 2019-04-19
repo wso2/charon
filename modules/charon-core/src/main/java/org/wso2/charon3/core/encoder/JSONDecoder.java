@@ -111,17 +111,17 @@ public class JSONDecoder {
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
 
-        int totalResults = getIntValueFromJson(decodedJsonObj,
+        Optional<Integer> totalResults = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
-        int startIndex = getIntValueFromJson(decodedJsonObj, SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
-        int itemsPerPage = getIntValueFromJson(decodedJsonObj,
+        Optional<Integer> startIndex = getIntValueFromJson(decodedJsonObj, SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+        Optional<Integer> itemsPerPage = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
 
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(totalResults);
-        listedResource.setStartIndex(startIndex);
-        listedResource.setItemsPerPage(itemsPerPage);
+        totalResults.ifPresent(listedResource::setTotalResults);
+        startIndex.ifPresent(listedResource::setStartIndex);
+        itemsPerPage.ifPresent(listedResource::setItemsPerPage);
 
         JSONArray resources = null;
         try {
@@ -171,7 +171,6 @@ public class JSONDecoder {
         final String schema = getFirstSchemaValueFromJson(decodedJsonObj);
         final String scimType = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.SCIM_TYPE);
         final String detail = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.DETAIL);
-        final int httpStatusCode = getIntValueFromJson(decodedJsonObj, ResponseCodeConstants.STATUS);
 
         if (schema == null || !schema.equals(ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI)) {
             throw new CharonException(
@@ -179,7 +178,9 @@ public class JSONDecoder {
                     schema + "'");
         }
 
-        return new AbstractCharonException(httpStatusCode, detail, scimType);
+        final Optional<Integer> httpStatusCode = getIntValueFromJson(decodedJsonObj, ResponseCodeConstants.STATUS);
+        int statusCode = httpStatusCode.orElse(ResponseCodeConstants.CODE_INTERNAL_ERROR);
+        return new AbstractCharonException(statusCode, detail, scimType);
     }
 
     /**
@@ -258,15 +259,13 @@ public class JSONDecoder {
      * @return the int value of the key
      * @throws CharonException if the value under the given key is not an int value
      */
-    private int getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
-        int totalResults;
+    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
         try {
-            totalResults = jsonObject.getInt(name);
+            return Optional.of(jsonObject.getInt(name));
         } catch (JSONException e) {
             logger.error("could not get '{}' value from scim resource", name);
-            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+            return Optional.empty();
         }
-        return totalResults;
     }
 
     /**

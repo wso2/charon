@@ -83,6 +83,11 @@ public interface FileReferences {
 
 
     /**
+     * a resource file that represents a resource type for the user scim type
+     */
+    public static final String USER_RESOURCE_TYPE_FILE = BASE_PATH + "resourcetypes/user-resource-type.json";
+
+    /**
      * reads a file from the test-resources
      *
      * @param resourcePath the path to the resource

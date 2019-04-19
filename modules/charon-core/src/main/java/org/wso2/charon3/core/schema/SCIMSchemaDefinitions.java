@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.schema;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1363,14 +1364,55 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_URI,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS,
-                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMDefinitions.DataType.COMPLEX, true,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
                         new ArrayList<AttributeSchema>(Arrays.asList(SCHEMA_EXTENSION_SCHEMA,
                                 SCHEMA_EXTENSION_REQUIRED)));
 
+    }
 
+    /**
+     * contains the attribute schema definitions that are defined by the listed resource
+     */
+    public static class ListedResourceSchemaDefinition {
+
+        public static final SCIMAttributeSchema TOTAL_RESULTS =
+            SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS_URI,
+                SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS,
+                SCIMDefinitions.DataType.INTEGER, false,
+                SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS_DESC, true, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema START_INDEX =
+            SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.ListedResourceSchemaConstants.START_INDEX_URI,
+                SCIMConstants.ListedResourceSchemaConstants.START_INDEX,
+                SCIMDefinitions.DataType.INTEGER, false,
+                SCIMConstants.ListedResourceSchemaConstants.START_INDEX_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema ITEMS_PER_PAGE =
+            SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE_URI,
+                SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE,
+                SCIMDefinitions.DataType.INTEGER, false,
+                SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema RESOURCES =
+            SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.ListedResourceSchemaConstants.RESOURCES_URI,
+                SCIMConstants.ListedResourceSchemaConstants.RESOURCES,
+                SCIMDefinitions.DataType.COMPLEX, true,
+                SCIMConstants.ListedResourceSchemaConstants.RESOURCES_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, null, null, null);
     }
 
     /**
@@ -1446,13 +1488,26 @@ public class SCIMSchemaDefinitions {
                     SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES);
 
     /*
+     * **********SCIM defined Listed Resource Schema.****************************
+     */
+
+    public static final SCIMResourceTypeSchema LISTED_RESOURCE_SCHEMA =
+        SCIMResourceTypeSchema.createSCIMResourceSchema(
+            new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
+            ListedResourceSchemaDefinition.TOTAL_RESULTS,
+            ListedResourceSchemaDefinition.START_INDEX,
+            ListedResourceSchemaDefinition.TOTAL_RESULTS,
+            ListedResourceSchemaDefinition.RESOURCES);
+
+    /*
      * **********SCIM defined Resource Type Resource Schema.****************************
      */
 
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.RESOURCE_TYPE_SCHEMA_URI)),
                     SCIMResourceTypeSchemaDefinition.ID,
+                    META,
                     SCIMResourceTypeSchemaDefinition.NAME,
                     SCIMResourceTypeSchemaDefinition.ENDPOINT,
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
