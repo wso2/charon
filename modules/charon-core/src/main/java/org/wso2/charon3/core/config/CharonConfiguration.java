@@ -15,26 +15,16 @@
  */
 package org.wso2.charon3.core.config;
 
-import org.wso2.charon3.core.attributes.AbstractAttribute;
-import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.attributes.ComplexAttribute;
-import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
-import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.attributes.*;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.*;
 
 /**
  * This class contains the charon related configurations.
@@ -57,7 +47,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     /**
      * private default constructor
      */
-    private CharonConfiguration() {
+    private CharonConfiguration () {
         setSchema(SCIMConstants.SERVICE_PROVIDER_CONFIG_SCHEMA_URI);
         setPatch(null);
         setSort(null);
@@ -71,15 +61,14 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     /**
      * return the instance of CharonConfiguration
      */
-    public static CharonConfiguration getInstance() {
+    public static CharonConfiguration getInstance () {
         return CHARON_CONFIGURATION;
     }
 
     /**
-     * A complex type that specifies PATCH configuration options.
-     * REQUIRED.  See Section 3.5.2 of [RFC7644].
+     * A complex type that specifies PATCH configuration options. REQUIRED.  See Section 3.5.2 of [RFC7644].
      */
-    public ScimFeature getPatch() {
+    public ScimFeature getPatch () {
         SCIMAttributeSchema patchAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.PATCH;
         SCIMAttributeSchema patchSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.PATCH_SUPPORTED;
@@ -91,10 +80,9 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies PATCH configuration options.
-     * REQUIRED.  See Section 3.5.2 of [RFC7644].
+     * A complex type that specifies PATCH configuration options. REQUIRED.  See Section 3.5.2 of [RFC7644].
      */
-    public void setPatch(ScimFeature patch) {
+    public void setPatch (ScimFeature patch) {
         SCIMAttributeSchema patchAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.PATCH;
         SCIMAttributeSchema patchSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.PATCH_SUPPORTED;
@@ -107,10 +95,9 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * An HTTP-addressable URL pointing to the service provider's
-     * human-consumable help documentation.  OPTIONAL.
+     * An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.  OPTIONAL.
      */
-    public URL getDocumentationUri() {
+    public URL getDocumentationUri () {
         SCIMAttributeSchema documentationUriAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.DOCUMENTATION_URI;
         return getSimpleAttribute(documentationUriAttribute).map(rethrowFunction(simpleAttribute -> {
@@ -119,26 +106,22 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * An HTTP-addressable URL pointing to the service provider's
-     * human-consumable help documentation.  OPTIONAL.
+     * An HTTP-addressable URL pointing to the service provider's human-consumable help documentation.  OPTIONAL.
      */
-    public void setDocumentationUri(URL documentationUri) {
+    public void setDocumentationUri (URL documentationUri) {
         SCIMAttributeSchema documentationUriAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.DOCUMENTATION_URI;
         replaceSimpleAttribute(documentationUriAttribute, documentationUri.toString());
     }
 
     /**
-     * A complex type that specifies FILTER options.  REQUIRED.  See
-     * Section 3.4.2.2 of [RFC7644].
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
-     *
-     * maxResults  An integer value specifying the maximum number of
-     *             resources returned in a response.  REQUIRED.
+     * A complex type that specifies FILTER options.  REQUIRED.  See Section 3.4.2.2 of [RFC7644].
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
+     * <p>
+     * maxResults  An integer value specifying the maximum number of resources returned in a response.  REQUIRED.
      */
-    public FilterFeature getFilter() {
+    public FilterFeature getFilter () {
         SCIMAttributeSchema filterAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.FILTER;
         SCIMAttributeSchema filterSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.FILTER_SUPPORTED;
@@ -153,16 +136,13 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies FILTER options.  REQUIRED.  See
-     * Section 3.4.2.2 of [RFC7644].
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
-     *
-     * maxResults  An integer value specifying the maximum number of
-     *             resources returned in a response.  REQUIRED.
+     * A complex type that specifies FILTER options.  REQUIRED.  See Section 3.4.2.2 of [RFC7644].
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
+     * <p>
+     * maxResults  An integer value specifying the maximum number of resources returned in a response.  REQUIRED.
      */
-    public void setFilter(FilterFeature filter) {
+    public void setFilter (FilterFeature filter) {
         SCIMAttributeSchema filterAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.FILTER;
         SCIMAttributeSchema filterSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.FILTER_SUPPORTED;
@@ -177,19 +157,15 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies bulk configuration options.  See
-     * Section 3.7 of [RFC7644].  REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
-     *
-     * maxOperations  An integer value specifying the maximum number of
-     *                operations.  REQUIRED.
-     *
-     * maxPayloadSize  An integer value specifying the maximum payload
-     *                 size in bytes.  REQUIRED.
+     * A complex type that specifies bulk configuration options.  See Section 3.7 of [RFC7644].  REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
+     * <p>
+     * maxOperations  An integer value specifying the maximum number of operations.  REQUIRED.
+     * <p>
+     * maxPayloadSize  An integer value specifying the maximum payload size in bytes.  REQUIRED.
      */
-    public BulkFeature getBulk() {
+    public BulkFeature getBulk () {
         SCIMAttributeSchema bulkAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.BULK;
         SCIMAttributeSchema bulkSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.BULK_SUPPORTED;
@@ -207,19 +183,15 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies bulk configuration options.  See
-     * Section 3.7 of [RFC7644].  REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
-     *
-     * maxOperations  An integer value specifying the maximum number of
-     *                operations.  REQUIRED.
-     *
-     * maxPayloadSize  An integer value specifying the maximum payload
-     *                 size in bytes.  REQUIRED.
+     * A complex type that specifies bulk configuration options.  See Section 3.7 of [RFC7644].  REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
+     * <p>
+     * maxOperations  An integer value specifying the maximum number of operations.  REQUIRED.
+     * <p>
+     * maxPayloadSize  An integer value specifying the maximum payload size in bytes.  REQUIRED.
      */
-    public void setBulk(BulkFeature bulk) {
+    public void setBulk (BulkFeature bulk) {
         SCIMAttributeSchema bulkAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.BULK;
         SCIMAttributeSchema bulkSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.BULK_SUPPORTED;
@@ -238,13 +210,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies Sort configuration options.
-     * REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not sorting is
-     *            supported.  REQUIRED.
+     * A complex type that specifies Sort configuration options. REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not sorting is supported.  REQUIRED.
      */
-    public ScimFeature getSort() {
+    public ScimFeature getSort () {
         SCIMAttributeSchema sortAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.SORT;
         SCIMAttributeSchema sortSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.SORT_SUPPORTED;
@@ -256,13 +226,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies Sort configuration options.
-     * REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not sorting is
-     *            supported.  REQUIRED.
+     * A complex type that specifies Sort configuration options. REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not sorting is supported.  REQUIRED.
      */
-    public void setSort(ScimFeature sort) {
+    public void setSort (ScimFeature sort) {
         SCIMAttributeSchema sortAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.SORT;
         SCIMAttributeSchema sortSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.SORT_SUPPORTED;
@@ -275,13 +243,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies ETag configuration options.
-     * REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
+     * A complex type that specifies ETag configuration options. REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
      */
-    public ScimFeature geteTag() {
+    public ScimFeature geteTag () {
         SCIMAttributeSchema etagAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.ETAG;
         SCIMAttributeSchema etagSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.ETAG_SUPPORTED;
@@ -293,13 +259,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A complex type that specifies ETag configuration options.
-     * REQUIRED.
-     *
-     * supported  A Boolean value specifying whether or not the operation
-     *            is supported.  REQUIRED.
+     * A complex type that specifies ETag configuration options. REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
      */
-    public void seteTag(ScimFeature eTag) {
+    public void seteTag (ScimFeature eTag) {
         SCIMAttributeSchema etagAttribute = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.ETAG;
         SCIMAttributeSchema etagSupported =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.ETAG_SUPPORTED;
@@ -312,13 +276,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     *  A complex type that specifies configuration options related to
-     *  changing a password.  REQUIRED.
-     *
-     *  supported  A Boolean value specifying whether or not the operation
-     *             is supported.  REQUIRED.
+     * A complex type that specifies configuration options related to changing a password.  REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
      */
-    public ScimFeature getChangePassword() {
+    public ScimFeature getChangePassword () {
         SCIMAttributeSchema changePasswordAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.CHANGE_PASSWORD;
         SCIMAttributeSchema changePasswordSupported =
@@ -331,13 +293,11 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     *  A complex type that specifies configuration options related to
-     *  changing a password.  REQUIRED.
-     *
-     *  supported  A Boolean value specifying whether or not the operation
-     *             is supported.  REQUIRED.
+     * A complex type that specifies configuration options related to changing a password.  REQUIRED.
+     * <p>
+     * supported  A Boolean value specifying whether or not the operation is supported.  REQUIRED.
      */
-    public void setChangePassword(ScimFeature changePassword) {
+    public void setChangePassword (ScimFeature changePassword) {
         SCIMAttributeSchema changePasswordAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.CHANGE_PASSWORD;
         SCIMAttributeSchema changePasswordSupported =
@@ -351,30 +311,24 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A multi-valued complex type that specifies supported
-     * authentication scheme properties.  To enable seamless discovery of
-     * configurations, the service provider SHOULD, with the appropriate
-     * security considerations, make the authenticationSchemes attribute
-     * publicly accessible without prior authentication.  REQUIRED.  The
-     * following sub-attributes are defined:
-     *
-     * type  The authentication scheme.  This specification defines the
-     *       values "oauth", "oauth2", "oauthbearertoken", "httpbasic", and
-     *       "httpdigest".  REQUIRED.
-     *
-     * name  The common authentication scheme name, e.g., HTTP Basic.
-     *       REQUIRED.
-     *
-     * description  A description of the authentication scheme.
-     *              REQUIRED.
-     *
-     * specUri  An HTTP-addressable URL pointing to the authentication
-     *          scheme's specification.  OPTIONAL.
-     *
-     * documentationUri  An HTTP-addressable URL pointing to the
-     *                   authentication scheme's usage documentation.  OPTIONAL.
+     * A multi-valued complex type that specifies supported authentication scheme properties.  To enable seamless
+     * discovery of configurations, the service provider SHOULD, with the appropriate security considerations, make the
+     * authenticationSchemes attribute publicly accessible without prior authentication.  REQUIRED.  The following
+     * sub-attributes are defined:
+     * <p>
+     * type  The authentication scheme.  This specification defines the values "oauth", "oauth2", "oauthbearertoken",
+     * "httpbasic", and "httpdigest".  REQUIRED.
+     * <p>
+     * name  The common authentication scheme name, e.g., HTTP Basic. REQUIRED.
+     * <p>
+     * description  A description of the authentication scheme. REQUIRED.
+     * <p>
+     * specUri  An HTTP-addressable URL pointing to the authentication scheme's specification.  OPTIONAL.
+     * <p>
+     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation.
+     * OPTIONAL.
      */
-    public List<AuthenticationScheme> getAuthenticationSchemes() {
+    public List<AuthenticationScheme> getAuthenticationSchemes () {
         SCIMAttributeSchema authSchemesAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES;
         SCIMAttributeSchema type = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.TYPE;
@@ -399,7 +353,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
             getSimpleAttributeValue(specUri, authScheme).map(s -> rethrowSupplier(() -> new URL(s)).get()).ifPresent(
                 authenticationScheme::setSpecUri);
             getSimpleAttributeValue(documentationUri, authScheme).map(s -> rethrowSupplier(() -> new URL(s)).get())
-                                                                 .ifPresent(authenticationScheme::setDocumentationUri);
+                .ifPresent(authenticationScheme::setDocumentationUri);
             authenticationSchemeList.add(authenticationScheme);
         }
 
@@ -407,30 +361,24 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * A multi-valued complex type that specifies supported
-     * authentication scheme properties.  To enable seamless discovery of
-     * configurations, the service provider SHOULD, with the appropriate
-     * security considerations, make the authenticationSchemes attribute
-     * publicly accessible without prior authentication.  REQUIRED.  The
-     * following sub-attributes are defined:
-     *
-     * type  The authentication scheme.  This specification defines the
-     *       values "oauth", "oauth2", "oauthbearertoken", "httpbasic", and
-     *       "httpdigest".  REQUIRED.
-     *
-     * name  The common authentication scheme name, e.g., HTTP Basic.
-     *       REQUIRED.
-     *
-     * description  A description of the authentication scheme.
-     *              REQUIRED.
-     *
-     * specUri  An HTTP-addressable URL pointing to the authentication
-     *          scheme's specification.  OPTIONAL.
-     *
-     * documentationUri  An HTTP-addressable URL pointing to the
-     *                   authentication scheme's usage documentation.  OPTIONAL.
+     * A multi-valued complex type that specifies supported authentication scheme properties.  To enable seamless
+     * discovery of configurations, the service provider SHOULD, with the appropriate security considerations, make the
+     * authenticationSchemes attribute publicly accessible without prior authentication.  REQUIRED.  The following
+     * sub-attributes are defined:
+     * <p>
+     * type  The authentication scheme.  This specification defines the values "oauth", "oauth2", "oauthbearertoken",
+     * "httpbasic", and "httpdigest".  REQUIRED.
+     * <p>
+     * name  The common authentication scheme name, e.g., HTTP Basic. REQUIRED.
+     * <p>
+     * description  A description of the authentication scheme. REQUIRED.
+     * <p>
+     * specUri  An HTTP-addressable URL pointing to the authentication scheme's specification.  OPTIONAL.
+     * <p>
+     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation.
+     * OPTIONAL.
      */
-    public void setAuthenticationSchemes(List<AuthenticationScheme> authenticationSchemes) {
+    public void setAuthenticationSchemes (List<AuthenticationScheme> authenticationSchemes) {
         SCIMAttributeSchema authSchemesAttribute =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES;
         SCIMAttributeSchema type = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.TYPE;
@@ -465,8 +413,8 @@ public final class CharonConfiguration extends AbstractSCIMObject {
      * @see #getAuthenticationSchemes()
      * @see #setAuthenticationSchemes(List)
      */
-    public void addAuthenticationSchemes(AuthenticationScheme authenticationScheme,
-                                         AuthenticationScheme... authenticationSchemes) {
+    public void addAuthenticationSchemes (AuthenticationScheme authenticationScheme,
+                                          AuthenticationScheme... authenticationSchemes) {
         List<AuthenticationScheme> authenticationSchemeList = new ArrayList<>(getAuthenticationSchemes());
         authenticationSchemeList.add(authenticationScheme);
         if (authenticationSchemes != null) {
