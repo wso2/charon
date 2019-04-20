@@ -12,6 +12,7 @@ import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.config.ResourceTypeRegistration;
+import org.wso2.charon3.core.config.SchemaRegistration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -66,6 +67,7 @@ public class SchemasResourceManagerTest {
     public void removeAddedClientResourceType() {
         ResourceTypeRegistration.getResourceTypeList().removeIf(
             resourceType -> resourceType.getName().equals(ClientSchemaConstants.CLIENT_RESOURCE_TYPE));
+        SchemaRegistration.getInstance().removeSchema(ClientSchemaConstants.CLIENT_CORE_SCHEMA_URI);
     }
 
     @ParameterizedTest
