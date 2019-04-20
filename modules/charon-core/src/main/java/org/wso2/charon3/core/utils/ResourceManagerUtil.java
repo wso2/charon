@@ -23,7 +23,6 @@ import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +43,9 @@ public class ResourceManagerUtil {
      * @return
      * @throws CharonException
      */
-    public static Map<String, Boolean> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
-                                                                     String requestedAttributes,
-                                                                     String requestedExcludingAttributes)
+    public static Map<String, Boolean> getOnlyRequiredAttributesURIs (SCIMResourceTypeSchema schema,
+                                                                      String requestedAttributes,
+                                                                      String requestedExcludingAttributes)
         throws CharonException {
 
         List<AttributeSchema> attributeSchemaArrayList = (List<AttributeSchema>) CopyUtil.deepCopy(
@@ -82,10 +81,10 @@ public class ResourceManagerUtil {
                 if (requestedAttributes != null) {
                     //if attributes are set, delete all the request and default attributes
                     //and add only the requested attributes
-                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
-                             attributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
-                            (!requestedAttributesList.contains(attributeSchema.getName()) &&
-                                 !isSubAttributeExistsInList(requestedAttributesList, attributeSchema))) {
+                    if (( attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                        attributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST) ) &&
+                        ( !requestedAttributesList.contains(attributeSchema.getName()) &&
+                            !isSubAttributeExistsInList(requestedAttributesList, attributeSchema) )) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
                 } else if (requestedExcludingAttributes != null) {
@@ -95,8 +94,8 @@ public class ResourceManagerUtil {
                     }
                     //if exclude attribute is set, set of exclude attributes need to be
                     // removed from the default set of attributes
-                    if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
-                            requestedExcludingAttributesList.contains(attributeSchema.getName())) {
+                    if (( attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ) &&
+                        requestedExcludingAttributesList.contains(attributeSchema.getName())) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
                 }
@@ -119,12 +118,12 @@ public class ResourceManagerUtil {
      * @param requestedExcludingAttributesList
      * @throws CharonException
      */
-    private static void getOnlyRequiredSubAttributesURIs(AttributeSchema attributeSchema,
-                                                         List<AttributeSchema> attributeSchemaArrayList,
-                                                         String requestedAttributes,
-                                                         String requestedExcludingAttributes,
-                                                         List<String> requestedAttributesList,
-                                                         List<String> requestedExcludingAttributesList)
+    private static void getOnlyRequiredSubAttributesURIs (AttributeSchema attributeSchema,
+                                                          List<AttributeSchema> attributeSchemaArrayList,
+                                                          String requestedAttributes,
+                                                          String requestedExcludingAttributes,
+                                                          List<String> requestedAttributesList,
+                                                          List<String> requestedExcludingAttributesList)
         throws CharonException {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
@@ -157,13 +156,13 @@ public class ResourceManagerUtil {
                         if (requestedAttributes != null) {
                             //if attributes are set, delete all the request and default attributes
                             //and add only the requested attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
-                                     subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
-                                    (!requestedAttributesList.contains(
-                                        attributeSchema.getName() + "." + subAttributeSchema.getName()) &&
-                                         !isSubSubAttributeExistsInList(requestedAttributesList, attributeSchema,
-                                             subAttributeSchema)) && (!requestedAttributesList.contains(
-                                attributeSchema.getName()))) {
+                            if (( subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                                subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST) ) &&
+                                ( !requestedAttributesList.contains(
+                                    attributeSchema.getName() + "." + subAttributeSchema.getName()) &&
+                                    !isSubSubAttributeExistsInList(requestedAttributesList, attributeSchema,
+                                        subAttributeSchema) ) && ( !requestedAttributesList.contains(
+                                attributeSchema.getName()) )) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -173,9 +172,9 @@ public class ResourceManagerUtil {
                             }
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
-                            if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
-                                    requestedExcludingAttributesList.contains(
-                                        attributeSchema.getName() + "." + subAttributeSchema.getName())) {
+                            if (( subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ) &&
+                                requestedExcludingAttributesList.contains(
+                                    attributeSchema.getName() + "." + subAttributeSchema.getName())) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         }
@@ -201,13 +200,13 @@ public class ResourceManagerUtil {
      * @param requestedExcludingAttributesList
      * @throws CharonException
      */
-    private static void getOnlyRequiredSubSubAttributesURIs(AttributeSchema attribute,
-                                                            AttributeSchema subAttribute,
-                                                            List<AttributeSchema> attributeSchemaArrayList,
-                                                            String requestedAttributes,
-                                                            String requestedExcludingAttributes,
-                                                            List<String> requestedAttributesList,
-                                                            List<String> requestedExcludingAttributesList)
+    private static void getOnlyRequiredSubSubAttributesURIs (AttributeSchema attribute,
+                                                             AttributeSchema subAttribute,
+                                                             List<AttributeSchema> attributeSchemaArrayList,
+                                                             String requestedAttributes,
+                                                             String requestedExcludingAttributes,
+                                                             List<String> requestedAttributesList,
+                                                             List<String> requestedExcludingAttributesList)
         throws CharonException {
 
         if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
@@ -246,13 +245,13 @@ public class ResourceManagerUtil {
                         if (requestedAttributes != null) {
                             //if attributes are set, delete all the request and default attributes
                             //and add only the requested attributes
-                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
-                                     subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST)) &&
-                                    (!requestedAttributesList.contains(
-                                        attribute.getName() + "." + subAttribute.getName() + "." +
-                                            subSubAttributeSchema.getName())) && (!requestedAttributesList.contains(
-                                attribute.getName())) && (!requestedAttributesList.contains(
-                                attribute.getName() + "." + subAttribute.getName()))) {
+                            if (( subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ||
+                                subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST) ) &&
+                                ( !requestedAttributesList.contains(
+                                    attribute.getName() + "." + subAttribute.getName() + "." +
+                                        subSubAttributeSchema.getName()) ) && ( !requestedAttributesList.contains(
+                                attribute.getName()) ) && ( !requestedAttributesList.contains(
+                                attribute.getName() + "." + subAttribute.getName()) )) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -262,10 +261,10 @@ public class ResourceManagerUtil {
                             }
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
-                            if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)) &&
-                                    requestedExcludingAttributesList.contains(
-                                        attribute.getName() + "." + subAttribute.getName() + "." +
-                                            subSubAttributeSchema.getName())) {
+                            if (( subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT) ) &&
+                                requestedExcludingAttributesList.contains(
+                                    attribute.getName() + "." + subAttribute.getName() + "." +
+                                        subSubAttributeSchema.getName())) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         }
@@ -282,8 +281,8 @@ public class ResourceManagerUtil {
      * @param attributeSchema
      * @return
      */
-    private static boolean isSubAttributeExistsInList(List<String> requestedAttributes,
-                                                      AttributeSchema attributeSchema) {
+    private static boolean isSubAttributeExistsInList (List<String> requestedAttributes,
+                                                       AttributeSchema attributeSchema) {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
             List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
 
@@ -318,16 +317,16 @@ public class ResourceManagerUtil {
      * @param subAttributeSchema
      * @return
      */
-    private static boolean isSubSubAttributeExistsInList(List<String> requestedAttributes,
-                                                         AttributeSchema attributeSchema,
-                                                         AttributeSchema subAttributeSchema) {
+    private static boolean isSubSubAttributeExistsInList (List<String> requestedAttributes,
+                                                          AttributeSchema attributeSchema,
+                                                          AttributeSchema subAttributeSchema) {
 
         if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
             List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
             for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
                 if (requestedAttributes.contains(attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
-                                                     subSubAttributeSchema.getName())) {
+                    subSubAttributeSchema.getName())) {
                     return true;
                 }
             }
@@ -343,7 +342,7 @@ public class ResourceManagerUtil {
      * @param schemas
      * @return
      */
-    private static Map<String, Boolean> convertSchemasToURIs(List<AttributeSchema> schemas) {
+    private static Map<String, Boolean> convertSchemasToURIs (List<AttributeSchema> schemas) {
 
         Map<String, Boolean> uriList = new HashMap<>();
         for (AttributeSchema schema : schemas) {
@@ -373,7 +372,7 @@ public class ResourceManagerUtil {
      * @param attributeName
      * @throws CharonException
      */
-    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName)
+    private static void removeAttributesFromList (List<AttributeSchema> attributeSchemaList, String attributeName)
         throws CharonException {
         List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);
         int count = 0;
@@ -385,17 +384,20 @@ public class ResourceManagerUtil {
         }
     }
 
-    public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
+    public static Map<String, Boolean> getAllAttributeURIs (SCIMResourceTypeSchema schema) throws CharonException {
         return getOnlyRequiredAttributesURIs(schema, null, null);
     }
 
     /**
      * Process count value according to SCIM 2.0 specification
+     *
      * @param countStr
+     *
      * @return
+     *
      * @throws BadRequestException
      */
-    public static int processCount(String countStr) throws BadRequestException {
+    public static int processCount (String countStr) throws BadRequestException {
 
         if (countStr == null || countStr.isEmpty()) {
             return CharonConfiguration.getInstance().getFilter().getMaxResults();
@@ -422,11 +424,14 @@ public class ResourceManagerUtil {
 
     /**
      * Process startIndex value according to SCIM 2.0 specification
+     *
      * @param startIndexStr
+     *
      * @return
+     *
      * @throws BadRequestException
      */
-    public static int processStartIndex(String startIndexStr) throws BadRequestException {
+    public static int processStartIndex (String startIndexStr) throws BadRequestException {
 
         int startIndex = 1;
         if (startIndexStr == null) {

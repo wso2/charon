@@ -19,28 +19,27 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This is the interface for resource schema definition. Default schema definitions included in
- * SCIMResourceTypeSchema.
+ * This is the interface for resource schema definition. Default schema definitions included in SCIMResourceTypeSchema.
  * Any SCIM implementation can implement this/extend SCIMSchema to introduce schema extensions.
  */
 public interface ResourceTypeSchema {
 
-    public List<String> getSchemasList();
+    public List<String> getSchemasList ();
 
-    public void setSchemasList(String schema);
+    public void setSchemasList (String schema);
 
-    public List<AttributeSchema> getAttributesList();
+    public List<AttributeSchema> getAttributesList ();
 
-    public void setAttributeList(List attributeList);
+    public void setAttributeList (List attributeList);
 
-    public Set<SCIMResourceTypeExtensionSchema> getExtensions();
+    public Set<SCIMResourceTypeExtensionSchema> getExtensions ();
 
     /**
      * an optional name for schemata
      *
      * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
      */
-    default String getName(){
+    default String getName () {
         return null;
     }
 
@@ -49,7 +48,7 @@ public interface ResourceTypeSchema {
      *
      * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
      */
-    default String getDescription(){
+    default String getDescription () {
         return null;
     }
 

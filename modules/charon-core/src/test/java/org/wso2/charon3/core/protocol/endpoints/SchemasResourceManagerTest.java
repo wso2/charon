@@ -35,9 +35,9 @@ import java.util.Optional;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- *
  * <br><br>
  * created at: 19.04.2019
+ *
  * @author Pascal Knüppel
  */
 public class SchemasResourceManagerTest {
@@ -48,7 +48,7 @@ public class SchemasResourceManagerTest {
      * initializes the endpoints that need to be registered within the {@link AbstractResourceManager}
      */
     @BeforeEach
-    public void registerEndpoints() {
+    public void registerEndpoints () {
         String baseUri = "https://localhost:8443/charon/scim/v2";
         Map<String, String> endpointMap = new HashMap<>();
         endpointMap.put(SCIMConstants.USER_ENDPOINT, baseUri + SCIMConstants.USER_ENDPOINT);
@@ -64,16 +64,16 @@ public class SchemasResourceManagerTest {
     }
 
     @AfterEach
-    public void removeAddedClientResourceType() {
+    public void removeAddedClientResourceType () {
         ResourceTypeRegistration.getResourceTypeList().removeIf(
             resourceType -> resourceType.getName().equals(ClientSchemaConstants.CLIENT_RESOURCE_TYPE));
         SchemaRegistration.getInstance().removeSchema(ClientSchemaConstants.CLIENT_CORE_SCHEMA_URI);
     }
 
     @ParameterizedTest
-    @ValueSource( strings = { SCIMConstants.USER_CORE_SCHEMA_URI, SCIMConstants.GROUP_CORE_SCHEMA_URI,
-        SCIMConstants.ENTERPRISE_USER_SCHEMA_URI, ClientSchemaConstants.CLIENT_CORE_SCHEMA_URI } )
-    public void testGetASingleSchema(String schemaUri)
+    @ValueSource(strings = {SCIMConstants.USER_CORE_SCHEMA_URI, SCIMConstants.GROUP_CORE_SCHEMA_URI,
+        SCIMConstants.ENTERPRISE_USER_SCHEMA_URI, ClientSchemaConstants.CLIENT_CORE_SCHEMA_URI})
+    public void testGetASingleSchema (String schemaUri)
         throws InternalErrorException, BadRequestException, CharonException {
         ResourceType clientType = new ResourceType(ClientSchemaConstants.CLIENT_RESOURCE_TYPE,
             ClientSchemaConstants.CLIENT_RESOURCE_TYPE, "OpenID Connect Clients",
@@ -91,7 +91,7 @@ public class SchemasResourceManagerTest {
     }
 
     @Test
-    public void testListAllSchemata() throws BadRequestException, CharonException {
+    public void testListAllSchemata () throws BadRequestException, CharonException {
         SchemasResourceManager schemasResourceManager = new SchemasResourceManager();
         SCIMResponse scimResponse = schemasResourceManager.listResources();
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
@@ -127,16 +127,16 @@ public class SchemasResourceManagerTest {
             subAttributes.getAttributeValues().size());
     }
 
-    private void validateAttributes(ListedResource listedResource,
-                                    String schemaUri,
-                                    ResourceTypeSchema resourceTypeSchema) {
+    private void validateAttributes (ListedResource listedResource,
+                                     String schemaUri,
+                                     ResourceTypeSchema resourceTypeSchema) {
         SchemaDefinition schemaDefinition = getSchemaDefinition(listedResource, schemaUri);
         MultiValuedAttribute attributes = (MultiValuedAttribute) schemaDefinition.getAttribute(
             SCIMSchemaDefinitions.SchemaSchemaDefinition.ATTRIBUTES.getName());
         Assertions.assertEquals(resourceTypeSchema.getAttributesList().size(), attributes.getAttributeValues().size());
     }
 
-    private SchemaDefinition getSchemaDefinition(ListedResource listedResource, String schemaUri) {
+    private SchemaDefinition getSchemaDefinition (ListedResource listedResource, String schemaUri) {
         return listedResource.getResources().stream().map(scimObject -> (SchemaDefinition) scimObject).filter(
             schemaDefinition -> schemaDefinition.getId().equals(schemaUri)).findAny().orElseThrow(
             () -> new IllegalStateException("user schema must be present"));

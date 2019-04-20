@@ -140,7 +140,8 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema EMAIL_DISPLAY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.EMAILS_DISPLAY_URI,
                         SCIMConstants.CommonSchemaConstants.DISPLAY,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.EMAIL_DISPLAY_DESC,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.UserSchemaConstants.EMAIL_DISPLAY_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
@@ -149,7 +150,8 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema EMAIL_TYPE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.EMAILS_TYPE_URI,
                         SCIMConstants.CommonSchemaConstants.TYPE,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.UserSchemaConstants.EMAIL_TYPE_DESC,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.UserSchemaConstants.EMAIL_TYPE_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE,
