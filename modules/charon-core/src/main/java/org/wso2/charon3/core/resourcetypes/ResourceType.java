@@ -68,7 +68,7 @@ public class ResourceType extends AbstractSCIMObject {
                         ResourceTypeSchema resourceTypeSchema) {
         this();
         this.replaceId(id);
-        this.replaceName(Objects.requireNonNull(name, "name must not be null"));
+        this.replaceName(Objects.requireNonNull(name, "name for schema '" + id + "' must not be null"));
         this.replaceDescription(description);
         Objects.requireNonNull(endpointAddress, "endpoint address must not be null");
         if (!endpointAddress.startsWith("/")) {
