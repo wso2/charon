@@ -15,16 +15,26 @@
  */
 package org.wso2.charon3.core.config;
 
-import org.wso2.charon3.core.attributes.*;
+import org.wso2.charon3.core.attributes.AbstractAttribute;
+import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
+import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-import static org.wso2.charon3.core.utils.LambdaExceptionUtils.*;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
  * This class contains the charon related configurations.
@@ -325,8 +335,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
      * <p>
      * specUri  An HTTP-addressable URL pointing to the authentication scheme's specification.  OPTIONAL.
      * <p>
-     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation.
-     * OPTIONAL.
+     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation. OPTIONAL.
      */
     public List<AuthenticationScheme> getAuthenticationSchemes () {
         SCIMAttributeSchema authSchemesAttribute =
@@ -375,8 +384,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
      * <p>
      * specUri  An HTTP-addressable URL pointing to the authentication scheme's specification.  OPTIONAL.
      * <p>
-     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation.
-     * OPTIONAL.
+     * documentationUri  An HTTP-addressable URL pointing to the authentication scheme's usage documentation. OPTIONAL.
      */
     public void setAuthenticationSchemes (List<AuthenticationScheme> authenticationSchemes) {
         SCIMAttributeSchema authSchemesAttribute =
@@ -416,8 +424,14 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     public void addAuthenticationSchemes (AuthenticationScheme authenticationScheme,
                                           AuthenticationScheme... authenticationSchemes) {
         List<AuthenticationScheme> authenticationSchemeList = new ArrayList<>(getAuthenticationSchemes());
-        authenticationSchemeList.add(authenticationScheme);
+        if (!authenticationSchemeList.contains(authenticationScheme)) {
+            authenticationSchemeList.add(authenticationScheme);
+        }
         if (authenticationSchemes != null) {
+            Arrays.stream(authenticationSchemes)
+                .filter(authScheme -> authenticationSchemeList.stream()
+                    .noneMatch(s -> s.equals(authScheme)))
+                .forEach(authenticationSchemeList::add);
             authenticationSchemeList.addAll(Arrays.asList(authenticationSchemes));
         }
         setAuthenticationSchemes(authenticationSchemeList);
