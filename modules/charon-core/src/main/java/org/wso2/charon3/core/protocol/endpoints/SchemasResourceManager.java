@@ -74,6 +74,7 @@ public class SchemasResourceManager {
         try {
             List<SchemaDefinition> schemaDefinitionList = SchemaRegistration.getInstance().getSchemaListCopy();
             ListedResource listedResource = new ListedResource();
+            listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
             listedResource.setTotalResults(schemaDefinitionList.size());
             schemaDefinitionList.forEach(listedResource::addResource);
             String encodedObject = new JSONEncoder().encodeSCIMObject(listedResource);
