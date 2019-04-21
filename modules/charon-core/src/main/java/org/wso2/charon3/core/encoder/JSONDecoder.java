@@ -142,12 +142,31 @@ public class JSONDecoder {
                     SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
                 throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
             }
+
+            T abstractSCIMObject;
             try {
-                T abstractSCIMObject = decodeResource(resource.toString(), resourceSchema,
+                abstractSCIMObject = decodeResource(resource.toString(), resourceSchema,
                     scimObjectType.newInstance());
                 listedResource.addResource(abstractSCIMObject);
             } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
                 throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
+            }
+
+            {
+                // TODO get rid of the inequality problem completely: This means that the schemas in the
+                //      AbstractSCIMObject must be handled as normal attributes not as separate list object
+                // this is actually a workaround. If the class ListedResource was encoded to a string the schemas
+                // attribute was missing in the json structure. But fixing this problem resulted in another problem
+                // where the decoded resources of the ListedResource had the schemas-attribute in their attribute-list.
+                // charon does not handle the schemas array as a normal attribute meaning, that if the method
+                // decodeResources is used for example the schemas attribute is not added into the attributes-list
+                // of the scim object instead it is added into a separate list within the scim object. This problem
+                // caused inequality checks on AbstractSCIMObjects. So when decoding listed resources we need
+                // to remove the schemas attribute again after it was added to the listed resource. But this would
+                // now actually result in the problem that the decoded listedResource cannot be encoded again without
+                // creating inequalities... but since it should not be the normal case to encode the just decoded
+                // list again this solution should do it for a while...
+                abstractSCIMObject.deleteAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
             }
         }
         return listedResource;
