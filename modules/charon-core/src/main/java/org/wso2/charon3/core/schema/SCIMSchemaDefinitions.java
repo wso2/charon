@@ -1568,7 +1568,9 @@ public class SCIMSchemaDefinitions {
      */
     public static final SCIMResourceTypeExtensionSchema SCIM_SCHEMA_DEFINITION_SCHEMA =
         SCIMResourceTypeExtensionSchema.createSCIMResourcetypeExtension(SCIMConstants.SCHEMA_URI,
-            SCIMSchemaDefinitions.ID, SchemaSchemaDefinition.NAME, SchemaSchemaDefinition.DESCRIPTION,
+            SCIMSchemaDefinitions.ID,
+            SchemaSchemaDefinition.NAME,
+            SchemaSchemaDefinition.DESCRIPTION,
             SchemaSchemaDefinition.ATTRIBUTES);
 
     /**

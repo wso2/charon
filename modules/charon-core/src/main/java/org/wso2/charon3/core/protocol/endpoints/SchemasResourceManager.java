@@ -8,11 +8,15 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
+import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.SchemaDefinition;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
+import org.wso2.charon3.core.schema.ServerSideValidator;
+import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,7 @@ import static org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager.g
  * this class will provide the functionality for the schemas endpoint as defined in RFC7644 section 4
  * <br><br>
  * created at: 19.04.2019
+ *
  * @author Pascal Knüppel
  */
 public class SchemasResourceManager {
@@ -43,9 +48,10 @@ public class SchemasResourceManager {
     /**
      * will get a single
      *
-     * @param id the schema uri of the wanted schema
+     * @param id
+     *     the schema uri of the wanted schema
      */
-    public SCIMResponse get(String id) {
+    public SCIMResponse get (String id) {
         try {
             SchemaDefinition schemaDefinition = SchemaRegistration.getInstance().getSchemaListCopy().stream().filter(
                 schema -> schema.getId().equals(id)).findAny().orElse(null);
@@ -53,6 +59,10 @@ public class SchemasResourceManager {
                 log.debug("Schema definition with id '{}' does not exist", id);
                 throw new NotFoundException("Schema definition with id '" + id + "' does not exist");
             }
+            ServerSideValidator.validateRetrievedSCIMObjectInList(
+                schemaDefinition,
+                SCIMSchemaDefinitions.SCIM_SCHEMA_DEFINITION_SCHEMA,
+                null, null);
             String encodedObject = new JSONEncoder().encodeSCIMObject(schemaDefinition);
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(SCIMConstants.SCHEMAS_ENDPOINT));
@@ -70,13 +80,19 @@ public class SchemasResourceManager {
     /**
      * gets all schemata definitions as listed response
      */
-    public SCIMResponse listResources() {
+    public SCIMResponse listResources () {
         try {
             List<SchemaDefinition> schemaDefinitionList = SchemaRegistration.getInstance().getSchemaListCopy();
             ListedResource listedResource = new ListedResource();
             listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
             listedResource.setTotalResults(schemaDefinitionList.size());
-            schemaDefinitionList.forEach(listedResource::addResource);
+            schemaDefinitionList.forEach(schemaDefinition -> {
+                LambdaExceptionUtils.rethrowConsumer(o -> ServerSideValidator.validateRetrievedSCIMObjectInList(
+                    (AbstractSCIMObject) o,
+                    SCIMSchemaDefinitions.SCIM_SCHEMA_DEFINITION_SCHEMA,
+                    null, null)).accept(schemaDefinition);
+                listedResource.addResource(schemaDefinition);
+            });
             String encodedObject = new JSONEncoder().encodeSCIMObject(listedResource);
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.LOCATION_HEADER,

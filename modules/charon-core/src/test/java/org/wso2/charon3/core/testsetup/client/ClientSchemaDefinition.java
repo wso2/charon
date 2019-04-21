@@ -103,7 +103,10 @@ public final class ClientSchemaDefinition {
      * the SCIM schema definition for OpenID Connect clients
      */
     public static final SCIMResourceTypeSchema SCIM_CLIENT_SCHEMA = createSCIMResourceSchema(
-        new ArrayList<>(Collections.singletonList(CLIENT_CORE_SCHEMA_URI)), SCIMSchemaDefinitions.ID,
+        new ArrayList<>(Collections.singletonList(CLIENT_CORE_SCHEMA_URI)),
+        ClientSchemaConstants.CLIENT_EXTENSION_NAME,
+        ClientSchemaConstants.CLIENT_EXTENSION_DESCRIPTION,
+        SCIMSchemaDefinitions.ID,
         SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META, CLIENT_ID_ATTRIBUTE, CLIENT_SECRET_ATTRIBUTE,
         REDIRECT_URIS_ATTRIBUTE, JWT_X509_ATTRIBUTE, ACTIVE_ATTRIBUTE, SELF_AUTHORISATION_ATTRIBUTE,
         JWKS_URI_ATTRIBUTE);

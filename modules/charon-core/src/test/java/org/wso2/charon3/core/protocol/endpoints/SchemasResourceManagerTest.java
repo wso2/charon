@@ -85,9 +85,14 @@ public class SchemasResourceManagerTest {
         SCIMResponse scimResponse = schemasResourceManager.get(schemaUri);
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
 
+        log.warn(scimResponse.getResponseMessage());
+
         SchemaDefinition schemaDefinition = new JSONDecoder().decodeResource(scimResponse.getResponseMessage(),
             SCIMSchemaDefinitions.SCIM_SCHEMA_DEFINITION_SCHEMA, new SchemaDefinition());
         Assertions.assertEquals(schemaUri, schemaDefinition.getId());
+
+        Assertions.assertEquals(1, schemaDefinition.getSchemaList().size());
+        Assertions.assertEquals(SCIMConstants.SCHEMA_URI, schemaDefinition.getSchemaList().get(0));
     }
 
     @Test
@@ -99,6 +104,11 @@ public class SchemasResourceManagerTest {
         ListedResource listedResource = new JSONDecoder().decodeListedResource(scimResponse.getResponseMessage(),
             SCIMSchemaDefinitions.SCIM_SCHEMA_DEFINITION_SCHEMA, SchemaDefinition.class);
         Assertions.assertEquals(3, listedResource.getTotalResults());
+
+        listedResource.getResources().forEach(scimObject -> {
+            Assertions.assertEquals(1, scimObject.getSchemaList().size());
+            Assertions.assertEquals(SCIMConstants.SCHEMA_URI, scimObject.getSchemaList().get(0));
+        });
 
         validateAttributes(listedResource, SCIMConstants.USER_CORE_SCHEMA_URI, SCIMSchemaDefinitions.SCIM_USER_SCHEMA);
         validateAttributes(listedResource, SCIMConstants.GROUP_CORE_SCHEMA_URI,

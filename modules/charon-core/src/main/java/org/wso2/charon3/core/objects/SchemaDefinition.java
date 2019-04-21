@@ -10,6 +10,7 @@ import org.wso2.charon3.core.resourcetypes.ResourceType;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
+import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
@@ -24,20 +25,23 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
  * this class represents a schema definition for the schemas endpoint
  * <br><br>
  * created at: 19.04.2019
+ *
  * @author Pascal Knüppel
  */
 public class SchemaDefinition extends AbstractSCIMObject {
 
     private static final long serialVersionUID = -2529490956849739563L;
 
-    public SchemaDefinition() {
+    public SchemaDefinition () {
+        setSchema(SCIMConstants.SCHEMA_URI);
     }
 
-    public SchemaDefinition(ResourceType resourceType) {
+    public SchemaDefinition (ResourceType resourceType) {
+        this();
         setAttributes(resourceType);
     }
 
-    private void setAttributes(ResourceType resourceType) {
+    private void setAttributes (ResourceType resourceType) {
         ResourceTypeSchema resourceTypeSchema = resourceType.getResourceTypeSchema();
         setName(resourceTypeSchema.getName());
         setDescription(resourceTypeSchema.getDescription());
@@ -46,11 +50,11 @@ public class SchemaDefinition extends AbstractSCIMObject {
     }
 
     @Override
-    public void setId(String id) {
+    public void setId (String id) {
         replaceId(id);
     }
 
-    private void setName(String name) {
+    private void setName (String name) {
         SCIMAttributeSchema attributeDef = SCIMSchemaDefinitions.SchemaSchemaDefinition.NAME;
         if (StringUtils.isBlank(name)) {
             deleteAttribute(attributeDef.getName());
@@ -59,7 +63,7 @@ public class SchemaDefinition extends AbstractSCIMObject {
         replaceSimpleAttribute(attributeDef, name);
     }
 
-    private void setDescription(String description) {
+    private void setDescription (String description) {
         SCIMAttributeSchema attributeDef = SCIMSchemaDefinitions.SchemaSchemaDefinition.DESCRIPTION;
         if (StringUtils.isBlank(description)) {
             deleteAttribute(attributeDef.getName());
@@ -68,18 +72,18 @@ public class SchemaDefinition extends AbstractSCIMObject {
         replaceSimpleAttribute(attributeDef, description);
     }
 
-    private void setAttributes(List<AttributeSchema> attributesList) {
+    private void setAttributes (List<AttributeSchema> attributesList) {
         SCIMAttributeSchema attributeDef = SCIMSchemaDefinitions.SchemaSchemaDefinition.ATTRIBUTES;
         MultiValuedAttribute attributes = getOrCrateMultivaluedAttribute(attributeDef);
 
         setAttributes(attributesList, attributeDef, attributes);
     }
 
-    private void setAttributes(List<AttributeSchema> attributesList,
-                               SCIMAttributeSchema attributeDef,
-                               MultiValuedAttribute attributes) {
+    private void setAttributes (List<AttributeSchema> attributesList,
+                                SCIMAttributeSchema attributeDef,
+                                MultiValuedAttribute attributes) {
         for (AttributeSchema attributeSchema : attributesList) {
-            ComplexAttribute attribute = new ComplexAttribute();
+            ComplexAttribute attribute = new ComplexAttribute(attributes.getName());
             rethrowConsumer(o -> DefaultAttributeFactory.createAttribute(attributeDef, (AbstractAttribute) o)).accept(
                 attribute);
             SCIMAttributeSchema name = SCIMSchemaDefinitions.SchemaSchemaDefinition.ATTRIBUTES_NAME;

@@ -11,7 +11,8 @@ import org.wso2.charon3.core.schema.SCIMConstants;
  */
 public final class ClientSchemaConstants {
 
-    private ClientSchemaConstants() {
+
+    private ClientSchemaConstants () {
     }
 
     public static final String NAMESPACE = "urn:de:charon:scim:schemas:dvdv:2.0";
@@ -30,6 +31,17 @@ public final class ClientSchemaConstants {
      * The client SCIM schema URI
      */
     public static final String CLIENT_CORE_SCHEMA_URI = NAMESPACE + ":" + CLIENT_RESOURCE_TYPE;
+
+    /**
+     * the schema name
+     */
+    public static final String CLIENT_EXTENSION_NAME = "OpenID Connect Client";
+
+    /**
+     * the schema description
+     */
+    public static final String CLIENT_EXTENSION_DESCRIPTION =
+        "An OpenID Connect client representation that can be used for OAuth2 authentication";
 
     /**
      * the string name of the client name identifier

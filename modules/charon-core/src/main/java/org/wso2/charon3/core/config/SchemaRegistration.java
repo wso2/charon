@@ -71,8 +71,11 @@ public class SchemaRegistration {
      */
     public List<SchemaDefinition> getSchemaListCopy () {
         List<SchemaDefinition> schemaDefinitions = new ArrayList<>();
-        schemaDefinitionList.forEach(
-            schemaDefinition -> schemaDefinitions.add((SchemaDefinition) schemaDefinition.copy()));
+        schemaDefinitionList.forEach(schemaDefinition -> {
+            SchemaDefinition copyDefinition = (SchemaDefinition) schemaDefinition.copy();
+            copyDefinition.setSchema(schemaDefinition.getSchemaList().get(0));
+            schemaDefinitions.add(copyDefinition);
+        });
         return schemaDefinitions;
     }
 
