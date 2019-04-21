@@ -395,6 +395,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
         SCIMAttributeSchema specUri = SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.SPEC_URI;
         SCIMAttributeSchema documentationUri =
             SCIMSchemaDefinitions.SCIMServiceProviderConfigSchemaDefinition.DOCUMENTATION_URI;
+        deleteAttribute(authSchemesAttribute.getName());
         MultiValuedAttribute authSchemes = getOrCrateMultivaluedAttribute(authSchemesAttribute);
         if (authenticationSchemes == null || authenticationSchemes.isEmpty()) {
             return;
