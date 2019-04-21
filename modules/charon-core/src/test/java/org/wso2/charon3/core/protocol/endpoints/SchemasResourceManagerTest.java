@@ -1,5 +1,10 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.hamcrest.Matchers;
+import org.hamcrest.junit.MatcherAssert;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,6 +105,16 @@ public class SchemasResourceManagerTest {
         SchemasResourceManager schemasResourceManager = new SchemasResourceManager();
         SCIMResponse scimResponse = schemasResourceManager.listResources();
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+
+        log.warn(scimResponse.getResponseMessage());
+        JSONObject jsonObject = new JSONObject(new JSONTokener(scimResponse.getResponseMessage()));
+        JSONArray resources =
+            jsonObject.getJSONArray(SCIMSchemaDefinitions.ListedResourceSchemaDefinition.RESOURCES.getName());
+        for (int i = 0; i < resources.length(); i++) {
+            JSONObject resource = resources.getJSONObject(i);
+            MatcherAssert.assertThat(resource.optString(SCIMConstants.CommonSchemaConstants.SCHEMAS),
+                Matchers.not(Matchers.emptyOrNullString()));
+        }
 
         ListedResource listedResource = new JSONDecoder().decodeListedResource(scimResponse.getResponseMessage(),
             SCIMSchemaDefinitions.SCIM_SCHEMA_DEFINITION_SCHEMA, SchemaDefinition.class);

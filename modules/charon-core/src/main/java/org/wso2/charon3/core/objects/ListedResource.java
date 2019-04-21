@@ -15,17 +15,22 @@
  */
 package org.wso2.charon3.core.objects;
 
+import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
@@ -173,19 +178,21 @@ public class ListedResource extends AbstractSCIMObject {
      * @param scimResourceType the new resource
      */
     public void addResource(SCIMObject scimResourceType) {
-        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
-            MultiValuedAttribute resourcesAttribute = rethrowSupplier(() -> {
-                return (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(
-                    SCIMSchemaDefinitions.ListedResourceSchemaDefinition.RESOURCES,
-                    new MultiValuedAttribute(SCIMConstants.ListedResourceSchemaConstants.RESOURCES));
-            }).get();
+        MultiValuedAttribute resourcesAttribute =
+            getOrCrateMultivaluedAttribute(SCIMSchemaDefinitions.ListedResourceSchemaDefinition.RESOURCES);
 
-            resourcesAttribute.setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
-            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
-        } else {
-            ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
-                .setComplexValueWithSetOfSubAttributes(scimResourceType.getAttributeList());
-        }
+        ComplexAttribute resource = new ComplexAttribute();
+        resource.setSubAttributesList(scimResourceType.getAttributeList());
+
+        MultiValuedAttribute schemas = new MultiValuedAttribute(SCIMSchemaDefinitions.SCHEMAS.getName());
+        rethrowConsumer(o -> DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCHEMAS,
+            (AbstractAttribute) o)).accept(schemas);
+        schemas.setAttributePrimitiveValues(scimResourceType.getSchemaList().stream()
+            .map(s -> (Object)s).collect(Collectors.toList()));
+        resource.setSubAttribute(schemas);
+        resourcesAttribute.setAttributeValue(resource);
+
+        attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
         resources.add(scimResourceType);
     }
 }

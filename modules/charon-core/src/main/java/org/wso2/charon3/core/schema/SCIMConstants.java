@@ -16,8 +16,8 @@
 package org.wso2.charon3.core.schema;
 
 /**
- * This defines the constants which can be found in SCIM 2.0 core schema can be found at.
- * : https://tools.ietf.org/html/rfc7643
+ * This defines the constants which can be found in SCIM 2.0 core schema can be found at. :
+ * https://tools.ietf.org/html/rfc7643
  */
 public class SCIMConstants {
 
@@ -25,11 +25,11 @@ public class SCIMConstants {
     public static final String MESSAGE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0";
     public static final String USER_CORE_SCHEMA_URI = CORE_SCHEMA_URI + ":User";
     public static final String ENTERPRISE_USER_SCHEMA_URI = "urn:ietf:params:scim:schemas:extension:enterprise:2" +
-            ".0:User";
+        ".0:User";
     public static final String GROUP_CORE_SCHEMA_URI = CORE_SCHEMA_URI + ":Group";
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = MESSAGE_SCHEMA_URI + ":ListResponse";
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI =
-            "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
+        "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
     public static final String RESOURCE_TYPE_SCHEMA_URI = CORE_SCHEMA_URI + ":ResourceType";
     public static final String SEARCH_SCHEMA_URI = MESSAGE_SCHEMA_URI + ":SearchRequest";
     public static final String BULK_RESPONSE_URI = MESSAGE_SCHEMA_URI + ":BulkResponse";
@@ -78,6 +78,9 @@ public class SCIMConstants {
     public static class CommonSchemaConstants {
 
         public static final String SCHEMAS = "schemas";
+        public static final String SCHEMAS_FIELD_URI = CORE_SCHEMA_URI + ":" + SCHEMAS;
+        public static final String SCHEMAS_FIELD_DESC = "a list of the core schema and the schema extensions that " +
+            "represent the current schema definiton";
         public static final String ID = "id";
         public static final String ID_URI = CORE_SCHEMA_URI + ":id";
         public static final String EXTERNAL_ID = "externalId";
@@ -105,16 +108,16 @@ public class SCIMConstants {
         /*******Attributes descriptions of the attributes found in Common Schema.***************/
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
-                "Provider.";
+            "Provider.";
         public static final String EXTERNAL_ID_DESC = "A String that is an identifier for the resource as defined by " +
-                "the provisioning client." +
-                "The service provider MUST always interpret the externalId as scoped to the provisioning domain.";
+            "the provisioning client." +
+            "The service provider MUST always interpret the externalId as scoped to the provisioning domain.";
         public static final String META_DESC = "A complex attribute containing resource metadata.";
         public static final String RESOURCE_TYPE_DESC = "The name of the resource type of the resource.";
         public static final String CREATED_DESC = "The \"DateTime\" that the resource was added to the service " +
-                "provider.";
+            "provider.";
         public static final String LAST_MODIFIED_DESC = "The most recent DateTime that the details of this resource " +
-                "were updated at the service provider.";
+            "were updated at the service provider.";
         public static final String LOCATION_DESC = "Location  The uri of the resource being returned";
         public static final String VERSION_DESC = "The version of the resource being returned.";
 
@@ -128,22 +131,22 @@ public class SCIMConstants {
         public static final String TOTAL_RESULTS = "totalResults";
         public static final String TOTAL_RESULTS_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + TOTAL_RESULTS;
         public static final String TOTAL_RESULTS_DESC = " The total number of results returned by the list or query " +
-                                                            "operation.";
+            "operation.";
 
         public static final String START_INDEX = "startIndex";
         public static final String START_INDEX_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + START_INDEX;
         public static final String START_INDEX_DESC = " The 1-based index of the first result in the current set " +
-                                                          "of list results.";
+            "of list results.";
 
         public static final String ITEMS_PER_PAGE = "itemsPerPage";
         public static final String ITEMS_PER_PAGE_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + ITEMS_PER_PAGE;
         public static final String ITEMS_PER_PAGE_DESC = "The number of resources returned in a list response " +
-                                                             "page.";
+            "page.";
 
         public static final String RESOURCES = "Resources";
         public static final String RESOURCES_URI = LISTED_RESOURCE_CORE_SCHEMA_URI + ":" + RESOURCES;
         public static final String RESOURCES_DESC = "A multi-valued list of complex objects containing the " +
-                                                        "requested resources.  ";
+            "requested resources.  ";
     }
 
     /**
@@ -165,10 +168,10 @@ public class SCIMConstants {
         public static final String MIDDLE_NAME_URI = CORE_SCHEMA_URI + ":" + USER + ":name.middleName";
         public static final String HONORIFIC_PREFIX = "honorificPrefix";
         public static final String HONORIFIC_PREFIX_URI = CORE_SCHEMA_URI + ":" + USER + ":name" +
-                ".honorificPrefix";
+            ".honorificPrefix";
         public static final String HONORIFIC_SUFFIX = "honorificSuffix";
         public static final String HONORIFIC_SUFFIX_URI = CORE_SCHEMA_URI + ":" + USER + ":name" +
-                ".honorificSuffix";
+            ".honorificSuffix";
 
         public static final String DISPLAY_NAME = "displayName";
         public static final String DISPLAY_NAME_URI = CORE_SCHEMA_URI + ":" + USER + ":displayName";
@@ -182,7 +185,7 @@ public class SCIMConstants {
         public static final String USER_TYPE_URI = CORE_SCHEMA_URI + ":" + USER + ":userType";
         public static final String PREFERRED_LANGUAGE = "preferredLanguage";
         public static final String PREFERRED_LANGUAGE_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":preferredLanguage";
+            CORE_SCHEMA_URI + ":" + USER + ":preferredLanguage";
         public static final String LOCALE = "locale";
         public static final String LOCALE_URI = CORE_SCHEMA_URI + ":" + USER + ":locale";
         public static final String TIME_ZONE = "timezone";
@@ -194,10 +197,10 @@ public class SCIMConstants {
 
         public static final String FORMATTED_ADDRESS = "formatted";
         public static final String FORMATTED_ADDRESS_URI = CORE_SCHEMA_URI + ":" + USER + ":addresses" +
-                ".formatted";
+            ".formatted";
         public static final String STREET_ADDRESS = "streetAddress";
         public static final String STREET_ADDRESS_URI = CORE_SCHEMA_URI + ":" + USER + ":addresses" +
-                ".streetAddress";
+            ".streetAddress";
         public static final String LOCALITY = "locality";
         public static final String LOCALITY_URI = CORE_SCHEMA_URI + ":" + USER + ":addresses.locality";
         public static final String REGION = "region";
@@ -258,13 +261,13 @@ public class SCIMConstants {
         public static final String EMAILS_PRIMARY_URI = CORE_SCHEMA_URI + ":" + USER + ":emails.primary";
 
         public static final String PHONE_NUMBERS_VALUE_URI = CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers" +
-                ".value";
+            ".value";
         public static final String PHONE_NUMBERS_DISPLAY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers.display";
+            CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers.display";
         public static final String PHONE_NUMBERS_TYPE_URI = CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers" +
-                ".type";
+            ".type";
         public static final String PHONE_NUMBERS_PRIMARY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers.primary";
+            CORE_SCHEMA_URI + ":" + USER + ":phoneNumbers.primary";
 
         public static final String IMS_VALUE_URI = CORE_SCHEMA_URI + ":" + USER + ":ims.value";
         public static final String IMS_DISPLAY_URI = CORE_SCHEMA_URI + ":" + USER + ":ims.display";
@@ -278,7 +281,7 @@ public class SCIMConstants {
 
         public static final String ADDRESSES_TYPE_URI = CORE_SCHEMA_URI + ":" + USER + ":addresses.type";
         public static final String ADDRESSES_PRIMARY_URI = CORE_SCHEMA_URI + ":" + USER + ":addresses" +
-                ".primary";
+            ".primary";
 
         public static final String GROUPS_VALUE_URI = CORE_SCHEMA_URI + ":" + USER + ":groups.value";
         public static final String GROUPS_DISPLAY_URI = CORE_SCHEMA_URI + ":" + USER + ":groups.display";
@@ -291,188 +294,188 @@ public class SCIMConstants {
         public static final String ROLES_PRIMARY_URI = CORE_SCHEMA_URI + ":" + USER + ":roles.primary";
 
         public static final String ENTITLEMENTS_VALUE_URI = CORE_SCHEMA_URI + ":" + USER + ":entitlements" +
-                ".value";
+            ".value";
         public static final String ENTITLEMENTS_DISPLAY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":entitlements.display";
+            CORE_SCHEMA_URI + ":" + USER + ":entitlements.display";
         public static final String ENTITLEMENTS_TYPE_URI = CORE_SCHEMA_URI + ":" + USER + ":entitlements" +
-                ".type";
+            ".type";
         public static final String ENTITLEMENTS_PRIMARY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":entitlements.primary";
+            CORE_SCHEMA_URI + ":" + USER + ":entitlements.primary";
 
         public static final String X509CERTIFICATES_VALUE_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":x509certificates.value";
+            CORE_SCHEMA_URI + ":" + USER + ":x509certificates.value";
         public static final String X509CERTIFICATES_DISPLAY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":x509certificates.display";
+            CORE_SCHEMA_URI + ":" + USER + ":x509certificates.display";
         public static final String X509CERTIFICATES_TYPE_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":x509certificates.type";
+            CORE_SCHEMA_URI + ":" + USER + ":x509certificates.type";
         public static final String X509CERTIFICATES_PRIMARY_URI =
-                CORE_SCHEMA_URI + ":" + USER + ":x509certificates.primary";
+            CORE_SCHEMA_URI + ":" + USER + ":x509certificates.primary";
 
         /*******Attributes descriptions of the attributes found in User Schema.***************/
 
         public static final String USERNAME_DESC = "A service provider's unique identifier for the user, typically\n" +
-                "used by the user to directly authenticate to the service provider.Each User MUST include a non-empty" +
-                " userName value.  This identifier\n" +
-                "MUST be unique across the service provider's entire set of Users.";
+            "used by the user to directly authenticate to the service provider.Each User MUST include a non-empty" +
+            " userName value.  This identifier\n" +
+            "MUST be unique across the service provider's entire set of Users.";
 
         public static final String NAME_DESC = "The components of the user's real name.Providers MAY return just the " +
-                "full name as a single string in the\n" +
-                "formatted sub-attribute, or they MAY return just the individual component attributes using the other" +
-                " sub-attributes, or they MAY\n" +
-                "return both.  If both variants are returned, they SHOULD be describing the same name, with the " +
-                "formatted name indicating how the\n" +
-                "component attributes should be combined.";
+            "full name as a single string in the\n" +
+            "formatted sub-attribute, or they MAY return just the individual component attributes using the other" +
+            " sub-attributes, or they MAY\n" +
+            "return both.  If both variants are returned, they SHOULD be describing the same name, with the " +
+            "formatted name indicating how the\n" +
+            "component attributes should be combined.";
 
         public static final String FORMATTED_NAME_DESC = "The full name, including all middle names, titles, and " +
-                "suffixes as appropriate, formatted for display\n" +
-                "(e.g., 'Ms. Barbara J Jensen, III').";
+            "suffixes as appropriate, formatted for display\n" +
+            "(e.g., 'Ms. Barbara J Jensen, III').";
         public static final String FAMILY_NAME_DESC = "The family name of the User, or last name in most Western " +
-                "languages (e.g., 'Jensen' given the full\n" +
-                "name 'Ms. Barbara J Jensen, III').";
+            "languages (e.g., 'Jensen' given the full\n" +
+            "name 'Ms. Barbara J Jensen, III').";
         public static final String GIVEN_NAME_DESC = "The given name of the User, or first name in most Western " +
-                "languages (e.g., 'Barbara' given the\n" +
-                "full name 'Ms. Barbara J Jensen, III').";
+            "languages (e.g., 'Barbara' given the\n" +
+            "full name 'Ms. Barbara J Jensen, III').";
         public static final String MIDDLE_NAME_DESC = "The middle name(s) of the User (e.g., 'Jane' given the full " +
-                "name 'Ms. Barbara J Jensen, III').";
+            "name 'Ms. Barbara J Jensen, III').";
         public static final String HONORIFIC_PREFIX_DESC = "The honorific prefix(es) of the User, or title in most " +
-                "Western languages (e.g., 'Ms.' given the full name\n" +
-                "'Ms. Barbara J Jensen, III').";
+            "Western languages (e.g., 'Ms.' given the full name\n" +
+            "'Ms. Barbara J Jensen, III').";
         public static final String HONORIFIC_SUFFIX_DESC = "The honorific suffix(es) of the User, or suffix in most " +
-                "Western languages (e.g., 'III' given the full name\n" +
-                "'Ms. Barbara J Jensen, III').";
+            "Western languages (e.g., 'III' given the full name\n" +
+            "'Ms. Barbara J Jensen, III').";
 
         public static final String DISPLAY_NAME_DESC = "The name of the User, suitable for display\n" +
-                "to end-users.  The name SHOULD be the full name of the User being described, if known.";
+            "to end-users.  The name SHOULD be the full name of the User being described, if known.";
         public static final String NICK_NAME_DESC = "The casual way to address the user in real life, e.g., 'Bob' or " +
-                "'Bobby' instead of 'Robert'.  This attribute\n" +
-                "SHOULD NOT be used to represent a User's username (e.g., 'bjensen' or 'mpepperidge').";
+            "'Bobby' instead of 'Robert'.  This attribute\n" +
+            "SHOULD NOT be used to represent a User's username (e.g., 'bjensen' or 'mpepperidge').";
         public static final String PROFILE_URL_DESC = "A fully qualified URL pointing to a page\n" +
-                "representing the User's online profile.";
+            "representing the User's online profile.";
         public static final String TITLE_DESC = "The user's title, such as \\\"Vice President.\\\"";
         public static final String USER_TYPE_DESC = "Used to identify the relationship between the organization and " +
-                "the user.  Typical values used might be\n" +
-                "'Contractor', 'Employee', 'Intern', 'Temp', 'External', and 'Unknown', but any value may be used.";
+            "the user.  Typical values used might be\n" +
+            "'Contractor', 'Employee', 'Intern', 'Temp', 'External', and 'Unknown', but any value may be used.";
         public static final String PREFERRED_LANGUAGE_DESC = "Indicates the User's preferred written or\n" +
-                "spoken language.  Generally used for selecting a localized user interface; e.g., 'en_US' specifies " +
-                "the language English and country";
+            "spoken language.  Generally used for selecting a localized user interface; e.g., 'en_US' specifies " +
+            "the language English and country";
         public static final String LOCALE_DESC = "Used to indicate the User's default location\n" +
-                "for purposes of localizing items such as currency, date time format, or numerical representations.";
+            "for purposes of localizing items such as currency, date time format, or numerical representations.";
         public static final String TIME_ZONE_DESC = "The User's time zone in the 'Olson' time zone\n" +
-                "database format, e.g., 'America/Los_Angeles'.";
+            "database format, e.g., 'America/Los_Angeles'.";
         public static final String ACTIVE_DESC = "A Boolean value indicating the User's administrative status.";
         public static final String PASSWORD_DESC = "The User's cleartext password.  This attribute is intended to be " +
-                "used as a means to specify an initial\n" +
-                "password when creating a new User or to reset an existing User's password.";
+            "used as a means to specify an initial\n" +
+            "password when creating a new User or to reset an existing User's password.";
 
         public static final String EMAILS_DESC = "Email addresses for the user.  The value SHOULD be canonicalized by" +
-                " the service provider, e.g.,\n" +
-                "'bjensen@example.com' instead of 'bjensen@EXAMPLE.COM'.Canonical type values of 'work', 'home', and " +
-                "'other'.";
+            " the service provider, e.g.,\n" +
+            "'bjensen@example.com' instead of 'bjensen@EXAMPLE.COM'.Canonical type values of 'work', 'home', and " +
+            "'other'.";
         public static final String EMAIL_VALUE_DESC = "Email addresses for the user.  The value SHOULD be " +
-                "canonicalized by the service provider, e.g.,\n" +
-                "'bjensen@example.com' instead of 'bjensen@EXAMPLE.COM'.Canonical type values of 'work', 'home', and " +
-                "'other'.";
+            "canonicalized by the service provider, e.g.,\n" +
+            "'bjensen@example.com' instead of 'bjensen@EXAMPLE.COM'.Canonical type values of 'work', 'home', and " +
+            "'other'.";
         public static final String EMAIL_DISPLAY_DESC = "A human-readable name, primarily used for display purposes. " +
-                " READ-ONLY.";
+            " READ-ONLY.";
         public static final String EMAIL_TYPE_DESC = "A label indicating the attribute's function, e.g., 'work' or " +
-                "'home'.";
+            "'home'.";
         public static final String EMAIL_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
-                "attribute value for this attribute, " +
-                "e.g., the psreferred mailing address or primary email address.  The primary attribute value 'true' " +
-                "MUST appear no more than once.";
+            "attribute value for this attribute, " +
+            "e.g., the psreferred mailing address or primary email address.  The primary attribute value 'true' " +
+            "MUST appear no more than once.";
 
         public static final String PHONE_NUMBERS_DESC = "Phone numbers for the User.  The value SHOULD be " +
-                "canonicalized by the service provider according to the\n" +
-                "format specified in RFC 3966, e.g., 'tel:+1-201-555-0123'.Canonical type values of 'work', 'home', " +
-                "'mobile', 'fax', 'pager";
+            "canonicalized by the service provider according to the\n" +
+            "format specified in RFC 3966, e.g., 'tel:+1-201-555-0123'.Canonical type values of 'work', 'home', " +
+            "'mobile', 'fax', 'pager";
         public static final String PHONE_NUMBERS_VALUE_DESC = "Phone number of the User.";
         public static final String PHONE_NUMBERS_DISPLAY_DESC = "A human-readable name, primarily used for display " +
-                "purposes.  READ-ONLY.";
+            "purposes.  READ-ONLY.";
         public static final String PHONE_NUMBERS_TYPE_DESC = "A label indicating the attribute's function, e.g., " +
-                "'work', 'home', 'mobile'.";
+            "'work', 'home', 'mobile'.";
         public static final String PHONE_NUMBERS_PRIMARY_DESC = "A Boolean value indicating the 'primary' or " +
-                "preferred attribute value for this attribute, e.g., the preferred\n" +
-                "phone number or primary phone number.  The primary attribute value 'true' MUST appear no more than " +
-                "once.";
+            "preferred attribute value for this attribute, e.g., the preferred\n" +
+            "phone number or primary phone number.  The primary attribute value 'true' MUST appear no more than " +
+            "once.";
 
         public static final String IMS_DESC = "Instant messaging addresses for the User.";
         public static final String IMS_VALUE_DESC = "Instant messaging address for the User.";
         public static final String IMS_DISPLAY_DESC = "A human-readable name, primarily used for display purposes.  " +
-                "READ-ONLY.";
+            "READ-ONLY.";
         public static final String IMS_TYPE_DESC = "A label indicating the attribute's function, e.g., 'aim', " +
-                "'gtalk', 'xmpp'.";
+            "'gtalk', 'xmpp'.";
         public static final String IMS_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
-                "attribute value for this attribute, e.g., the preferred\n" +
-                "messenger or primary messenger.  The primary attribute value 'true' MUST appear no more than once.";
+            "attribute value for this attribute, e.g., the preferred\n" +
+            "messenger or primary messenger.  The primary attribute value 'true' MUST appear no more than once.";
 
         public static final String PHOTOS_DESC = "URLs of photos of the User.";
         public static final String PHOTOS_VALUE_DESC = "URLs of photos of the User.";
         public static final String PHOTOS_DISPLAY_DESC = "A human-readable name, primarily used for display purposes." +
-                "  READ-ONLY.";
+            "  READ-ONLY.";
         public static final String PHOTOS_TYPE_DESC = "A label indicating the attribute's function, i.e., 'photo' or " +
-                "'thumbnail'.";
+            "'thumbnail'.";
         public static final String PHOTOS_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
-                "attribute value for this attribute, e.g., the preferred\n" +
-                "phone number or primary phone number. The primary attribute value 'true' MUST appear no more than " +
-                "once.";
+            "attribute value for this attribute, e.g., the preferred\n" +
+            "phone number or primary phone number. The primary attribute value 'true' MUST appear no more than " +
+            "once.";
 
         public static final String ADDRESSES_DESC = "A physical mailing address for this User.\n" +
-                "Canonical type values of 'work', 'home', and 'other'.  This attribute is a complex type with the " +
-                "following sub-attributes.";
+            "Canonical type values of 'work', 'home', and 'other'.  This attribute is a complex type with the " +
+            "following sub-attributes.";
         public static final String ADDRESSES_FORMATTED_DESC = "The full mailing address, formatted for display or use" +
-                " with a mailing label.  This attribute MAY contain\n" +
-                "newlines.";
+            " with a mailing label.  This attribute MAY contain\n" +
+            "newlines.";
         public static final String ADDRESSES_STREET_ADDRESS_DESC = "The full street address component, which may " +
-                "include house number, street name, P.O. box, and multi-line\n" +
-                "extended street address information.  This attribute MAY contain newlines.";
+            "include house number, street name, P.O. box, and multi-line\n" +
+            "extended street address information.  This attribute MAY contain newlines.";
         public static final String ADDRESSES_LOCALITY_DESC = "The city or locality component.";
         public static final String ADDRESSES_REGION_DESC = "The state or region component.";
         public static final String ADDRESSES_POSTAL_CODE_DESC = "The zip code or postal code component.";
         public static final String ADDRESSES_COUNTRY_DESC = "The country name component.";
         public static final String ADDRESSES_TYPE_DESC = "A label indicating the attribute's function, e.g., 'work' " +
-                "or 'home'.";
+            "or 'home'.";
         public static final String ADDRESSES_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
-                "attribute value for this attribute.  The primary\n" +
-                "attribute value 'true' MUST appear no more than once.";
+            "attribute value for this attribute.  The primary\n" +
+            "attribute value 'true' MUST appear no more than once.";
 
         public static final String GROUPS_DESC = "A list of groups to which the user belongs,\n" +
-                "either through direct membership, through nested groups, or dynamically calculated.";
+            "either through direct membership, through nested groups, or dynamically calculated.";
         public static final String GROUP_VALUE_DESC = "The identifier of the User's group.";
         public static final String GROUP_DISPLAY_DESC = "A human-readable name, primarily used for display purposes. " +
-                "READ-ONLY.";
+            "READ-ONLY.";
         public static final String GROUP_REF_DESC = "The uri of the corresponding 'Group' resource to which the user" +
-                " belongs.";
+            " belongs.";
         public static final String GROUP_TYPE_DESC = "A label indicating the attribute's function, e.g., 'direct' or " +
-                "'indirect'.";
+            "'indirect'.";
 
         public static final String ENTITLEMENTS_DESC = "A list of entitlements for the User that represent a thing " +
-                "the User has.";
+            "the User has.";
         public static final String ENTITLEMENTS_VALUE_DESC = "The value of an entitlement.";
         public static final String ENTITLEMENTS_DISPLAY_DESC = "A human-readable name, primarily used for display " +
-                "purposes.  READ-ONLY.";
+            "purposes.  READ-ONLY.";
         public static final String ENTITLEMENTS_TYPE_DESC = "A label indicating the attribute's function.";
         public static final String ENTITLEMENTS_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred" +
-                " attribute value for this attribute.  The primary\n" +
-                "attribute value 'true' MUST appear no more than once.";
+            " attribute value for this attribute.  The primary\n" +
+            "attribute value 'true' MUST appear no more than once.";
 
         public static final String ROLES_DESC = "A list of roles for the User that collectively represent who the " +
-                "User is, e.g., 'Student', 'Faculty'.";
+            "User is, e.g., 'Student', 'Faculty'.";
         public static final String ROLES_VALUE_DESC = "The value of a role.";
         public static final String ROLES_DISPLAY_DESC = "A human-readable name, primarily used for display purposes. " +
-                " READ-ONLY.";
+            " READ-ONLY.";
         public static final String ROLES_TYPE_DESC = "A label indicating the attribute's function.";
         public static final String ROLES_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
-                "attribute value for this attribute.  The primary attribute value 'true' MUST appear no more than " +
-                "once.";
+            "attribute value for this attribute.  The primary attribute value 'true' MUST appear no more than " +
+            "once.";
 
         public static final String X509CERTIFICATES_DESC = "A list of certificates issued to the User.";
         public static final String X509CERTIFICATES_VALUE_DESC = "The value of an X.509 certificate.";
         public static final String X509CERTIFICATES_DISPLAY_DESC = "A human-readable name, primarily used for display" +
-                " purposes.  READ-ONLY.";
+            " purposes.  READ-ONLY.";
         public static final String X509CERTIFICATES_TYPE_DESC = "A label indicating the attribute's function.";
         public static final String X509CERTIFICATES_PRIMARY_DESC = "A Boolean value indicating the 'primary' or " +
-                "preferred attribute value for this attribute." +
-                "The primary attribute value 'true' MUST appear no more than once.";
+            "preferred attribute value for this attribute." +
+            "The primary attribute value 'true' MUST appear no more than once.";
     }
 
     /**
@@ -483,7 +486,7 @@ public class SCIMConstants {
         public static final String EMPLOYEE_NUMBER = "employeeNumber";
         public static final String EMPLOYEE_NUMBER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + EMPLOYEE_NUMBER;
         public static final String EMPLOYEE_NUMBER_DESC = "Numeric or alphanumeric identifier assigned to a " +
-                "person, typically based on order of hire or association with an organization.";
+            "person, typically based on order of hire or association with an organization.";
 
         public static final String COST_CENTER = "costCenter";
         public static final String COST_CENTER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + COST_CENTER;
@@ -504,23 +507,23 @@ public class SCIMConstants {
         public static final String VALUE = "value";
         public static final String VALUE_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + VALUE;
         public static final String VALUE_DESC = "The id of the SCIM resource representing the User's manager.  " +
-                "REQUIRED.";
+            "REQUIRED.";
 
         public static final String REF = "$ref";
         public static final String REF_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + REF;
         public static final String REF_DESC = "The URI of the SCIM resource representing the User's manager.  " +
-                "REQUIRED.";
+            "REQUIRED.";
 
         public static final String DISPLAY_NAME = "displayName";
         public static final String DISPLAY_NAME_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + DISPLAY_NAME;
         public static final String DISPLAY_NAME_DESC = "The displayName of the User's manager. " +
-                "OPTIONAL and READ-ONLY.";
+            "OPTIONAL and READ-ONLY.";
 
         public static final String MANAGER = "manager";
         public static final String MANAGER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + MANAGER;
         public static final String MANAGER_DESC = "The User's manager.  A complex type that optionally " +
-                "allows service providers to represent organizational hierarchy by referencing the 'id' " +
-                "attribute of another User.";
+            "allows service providers to represent organizational hierarchy by referencing the 'id' " +
+            "attribute of another User.";
 
 
     }
@@ -543,7 +546,7 @@ public class SCIMConstants {
         public static final String MEMBERS_DESC = "A list of members of the Group.";
         public static final String VALUE_DESC = "Identifier of the member of this Group.";
         public static final String REF_DESC = "The uri corresponding to a SCIM resource that is a member of this " +
-                "Group.";
+            "Group.";
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
 
@@ -562,7 +565,7 @@ public class SCIMConstants {
         public static final String SERVICE_PROVIDER_CONFIG = "ServiceProviderConfig";
         public static final String DOCUMENTATION_URI = "documentationUri";
         public static final String DOCUMENTATION_URI_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":documentationUri";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":documentationUri";
         public static final String PATCH = "patch";
         public static final String PATCH_URI = CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":patch";
         public static final String BULK = "bulk";
@@ -571,85 +574,85 @@ public class SCIMConstants {
         public static final String FILTER_URI = CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":filter";
         public static final String CHANGE_PASSWORD = "changePassword";
         public static final String CHANGE_PASSWORD_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":changePassword";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":changePassword";
         public static final String SORT = "sort";
         public static final String SORT_URI = CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":sort";
         public static final String ETAG = "etag";
         public static final String ETAG_URI = CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":etag";
         public static final String AUTHENTICATION_SCHEMAS = "authenticationSchemes";
         public static final String AUTHENTICATION_SCHEMAS_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes";
         public static final String SUPPORTED = "supported";
         public static final String MAX_OPERATIONS = "maxOperations";
         public static final String MAX_OPERATIONS_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.maxOperations";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.maxOperations";
         public static final String MAX_PAYLOAD_SIZE = "maxPayloadSize";
         public static final String MAX_PAYLOAD_SIZE_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.maxPayloadSize";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.maxPayloadSize";
         public static final String MAX_RESULTS = "maxResults";
         public static final String MAX_RESULTS_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":filter.maxResults";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":filter.maxResults";
         public static final String NAME = "name";
         public static final String NAME_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.name";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.name";
         public static final String DESCRIPTION = "description";
         public static final String DESCRIPTION_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.description";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.description";
         public static final String SPEC_URI = "specUri";
         public static final String SPEC_URI_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.specUri";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.specUri";
         public static final String TYPE = "type";
         public static final String TYPE_URL =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.type";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.type";
         public static final String PRIMARY = "primary";
         public static final String PRIMARY_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.primary";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.primary";
 
         public static final String PATCH_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":patcg.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":patcg.supported";
         public static final String BULK_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":bulk.supported";
         public static final String FILTER_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":filter.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":filter.supported";
         public static final String CHANGE_PASSWORD_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":changePassword.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":changePassword.supported";
         public static final String SORT_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":sort.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":sort.supported";
         public static final String ETAG_SUPPORTED_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":etag.supported";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":etag.supported";
         public static final String AUTHENTICATION_SCHEMAS_DOCUMENTATION_URI_URI =
-                CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.documentationUri";
+            CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.documentationUri";
 
 
         /*******Attributes descriptions of the attributes found in Service Provider Config Schema.***************/
 
         public static final String DOCUMENTATION_URI_DESC = "An HTTP-addressable URL pointing to the service " +
-                "provider's human-consumable help documentation.";
+            "provider's human-consumable help documentation.";
         public static final String PATCH_DESC = "A complex type that specifies PATCH configuration options.";
         public static final String BULK_DESC = "A complex type that specifies bulk configuration options.";
         public static final String FILTERS_DESC = "A complex type that specifies FILTER options.";
         public static final String CHANGE_PASSWORD_DESC = "A complex type that specifies configuration options " +
-                "related to changing a password.";
+            "related to changing a password.";
         public static final String SORT_DESC = "A complex type that specifies sort result options.";
         public static final String ETAG_DESC = "The version of the resources";
         public static final String AUTHENTICATION_SCHEMAS_DESC = "A complex type that specifies supported " +
-                "authentication scheme properties.";
+            "authentication scheme properties.";
         public static final String SUPPORTED_DESC = "A Boolean value specifying whether or not the operation is " +
-                "supported.";
+            "supported.";
         public static final String MAX_OPERATIONS_DESC = "An integer value specifying the maximum number of " +
-                "operations.";
+            "operations.";
         public static final String MAX_PAYLOAD_SIZE_DESC = "An integer value specifying the maximum payload size in " +
-                "bytes.";
+            "bytes.";
         public static final String MAX_RESULTS_DESC = "An integer value specifying the maximum number of resources " +
-                "returned in a response.";
+            "returned in a response.";
         public static final String NAME_DESC = "The common authentication scheme name,e.g., HTTP Basic.";
         public static final String DESCRIPTION_DESC = "A description of the authentication scheme.";
         public static final String SPEC_URI_DESC = "An HTTP-addressable URL pointing to the authentication scheme's " +
-                "specification.";
+            "specification.";
         public static final String TYPE_DESC = "A label indicating the attribute's function, e.g., 'work' or 'home'.";
         public static final String PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred attribute " +
-                "value for this attribute.  " +
-                "The primary attribute value 'true' MUST appear no more than once.";
+            "value for this attribute.  " +
+            "The primary attribute value 'true' MUST appear no more than once.";
     }
 
     /**
@@ -669,25 +672,25 @@ public class SCIMConstants {
         public static final String SCHEMA_URI = CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schema";
         public static final String SCHEMA_EXTENSIONS = "schemaExtensions";
         public static final String SCHEMA_EXTENSIONS_URI =
-                CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtensions";
+            CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtensions";
         public static final String SCHEMA_EXTENSIONS_SCHEMA = "schema";
         public static final String SCHEMA_EXTENSIONS_SCHEMA_URI =
-                CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtension.schema";
+            CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtension.schema";
         public static final String SCHEMA_EXTENSIONS_REQUIRED = "required";
         public static final String SCHEMA_EXTENSIONS_REQUIRED_URI =
-                CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtension.required";
+            CORE_SCHEMA_URI + ":" + RESOURCE_TYPE + ":schemaExtension.required";
 
         public static final String NAME_DESC = "The resource type name.  When applicable, service providers MUST " +
-                "specify the name, e.g., 'User'.\"";
+            "specify the name, e.g., 'User'.\"";
         public static final String DESCRIPTION_DESC = "e resource type's human-readable description. When applicable," +
-                " service providers MUST specify the description.";
+            " service providers MUST specify the description.";
         public static final String ENDPOINT_DESC = "The resource type's HTTP-addressable endpoint relative to the " +
-                "Base URL, e.g., '/Users'.";
+            "Base URL, e.g., '/Users'.";
         public static final String SCHEMA_DESC = "The resource type's primary/base schema uri.";
         public static final String SCHEMA_EXTENSIONS_DESC = "A list of URIs of the resource type's schema extensions.";
         public static final String SCHEMA_EXTENSIONS_SCHEMA_DESC = "The uri of a schema extension.";
         public static final String SCHEMA_EXTENSION_REQUIRED_DESC = "A Boolean value that specifies whether or not " +
-                "the schema extension is required for the resource type.";
+            "the schema extension is required for the resource type.";
         public static final String ID_DESC = "The resource type's server unique id";
 
         public static final String USER_ACCOUNT = "User Account";

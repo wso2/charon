@@ -87,6 +87,15 @@ public class SCIMSchemaDefinitions {
     /* attribute schemas of the attributes defined in common schema. */
 
     //A unique identifier for a SCIM resource as defined by the service provider
+    public static final SCIMAttributeSchema SCHEMAS =
+            SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.SCHEMAS_FIELD_URI,
+                    SCIMConstants.CommonSchemaConstants.SCHEMAS,
+                    SCIMDefinitions.DataType.STRING, true,
+                    SCIMConstants.CommonSchemaConstants.SCHEMAS_FIELD_DESC, true, true,
+                    SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.ALWAYS,
+                    SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+    //A unique identifier for a SCIM resource as defined by the service provider
     public static final SCIMAttributeSchema ID =
             SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.ID_URI,
                     SCIMConstants.CommonSchemaConstants.ID,
