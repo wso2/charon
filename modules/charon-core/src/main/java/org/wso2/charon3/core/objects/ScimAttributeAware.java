@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.BiConsumer;
@@ -50,124 +51,6 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
  * implementation of {@link AbstractSCIMObject}s is added.
  */
 public abstract class ScimAttributeAware {
-
-    /**
-     * checks that two given attributes are equals by running through their structure recursively
-     *
-     * @return true if the given attributes are equals, false else
-     */
-    public static boolean attributesEquals(Attribute attribute,
-                                           Attribute attributeOther) {
-
-        if (!attribute.getClass().equals(attributeOther.getClass())) {
-            return false;
-        }
-        if (!attributeMetaEquals(attribute, attributeOther)) {
-            return false;
-        }
-        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
-            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
-        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
-            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
-        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
-            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
-        }
-        return false;
-    }
-
-    /**
-     * tells us if the given two attributes do contain the same meta-data
-     *
-     * @return if the meta-data is identical
-     */
-    public static boolean attributeMetaEquals(Attribute attribute,
-                                              Attribute attributeOther) {
-
-        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
-            return false;
-        }
-        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
-            return false;
-        }
-        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
-            return false;
-        }
-        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
-            return false;
-        }
-        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
-            return false;
-        }
-        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
-            return false;
-        }
-        if (!attribute.getURI().equals(attributeOther.getURI())) {
-            return false;
-        }
-        return attribute.getType().equals(attributeOther.getType());
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
-                                                SimpleAttribute attribute2) {
-
-        if (!attribute1.getValue().equals(attribute2.getValue())) {
-            return false;
-        }
-        return attributeMetaEquals(attribute1, attribute2);
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
-                                                     MultiValuedAttribute otherAttribute) {
-
-        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaEquals) {
-            return false;
-        }
-        if (attribute.getAttributePrimitiveValues().isEmpty()) {
-            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
-                return false;
-            }
-            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
-                return otherAttribute.getAttributeValues().stream().anyMatch(
-                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
-            });
-        } else {
-            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
-        }
-    }
-
-    /**
-     * tells us if two complex attributes are identical or not
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean complexAttributeEquals(ComplexAttribute attribute,
-                                                 ComplexAttribute otherAttribute) {
-
-        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaDataEquals) {
-            return false;
-        }
-
-        // @formatter:off
-        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
-            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
-                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
-                            otherAttribute.getSubAttribute((String) otherAttributeName)))
-                    .apply(oAttributeName));
-        });
-        // @formatter:on
-    }
 
     /**
      * @return the id of the SCIM {@link #getResource()}
@@ -720,6 +603,122 @@ public abstract class ScimAttributeAware {
             return attributesEquals(getResource().getAttribute(attributeName),
                     scimAttributeAware.getResource().getAttribute(attributeName));
         });
+    }
+
+    /**
+     * checks that two given attributes are equals by running through their structure recursively
+     *
+     * @return true if the given attributes are equals, false else
+     */
+    public static boolean attributesEquals(Attribute attribute,
+                                           Attribute attributeOther) {
+
+        if (!attribute.getClass().equals(attributeOther.getClass())) {
+            return false;
+        }
+        if (!attributeMetaEquals(attribute, attributeOther)) {
+            return false;
+        }
+        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
+            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
+        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
+            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
+        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
+            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
+        }
+        return false;
+    }
+
+    /**
+     * tells us if the given two attributes do contain the same meta-data
+     *
+     * @return if the meta-data is identical
+     */
+    public static boolean attributeMetaEquals(Attribute attribute, Attribute attributeOther) {
+
+        if (!Objects.equals(attribute.getMultiValued(), attributeOther.getMultiValued())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getCaseExact(), attributeOther.getCaseExact())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getRequired(), attributeOther.getRequired())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getMutability(), attributeOther.getMutability())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getReturned(), attributeOther.getReturned())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getUniqueness(), attributeOther.getUniqueness())) {
+            return false;
+        }
+        if (attribute.getURI() == null || !attribute.getURI().equals(attributeOther.getURI())) {
+            return false;
+        }
+        return Objects.equals(attribute.getType(), attributeOther.getType());
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1, SimpleAttribute attribute2) {
+
+        if (!Objects.equals(attribute1.getValue(), attribute2.getValue())) {
+            return false;
+        }
+        return attributeMetaEquals(attribute1, attribute2);
+    }
+
+    /**
+     * tells us if two simple attributes are identical
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
+                                                     MultiValuedAttribute otherAttribute) {
+
+        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaEquals) {
+            return false;
+        }
+        if (attribute.getAttributePrimitiveValues().isEmpty()) {
+            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
+                return false;
+            }
+            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
+                return otherAttribute.getAttributeValues().stream().anyMatch(
+                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
+            });
+        } else {
+            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
+        }
+    }
+
+    /**
+     * tells us if two complex attributes are identical or not
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean complexAttributeEquals(ComplexAttribute attribute,
+                                                 ComplexAttribute otherAttribute) {
+
+        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaDataEquals) {
+            return false;
+        }
+
+        // @formatter:off
+        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
+            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
+                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
+                            otherAttribute.getSubAttribute((String) otherAttributeName)))
+                    .apply(oAttributeName));
+        });
+        // @formatter:on
     }
 
     @Override
