@@ -230,28 +230,21 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @return
      */
     @Override
-    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex,
-                                    int count, String sortBy, String sortOrder, String domainName,
-                                    String attributes, String excludeAttributes) {
-
-        //According to SCIM 2.0 spec minus values will be considered as 0
-        if (count < 0) {
-            count = 0;
-        }
-        //According to SCIM 2.0 spec minus values will be considered as 1
-        if (startIndex < 1) {
-            startIndex = 1;
-        }
+    public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
+            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
         Node rootNode = null;
         JSONEncoder encoder = null;
         try {
+            int count = ResourceManagerUtil.processCount(countInt == null ? null : String.valueOf(countInt));
+            int startIndex = ResourceManagerUtil
+                    .processStartIndex(startIndexInt == null ? null : String.valueOf(startIndexInt));
 
             //check whether provided sortOrder is valid or not
             if (sortOrder != null) {
-                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
+                        .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
@@ -274,16 +267,22 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                    (SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                    (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
             List<Object> returnedGroups;
             int totalResults = 0;
-            //API group should pass a usermanager usermanager to GroupResourceEndpoint.
+            //API group should pass a usermanager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
-                        sortBy, sortOrder, domainName, requiredAttributes);
+                List<Object> tempList;
 
+                // Count equal to -1 would imply that the request should not contain any users. In that case empty
+                // response needs to be sent.
+                if (count == -1) {
+                    tempList = null;
+                } else {
+                    tempList = userManager.listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
+                            requiredAttributes);
+                }
                 if (tempList == null) {
                     tempList = Collections.emptyList();
                 }

@@ -247,9 +247,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @param excludeAttributes
      * @return
      */
-    public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
-                                    String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
+            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager = null;
         Node rootNode = null;
@@ -257,21 +256,18 @@ public class UserResourceManager extends AbstractResourceManager {
 
         try {
 
-            //According to SCIM 2.0 spec minus values will be considered as 0
-            if (count < 0) {
-                count = 0;
-            }
-            //According to SCIM 2.0 spec minus values will be considered as 1
-            if (startIndex < 1) {
-                startIndex = 1;
-            }
+            int count = ResourceManagerUtil.processCount(countInt == null ? null : String.valueOf(countInt));
+            int startIndex = ResourceManagerUtil
+                    .processStartIndex(startIndexInt == null ? null : String.valueOf(startIndexInt));
+
             if (sortOrder != null) {
-                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
+                        .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
                     String error = " Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
+
             //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
             // ascending.
             if (sortOrder == null && sortBy != null) {
@@ -298,9 +294,17 @@ public class UserResourceManager extends AbstractResourceManager {
             int totalResults = 0;
             //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listUsersWithGET(rootNode, startIndex, count,
-                        sortBy, sortOrder, domainName, requiredAttributes);
+                List<Object> tempList;
 
+                // Count equal to -1 would imply that the request should not contain any users. In that case empty
+                // response needs to be sent.
+                if (count == -1) {
+                    tempList = null;
+                } else {
+                    tempList = userManager.listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
+                            requiredAttributes);
+
+                }
                 if (tempList == null) {
                     tempList = Collections.emptyList();
                 }

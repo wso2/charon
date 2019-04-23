@@ -392,6 +392,7 @@ public class ResourceManagerUtil {
 
     /**
      * Process count value according to SCIM 2.0 specification
+     *
      * @param countStr
      * @return
      * @throws BadRequestException
@@ -404,15 +405,16 @@ public class ResourceManagerUtil {
         } else {
             try {
                 count = Integer.parseInt(countStr);
+                if (count == 0) {
+                    return -1;
+                }
             } catch (NumberFormatException e) {
                 throw new BadRequestException("Value of parameter count is Invalid");
             }
         }
-
         if (count < 0) {
             count = 0;
         }
-
         return count;
     }
 
