@@ -56,7 +56,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         Assertions.assertEquals("der Mittlere", user.getName().getMiddleName());
         Assertions.assertEquals("Dr. Hc.", user.getName().getHonorificPrefix());
         Assertions.assertEquals("III", user.getName().getHonorificSuffix());
-        Assertions.assertEquals("myPwd", user.getPassword());
+        Assertions.assertNull(user.getPassword());
         Assertions.assertEquals("Max Muster", user.getDisplayName());
         Assertions.assertEquals("Maxi", user.getNickName());
         Assertions.assertEquals("Employee", user.getUserType());
