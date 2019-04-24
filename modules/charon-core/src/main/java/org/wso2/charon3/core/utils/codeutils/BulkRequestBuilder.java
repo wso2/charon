@@ -50,12 +50,30 @@ public class BulkRequestBuilder {
      *
      * @return the next operation to use
      */
-    public static BulkRequestOperation builder(Integer failOnErrors) {
+    public static BulkRequestBuilder builder(Integer failOnErrors) {
         BulkRequestBuilder bulkRequestBuilder = new BulkRequestBuilder();
         bulkRequestBuilder.setFailOnErrors(failOnErrors);
-        BulkRequestOperation bulkRequestOperation = new BulkRequestOperation(bulkRequestBuilder);
-        bulkRequestBuilder.getBulkOperationsList().add(bulkRequestOperation);
-        return bulkRequestOperation;
+        return bulkRequestBuilder;
+    }
+
+    /**
+     * creates the builder class and a bulk operation that must be configured.
+     *
+     * @return the next operation to use
+     */
+    public static BulkRequestBuilder builder() {
+        return new BulkRequestBuilder();
+    }
+
+    /**
+     * adds a new bulk request operation that must be configured
+     *
+     * @return the next bulk request operation that must be configured
+     */
+    public BulkRequestOperation next() {
+        BulkRequestOperation operation = new BulkRequestOperation(this);
+        this.bulkOperationsList.add(operation);
+        return operation;
     }
 
     /**

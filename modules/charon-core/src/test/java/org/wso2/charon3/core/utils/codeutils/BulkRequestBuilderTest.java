@@ -45,6 +45,7 @@ public class BulkRequestBuilderTest extends CharonInitializer implements FileRef
         Group group = JSON_DECODER.decodeResource(groupString, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, new Group());
 
         String bulkRequest = BulkRequestBuilder.builder(null)
+            .next()
             .setMethod(BulkRequestBuilder.Method.POST)
             .setPath(SCIMConstants.USER_ENDPOINT)
             .setData(user)
@@ -81,6 +82,7 @@ public class BulkRequestBuilderTest extends CharonInitializer implements FileRef
         User user = JSON_DECODER.decodeResource(userString, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
 
         String bulkRequest = BulkRequestBuilder.builder(failOnErrors)
+            .next()
             .setMethod(BulkRequestBuilder.Method.POST)
             .setPath(SCIMConstants.USER_ENDPOINT)
             .setData(user)

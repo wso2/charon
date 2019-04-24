@@ -205,6 +205,7 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
 
         Function<Integer, String> getBulkRequest = failOnErrors -> {
             return BulkRequestBuilder.builder(failOnErrors)
+                .next()
                 .setMethod(BulkRequestBuilder.Method.POST)
                 .setPath(SCIMConstants.USER_ENDPOINT)
                 .setData(user)
