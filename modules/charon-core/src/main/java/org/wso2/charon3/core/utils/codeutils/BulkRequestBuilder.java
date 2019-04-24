@@ -232,13 +232,6 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #bulkRequestBuilder
-         */
-        public void setBulkRequestBuilder(BulkRequestBuilder bulkRequestBuilder) {
-            this.bulkRequestBuilder = bulkRequestBuilder;
-        }
-
-        /**
          * @return this object as JSON object
          */
         public JSONObject toJsonObject() {
