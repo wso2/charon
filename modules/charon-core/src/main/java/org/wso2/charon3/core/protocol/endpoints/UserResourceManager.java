@@ -358,6 +358,125 @@ public class UserResourceManager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Method to list users at the Users endpoint.
+     * In the method, when the count is zero, the response will get zero results. When the count value is not
+     * specified (null) a default number of values for response will be returned. Any negative value to the count
+     * will return all the users.
+     *
+     * @param userManager       User manager
+     * @param filter            Filter to be executed
+     * @param startIndexInt     Starting index value of the filter
+     * @param countInt          Number of required results
+     * @param sortBy            SortBy
+     * @param sortOrder         Sorting order
+     * @param domainName        Domain name
+     * @param attributes        Attributes in the request
+     * @param excludeAttributes Exclude attributes
+     * @return SCIM response
+     */
+    @Override
+    public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
+            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
+
+        FilterTreeManager filterTreeManager;
+        Node rootNode = null;
+        JSONEncoder encoder;
+        try {
+            int count = ResourceManagerUtil.processCount(countInt);
+            int startIndex = ResourceManagerUtil
+                    .processStartIndex(startIndexInt == null ? null : String.valueOf(startIndexInt));
+
+            if (sortOrder != null) {
+                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
+                        .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+                    String error = " Invalid sortOrder value is specified";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+            // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (sortOrder == null && sortBy != null) {
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
+
+            // Unless configured returns core-user schema or else returns extended user schema).
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+
+            if (filter != null) {
+                filterTreeManager = new FilterTreeManager(filter, schema);
+                rootNode = filterTreeManager.buildTree();
+            }
+
+            // Obtain the json encoder.
+            encoder = getEncoder();
+
+            // Get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil
+                    .getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
+                            excludeAttributes);
+            List<Object> returnedUsers;
+            int totalResults = 0;
+            // API user should pass a user manager to UserResourceEndpoint.
+            if (userManager != null) {
+                List<Object> tempList;
+
+                // Count equal to -1 would imply that the request should not contain any users. In that case empty
+                // response needs to be sent.
+                if (count == -1) {
+                    tempList = null;
+                } else {
+                    tempList = userManager.listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
+                            requiredAttributes);
+
+                }
+                if (tempList == null) {
+                    tempList = Collections.emptyList();
+                }
+                try {
+                    totalResults = (int) tempList.get(0);
+                    tempList.remove(0);
+                } catch (IndexOutOfBoundsException e) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Group result list is empty.");
+                    }
+                    totalResults = tempList.size();
+                } catch (ClassCastException ex) {
+                    logger.debug("Parse error while getting the user result count. Setting result count as: " + tempList
+                            .size(), ex);
+                    totalResults = tempList.size();
+                }
+                returnedUsers = tempList;
+                for (Object user : returnedUsers) {
+                    // Perform service provider side validation.
+                    ServerSideValidator
+                            .validateRetrievedSCIMObjectInList((User) user, schema, attributes, excludeAttributes);
+                }
+                // Create a listed resource object out of the returned users list.
+                ListedResource listedResource = createListedResource(returnedUsers, startIndex, totalResults);
+                // Convert the listed resource into specific format.
+                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+                // If there are any http headers to be added in the response header.
+                Map<String, String> responseHeaders = new HashMap<String, String>();
+                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                // Log the error as well.
+                // Throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
+                NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException = new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        }
+    }
+
     /*
      * this facilitates the querying using HTTP POST
      * @param resourceString

@@ -110,6 +110,27 @@ public class BulkResourceManager extends AbstractResourceManager {
         return null;
     }
 
+    /**
+     * Method to list with BulkResourceManager
+     *
+     * @param userManager       User manager
+     * @param filter            Filter to be executed
+     * @param startIndexInt     Starting index value of the filter
+     * @param countInt          Number of required results
+     * @param sortBy            SortBy
+     * @param sortOrder         Sorting order
+     * @param domainName        Domain name
+     * @param attributes        Attributes in the request
+     * @param excludeAttributes Exclude attributes
+     * @return SCIM response
+     */
+    @Override
+    public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
+            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
+
+        return null;
+    }
+
     @Override
     public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
         return null;
