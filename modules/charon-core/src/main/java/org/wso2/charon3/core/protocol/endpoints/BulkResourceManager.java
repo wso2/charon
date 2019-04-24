@@ -49,18 +49,6 @@ public class BulkResourceManager {
     private JSONDecoder decoder = new JSONDecoder();
 
     /**
-     * An integer specifying the number of errors that the service provider will accept before the operation is
-     * terminated and an error response is returned.  OPTIONAL in a request.  Not valid in a response.<br><br>
-     * if not specified the server should process as many operations if possible even if each of them fails
-     */
-    //    private int failOnErrors = Integer.MAX_VALUE;
-
-    /**
-     * the number of errors that actually occurred
-     */
-    private int errorCount;
-
-    /**
      * a list of the resource managers that can be used to process bulk operations
      */
     private Map<String, ResourceManager> resourceManagerMap;
@@ -87,19 +75,22 @@ public class BulkResourceManager {
     public SCIMResponse processBulkData(String data) {
         try {
             BulkRequestData bulkRequestData = decoder.decodeBulkData(data);
-            int failOnErrors = bulkRequestData.getFailOnErrors();
+            Integer failOnErrors = bulkRequestData.getFailOnErrors();
 
             BulkResponseData bulkResponseData = new BulkResponseData();
+            int errorCount = 0;
             for (BulkRequestContent bulkRequestContent : bulkRequestData.getOperationRequests()) {
-                if (( failOnErrors == 0 && errorCount > 0 ) || ( errorCount > 0 && errorCount >= failOnErrors )) {
-                    throw new BadRequestException("bulk request has failed for too many errors: " + errorCount,
-                        "too_many_errors");
-                }
                 Optional<ResourceManager> resourceManagerOptional = findResourceManager(bulkRequestContent);
                 if (resourceManagerOptional.isPresent()) {
                     ResourceManager resourceManager = resourceManagerOptional.get();
                     BulkResponseContent responseContent = processOperationRequest(bulkRequestContent, resourceManager);
                     bulkResponseData.addOperationResponse(responseContent);
+                    errorCount += errorsCheck(responseContent.getScimResponse());
+                }
+                if (failOnErrors != null &&
+                    ((failOnErrors == 0 && errorCount > 0) || (errorCount > 0 && errorCount > failOnErrors))) {
+                    throw new BadRequestException("bulk request has failed for too many errors: " + errorCount,
+                        "too_many_errors");
                 }
             }
             //encode the BulkResponseData object
@@ -128,7 +119,6 @@ public class BulkResourceManager {
             SCIMResponse response = resourceManager.create(bulkRequestContent.getData(), null, null);
             bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
                 bulkRequestContent);
-            errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
 
@@ -136,7 +126,6 @@ public class BulkResourceManager {
             SCIMResponse response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), null, null);
             bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
                 bulkRequestContent);
-            errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
 
@@ -145,14 +134,12 @@ public class BulkResourceManager {
                 null);
             bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
                 bulkRequestContent);
-            errorsCheck(response);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.delete(resourceId);
             bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
                 bulkRequestContent);
-            errorsCheck(response);
         } else {
             bulkResponseContent = new BulkResponseContent();
             BadRequestException badRequestException = new BadRequestException(
@@ -189,11 +176,12 @@ public class BulkResourceManager {
     }
 
 
-    private void errorsCheck(SCIMResponse response) {
+    private int errorsCheck(SCIMResponse response) {
         if (response.getResponseStatus() != 200 && response.getResponseStatus() != 201 &&
             response.getResponseStatus() != 204) {
-            errorCount++;
+            return 1;
         }
+        return 0;
     }
 
     /**

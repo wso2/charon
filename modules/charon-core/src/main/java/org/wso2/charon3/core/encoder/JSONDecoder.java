@@ -876,7 +876,7 @@ public class JSONDecoder {
 
         BulkRequestData bulkRequestDataObject = new BulkRequestData();
         List<BulkRequestContent> endpointOperationList = new ArrayList<>();
-        int failOnErrorsAttribute = 0;
+        Integer failOnErrorsAttribute;
         List<String> schemas = new ArrayList<>();
 
         JSONObject decodedObject;
@@ -932,7 +932,10 @@ public class JSONDecoder {
                 }
             }
             //extract [failOnErrors] attribute from Json string
-            failOnErrorsAttribute = decodedObject.optInt(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS);
+            failOnErrorsAttribute = decodedObject.optInt(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS, -1);
+            if (failOnErrorsAttribute < 0) {
+                failOnErrorsAttribute = null;
+            }
 
             bulkRequestDataObject.setFailOnErrors(failOnErrorsAttribute);
             bulkRequestDataObject.setOperationRequests(endpointOperationList);

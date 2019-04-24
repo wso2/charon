@@ -2,10 +2,15 @@ package org.wso2.charon3.core.utils.codeutils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
@@ -52,7 +57,7 @@ public class BulkRequestBuilderTest extends CharonInitializer implements FileRef
         BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequest);
         Assertions.assertEquals(1, bulkRequestData.getSchemas().size());
         Assertions.assertEquals(SCIMConstants.BULK_REQUEST_URI, bulkRequestData.getSchemas().get(0));
-        Assertions.assertEquals(0, bulkRequestData.getFailOnErrors());
+        Assertions.assertNull(bulkRequestData.getFailOnErrors());
 
         BulkResourceManager bulkResourceManager = new BulkResourceManager(createResourceManagers());
         SCIMResponse response = bulkResourceManager.processBulkData(bulkRequest);
@@ -66,6 +71,25 @@ public class BulkRequestBuilderTest extends CharonInitializer implements FileRef
             SCIMResponse scimResponse = bulkResponseContent.getScimResponse();
             Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, scimResponse.getResponseStatus());
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 5, 8, 13})
+    public void testFailOnErrorsValue(int failOnErrors)
+        throws InternalErrorException, BadRequestException, CharonException {
+        String userString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        User user = JSON_DECODER.decodeResource(userString, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
+
+        String bulkRequest = BulkRequestBuilder.builder(failOnErrors)
+            .setMethod(BulkRequestBuilder.Method.POST)
+            .setPath(SCIMConstants.USER_ENDPOINT)
+            .setData(user)
+            .build();
+
+        BulkRequestData bulkRequestData = JSON_DECODER.decodeBulkData(bulkRequest);
+        Assertions.assertEquals(1, bulkRequestData.getSchemas().size());
+        Assertions.assertEquals(SCIMConstants.BULK_REQUEST_URI, bulkRequestData.getSchemas().get(0));
+        Assertions.assertEquals(failOnErrors, bulkRequestData.getFailOnErrors());
     }
 
     protected List<ResourceManager> createResourceManagers() {

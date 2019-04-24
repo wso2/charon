@@ -33,7 +33,7 @@ public class BulkRequestData {
     /**
      * number of errors that are allowed to happen before the whole procedure should fail
      */
-    private int failOnErrors;
+    private Integer failOnErrors;
 
     /**
      * the list of bulk operations to execute
@@ -53,11 +53,11 @@ public class BulkRequestData {
         this.operationRequests = operationRequests;
     }
 
-    public int getFailOnErrors() {
+    public Integer getFailOnErrors() {
         return failOnErrors;
     }
 
-    public void setFailOnErrors(int failOnErrors) {
+    public void setFailOnErrors(Integer failOnErrors) {
         this.failOnErrors = failOnErrors;
     }
 
