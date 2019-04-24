@@ -119,8 +119,9 @@ public class BulkRequestBuilder {
     /**
      * @see #failOnErrors
      */
-    public void setFailOnErrors(Integer failOnErrors) {
+    public BulkRequestBuilder setFailOnErrors(Integer failOnErrors) {
         this.failOnErrors = failOnErrors;
+        return this;
     }
 
     /**
