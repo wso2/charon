@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
-import javax.swing.*;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -29,7 +28,8 @@ public class SearchRequestBuilderTest {
             .setFilter(filter)
             .setSortBy(sortBy)
             .setSortOrder(
-                Optional.ofNullable(sortOrder).map(s -> SortOrder.valueOf(s.toUpperCase(Locale.ENGLISH))).orElse(null))
+                Optional.ofNullable(sortOrder)
+                    .map(s -> SearchRequestBuilder.SortOrder.valueOf(s.toUpperCase(Locale.ENGLISH))).orElse(null))
             .setAttributes(attributes)
             .setExcludedAttributes(excludedAttributes)
             .build();

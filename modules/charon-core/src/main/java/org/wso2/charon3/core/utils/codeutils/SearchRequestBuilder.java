@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
-import javax.swing.*;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -100,12 +99,8 @@ public class SearchRequestBuilder {
         Optional.ofNullable(sortBy)
             .ifPresent(string -> searchRequest.put(SCIMConstants.OperationalConstants.SORT_BY, string));
         Optional.ofNullable(sortOrder)
-            .ifPresent(enumType -> {
-                if (!SortOrder.UNSORTED.equals(enumType)) {
-                    searchRequest
-                        .put(SCIMConstants.OperationalConstants.SORT_ORDER, enumType.name().toLowerCase(Locale.ENGLISH));
-                }
-            });
+            .ifPresent(enumType -> searchRequest.put(SCIMConstants.OperationalConstants.SORT_ORDER,
+                enumType.name().toLowerCase(Locale.ENGLISH)));
         Optional.ofNullable(attributes)
             .ifPresent(string -> searchRequest.put(SCIMConstants.OperationalConstants.ATTRIBUTES, string));
         Optional.ofNullable(excludedAttributes)
@@ -216,6 +211,13 @@ public class SearchRequestBuilder {
     public SearchRequestBuilder setExcludedAttributes(String excludedAttributes) {
         this.excludedAttributes = excludedAttributes;
         return this;
+    }
+
+    /**
+     * the allowed values for sortOrder
+     */
+    public static enum SortOrder {
+        ASCENDING, DESCENDING
     }
 
     @Override
