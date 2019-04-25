@@ -104,9 +104,10 @@ public class BulkRequestBuilder {
     /**
      * @see #bulkOperationsList
      */
-    public void setBulkOperationsList(
+    public BulkRequestBuilder setBulkOperationsList(
         List<BulkRequestOperation> bulkOperationsList) {
         this.bulkOperationsList = bulkOperationsList;
+        return this;
     }
 
     /**
