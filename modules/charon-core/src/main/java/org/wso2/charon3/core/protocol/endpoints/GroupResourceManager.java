@@ -230,9 +230,8 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @return
      */
     @Override
-    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex,
-                                    int count, String sortBy, String sortOrder, String domainName,
-                                    String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
+            String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
         //According to SCIM 2.0 spec minus values will be considered as 0
         if (count < 0) {
@@ -242,105 +241,88 @@ public class GroupResourceManager extends AbstractResourceManager {
         if (startIndex < 1) {
             startIndex = 1;
         }
-
-        FilterTreeManager filterTreeManager = null;
-        Node rootNode = null;
-        JSONEncoder encoder = null;
         try {
+            // Resolving sorting order.
+            sortOrder = resolveSortOrder(sortOrder, sortBy);
 
-            //check whether provided sortOrder is valid or not
-            if (sortOrder != null) {
-                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
-                        || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
-                    String error = " Invalid sortOrder value is specified";
-                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
-                }
-            }
-            //If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
-            // ascending.
-            if (sortOrder == null && sortBy != null) {
-                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
-            }
-
-            // unless configured returns core-user schema or else returns extended user schema)
+            // Unless configured returns core-user schema or else returns extended user schema
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-            if (filter != null) {
-                filterTreeManager = new FilterTreeManager(filter, schema);
-                rootNode = filterTreeManager.buildTree();
-            }
 
-            //obtain the json encoder
-            encoder = getEncoder();
+            // Build node for filtering.
+            Node rootNode = buildNode(filter, schema);
 
-            //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                    (SCIMResourceTypeSchema)
-                    CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+            // Obtain the json encoder
+            JSONEncoder encoder = getEncoder();
 
-            List<Object> returnedGroups;
-            int totalResults = 0;
-            //API group should pass a usermanager usermanager to GroupResourceEndpoint.
+            // Get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil
+                    .getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
+                            excludeAttributes);
+
+            // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
-                        sortBy, sortOrder, domainName, requiredAttributes);
-
-                if (tempList == null) {
-                    tempList = Collections.emptyList();
-                }
-
-                try {
-                    totalResults = (int) tempList.get(0);
-                    tempList.remove(0);
-                } catch (IndexOutOfBoundsException e) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Group result list is empty.");
-                    }
-                    totalResults = tempList.size();
-                } catch (ClassCastException ex) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Parse error while getting the group result count. Setting result count as: " +
-                                     tempList.size(), ex);
-                    }
-                    totalResults = tempList.size();
-                }
-                returnedGroups = tempList;
-
-                for (Object group : returnedGroups) {
-                    //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions
-                                    .SCIM_GROUP_SCHEMA,
-                            attributes, excludeAttributes);
-                }
-                //create a listed resource object out of the returned groups list.
-                ListedResource listedResource = createListedResource(returnedGroups, startIndex, totalResults);
-                //convert the listed resource into specific format.
-                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                //if there are any http headers to be added in the response header.
-                Map<String, String> responseHeaders = new HashMap<String, String>();
-                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
-
+                List<Object> tempList = userManager
+                        .listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
+                                requiredAttributes);
+                return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                //log the error as well.
-                //throw internal server error.
+                // Log the error as well.
+                // Throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
+                NotImplementedException e) {
             return encodeSCIMException(e);
         } catch (IOException e) {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
         }
+    }
+
+    /**
+     * Resolves the sorting order of the filter.
+     *
+     * @param sortOrder Sort order in the request.
+     * @param sortBy    SortBy in the request.
+     * @return Resolved sorting order.
+     * @throws BadRequestException Invalid sorting order.
+     */
+    private String resolveSortOrder(String sortOrder, String sortBy) throws BadRequestException {
+
+        // Check whether provided sortOrder is valid or not.
+        if (sortOrder != null) {
+            if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
+                    .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+                String error = " Invalid sortOrder value is specified";
+                throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+            }
+        }
+        // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+        // ascending.
+        if (sortOrder == null && sortBy != null) {
+            sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+        }
+        return sortOrder;
+    }
+
+    /**
+     * Build Node for filtering.
+     *
+     * @param filter Filter in the request.
+     * @param schema Schema
+     * @return Node
+     * @throws BadRequestException
+     * @throws IOException
+     */
+    private Node buildNode(String filter, SCIMResourceTypeSchema schema) throws BadRequestException, IOException {
+
+        if (filter != null) {
+            FilterTreeManager filterTreeManager = new FilterTreeManager(filter, schema);
+            return filterTreeManager.buildTree();
+        }
+        return null;
     }
 
     /**
@@ -365,92 +347,42 @@ public class GroupResourceManager extends AbstractResourceManager {
             String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
         FilterTreeManager filterTreeManager;
-        Node rootNode = null;
-        JSONEncoder encoder;
         try {
 
-            int count = ResourceManagerUtil.processCount(countInt);
-            int startIndex = ResourceManagerUtil
+            Integer count = ResourceManagerUtil.processCount(countInt);
+            Integer startIndex = ResourceManagerUtil
                     .processStartIndex(startIndexInt == null ? null : String.valueOf(startIndexInt));
 
-            // Check whether provided sortOrder is valid or not.
-            if (sortOrder != null) {
-                if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
-                        .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
-                    String error = " Invalid sortOrder value is specified";
-                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
-                }
-            }
+            // Resolving sorting order.
+            sortOrder = resolveSortOrder(sortOrder, sortBy);
 
-            // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
-            // ascending.
-            if (sortOrder == null && sortBy != null) {
-                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
-            }
-
-            // Unless configured returns core-user schema or else returns extended user schema).
+            // Unless configured returns core-user schema or else returns extended user schema.
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-            if (filter != null) {
-                filterTreeManager = new FilterTreeManager(filter, schema);
-                rootNode = filterTreeManager.buildTree();
-            }
+
+            //// Build node for filtering.
+            Node rootNode = buildNode(filter, schema);
 
             // Obtain the json encoder.
-            encoder = getEncoder();
+            JSONEncoder encoder = getEncoder();
 
             // Get the URIs of required attributes which must be given a value.
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil
                     .getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
                             excludeAttributes);
-            List<Object> returnedGroups;
-            int totalResults = 0;
+
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
                 List<Object> tempList;
 
                 // Count equal to -1 would imply that the request should not contain any users. In that case empty
                 // response needs to be sent.
-                if (count == -1) {
+                if (count != null && count == 0) {
                     tempList = null;
                 } else {
                     tempList = userManager.listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
                             requiredAttributes);
                 }
-                if (tempList == null) {
-                    tempList = Collections.emptyList();
-                }
-                try {
-                    totalResults = (int) tempList.get(0);
-                    tempList.remove(0);
-                } catch (IndexOutOfBoundsException e) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Group result list is empty.");
-                    }
-                    totalResults = tempList.size();
-                } catch (ClassCastException ex) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "Parse error while getting the group result count. Setting result count as: " + tempList
-                                        .size(), ex);
-                    }
-                    totalResults = tempList.size();
-                }
-                returnedGroups = tempList;
-
-                for (Object group : returnedGroups) {
-                    // Perform service provider side validation.
-                    ServerSideValidator
-                            .validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
-                                    attributes, excludeAttributes);
-                }
-                // Create a listed resource object out of the returned groups list.
-                ListedResource listedResource = createListedResource(returnedGroups, startIndex, totalResults);
-                // Convert the listed resource into specific format.
-                String encodedListedResource = encoder.encodeSCIMObject(listedResource);
-                // If there are any http headers to be added in the response header.
-                Map<String, String> responseHeaders = new HashMap<String, String>();
-                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
+                return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
                 // Log the error as well.
@@ -465,6 +397,61 @@ public class GroupResourceManager extends AbstractResourceManager {
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
         }
+    }
+
+    /**
+     * Method to process a list and return a SCIM response.
+     *
+     * @param tempList          Filtered user list
+     * @param encoder           Json encoder
+     * @param attributes        Required attributes
+     * @param excludeAttributes Exclude attributes
+     * @param startIndex        Starting index
+     * @return SCIM response
+     * @throws NotFoundException
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    private SCIMResponse processGroupList(List<Object> tempList, JSONEncoder encoder, String attributes,
+            String excludeAttributes, int startIndex) throws NotFoundException, CharonException, BadRequestException {
+
+        int totalResults = 0;
+        List<Object> returnedGroups;
+        if (tempList == null) {
+            tempList = Collections.emptyList();
+        }
+        try {
+            totalResults = (int) tempList.get(0);
+            tempList.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Group result list is empty.");
+            }
+            totalResults = tempList.size();
+        } catch (ClassCastException ex) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(
+                        "Parse error while getting the group result count. Setting result count as: " + tempList.size(),
+                        ex);
+            }
+            totalResults = tempList.size();
+        }
+        returnedGroups = tempList;
+
+        for (Object group : returnedGroups) {
+            // Perform service provider side validation.
+            ServerSideValidator
+                    .validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+                            attributes, excludeAttributes);
+        }
+        // Create a listed resource object out of the returned groups list.
+        ListedResource listedResource = createListedResource(returnedGroups, startIndex, totalResults);
+        // Convert the listed resource into specific format.
+        String encodedListedResource = encoder.encodeSCIMObject(listedResource);
+        // If there are any http headers to be added in the response header.
+        Map<String, String> responseHeaders = new HashMap<String, String>();
+        responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+        return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
     }
 
     /*

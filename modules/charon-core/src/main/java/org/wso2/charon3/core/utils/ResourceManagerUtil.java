@@ -416,36 +416,25 @@ public class ResourceManagerUtil {
         return count;
     }
 
-    /*
+    /**
      * Process count value according to SCIM 2.0 specification
      *
      * @param countInt The count value in the request
-     * @return Integer according to the passed value. (-1 is returned when the countInt value is zero to distinguish
-     * the zero count value in the request).
-     * @throws BadRequestException When the countInt is not a number.
+     * @return Integer according to the passed value. (NOTE: return NULL when the COUNT is not speciified in the
+     * request)
      */
-    public static int processCount(Integer countInt) throws BadRequestException {
+    public static Integer processCount(Integer countInt) {
 
-        int count;
         if (countInt == null || countInt.toString().isEmpty()) {
-            count = CharonConfiguration.getInstance().getCountValueForPagination();
+            return null;
         } else {
-            try {
-                count = countInt;
-                // -1 is returned as a flag to identify count = 0 scenario.
-                if (count == 0) {
-                    return -1;
-                }
-            } catch (NumberFormatException e) {
-                throw new BadRequestException("Value of parameter count is Invalid");
+            // All the negative values are interpreted as zero according to the specification.
+            if (countInt <= 0) {
+                return 0;
+            } else {
+                return countInt;
             }
         }
-
-        // All the negative values are updated to zero inorder to return all the users.
-        if (count < 0) {
-            count = 0;
-        }
-        return count;
     }
 
     /**

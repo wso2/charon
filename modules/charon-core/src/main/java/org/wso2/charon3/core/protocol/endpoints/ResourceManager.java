@@ -68,6 +68,7 @@ public interface ResourceManager {
      * @param excludeAttributes
      * @return
      */
+    @Deprecated
     SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
             String sortOrder, String domainName, String attributes, String excludeAttributes);
 
