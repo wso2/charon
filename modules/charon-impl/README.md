@@ -27,7 +27,8 @@ and Group create, get, update, patch and list.
 
 **User create**
 ```
-curl -v --data '{"schemas":[],"name":{"familyName":"jayawardana","givenName":"vindula"},"userName":"vindula","password":"vindula","emails":[{"value":"vindula@work.com","type":"work"}]}' --h```
+curl -v --data '{"schemas":[],"name":{"familyName":"jayawardana","givenName":"vindula"},"userName":"vindula","password":"vindula","emails":[{"value":"vindula@work.com","type":"work"}]}' --h
+```
 
 **User get**
 ```
