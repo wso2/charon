@@ -25,7 +25,9 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
 import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +44,8 @@ public class AttributeUtil {
      * @param dataType
      * @return Object
      */
-    public static Object getAttributeValueFromString(Object attributeValue, SCIMDefinitions.DataType dataType)
+    public static Object getAttributeValueFromString (Object attributeValue,
+                                                      SCIMDefinitions.DataType dataType)
         throws CharonException, BadRequestException {
         if (attributeValue == null) {
             return attributeValue;
@@ -89,7 +92,7 @@ public class AttributeUtil {
      * @return
      * @throws CharonException
      */
-    public static String getStringValueOfAttribute(Object attributeValue, SCIMDefinitions.DataType dataType)
+    public static String getStringValueOfAttribute (Object attributeValue, SCIMDefinitions.DataType dataType)
         throws CharonException {
         switch (dataType) {
             case STRING:
@@ -117,22 +120,26 @@ public class AttributeUtil {
      *
      * @param dateTimeString
      */
-    public static Instant parseDateTime(String dateTimeString) throws CharonException {
+    public static Instant parseDateTime (String dateTimeString) throws CharonException {
         try {
-            return OffsetDateTime.parse(dateTimeString).toInstant();
+            return LocalDateTime.parse(dateTimeString).toInstant(ZoneOffset.UTC);
         } catch (DateTimeException e) {
-            throw new CharonException(
-                "Error in parsing date time. " + "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+            try {
+                return OffsetDateTime.parse(dateTimeString).toInstant();
+            } catch (DateTimeException dte) {
+                throw new CharonException(
+                    "Error in parsing date time. " + "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+            }
         }
     }
 
-    public static String parseReference(String referenceString) throws CharonException {
+    public static String parseReference (String referenceString) throws CharonException {
         //TODO: Need a better way for doing this. Think of the way to handle reference types
         return referenceString;
     }
 
     //this method is for the consistency purpose only
-    public static String parseComplex(String complexString) {
+    public static String parseComplex (String complexString) {
         return complexString;
     }
 
@@ -141,7 +148,7 @@ public class AttributeUtil {
      *
      * @param date
      */
-    public static String formatDateTime(Instant instant) {
+    public static String formatDateTime (Instant instant) {
         return instant.toString();
     }
 
@@ -150,7 +157,7 @@ public class AttributeUtil {
      *
      * @param booleanValue
      */
-    public static Boolean parseBoolean(Object booleanValue) throws BadRequestException {
+    public static Boolean parseBoolean (Object booleanValue) throws BadRequestException {
         try {
             return ((Boolean) booleanValue);
         } catch (Exception e) {
@@ -164,7 +171,7 @@ public class AttributeUtil {
      * @param attributeName
      * @return
      */
-    public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema)
+    public static String getAttributeURI (String attributeName, SCIMResourceTypeSchema schema)
         throws BadRequestException {
 
         List<AttributeSchema> attributeSchemas = new ArrayList<>(schema.getAttributesList());
@@ -207,16 +214,16 @@ public class AttributeUtil {
      * @param attributeSchema
      * @param attributeName   @return
      */
-    private static String checkSCIMSubAttributeURIs(List<AttributeSchema> subAttributes,
-                                                    AttributeSchema attributeSchema,
-                                                    String attributeName) {
+    private static String checkSCIMSubAttributeURIs (List<AttributeSchema> subAttributes,
+                                                     AttributeSchema attributeSchema,
+                                                     String attributeName) {
         if (subAttributes != null) {
             Iterator<AttributeSchema> subsIterator = subAttributes.iterator();
 
             while (subsIterator.hasNext()) {
                 AttributeSchema subAttributeSchema = subsIterator.next();
                 if ((attributeSchema.getName() + "." + subAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
-                        subAttributeSchema.getURI().equals(attributeName)) {
+                    subAttributeSchema.getURI().equals(attributeName)) {
                     return subAttributeSchema.getURI();
                 }
                 if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
@@ -227,8 +234,8 @@ public class AttributeUtil {
                         while (subSubsIterator.hasNext()) {
                             AttributeSchema subSubAttributeSchema = subSubsIterator.next();
                             if ((attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
-                                     subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
-                                    subAttributeSchema.getURI().equals(attributeName)) {
+                                subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
+                                subAttributeSchema.getURI().equals(attributeName)) {
                                 return subSubAttributeSchema.getURI();
                             }
                         }

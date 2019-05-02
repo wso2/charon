@@ -57,7 +57,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
      *
      * @return the
      */
-    //    @Override
+    @Override
     public SCIMResponse get(String id, String attributes, String excludeAttributes) {
 
         try {
@@ -82,6 +82,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         }
     }
 
+    @Override
     public SCIMResponse create(String scimObjectString, String attributes, String excludeAttributes) {
 
         String error = "Request is undefined";
@@ -89,21 +90,17 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse delete(ResourceHandler userManager, String id) {
+    @Override
+    public SCIMResponse delete(String id) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-    public SCIMResponse listWithGET(String filter,
-                                    int startIndex,
-                                    int count,
-                                    String sortBy,
-                                    String sortOrder,
-                                    String domainName,
-                                    String attributes,
-                                    String excludeAttributes) {
+    @Override
+    public SCIMResponse listWithGET(String filter, Integer startIndexInt, Integer countInt, String sortBy,
+                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
 
         try {
             List<ResourceType> copiedResourceTypes = ResourceTypeRegistration.getResourceTypeListCopy();
@@ -131,6 +128,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         }
     }
 
+    @Override
     public SCIMResponse listWithPOST(String resourceString) {
 
         String error = "Request is undefined";
@@ -138,6 +136,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         return encodeSCIMException(badRequestException);
     }
 
+    @Override
     public SCIMResponse updateWithPUT(String existingId,
                                       String scimObjectString,
                                       String attributes,
@@ -148,6 +147,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         return encodeSCIMException(badRequestException);
     }
 
+    @Override
     public SCIMResponse updateWithPATCH(String existingId,
                                         String scimObjectString,
                                         String attributes,
