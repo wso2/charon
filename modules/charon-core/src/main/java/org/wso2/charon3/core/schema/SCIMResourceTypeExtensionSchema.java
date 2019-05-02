@@ -6,10 +6,11 @@ import java.util.Set;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
 
 /**
- * author Pascal Knueppel <br>
- * created at: 18.03.2019 - 12:50 <br>
- * <br>
- * this class represents a scim schema extension for a resource
+ * this class represents a scim schema extension for a resource.<br>
+ *
+ * created at: 18.03.2019 - 12:50
+ *
+ * @author Pascal Knueppel
  */
 public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
 
@@ -20,7 +21,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * creates a new extension schema
+     * creates a new extension schema.
      *
      * @param schema           the identifier uri of the extension
      * @param attributeSchemas the attributes that will be describes by this schema
@@ -46,7 +47,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final Set<SCIMResourceTypeExtensionSchema> getExtensions() {
@@ -54,7 +55,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void setExtensions(Set<SCIMResourceTypeExtensionSchema> extensions) {
@@ -62,7 +63,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void addExtension(SCIMResourceTypeExtensionSchema extension) {
@@ -79,7 +80,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * equals if the schema uri identifier is equal
+     * equals if the schema uri identifier is equal.
      */
     @Override
     public boolean equals(Object o) {

@@ -84,7 +84,7 @@ public class JSONDecoder {
 
     /**
      * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
-     * {@link ListedResource} object that holds the parsed objects
+     * {@link ListedResource} object that holds the parsed objects.
      *
      * @param scimResourceString the listed resource string
      * @param resourceSchema     the schema of the resource objects that should be present.
@@ -151,7 +151,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
@@ -180,7 +180,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
@@ -229,7 +229,7 @@ public class JSONDecoder {
     }
 
     /**
-     * retrieves the string value from the given {@link JSONObject}
+     * retrieves the string value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
@@ -248,7 +248,7 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves an int value from the given {@link JSONObject}
+     * retrieves an int value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
@@ -372,7 +372,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method will resolve the schema extensions of a resource and will add them to the translated resource
+     * this method will resolve the schema extensions of a resource and will add them to the translated resource.
      *
      * @param jsonObject     the json representation of the current scim resource
      * @param resourceSchema the resource type definition to resolve the extension

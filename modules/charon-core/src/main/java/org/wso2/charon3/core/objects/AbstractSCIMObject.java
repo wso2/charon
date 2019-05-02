@@ -282,7 +282,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * crete the meta attribute of the scim object
+     * crete the meta attribute of the scim object.
      */
     protected void createMetaAttribute() throws CharonException, BadRequestException {
         ComplexAttribute metaAttribute =
@@ -298,7 +298,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Return the meta attribute
+     * Return the meta attribute.
      *
      * @return ComplexAttribute
      */
@@ -312,7 +312,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the location of the meta attribute
+     * set the location of the meta attribute.
      *
      * @param location
      */
@@ -342,7 +342,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the resourceType of the meta attribute
+     * set the resourceType of the meta attribute.
      *
      * @param resourceType
      */
@@ -377,7 +377,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the created date and time of the resource
+     * set the created date and time of the resource.
      *
      * @param createdDate
      */
@@ -393,7 +393,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the last modified date and time of the resource
+     * set the last modified date and time of the resource.
      *
      * @param lastModifiedDate
      */

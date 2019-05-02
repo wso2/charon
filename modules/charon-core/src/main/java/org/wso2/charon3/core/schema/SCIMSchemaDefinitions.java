@@ -1373,7 +1373,7 @@ public class SCIMSchemaDefinitions {
 
     }
 
-    /**
+    /*
      * **********SCIM defined Enterprise User Resource Schema.****************************
      */
     public static final SCIMResourceTypeExtensionSchema SCIM_ENTERPRISE_USER_SCHEMA =
@@ -1387,7 +1387,7 @@ public class SCIMSchemaDefinitions {
                     SCIMEnterpriseUserSchemaDefinition.MANAGER
             );
 
-    /**
+    /*
      * **********SCIM defined User Resource Schema.****************************
      */
     public static final SCIMResourceTypeSchema SCIM_USER_SCHEMA =
@@ -1418,7 +1418,7 @@ public class SCIMSchemaDefinitions {
                     SCIMUserSchemaDefinition.X509CERTIFICATES);
 
 
-    /**
+    /*
      * **********SCIM defined Group Resource Schema.****************************
      */
     public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =

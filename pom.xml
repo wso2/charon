@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.19-SNAPSHOT</version>
+    <version>3.1.22-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -340,6 +340,10 @@
         <servlet.api.version>2.5</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
+
+        <!-- this version has the problematic checkstyle bug fixed
+             (IllegalStateException because of invalid regex group) -->
+        <maven.checkstyleplugin.version>3.0.0</maven.checkstyleplugin.version>
 
         <!--plugin versions-->
         <compiler.plugin.version>2.3.1</compiler.plugin.version>

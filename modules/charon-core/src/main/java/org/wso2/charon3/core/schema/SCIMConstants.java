@@ -451,7 +451,7 @@ public class SCIMConstants {
     }
 
     /**
-     * represents the constants for the enterprise user schema
+     * represents the constants for the enterprise user schema.
      */
     public static class EnterpriseUserSchemaConstants {
 

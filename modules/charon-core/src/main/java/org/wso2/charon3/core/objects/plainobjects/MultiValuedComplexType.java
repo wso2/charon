@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /**
  * this class representation can be used to easily add a multi valued complex type representation like an email
- * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class MultiValuedComplexType {
 

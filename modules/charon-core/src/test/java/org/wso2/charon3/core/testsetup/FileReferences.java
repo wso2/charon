@@ -11,52 +11,53 @@ import java.util.function.Function;
 
 
 /**
- * author Pascal Knueppel <br>
+ * .
+ * @author Pascal Knueppel
  */
 public interface FileReferences {
 
     /**
-     * the basePath where the resource files are
+     * the basePath where the resource files are.
      */
     public static final String BASE_PATH = "/org/wso2/charon3/core/";
 
     /**
-     * a decoder to convert json-string into SCIM DTO objects
+     * a decoder to convert json-string into SCIM DTO objects.
      */
     public static final JSONDecoder JSON_DECODER = new JSONDecoder();
 
     /**
-     * an encoder to convert SCIM DTO objects into string-json representations
+     * an encoder to convert SCIM DTO objects into string-json representations.
      */
     public static final JSONEncoder JSON_ENCODER = new JSONEncoder();
 
     /**
-     * the resource file path to the json structure with a creation representation of a group named "bremen"
+     * the resource file path to the json structure with a creation representation of a group named "bremen".
      */
     public static final String CREATE_GROUP_BREMEN_FILE = BASE_PATH + "group/create-group-bremen.json";
 
     /**
      * the resource file path to the json structure with a creation representation of a group named "bremen" that has
-     * also a user member and another group member
+     * also a user member and another group member.
      */
     public static final String CREATE_GROUP_BREMEN_WITH_MEMBERS_FILE =
         BASE_PATH + "group/create-group-bremen-with-members.json";
 
     /**
-     * the resource file path to the json structure with a creation representation of an user named "maxilein"
+     * the resource file path to the json structure with a creation representation of an user named "maxilein".
      */
     public static final String CREATE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-user-maxilein.json";
 
     /**
      * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
-     * enterprise extension
+     * enterprise extension.
      */
     public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE = BASE_PATH + "group/create-enterprise-user" +
             "-maxilein.json";
 
 
     /**
-     * reads a file from the test-resources
+     * reads a file from the test-resources.
      *
      * @param resourcePath the path to the resource
      * @return the resource read into a string value
@@ -66,7 +67,7 @@ public interface FileReferences {
     }
 
     /**
-     * reads a file from the test-resources and modifies the content
+     * reads a file from the test-resources and modifies the content.
      *
      * @param resourcePath              the path to the resource
      * @param changeResourceFileContent a function on the file content to modify the return string
