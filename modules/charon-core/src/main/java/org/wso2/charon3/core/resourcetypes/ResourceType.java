@@ -26,7 +26,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- * this class represents a resource type as it was defined in RFC7643 section 6
+ * this class represents a resource type as it was defined in RFC7643 section 6.
  * <br><br>
  * created at: 04.04.2019
  * @author Pascal Knüppel
@@ -38,7 +38,7 @@ public class ResourceType extends AbstractSCIMObject {
     private static final Logger log = LoggerFactory.getLogger(ResourceType.class);
 
     /**
-     * the schema that is represented by this resource type
+     * the schema that is represented by this resource type.
      */
     private ResourceTypeSchema resourceTypeSchema;
 
@@ -249,7 +249,7 @@ public class ResourceType extends AbstractSCIMObject {
     }
 
     /**
-     * creates a schema extension attribute as complex type
+     * creates a schema extension attribute as complex type.
      *
      * @param resourceTypeExtension the payload data of the schema extension attribute
      */
@@ -278,7 +278,7 @@ public class ResourceType extends AbstractSCIMObject {
     }
 
     /**
-     * adds a new schema extension
+     * adds a new schema extension.
      *
      * @param schema the schema uri
      * @param required if the extension is required or not

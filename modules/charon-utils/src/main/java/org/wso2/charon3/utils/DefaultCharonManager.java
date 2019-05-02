@@ -32,9 +32,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This illustrates what are the core tasks an implementation should take care of,
- * according to their specific implementation, and how the extension points and supportutils
- * implementation provided by charon can be initialized/utilized here.
+ * This illustrates what are the core tasks an implementation should take care of, according to their specific
+ * implementation, and how the extension points and supportutils implementation provided by charon can be
+ * initialized/utilized here.
  */
 public class DefaultCharonManager {
 
@@ -47,19 +47,19 @@ public class DefaultCharonManager {
     private static JSONDecoder jsonDecoder = new JSONDecoder();
     private static JSONEncoder jsonEncoder = new JSONEncoder();
 
-    private DefaultCharonManager() {
+    private DefaultCharonManager () {
         init();
     }
 
     /**
-     * Should return the static instance of CharonManager implementation.
-     * Read the config and initialize extensions as specified in the config.
+     * Should return the static instance of CharonManager implementation. Read the config and initialize extensions as
+     * specified in the config.
      *
      * @return
      */
-    public static DefaultCharonManager getInstance() throws CharonException {
+    public static DefaultCharonManager getInstance () throws CharonException {
         if (defaultCharonManager == null) {
-            synchronized(DefaultCharonManager.class) {
+            synchronized (DefaultCharonManager.class) {
                 if (defaultCharonManager == null) {
                     defaultCharonManager = new DefaultCharonManager();
                     return defaultCharonManager;
@@ -75,7 +75,7 @@ public class DefaultCharonManager {
     /**
      * Perform initialization.
      */
-    private void init() {
+    private void init () {
         //Define endpoint urls to be used in Location Header
         endpointURLs.put(SCIMConstants.USER_ENDPOINT, USERS_URL);
         endpointURLs.put(SCIMConstants.GROUP_ENDPOINT, GROUPS_URL);
@@ -88,7 +88,7 @@ public class DefaultCharonManager {
      *
      * @return
      */
-    public JSONDecoder getDecoder() {
+    public JSONDecoder getDecoder () {
         return jsonDecoder;
     }
 
@@ -97,21 +97,21 @@ public class DefaultCharonManager {
      *
      * @return
      */
-    public JSONEncoder getEncoder() {
+    public JSONEncoder getEncoder () {
         return jsonEncoder;
     }
 
-    private void registerEndpointURLs() {
+    private void registerEndpointURLs () {
         if (endpointURLs != null && endpointURLs.size() != 0) {
             AbstractResourceManager.setEndpointURLMap(endpointURLs);
         }
     }
 
-    public ResourceHandler<User> getUserResourceHandler() {
+    public ResourceHandler<User> getUserResourceHandler () {
         return userResourceHandler;
     }
 
-    public ResourceHandler<Group> getGroupResourceHandler() {
+    public ResourceHandler<Group> getGroupResourceHandler () {
         return groupResourceHandler;
     }
 }

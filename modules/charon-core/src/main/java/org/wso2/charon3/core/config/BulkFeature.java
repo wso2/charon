@@ -17,7 +17,7 @@ public class BulkFeature extends ScimFeature {
     private int maxOperations = Integer.MAX_VALUE;
 
     /**
-     * the maximum payload that is allowed to be processed
+     * the maximum payload that is allowed to be processed.
      */
     private int maxPayLoadSize = Integer.MAX_VALUE;
 

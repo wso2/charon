@@ -34,16 +34,14 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
      * need to know which node is the parent node.
      */
     private SCIMAttributeSchema parent;
-    /**
-     * unique identifier for the attribute
-     */
+    //unique identifier for the attribute
     private String uri;
     /**
-     * name of the attribute
+     * name of the attribute.
      */
     private String name;
     /**
-     * data type of the attribute
+     * data type of the attribute.
      */
     private SCIMDefinitions.DataType type;
     /**
@@ -51,15 +49,15 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
      */
     private Boolean multiValued;
     /**
-     * The attribute's human readable description
+     * The attribute's human readable description.
      */
     private String description;
     /**
-     * A Boolean value that specifies if the attribute is required
+     * A Boolean value that specifies if the attribute is required.
      */
     private Boolean required;
     /**
-     * A Boolean value that specifies if the String attribute is case sensitive
+     * A Boolean value that specifies if the String attribute is case sensitive.
      */
     private Boolean caseExact;
     /**
@@ -79,12 +77,12 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
      */
     private List<AttributeSchema> subAttributes;
     /**
-     * A collection of suggested canonical values that MAY be used -OPTIONAL
+     * A collection of suggested canonical values that MAY be used -OPTIONAL.
      */
     private List<String> canonicalValues;
     /**
      * A multi-valued array of JSON strings that indicate the SCIM resource types that may be referenced
-     * only applicable for attributes that are of type "reference"
+     * only applicable for attributes that are of type "reference".
      */
     private List<SCIMDefinitions.ReferenceType> referenceTypes;
 

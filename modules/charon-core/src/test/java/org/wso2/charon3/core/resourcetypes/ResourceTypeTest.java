@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 04.04.2019
  * @author Pascal Knüppel

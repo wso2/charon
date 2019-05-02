@@ -41,7 +41,7 @@ public class FilterFeature extends ScimFeature {
         if (this == o) {
             return true;
         }
-        if (!( o instanceof FilterFeature )) {
+        if (!(o instanceof FilterFeature)) {
             return false;
         }
         if (!super.equals(o)) {

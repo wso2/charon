@@ -20,14 +20,15 @@ import static org.wso2.charon3.core.schema.SCIMSchemaDefinitions.SCIMUserSchemaD
 import static org.wso2.charon3.core.schema.SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME;
 
 /**
- * author Pascal Knueppel <br>
+ * .<br>
  * created at: 22.03.2019 - 15:33 <br>
  * <br>
+ * @author Pascal Knueppel
  */
 public class FilterBuilderTest {
 
     /**
-     * tests that the {@link FilterBuilder} works correctly
+     * tests that the {@link FilterBuilder} works correctly.
      */
     @Test
     public void testFilterBuilder() {

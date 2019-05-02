@@ -89,7 +89,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns SCIM Response object after json encoding the exception
+     * Returns SCIM Response object after json encoding the exception.
      *
      * @param exception - exception message
      * @return SCIMResponse

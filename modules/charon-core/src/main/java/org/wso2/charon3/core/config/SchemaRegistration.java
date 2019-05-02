@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This is the schema holder that holds all registrated schema definitions. The registration is done automatically if a
- * new {@link org.wso2.charon3.core.resourcetypes.ResourceType} gets added within the {@link ResourceTypeRegistration}
+ * new {@link org.wso2.charon3.core.resourcetypes.ResourceType} gets added within the {@link ResourceTypeRegistration}.
  * <br><br>
  * created at: 19.04.2019
  *
@@ -29,7 +29,7 @@ public class SchemaRegistration {
 
     /**
      * sets all schemas that will be visible from the schemas-endpoint <br> will be called from {@link
-     * ResourceTypeRegistration}
+     * ResourceTypeRegistration}.
      *
      * @param schemaDefinitionList
      *     the schemata to register
@@ -40,7 +40,7 @@ public class SchemaRegistration {
 
     /**
      * adds a schema that will be visible from the schema-endpoint<br> will be called from {@link
-     * ResourceTypeRegistration}
+     * ResourceTypeRegistration}.
      *
      * @param schemaDefinition
      *     the schemata to register

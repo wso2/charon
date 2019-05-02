@@ -13,32 +13,33 @@ import java.util.Locale;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.FilterOperation.PR;
 
 /**
- * author Pascal Knueppel <br>
+ * can be used to build a SCIM filter expression.<br>
+ *
  * created at: 22.03.2019 - 14:35 <br>
  * <br>
- * can be used to build a SCIM filter expression
+ * @author Pascal Knueppel
  */
 public class FilterBuilder {
 
     private static final String ESCAPE_STRING_LITERAL = "\"";
 
     /**
-     * the builder that is used to create the filter
+     * the builder that is used to create the filter.
      */
     private StringBuilder filter = new StringBuilder();
 
     /**
-     * counts the number of left parentheses
+     * counts the number of left parentheses.
      */
     private int leftParenthesisCount = 0;
 
     /**
-     * counts the number of right parentheses
+     * counts the number of right parentheses.
      */
     private int rightParenthesisCount = 0;
 
     /**
-     * if set to true a left parenthesis will be added before the next operation
+     * if set to true a left parenthesis will be added before the next operation.
      */
     private boolean addLeftParenthesis = false;
 
@@ -52,7 +53,7 @@ public class FilterBuilder {
 
     /**
      * adds an and expression to the filter - if the filter has no expressions yet the "and" is ignored and a simple
-     * filter expression is created
+     * filter expression is created.
      *
      * @param attributeSchema the attribute schema that will describe the attribute-name of the expression
      * @param operation       the operation if the value is equals, contains etc.
@@ -65,7 +66,7 @@ public class FilterBuilder {
 
     /**
      * adds an or expression to the filter - if the filter has no expressions yet the "or" is ignored and a simple
-     * filter expression is created
+     * filter expression is created.
      *
      * @param attributeSchema the attribute schema that will describe the attribute-name of the expression
      * @param operation       the operation if the value is equals, contains etc.
@@ -77,7 +78,7 @@ public class FilterBuilder {
     }
 
     /**
-     * adds a not expression to the filter
+     * adds a not expression to the filter.
      *
      * @param attributeSchema the attribute schema that will describe the attribute-name of the expression
      * @param operation       the operation if the value is equals, contains etc.
@@ -89,7 +90,7 @@ public class FilterBuilder {
     }
 
     /**
-     * prepares for adding an opening parenthesis for the next operation call
+     * prepares for adding an opening parenthesis for the next operation call.
      */
     public FilterBuilder leftParenthesis() {
         leftParenthesisCount++;
@@ -98,7 +99,7 @@ public class FilterBuilder {
     }
 
     /**
-     * adds a right parenthesis
+     * adds a right parenthesis.
      */
     public FilterBuilder rightParenthesis() {
         filter.append(')');
@@ -107,7 +108,7 @@ public class FilterBuilder {
     }
 
     /**
-     * builds the actual filter expression
+     * builds the actual filter expression.
      *
      * @param attributeSchema the attribute schema that will describe the attribute-name of the expression
      * @param operation       the operation if the value is equals, contains etc.
@@ -133,7 +134,7 @@ public class FilterBuilder {
     }
 
     /**
-     * prepends a concatenation to the current position of the filter
+     * prepends a concatenation to the current position of the filter.
      */
     private void prependConcatenation(SCIMDefinitions.FilterConcatenation concatenation) {
         if (filter.length() != 0) {
@@ -170,7 +171,7 @@ public class FilterBuilder {
     }
 
     /**
-     * tells us if the given attribute is either a child of the user core schema or of the group core schema
+     * tells us if the given attribute is either a child of the user core schema or of the group core schema.
      */
     private boolean isAttributeFromCoreSchemas(AttributeSchema attributeSchema) {
         if (attributeSchema.getURI().startsWith(SCIMConstants.USER_CORE_SCHEMA_URI) ||
@@ -181,7 +182,7 @@ public class FilterBuilder {
     }
 
     /**
-     * rells us if the attribute is of type {@link SCIMAttributeSchema}
+     * rells us if the attribute is of type {@link SCIMAttributeSchema}.
      */
     private boolean isSCIMAttributeSchema(AttributeSchema attributeSchema) {
         return attributeSchema instanceof SCIMAttributeSchema;

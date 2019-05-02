@@ -125,7 +125,7 @@ public abstract class AbstractAttribute implements Attribute {
     }
 
     /**
-     * copies this attribute instance
+     * copies this attribute instance.
      *
      * @return a fully qualified copy of this attribute
      */
@@ -145,7 +145,7 @@ public abstract class AbstractAttribute implements Attribute {
     }
 
     /**
-     * contains the copy implementation of the specific attribute types
+     * contains the copy implementation of the specific attribute types.
      *
      * @return a copy of the attribute
      */

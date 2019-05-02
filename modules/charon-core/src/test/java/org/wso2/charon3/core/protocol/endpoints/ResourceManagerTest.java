@@ -25,7 +25,7 @@ import org.wso2.charon3.core.setup.CharonInitializer;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- * <br><br>
+ * .<br><br>
  * created at: 03.04.2019
  *
  * @author Pascal Knüppel
@@ -37,7 +37,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
 
     /**
      * will show that a user can successfully be created and that the methods of the {@link
-     * org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly
+     * org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly.
      */
     @Test
     public void testCreateUser () throws AbstractCharonException {
@@ -218,7 +218,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
 
     /**
      * this test will assure that the count value is reduced to the maximum number of results that was setup in the
-     * service provider configuration if the client defined a value that is greater than the maximum number of results
+     * service provider configuration if the client defined a value that is greater than the maximum number of results.
      *
      * @throws AbstractCharonException
      */

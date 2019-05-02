@@ -23,7 +23,7 @@ public final class ResourceTypeRegistration {
 
     private static final List<ResourceType> RESOURCE_TYPE_LIST = new ArrayList<>();
 
-    /**
+    /*
      * adds the default scim resources into the resource type list
      */
     static {
@@ -36,7 +36,7 @@ public final class ResourceTypeRegistration {
 
 
     /**
-     * creates the user resource type
+     * creates the user resource type.
      */
     private static ResourceType getUserResourceType() {
         ResourceType userResourceType = new ResourceType(SCIMConstants.USER, SCIMConstants.USER, "User Account",
@@ -45,7 +45,7 @@ public final class ResourceTypeRegistration {
     }
 
     /**
-     * creates the group resource type
+     * creates the group resource type.
      */
     private static ResourceType getGroupResourceType() {
         ResourceType groupResourceType = new ResourceType(SCIMConstants.GROUP, SCIMConstants.GROUP, "Group",
@@ -54,7 +54,7 @@ public final class ResourceTypeRegistration {
     }
 
     /**
-     * the original resource type list that can be used to manipulate the list of resource types
+     * the original resource type list that can be used to manipulate the list of resource types.
      *
      * @return the original resource type list
      */
@@ -84,7 +84,7 @@ public final class ResourceTypeRegistration {
 
     /**
      * registeres a new resource type that will be returned from the resource types endpoint by the
-     * {@link org.wso2.charon3.core.protocol.endpoints.ResourceTypeResourceManager}
+     * {@link org.wso2.charon3.core.protocol.endpoints.ResourceTypeResourceManager}.
      * @param resourceType the new resource type
      */
     public static void addResourceType(ResourceType resourceType) {
@@ -101,7 +101,7 @@ public final class ResourceTypeRegistration {
 
     /**
      * this method will add the resource schemas  to the {@link SchemaRegistration} in order to make them available
-     * from the schemas endpoint
+     * from the schemas endpoint.
      *
      * @param resourceType the current resource type that represents the schema definition that should be added
      */

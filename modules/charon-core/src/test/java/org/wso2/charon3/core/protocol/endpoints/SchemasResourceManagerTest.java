@@ -40,7 +40,7 @@ import java.util.Optional;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- * <br><br>
+ * .<br><br>
  * created at: 19.04.2019
  *
  * @author Pascal Knüppel
@@ -50,7 +50,7 @@ public class SchemasResourceManagerTest {
     private static final Logger log = LoggerFactory.getLogger(SchemasResourceManagerTest.class);
 
     /**
-     * initializes the endpoints that need to be registered within the {@link AbstractResourceManager}
+     * initializes the endpoints that need to be registered within the {@link AbstractResourceManager}.
      */
     @BeforeEach
     public void registerEndpoints () {

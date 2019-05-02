@@ -60,7 +60,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
     /**
-     * Logic goes here
+     * Logic goes here.
      * @throws CharonException
      */
     public void buildUserSchemaExtension(String configFilePath) throws CharonException, InternalErrorException {
@@ -85,7 +85,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
     /**
      * This method reads configuration file and stores in the memory as an
-     * configuration map
+     * configuration map.
      *
      * @param configFilePath
      * @throws CharonException
@@ -128,7 +128,7 @@ public class SCIMUserSchemaExtensionBuilder {
 
 
     /**
-     * Knows how to build a complex attribute
+     * Knows how to build a complex attribute.
      *
      * @param config
      */
@@ -160,7 +160,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
     /**
-     * Has the logic to iterate through child attributes
+     * Has the logic to iterate through child attributes.
      *
      * @param config
      */
@@ -176,7 +176,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
     /**
-     * Builds simple attribute schema
+     * Builds simple attribute schema.
      *
      * @param config
      */
@@ -191,7 +191,7 @@ public class SCIMUserSchemaExtensionBuilder {
     }
 
     /**
-     * create SCIM Attribute Schema
+     * create SCIM Attribute Schema.
      * @param attribute
      * @param subAttributeList
      * @return
@@ -361,7 +361,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /**
-         * this builds the relevant data types according to what has configured in config file
+         * this builds the relevant data types according to what has configured in config file.
          * @param input
          * @return
          */
@@ -388,7 +388,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /**
-         * this builds the relevant mutability according to what has configured in config file
+         * this builds the relevant mutability according to what has configured in config file.
          * @param input
          * @return
          */
@@ -407,7 +407,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /**
-         * this builds the relevant returned type according to what has configured in config file
+         * this builds the relevant returned type according to what has configured in config file.
          * @param input
          * @return
          */
@@ -426,7 +426,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /**
-         * this builds the relevant uniqueness according to what has configured in config file
+         * this builds the relevant uniqueness according to what has configured in config file.
          * @param input
          * @return
          */
@@ -457,7 +457,7 @@ public class SCIMUserSchemaExtensionBuilder {
         }
 
         /**
-         * this builds the relevant reference types according to what has configured in config file
+         * this builds the relevant reference types according to what has configured in config file.
          * @param input
          * @return
          */

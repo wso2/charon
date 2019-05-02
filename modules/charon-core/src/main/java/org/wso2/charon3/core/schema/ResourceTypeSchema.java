@@ -35,7 +35,7 @@ public interface ResourceTypeSchema {
     public Set<SCIMResourceTypeExtensionSchema> getExtensions ();
 
     /**
-     * an optional name for schemata
+     * an optional name for schemata.
      *
      * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
      */
@@ -44,7 +44,7 @@ public interface ResourceTypeSchema {
     }
 
     /**
-     * an optional description value for schemata
+     * an optional description value for schemata.
      *
      * @see <a href="https://tools.ietf.org/html/rfc7643#section-7">https://tools.ietf.org/html/rfc7643#section-7</a>
      */

@@ -88,7 +88,7 @@ public class JSONDecoder {
 
     /**
      * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
-     * {@link ListedResource} object that holds the parsed objects
+     * {@link ListedResource} object that holds the parsed objects.
      *
      * @param scimResourceString the listed resource string
      * @param resourceSchema     the schema of the resource objects that should be present.
@@ -101,7 +101,7 @@ public class JSONDecoder {
     public <T extends AbstractSCIMObject> ListedResource decodeListedResource(String scimResourceString,
                                                                               ResourceTypeSchema resourceSchema,
                                                                               Class<T> scimObjectType)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -173,12 +173,12 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public AbstractCharonException decodeCharonException(String scimErrorString)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -204,12 +204,12 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public <T extends AbstractCharonException> T decodeCharonException(String scimErrorString, Class<T> exceptionType)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         AbstractCharonException abstractCharonException = decodeCharonException(scimErrorString);
         T exception;
@@ -253,7 +253,7 @@ public class JSONDecoder {
     }
 
     /**
-     * retrieves the string value from the given {@link JSONObject}
+     * retrieves the string value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
@@ -272,7 +272,7 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves an int value from the given {@link JSONObject}
+     * retrieves an int value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
@@ -397,7 +397,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method will resolve the schema extensions of a resource and will add them to the translated resource
+     * this method will resolve the schema extensions of a resource and will add them to the translated resource.
      *
      * @param jsonObject     the json representation of the current scim resource
      * @param resourceSchema the resource type definition to resolve the extension
@@ -406,13 +406,13 @@ public class JSONDecoder {
     private <T extends AbstractSCIMObject> T resolveExtensionAttributes(JSONObject jsonObject,
                                                                         ResourceTypeSchema resourceSchema,
                                                                         T scimObject)
-        throws InternalErrorException, BadRequestException, CharonException {
+            throws InternalErrorException, BadRequestException, CharonException {
         for (SCIMResourceTypeExtensionSchema extension : resourceSchema.getExtensions()) {
             String resourceString;
             try {
                 resourceString = jsonObject.optString(extension.getSchema());
             } catch (JSONException e) {
-                logger.debug(e.getMessage());
+                logger.debug(e.getMessage(), e);
                 continue;
             }
             if (StringUtils.isBlank(resourceString)) {
@@ -422,7 +422,7 @@ public class JSONDecoder {
             final SCIMAttributeSchema scimAttributeSchema = extension.getAsAttributeSchema();
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
             Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
-                complexAttribute);
+                                                                                   complexAttribute);
             ComplexAttribute complexExtension = (ComplexAttribute) extensionAttribute;
 
             scimExtension.getAttributeList().forEach((s, attribute) -> {
@@ -989,7 +989,7 @@ public class JSONDecoder {
     }
 
     /**
-     * will resolve a bulk response into a {@link BulkResponseData} object
+     * will resolve a bulk response into a {@link BulkResponseData} object.
      *
      * @param bulkResponseString the bulk response message
      * @return the decoded bulk object

@@ -15,15 +15,16 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- * author Pascal Knueppel <br>
+ * the tests witin this class require that the tests in {@link JSONDecoderTest} are working.<br>
+ *
  * created at: 18.03.2019 - 12:31 <br>
  * <br>
- * the tests witin this class require that the tests in {@link JSONDecoderTest} are working
+ * @author Pascal Knueppel
  */
 public class JSONEncoderTest implements FileReferences {
 
     /**
-     * this test will show that the encoding of a group does work as expected
+     * this test will show that the encoding of a group does work as expected.
      */
     @Test
     public void testEncodeGroup() throws InternalErrorException, BadRequestException, CharonException {
@@ -36,7 +37,7 @@ public class JSONEncoderTest implements FileReferences {
     }
 
     /**
-     * this test will show that the encoding of a user does work as expected
+     * this test will show that the encoding of a user does work as expected.
      */
     @Test
     public void testEncodeUser() throws InternalErrorException, BadRequestException, CharonException {
@@ -49,7 +50,7 @@ public class JSONEncoderTest implements FileReferences {
     }
 
     /**
-     * this test will show that the encoding of an enterprise user does work as expected
+     * this test will show that the encoding of an enterprise user does work as expected.
      */
     @Test
     public void testEncodeEnterpriseUser() throws InternalErrorException, BadRequestException, CharonException,

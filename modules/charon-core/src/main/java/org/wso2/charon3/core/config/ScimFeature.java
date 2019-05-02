@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ScimFeature {
 
     /**
-     * if this feature is supported or not
+     * if this feature is supported or not.
      */
     private boolean supported;
 
@@ -37,7 +37,7 @@ public class ScimFeature {
         if (this == o) {
             return true;
         }
-        if (!( o instanceof ScimFeature )) {
+        if (!(o instanceof ScimFeature)) {
             return false;
         }
         ScimFeature that = (ScimFeature) o;

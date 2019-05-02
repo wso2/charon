@@ -9,7 +9,7 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 13.04.2019
  * @author Pascal Knüppel
@@ -17,7 +17,7 @@ import org.wso2.charon3.core.testsetup.FileReferences;
 class EnterpriseUserTest implements FileReferences {
 
     /**
-     * tests that the setter methods for the enterprise user are working if the user has no attributes
+     * tests that the setter methods for the enterprise user are working if the user has no attributes.
      */
     @Test
     public void testSetValuesOfEnterpriseUser() {
@@ -55,7 +55,7 @@ class EnterpriseUserTest implements FileReferences {
 
     /**
      * tests that the enterprise user setter methods are still working if the enterprise schema extension has already
-     * all values set
+     * all values set.
      */
     @Test
     public void testOverrideValuesOfEnterpriseUser()
@@ -104,7 +104,7 @@ class EnterpriseUserTest implements FileReferences {
     }
 
     /**
-     * this test will make sure that the enterprise extension is not added to the user resource if the values are empty
+     * this test will make sure that the enterprise extension is not added to the user resource if the values are empty.
      */
     @Test
     public void testThatExtensionIsNotSerializedByEmptyValues() throws CharonException {

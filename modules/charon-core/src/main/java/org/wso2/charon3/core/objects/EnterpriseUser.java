@@ -6,15 +6,15 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeExtensionSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 /**
- * author Pascal Knueppel <br>
+ * this class serves as a wrapper class for user that helps reading the enterprise user attributes.<br>
  * created at: 18.03.2019 - 16:15 <br>
  * <br>
- * this class serves as a wrapper class for user that helps reading the enterprise user attributes
+ * @author Pascal Knueppel
  */
 public class EnterpriseUser extends ScimAttributeAware {
 
     /**
-     * a user object that might hold an enterprise extension
+     * a user object that might hold an enterprise extension.
      */
     private User enterpriseUser;
 
@@ -111,7 +111,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * sets an attribute within the manager complex type of the enterprise user
+     * sets an attribute within the manager complex type of the enterprise user.
      * @param simpleAttributeDefinition the attribute schema definition
      * @param value the value to set into the attribute
      */

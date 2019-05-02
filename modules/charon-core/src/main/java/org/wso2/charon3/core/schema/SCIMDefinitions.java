@@ -57,7 +57,7 @@ public class SCIMDefinitions {
 
     /**
      * a SCIM filter expression used for building filters with
-     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}
+     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}.
      */
     public static enum FilterOperation {
         EQ, NE, CO, SW, EW, PR, GT, GE, LT, LE
@@ -65,7 +65,7 @@ public class SCIMDefinitions {
 
     /**
      * a SCIM filter expression used for building filters with
-     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}
+     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}.
      */
     public static enum FilterConcatenation {
         AND, OR, NOT

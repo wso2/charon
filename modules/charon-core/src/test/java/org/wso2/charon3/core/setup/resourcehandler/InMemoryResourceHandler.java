@@ -14,15 +14,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 03.04.2019
+ *
+ * @param <R>
  * @author Pascal Knüppel
  */
 public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> implements ResourceHandler<R> {
 
     /**
-     * the in memory resource storage
+     * the in memory resource storage.
      */
     private final Map<String, R> resourceStore = new HashMap<>();
 

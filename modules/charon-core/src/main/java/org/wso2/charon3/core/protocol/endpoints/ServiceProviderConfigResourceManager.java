@@ -121,14 +121,6 @@ public class ServiceProviderConfigResourceManager extends ResourceManager {
     }
 
     @Override
-    public SCIMResponse listWithPOST(String resourceString) {
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-
-    @Override
     public SCIMResponse updateWithPUT(String existingId,
                                       String scimObjectString,
                                       String attributes,

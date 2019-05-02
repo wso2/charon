@@ -26,7 +26,7 @@ import static org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager.e
 import static org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager.getResourceEndpointURL;
 
 /**
- * this class will provide the functionality for the schemas endpoint as defined in RFC7644 section 4
+ * this class will provide the functionality for the schemas endpoint as defined in RFC7644 section 4.
  * <br><br>
  * created at: 19.04.2019
  *
@@ -46,7 +46,7 @@ public class SchemasResourceManager {
     }
 
     /**
-     * will get a single
+     * will get a single.
      *
      * @param id
      *     the schema uri of the wanted schema
@@ -78,7 +78,7 @@ public class SchemasResourceManager {
     }
 
     /**
-     * gets all schemata definitions as listed response
+     * gets all schemata definitions as listed response.
      */
     public SCIMResponse listResources () {
         try {

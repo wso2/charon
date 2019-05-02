@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 03.04.2019
  * @author Pascal Knüppel
@@ -27,19 +27,19 @@ public abstract class CharonInitializer {
 
     public static final String BASE_URI = "https://localhost/charon/v2";
     /**
-     * the user resource manager that executes the SCIM charon implementation
+     * the user resource manager that executes the SCIM charon implementation.
      */
     protected UserManager userManager;
     /**
-     * the group resource manager that executes the SCIM charon implementation
+     * the group resource manager that executes the SCIM charon implementation.
      */
     protected GroupManager groupManager;
     /**
-     * the user resource handler that represents the user implementation
+     * the user resource handler that represents the user implementation.
      */
     protected UserResourceHandler userResourceHandler;
     /**
-     * the group resource handler that represents the group implementation
+     * the group resource handler that represents the group implementation.
      */
     protected GroupResourceHandler groupResourceHandler;
 

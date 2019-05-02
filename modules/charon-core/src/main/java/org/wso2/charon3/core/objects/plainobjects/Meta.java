@@ -72,7 +72,7 @@ public class Meta {
     }
 
     /**
-     * tells us if all attributes are null or not
+     * tells us if all attributes are null or not.
      */
     public boolean isEmpty() {
         return getCreated() == null && getLastModified() == null && getLocation() == null &&

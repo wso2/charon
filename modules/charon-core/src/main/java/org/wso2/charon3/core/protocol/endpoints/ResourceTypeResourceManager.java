@@ -53,7 +53,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
     }
 
     /**
-     * Retrieves a single resource type with the specified id
+     * Retrieves a single resource type with the specified id.
      *
      * @return the
      */
@@ -159,7 +159,7 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
     }
 
     /**
-     * this class is a simple useless mockup that is used to prevent a NullPointerException on the parent constructor
+     * this class is a simple useless mockup that is used to prevent a NullPointerException on the parent constructor.
      */
     public static class ResourceTypeHandler implements ResourceHandler<ResourceType> {
 

@@ -11,7 +11,7 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.FilterOperation.EQ;
 import static org.wso2.charon3.core.schema.SCIMSchemaDefinitions.SCIMEnterpriseUserSchemaDefinition.ORGANIZATION;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 13.04.2019
  * @author Pascal Knüppel
@@ -19,7 +19,7 @@ import static org.wso2.charon3.core.schema.SCIMSchemaDefinitions.SCIMEnterpriseU
 class FilterTreeManagerTest {
 
     /**
-     * checks that filter expressions are correctly resolved if extension attributes are present in the filter
+     * checks that filter expressions are correctly resolved if extension attributes are present in the filter.
      */
     @Test
     public void testThatFilterWithExtensionAttributesAreResolved() throws IOException, BadRequestException {

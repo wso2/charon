@@ -44,7 +44,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     private static final long serialVersionUID = -324866822974408761L;
 
     /**
-     * the singleton instance of the service provider configuration
+     * the singleton instance of the service provider configuration.
      */
     private static final CharonConfiguration CHARON_CONFIGURATION = new CharonConfiguration();
 
@@ -55,7 +55,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     public static final int DEFAULT_MAX_OPERATIONS = 1024 * 50;
 
     /**
-     * private default constructor
+     * private default constructor.
      */
     private CharonConfiguration() {
         setSchema(SCIMConstants.SERVICE_PROVIDER_CONFIG_SCHEMA_URI);
@@ -69,7 +69,7 @@ public final class CharonConfiguration extends AbstractSCIMObject {
     }
 
     /**
-     * return the instance of CharonConfiguration
+     * return the instance of CharonConfiguration.
      */
     public static CharonConfiguration getInstance() {
         return CHARON_CONFIGURATION;

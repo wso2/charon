@@ -22,7 +22,7 @@ import java.util.Objects;
 
 /**
  * This class representation can be used to easily add a scim name to an
- * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class ScimName {
 

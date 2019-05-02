@@ -26,7 +26,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
 
 
 /**
- * Represents an OpenID Connect client for Keycloak as SCIM representation
+ * Represents an OpenID Connect client for Keycloak as SCIM representation.
  *
  * @author Pascal Knueppel
  * @author Sebastian Loesch
@@ -38,14 +38,14 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Set the schemas for SCIM client
+     * Set the schemas for SCIM client.
      */
     public final void setSchemas() {
         SCIM_CLIENT_SCHEMA.getSchemasList().stream().forEach(this::setSchema);
     }
 
     /**
-     * Gets the client id from this SCIM resource
+     * Gets the client id from this SCIM resource.
      */
     public String getClientId() {
         return getSimpleAttribute(CLIENT_ID_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(
@@ -53,7 +53,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Puts the given client id into the object and overrides the value from before if it was present
+     * Puts the given client id into the object and overrides the value from before if it was present.
      *
      * @param clientId the new client id value for this object
      */
@@ -62,7 +62,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the client secret from this SCIM resource
+     * Gets the client secret from this SCIM resource.
      */
     public String getClientSecret() {
         return getSimpleAttribute(CLIENT_SECRET_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(
@@ -70,7 +70,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Puts the given client secret into the object and overrides the value from before if it was present
+     * Puts the given client secret into the object and overrides the value from before if it was present.
      *
      * @param clientSecret the new client secret value for this object
      */
@@ -79,7 +79,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the active value from this SCIM resource
+     * Gets the active value from this SCIM resource.
      */
     public boolean isActive() {
         return getSimpleAttribute(ACTIVE_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getBooleanValue)).orElse(
@@ -87,7 +87,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Puts the given active value into the object and overrides the value from before if it was present
+     * Puts the given active value into the object and overrides the value from before if it was present.
      *
      * @param active the new active value for this object
      */
@@ -96,7 +96,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the JWT X.509 certificate from this SCIM resource as base64 encoded string
+     * Gets the JWT X.509 certificate from this SCIM resource as base64 encoded string.
      */
     public String getJwtX509() {
         return getSimpleAttribute(JWT_X509_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(
@@ -105,7 +105,7 @@ public class Client extends AbstractSCIMObject {
 
     /**
      * Puts the given JWT X.509 certificate into the object and overrides the value from before if it was
-     * present
+     * present.
      *
      * @param jwtX509 the new JWT X.509 certificate as base64 encoded string
      */
@@ -114,7 +114,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the jwks uri value from this SCIM resource
+     * Gets the jwks uri value from this SCIM resource.
      */
     public String getJwksUri() {
         return getSimpleAttribute(JWKS_URI_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getStringValue)).orElse(
@@ -122,7 +122,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Puts the given jwks uri value into the object and overrides the value from before if it was present
+     * Puts the given jwks uri value into the object and overrides the value from before if it was present.
      *
      * @param jwksUri the new jwks uri value for this object
      */
@@ -139,14 +139,14 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the redirect URIs from this SCIM resource
+     * Gets the redirect URIs from this SCIM resource.
      */
     public List<String> getRedirectUris() {
         return getPrimitiveStringValuesOfMultiValuedAttribute(REDIRECT_URIS_ATTRIBUTE);
     }
 
     /**
-     * Puts the given redirect uris into the object and overrides the value from before if it was present
+     * Puts the given redirect uris into the object and overrides the value from before if it was present.
      *
      * @param redirectUris the new redirect uris list for this object
      */
@@ -157,7 +157,7 @@ public class Client extends AbstractSCIMObject {
 
     /**
      * Gets the self authorization value from this SCIM resource to tell if this client is allowed to request
-     * access tokens for himself
+     * access tokens for himself.
      */
     public boolean isSelfAuthorizationEnabled() {
         return getSimpleAttribute(SELF_AUTHORISATION_ATTRIBUTE).map(rethrowFunction(SimpleAttribute::getBooleanValue))
@@ -166,7 +166,7 @@ public class Client extends AbstractSCIMObject {
 
     /**
      * Puts the given self authorization value into the object and overrides the value from before if it was
-     * present
+     * present.
      *
      * @param selfAuthorisation the new self authorization value for this object
      */
@@ -175,7 +175,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Gets the primitive string values of the given attribute definition
+     * Gets the primitive string values of the given attribute definition.
      *
      * @param attributeSchema the attribute definition
      * @return the values of the attribute or an empty list
@@ -190,7 +190,7 @@ public class Client extends AbstractSCIMObject {
     }
 
     /**
-     * Sets the values of a multi valued attribute with primitive values
+     * Sets the values of a multi valued attribute with primitive values.
      *
      * @param attributeDefinition the attribute schema definition
      * @param values the values of the attributes

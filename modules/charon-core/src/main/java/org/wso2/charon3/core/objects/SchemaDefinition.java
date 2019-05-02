@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
- * this class represents a schema definition for the schemas endpoint
+ * this class represents a schema definition for the schemas endpoint.
  * <br><br>
  * created at: 19.04.2019
  *

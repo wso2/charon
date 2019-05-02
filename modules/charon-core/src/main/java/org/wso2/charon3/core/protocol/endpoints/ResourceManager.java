@@ -1,10 +1,17 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved. Licensed under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
- * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
- * law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
@@ -54,12 +61,12 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     private static final String INTERNAL_ERROR_MESSAGE = "an internal error occurred";
 
     /**
-     * the handler that will handle the scim resources
+     * the handler that will handle the scim resources.
      */
     private ResourceHandler<R> resourceHandler;
 
     /**
-     * holds the generic type of this implementation
+     * holds the generic type of this implementation.
      */
     private Class<R> genericType;
 
@@ -120,7 +127,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      *         client and server views of the new Resource. When a Resource is created, its uri must be returned
      *         in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, String attributes, String excludeAttributes) {
+    public SCIMResponse create(String scimObjectString, String attributes,
+                               String excludeAttributes) {
         try {
             // returns core-resource schema
             SCIMResourceTypeSchema schema = resourceHandler.getResourceSchema();
@@ -183,7 +191,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
         }
     }
 
-    /**
+    /*
      * get resources
      *
      * @param filter the filter expression
@@ -227,7 +235,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * does the actual work for the methods
+     * does the actual work for the methods.
      * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)} and
      * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)}
      */
@@ -310,7 +318,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * query resources
+     * query resources.
      *
      * @param resourceString the request body
      */
@@ -340,7 +348,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * To update the resource by giving entire attribute set
+     * To update the resource by giving entire attribute set.
      *
      * @param existingId the id of the resource to update
      * @param scimObjectString the request body
@@ -406,7 +414,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * will update an existing resource with the patch operation
+     * will update an existing resource with the patch operation.
      *
      * @param existingId the id of the resource that should be updated
      * @param scimObjectString the request body

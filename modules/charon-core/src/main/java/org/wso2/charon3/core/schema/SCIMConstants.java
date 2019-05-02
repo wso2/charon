@@ -22,12 +22,13 @@ package org.wso2.charon3.core.schema;
 public class SCIMConstants {
 
     public static final String CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0";
-    public static final String MESSAGE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0";
-    public static final String USER_CORE_SCHEMA_URI = CORE_SCHEMA_URI + ":User";
+    public static final String USER_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:User";
     public static final String ENTERPRISE_USER_SCHEMA_URI = "urn:ietf:params:scim:schemas:extension:enterprise:2" +
-        ".0:User";
-    public static final String GROUP_CORE_SCHEMA_URI = CORE_SCHEMA_URI + ":Group";
-    public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = MESSAGE_SCHEMA_URI + ":ListResponse";
+            ".0:User";
+    public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
+    public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
+    public static final String MESSAGE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0";
+
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI =
         "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
     public static final String RESOURCE_TYPE_SCHEMA_URI = CORE_SCHEMA_URI + ":ResourceType";
@@ -479,14 +480,14 @@ public class SCIMConstants {
     }
 
     /**
-     * represents the constants for the enterprise user schema
+     * represents the constants for the enterprise user schema.
      */
     public static class EnterpriseUserSchemaConstants {
 
         public static final String EMPLOYEE_NUMBER = "employeeNumber";
         public static final String EMPLOYEE_NUMBER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + EMPLOYEE_NUMBER;
         public static final String EMPLOYEE_NUMBER_DESC = "Numeric or alphanumeric identifier assigned to a " +
-            "person, typically based on order of hire or association with an organization.";
+                "person, typically based on order of hire or association with an organization.";
 
         public static final String COST_CENTER = "costCenter";
         public static final String COST_CENTER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + COST_CENTER;
@@ -507,23 +508,23 @@ public class SCIMConstants {
         public static final String VALUE = "value";
         public static final String VALUE_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + VALUE;
         public static final String VALUE_DESC = "The id of the SCIM resource representing the User's manager.  " +
-            "REQUIRED.";
+                "REQUIRED.";
 
         public static final String REF = "$ref";
         public static final String REF_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + REF;
         public static final String REF_DESC = "The URI of the SCIM resource representing the User's manager.  " +
-            "REQUIRED.";
+                "REQUIRED.";
 
         public static final String DISPLAY_NAME = "displayName";
         public static final String DISPLAY_NAME_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + DISPLAY_NAME;
         public static final String DISPLAY_NAME_DESC = "The displayName of the User's manager. " +
-            "OPTIONAL and READ-ONLY.";
+                "OPTIONAL and READ-ONLY.";
 
         public static final String MANAGER = "manager";
         public static final String MANAGER_URI = ENTERPRISE_USER_SCHEMA_URI + ":" + MANAGER;
         public static final String MANAGER_DESC = "The User's manager.  A complex type that optionally " +
-            "allows service providers to represent organizational hierarchy by referencing the 'id' " +
-            "attribute of another User.";
+                "allows service providers to represent organizational hierarchy by referencing the 'id' " +
+                "attribute of another User.";
 
 
     }
@@ -698,7 +699,7 @@ public class SCIMConstants {
     }
 
     /**
-     * this subclass holds the constant values for the schemas endpoint
+     * this subclass holds the constant values for the schemas endpoint.
      */
     public static class SchemaSchemaConstants {
 
