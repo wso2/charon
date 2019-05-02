@@ -340,7 +340,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             SearchRequest searchRequest = getDecoder().decodeSearchRequestBody(resourceString,
                                                                                resourceHandler.getResourceSchema());
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
 
             if (searchRequest.getSchema() != null &&
                     !searchRequest.getSchema().equals(SCIMConstants.SEARCH_SCHEMA_URI)) {
