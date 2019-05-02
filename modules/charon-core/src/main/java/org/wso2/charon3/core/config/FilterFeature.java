@@ -20,28 +20,28 @@ public class FilterFeature extends ScimFeature {
      */
     private int maxResults = 1;
 
-    public FilterFeature () {
+    public FilterFeature() {
     }
 
-    public FilterFeature (boolean supported, int maxResults) {
+    public FilterFeature(boolean supported, int maxResults) {
         super(supported);
         this.maxResults = maxResults;
     }
 
-    public int getMaxResults () {
+    public int getMaxResults() {
         return maxResults;
     }
 
-    public void setMaxResults (int maxResults) {
+    public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!( o instanceof FilterFeature )) {
+        if (!(o instanceof FilterFeature)) {
             return false;
         }
         if (!super.equals(o)) {
@@ -52,13 +52,13 @@ public class FilterFeature extends ScimFeature {
     }
 
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return Objects.hash(super.hashCode(), maxResults);
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "{\n" + super.toString() + "\nFilterFeature{" + "maxResults=" + maxResults + "}\n}";
     }
 }
