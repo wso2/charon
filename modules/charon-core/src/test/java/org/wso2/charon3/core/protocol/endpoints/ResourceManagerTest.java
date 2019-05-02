@@ -10,7 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.config.FilterFeature;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.EnterpriseUser;
+import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.objects.plainobjects.ScimAddress;
@@ -21,7 +25,7 @@ import org.wso2.charon3.core.setup.CharonInitializer;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- * <br><br>
+ * .<br><br>
  * created at: 03.04.2019
  *
  * @author Pascal Knüppel
@@ -33,7 +37,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
 
     /**
      * will show that a user can successfully be created and that the methods of the {@link
-     * org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly
+     * org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly.
      */
     @Test
     public void testCreateUser () throws AbstractCharonException {
@@ -60,7 +64,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         Assertions.assertEquals("der Mittlere", user.getName().getMiddleName());
         Assertions.assertEquals("Dr. Hc.", user.getName().getHonorificPrefix());
         Assertions.assertEquals("III", user.getName().getHonorificSuffix());
-        Assertions.assertEquals("myPwd", user.getPassword());
+        Assertions.assertNull(user.getPassword());
         Assertions.assertEquals("Max Muster", user.getDisplayName());
         Assertions.assertEquals("Maxi", user.getNickName());
         Assertions.assertEquals("Employee", user.getUserType());
@@ -178,6 +182,11 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
     @ValueSource(ints = {0, 1, 3, 5, 50})
     public void testListUsersWithGet (int numberOfResults) throws AbstractCharonException {
         CharonConfiguration.getInstance().setFilter(new FilterFeature(true, 50));
+
+        String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        SCIMResponse createResponse = userManager.create(enterpriseUserString, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, createResponse.getResponseStatus());
+
         SCIMResponse scimResponse = userManager.listWithGET(null, null, numberOfResults, null, null, null, null, null);
         Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
             Mockito.any(),
@@ -189,9 +198,27 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
     }
 
+    @Test
+    public void testCompareReturnedUser () throws BadRequestException, CharonException, InternalErrorException {
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, 50));
+
+        String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        SCIMResponse createResponse = userManager.create(enterpriseUserString, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, createResponse.getResponseStatus());
+        User user = JSON_DECODER.decodeResource(createResponse.getResponseMessage(),
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
+
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, 1, null, null, null, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+        ListedResource listedResource = JSON_DECODER.decodeListedResource(scimResponse.getResponseMessage(),
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA, User.class);
+        Assertions.assertEquals(1, listedResource.getResources().size());
+        Assertions.assertEquals(user, listedResource.getResources().get(0));
+    }
+
     /**
      * this test will assure that the count value is reduced to the maximum number of results that was setup in the
-     * service provider configuration if the client defined a value that is greater than the maximum number of results
+     * service provider configuration if the client defined a value that is greater than the maximum number of results.
      *
      * @throws AbstractCharonException
      */

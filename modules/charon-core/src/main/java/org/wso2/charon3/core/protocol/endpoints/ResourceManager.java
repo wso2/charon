@@ -1,10 +1,17 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved. Licensed under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
- * obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable
- * law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
+ * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
@@ -55,12 +62,12 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     private static final String INTERNAL_ERROR_MESSAGE = "an internal error occurred";
 
     /**
-     * the handler that will handle the scim resources
+     * the handler that will handle the scim resources.
      */
     private ResourceHandler<R> resourceHandler;
 
     /**
-     * holds the generic type of this implementation
+     * holds the generic type of this implementation.
      */
     private Class<R> genericType;
 
@@ -141,6 +148,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             String encodedResource;
             Map<String, String> httpHeaders = new HashMap<>();
             if (createdResource != null) {
+                // need to remove attributes that should never be returned
+                ServerSideValidator.validateReturnedAttributes(createdResource, attributes, excludeAttributes);
 
                 encodedResource = getEncoder().encodeSCIMObject(createdResource);
                 // add location header
@@ -186,30 +195,22 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * get resources
+     * gets the specified resources.
      *
-     * @param filter
-     *     the filter expression
-     * @param startIndex
-     *     index of the first entry
-     * @param count
-     *     number of resources to return in the request
-     * @param sortBy
-     *     a string indicating the attribute whose value SHALL be used to order the returned responses
-     * @param sortOrder
-     *     sortOrder A string indicating the order in which the "sortBy" parameter is applied
-     * @param domainName
-     *     specific parameter for charon idp
-     * @param attributes
-     *     A multi-valued list of strings indicating the names of resource attributes to in the response, overriding the
-     *     set of attributes that would be returned by default.
-     * @param excludeAttributes
-     *     A multi-valued list of strings indicating the names of resource attributes to be removed from the default set
-     *     of attributes to return
+     * @param filter the filter expression
+     * @param startIndex index of the first entry
+     * @param count number of resources to return in the request
+     * @param sortBy a string indicating the attribute whose value SHALL be used to order the returned responses
+     * @param sortOrder sortOrder A string indicating the order in which the "sortBy" parameter is applied
+     * @param domainName specific parameter for charon idp
+     * @param attributes A multi-valued list of strings indicating the names of resource attributes to in the
+     *          response, overriding the set of attributes that would be returned by default.
+     * @param excludeAttributes A multi-valued list of strings indicating the names of resource attributes to be
+     *          removed from the default set of attributes to return
      */
     public SCIMResponse listWithGET (String filter,
-                                     Integer startIndex,
-                                     Integer count,
+                                     Integer startIndexInt,
+                                     Integer countInt,
                                      String sortBy,
                                      String sortOrder,
                                      String domainName,
@@ -223,7 +224,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
                 rootNode = filterTreeManager.buildTree();
             }
 
-            return listResources(startIndex, count, sortBy, sortOrder, domainName, attributes, excludeAttributes,
+            return listResources(startIndexInt, countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes,
                 rootNode);
 
         } catch (IOException e) {
@@ -238,7 +239,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
     /**
      * does the actual work for the methods {@link #listWithGET(String, Integer, Integer, String, String, String,
-     * String, String)} and {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)}
+     * String, String)}  and {@link #listWithPOST(String)}.
      */
     private SCIMResponse listResources (Integer startIndex,
                                         Integer count,
@@ -319,7 +320,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * query resources
+     * query resources.
      *
      * @param resourceString
      *     the request body
@@ -350,7 +351,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * To update the resource by giving entire attribute set
+     * To update the resource by giving entire attribute set.
      *
      * @param existingId
      *     the id of the resource to update
@@ -363,7 +364,6 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      *     A multi-valued list of strings indicating the names of resource attributes to be removed from the default set
      *     of attributes to return
      */
-
     public SCIMResponse updateWithPUT (String existingId,
                                        String scimObjectString,
                                        String attributes,
@@ -420,14 +420,14 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * will update an existing resource with the patch operation
+     * will update an existing resource with the patch operation.
      *
      * @param existingId
      *     the id of the resource that should be updated
      * @param scimObjectString
      *     the request body
      */
-    public SCIMResponse updateWithPATCH (String existingId,
+     SCIMResponse updateWithPATCH (String existingId,
                                          String scimObjectString,
                                          String attributes,
                                          String excludeAttributes) {
@@ -494,7 +494,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
             // get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
+                excludeAttributes);
 
 
             R validatedResource = (R) ServerSideValidator.validateUpdatedSCIMObject(originalResource, newResource,

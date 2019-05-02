@@ -288,7 +288,7 @@ public class UserResource extends AbstractResource {
     }
 
     /**
-     * the user resource manager implementation
+     * the user resource manager implementation.
      */
     public static class UserResourceManager extends ResourceManager<User> {
 

@@ -40,7 +40,8 @@ public class SimpleAttribute extends AbstractAttribute {
      * @return
      */
     public Object getValue() {
-        return value; }
+        return value;
+    }
 
     /*
      * set the value of the simple attribute
@@ -67,6 +68,14 @@ public class SimpleAttribute extends AbstractAttribute {
     @Override
     public void deleteSubAttributes() throws CharonException {
         throw new CharonException("deleteSubAttributes method not supported by SimpleAttribute.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SimpleAttribute copyAttribute() {
+        return new SimpleAttribute(this.name, this.value);
     }
 
     /*
@@ -108,9 +117,9 @@ public class SimpleAttribute extends AbstractAttribute {
 
     /*
      * return boolean type of the attribute value
-     * 
+     *
      * @return
-     * 
+     *
      * @throws CharonException
      */
     public Boolean getBooleanValue() throws CharonException {
@@ -123,9 +132,9 @@ public class SimpleAttribute extends AbstractAttribute {
 
     /*
      * uodate the attribute value
-     * 
+     *
      * @param value
-     * 
+     *
      * @throws CharonException
      */
     public void updateValue(Object value) throws CharonException {

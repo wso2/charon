@@ -18,7 +18,7 @@ import java.util.function.Function;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 18.04.2019
  * @author Pascal Knüppel
@@ -28,7 +28,7 @@ public class CharonConfigurationTest {
     private static final Logger log = LoggerFactory.getLogger(CharonConfigurationTest.class);
 
     /**
-     * generates a URL object from a string
+     * generates a URL object from a string.
      */
     private static Function<String, URL> toUrl = url -> rethrowSupplier(() -> new URL(url)).get();
 

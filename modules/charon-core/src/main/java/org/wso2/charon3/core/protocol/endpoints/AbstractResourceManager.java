@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
@@ -71,11 +72,16 @@ public abstract class AbstractResourceManager {
      * @throws NotFoundException
      */
     public static String getResourceEndpointURL(String resource) throws NotFoundException {
+        String endpoint = null;
         if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
-        } else {
-            throw new NotFoundException();
+            endpoint = endpointURLMap.get(resource);
         }
+        if (StringUtils.isNotBlank(endpoint)) {
+            return endpoint;
+        }
+        logger.error("no location URL was registered for endpoint path '{}'. Please add a location URL to " +
+                         "endpointURLMap", resource);
+        throw new NotFoundException("endpoint path '" + resource + "' was not registered");
     }
 
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {
@@ -83,7 +89,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns SCIM Response object after json encoding the exception
+     * Returns SCIM Response object after json encoding the exception.
      *
      * @param exception - exception message
      * @return SCIMResponse

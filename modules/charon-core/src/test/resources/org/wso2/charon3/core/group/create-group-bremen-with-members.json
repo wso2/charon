@@ -1,0 +1,22 @@
+{
+	"schemas": [
+		"urn:ietf:params:scim:schemas:core:2.0:Group"
+	],
+	"id": "",
+	"externalId": "112233445566778899",
+	"displayName": "Bremen",
+	"members": [
+		{
+			"value": "${user1}",
+			"$ref": "http://localhost:8080/auth/realms/DVDV2/scim/v2/Users/${user1}",
+			"display": "Mustermann",
+			"type": "User"
+		},
+		{
+			"value": "${group1}",
+			"$ref": "http://localhost:8080/auth/realms/DVDV2/scim/v2/Groups/${group1}",
+			"display": "Berlin",
+			"type": "Group"
+		}
+	]
+}

@@ -14,15 +14,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * .
  * <br><br>
  * created at: 03.04.2019
+ *
+ * @param <R>
  * @author Pascal Knüppel
  */
 public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> implements ResourceHandler<R> {
 
     /**
-     * the in memory resource storage
+     * the in memory resource storage.
      */
     private final Map<String, R> resourceStore = new HashMap<>();
 
@@ -87,8 +89,9 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
         int fromIndex = startIndex - 1;
         fromIndex =  fromIndex >= resources.size() ? resources.size() - 1 : fromIndex;
         int toIndex = startIndex - 1 + count;
-        toIndex = toIndex >= resources.size() ? resources.size() - 1 : toIndex;
+        toIndex = toIndex >= resources.size() ? resources.size() : toIndex;
         resources = resources.subList(fromIndex, toIndex);
+        resources.add(0, resources.size());
         return resources;
     }
 

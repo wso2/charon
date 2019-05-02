@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ScimFeature {
 
     /**
-     * if this feature is supported or not
+     * if this feature is supported or not.
      */
     private boolean supported;
 

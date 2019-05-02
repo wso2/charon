@@ -3,11 +3,14 @@ package org.wso2.charon3.core.schema;
 import java.util.Collections;
 import java.util.Set;
 
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
+
 /**
- * author Pascal Knueppel <br>
- * created at: 18.03.2019 - 12:50 <br>
- * <br>
- * this class represents a scim schema extension for a resource
+ * this class represents a scim schema extension for a resource.<br>
+ *
+ * created at: 18.03.2019 - 12:50
+ *
+ * @author Pascal Knueppel
  */
 public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
 
@@ -18,7 +21,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * creates a new extension schema
+     * creates a new extension schema.
      *
      * @param schema           the identifier uri of the extension
      * @param attributeSchemas the attributes that will be describes by this schema
@@ -27,6 +30,24 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     public static SCIMResourceTypeExtensionSchema createSCIMResourcetypeExtension(String schema,
                                                                                   AttributeSchema... attributeSchemas) {
         return new SCIMResourceTypeExtensionSchema(schema, attributeSchemas);
+    }
+
+    /**
+     * creates a new extension schema.
+     *
+     * @param schema           the identifier uri of the extension
+     * @param attributeSchemas the attributes that will be describes by this schema
+     * @return the new extension schema
+     */
+    public static SCIMResourceTypeExtensionSchema createSCIMResourcetypeExtension(String schema,
+                                                                                  String name,
+                                                                                  String description,
+                                                                                  AttributeSchema... attributeSchemas) {
+        SCIMResourceTypeExtensionSchema resourceTypeSchema = new SCIMResourceTypeExtensionSchema(schema,
+            attributeSchemas);
+        resourceTypeSchema.setName(name);
+        resourceTypeSchema.setDescription(description);
+        return resourceTypeSchema;
     }
 
     /**
@@ -44,7 +65,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final Set<SCIMResourceTypeExtensionSchema> getExtensions() {
@@ -52,7 +73,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void setExtensions(Set<SCIMResourceTypeExtensionSchema> extensions) {
@@ -60,7 +81,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void addExtension(SCIMResourceTypeExtensionSchema extension) {
@@ -68,7 +89,16 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * equals if the schema uri identifier is equal
+     * @return this extension as an attribute schema definition
+     */
+    public SCIMAttributeSchema getAsAttributeSchema() {
+        return SCIMAttributeSchema.createSCIMAttributeSchema(getSchema(), getSchema(), COMPLEX, false, null, false,
+            false, SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+            SCIMDefinitions.Uniqueness.NONE, null, null, null);
+    }
+
+    /**
+     * equals if the schema uri identifier is equal.
      */
     @Override
     public boolean equals(Object o) {

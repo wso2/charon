@@ -289,7 +289,7 @@ public class GroupResource extends AbstractResource {
     }
 
     /**
-     * the group resource manager implementation
+     * the group resource manager implementation.
      */
     public static class GroupResourceManager extends ResourceManager<Group> {
 
