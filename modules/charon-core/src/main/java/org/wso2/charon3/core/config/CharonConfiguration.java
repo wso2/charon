@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class contains the charon related configurations.
+ * This class contains the charon related configurations..
  */
 public class CharonConfiguration implements Configuration {
 

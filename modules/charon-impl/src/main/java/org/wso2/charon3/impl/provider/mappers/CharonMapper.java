@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * Exception mapper for Charon Exception.
+ * Exception mapper for Charon Exception..
  */
 
 @Component(

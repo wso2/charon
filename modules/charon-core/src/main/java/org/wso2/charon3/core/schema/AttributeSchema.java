@@ -20,7 +20,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import java.util.List;
 
 /**
- * This interface defines the common schema base for SCIM attributes and SCIM sub attributes.
+ * This interface defines the common schema base for SCIM attributes and SCIM sub attributes..
  * In such defines as the 'attributes' attribute in Resource Schema Representation in SCIM 2.0
  */
 public interface AttributeSchema {

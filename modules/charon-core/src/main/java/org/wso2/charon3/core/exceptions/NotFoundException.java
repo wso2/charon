@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * If the requested resource is not found, this exception is thrown.
+ * If the requested resource is not found, this exception is thrown..
  * HTTP error code is: 404 NOT FOUND
  */
 public class NotFoundException extends AbstractCharonException {

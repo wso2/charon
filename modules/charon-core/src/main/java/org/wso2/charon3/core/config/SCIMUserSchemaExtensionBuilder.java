@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * This class is to build the extension user schema though the config file.
+ * This class is to build the extension user schema though the config file..
  */
 public class SCIMUserSchemaExtensionBuilder {
 
@@ -106,7 +106,7 @@ public class SCIMUserSchemaExtensionBuilder {
                 extensionConfig.put(attrubteConfig.getName(), attrubteConfig);
 
                 /**
-                 * NOTE: Assume last config is the root config
+                 * NOTE: Assume last config is the root config.
                  */
                 if (index == attributeConfigArray.length() - 1) {
                     extensionRootAttributeName = attrubteConfig.getName();

@@ -49,7 +49,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * Endpoints of the GroupResource in micro service. This will basically captures
+ * Endpoints of the GroupResource in micro service. This will basically captures..
  * the requests from the remote clients and hand over the request to respective operation performer.
  *
  */
@@ -289,7 +289,7 @@ public class GroupResource extends AbstractResource {
     }
 
     /**
-     * the group resource manager implementation
+     * the group resource manager implementation..
      */
     public static class GroupResourceManager extends ResourceManager<Group> {
 

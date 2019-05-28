@@ -19,7 +19,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * If an error occurs in SCIM operation,in addition to returning the HTTP response code,
+ * If an error occurs in SCIM operation,in addition to returning the HTTP response code,.
  * an human readable explanation should also be returned in the body.
  * This class abstract out the Exceptions that should be thrown at a failure of SCIM operation and
  * implementers can use code property to decide which HTTP code needs to be set in header of the
@@ -28,22 +28,22 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 public class AbstractCharonException extends Exception {
 
     /**
-     * Error responses are identified using the following "schema" uri
+     * Error responses are identified using the following "schema" uri.
      */
     protected String schemas;
 
     /**
-     * A detailed human-readable message.
+     * A detailed human-readable message..
      */
     protected String detail;
 
     /**
-     * The HTTP status code
+     * The HTTP status code.
      */
     protected int status;
 
     /**
-     * the scim type for scim errors as defined in RFC7644 3.12
+     * the scim type for scim errors as defined in RFC7644 3.12.
      */
     protected String scimType;
 
@@ -60,7 +60,7 @@ public class AbstractCharonException extends Exception {
     }
 
     /**
-     * Constructs a new exception with the specified detail message and
+     * Constructs a new exception with the specified detail message and.
      * cause. Note that the detail message associated with
      * causeis not automatically incorporated in this exception's detail message.
      *

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is a blueprint of ComplexAttribute defined in SCIM Core Schema Spec.
+ * This class is a blueprint of ComplexAttribute defined in SCIM Core Schema Spec..
  */
 public class ComplexAttribute extends AbstractAttribute {
 
@@ -35,7 +35,7 @@ public class ComplexAttribute extends AbstractAttribute {
     public ComplexAttribute() {}
 
     /**
-     * Retrieve the map of sub attributes.
+     * Retrieve the map of sub attributes..
      *
      * @return Map of Attributes
      */
@@ -44,7 +44,7 @@ public class ComplexAttribute extends AbstractAttribute {
         }
 
     /**
-     * Set the map of sub attributes.
+     * Set the map of sub attributes..
      *
      * @param subAttributesList
      */
@@ -53,7 +53,7 @@ public class ComplexAttribute extends AbstractAttribute {
     }
 
     /**
-     * Retrieve one attribute given the attribute name.
+     * Retrieve one attribute given the attribute name..
      *
      * @param attributeName
      * @return Attribute
@@ -76,7 +76,7 @@ public class ComplexAttribute extends AbstractAttribute {
     }
 
     /**
-     * Remove a sub attribute from the complex attribute given the sub attribute name.
+     * Remove a sub attribute from the complex attribute given the sub attribute name..
      *
      * @param attributeName
      */
@@ -96,7 +96,7 @@ public class ComplexAttribute extends AbstractAttribute {
     }
 
     /**
-     * Set a sub attribute of the complex attribute's sub attribute list.
+     * Set a sub attribute of the complex attribute's sub attribute list..
      *
      * @param subAttribute
      * @throws CharonException

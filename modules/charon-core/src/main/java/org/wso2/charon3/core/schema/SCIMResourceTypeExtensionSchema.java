@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * author Pascal Knueppel <br>
+ * author Pascal Knueppel <br>.
  * created at: 18.03.2019 - 12:50 <br>
  * <br>
  * this class represents a scim schema extension for a resource
@@ -18,7 +18,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * creates a new extension schema
+     * creates a new extension schema.
      *
      * @param schema           the identifier uri of the extension
      * @param attributeSchemas the attributes that will be describes by this schema
@@ -30,21 +30,21 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * @see SCIMResourceTypeSchema#schemasList
+     * @see SCIMResourceTypeSchema#schemasList.
      */
     public String getSchema() {
         return super.getSchemasList().get(0);
     }
 
     /**
-     * @see SCIMResourceTypeSchema#schemasList
+     * @see SCIMResourceTypeSchema#schemasList.
      */
     public void setSchema(String schema) {
         super.setSchemasList(schema);
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final Set<SCIMResourceTypeExtensionSchema> getExtensions() {
@@ -52,7 +52,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void setExtensions(Set<SCIMResourceTypeExtensionSchema> extensions) {
@@ -60,7 +60,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * extensions are not supported recursively
+     * extensions are not supported recursively.
      */
     @Override
     public final void addExtension(SCIMResourceTypeExtensionSchema extension) {
@@ -68,7 +68,7 @@ public class SCIMResourceTypeExtensionSchema extends SCIMResourceTypeSchema {
     }
 
     /**
-     * equals if the schema uri identifier is equal
+     * equals if the schema uri identifier is equal.
      */
     @Override
     public boolean equals(Object o) {

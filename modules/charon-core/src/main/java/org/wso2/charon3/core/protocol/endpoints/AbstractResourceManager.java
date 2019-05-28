@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is an abstract layer for all the resource endpoints to abstract out common
+ * This is an abstract layer for all the resource endpoints to abstract out common.
  * operations. And an entry point for initiating the charon from the outside.
  */
 public abstract class AbstractResourceManager {
@@ -40,12 +40,12 @@ public abstract class AbstractResourceManager {
     private static JSONDecoder decoder = new JSONDecoder();
 
     /**
-     * Keeps  a map of endpoint urls of the exposed resources.
+     * Keeps  a map of endpoint urls of the exposed resources..
      */
     private static Map<String, String> endpointURLMap;
 
     /**
-     * Returns the encoder for json.
+     * Returns the encoder for json..
      *
      * @return JSONEncoder - An json encoder for encoding data
      */
@@ -54,7 +54,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns the decoder for json.
+     * Returns the decoder for json..
      *
      *
      * @return JSONDecoder - An json decoder for decoding data
@@ -64,7 +64,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns the endpoint according to the resource.
+     * Returns the endpoint according to the resource..
      *
      * @param resource -Resource type
      * @return endpoint URL
@@ -83,7 +83,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns SCIM Response object after json encoding the exception
+     * Returns SCIM Response object after json encoding the exception.
      *
      * @param exception - exception message
      * @return SCIMResponse

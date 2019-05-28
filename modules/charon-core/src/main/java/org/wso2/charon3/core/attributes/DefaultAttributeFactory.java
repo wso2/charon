@@ -24,7 +24,7 @@ import org.wso2.charon3.core.schema.SCIMDefinitions;
 import java.time.Instant;
 
 /**
- * Default implementation of AttributeFactory according to SCIM Schema spec.
+ * Default implementation of AttributeFactory according to SCIM Schema spec..
  */
 public class DefaultAttributeFactory {
 
@@ -66,7 +66,7 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * Once identified that constructing attribute is a simple attribute & related attribute schema is a
+     * Once identified that constructing attribute is a simple attribute & related attribute schema is a.
      * SCIMAttributeSchema, perform attribute construction operations specific to Simple Attribute.
      *
      * @param attributeSchema
@@ -90,7 +90,7 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * When an attribute is created with value and data type provided,
+     * When an attribute is created with value and data type provided,.
      * we need to validate whether they are matching.
      *
      * @param attributeValue

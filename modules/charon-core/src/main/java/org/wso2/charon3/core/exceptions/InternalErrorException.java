@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * An internal error.
+ * An internal error..
  */
 public class InternalErrorException extends AbstractCharonException {
 

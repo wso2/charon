@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This defines the attributes schema as in SCIM Spec.
+ * This defines the attributes schema as in SCIM Spec..
  */
 
 public class SCIMAttributeSchema implements AttributeSchema, Serializable {

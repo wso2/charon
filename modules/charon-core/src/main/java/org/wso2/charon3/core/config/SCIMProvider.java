@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents the SCIM Provider object.
+ * Represents the SCIM Provider object..
  */
 public class SCIMProvider {
 

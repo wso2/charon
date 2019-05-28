@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -72,7 +73,7 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
- * This decodes the json encoded resource string and create a SCIM object model according to the specification
+ * This decodes the json encoded resource string and create a SCIM object model according to the specification.
  * according to the info that the user has sent, and returns SCIMUser object.
  */
 
@@ -86,8 +87,8 @@ public class JSONDecoder {
     }
 
     /**
-     * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
-     * {@link ListedResource} object that holds the parsed objects
+     * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to.
+     * {@link ListedResource} object that holds the parsed objects.
      *
      * @param scimResourceString the listed resource string
      * @param resourceSchema     the schema of the resource objects that should be present.
@@ -152,7 +153,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}..
      *
      * @return the decoded exception
      */
@@ -182,7 +183,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}..
      *
      * @return the decoded exception
      */
@@ -205,7 +206,7 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves the first schema string value from the given {@link JSONObject} in the
+     * retrieves the first schema string value from the given {@link JSONObject} in the.
      * {@link ResponseCodeConstants#SCHEMAS} attribute field which should be an array. This method is only useful if
      * this array is expected to contain a single element.
      *
@@ -231,7 +232,7 @@ public class JSONDecoder {
     }
 
     /**
-     * retrieves the string value from the given {@link JSONObject}
+     * retrieves the string value from the given {@link JSONObject}..
      *
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
@@ -250,7 +251,7 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves an int value from the given {@link JSONObject}
+     * retrieves an int value from the given {@link JSONObject}..
      *
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
@@ -269,7 +270,7 @@ public class JSONDecoder {
     }
 
     /**
-     * Decode the resource string sent in the SCIM request payload.
+     * Decode the resource string sent in the SCIM request payload..
      *
      * @param scimResourceString - json encoded string of user info
      * @param resourceSchema     - SCIM defined user schema
@@ -377,7 +378,7 @@ public class JSONDecoder {
     }
 
     /**
-     * this method will resolve the schema extensions of a resource and will add them to the translated resource
+     * this method will resolve the schema extensions of a resource and will add them to the translated resource.
      *
      * @param jsonObject     the json representation of the current scim resource
      * @param resourceSchema the resource type definition to resolve the extension
@@ -866,7 +867,7 @@ public class JSONDecoder {
     }
 
     /**
-     * Decode BulkRequestData Json Sting.
+     * Decode BulkRequestData Json Sting..
      *
      * @param bulkResourceString
      * @return BulkRequestData Object
@@ -965,7 +966,7 @@ public class JSONDecoder {
     }
 
     /**
-     * will resolve a bulk response into a {@link BulkResponseData} object
+     * will resolve a bulk response into a {@link BulkResponseData} object.
      *
      * @param bulkResponseString the bulk response message
      * @return the decoded bulk object

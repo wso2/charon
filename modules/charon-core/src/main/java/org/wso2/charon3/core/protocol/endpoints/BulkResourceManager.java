@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- * REST API exposed by Charon-Core to perform bulk operations. Any SCIM service provider can call this API perform bulk
+ * REST API exposed by Charon-Core to perform bulk operations. Any SCIM service provider can call this API perform bulk.
  * operations, based on the HTTP requests received by SCIM Client.
  */
 public class BulkResourceManager {
@@ -49,7 +49,7 @@ public class BulkResourceManager {
     private JSONDecoder decoder = new JSONDecoder();
 
     /**
-     * a list of the resource managers that can be used to process bulk operations
+     * a list of the resource managers that can be used to process bulk operations.
      */
     private Map<String, ResourceManager> resourceManagerMap;
 
@@ -58,7 +58,7 @@ public class BulkResourceManager {
     }
 
     /**
-     * will create a map from the resource managers to make them more easily accessible and to prevent unnecessary
+     * will create a map from the resource managers to make them more easily accessible and to prevent unnecessary.
      * iterations over the resource manager list.<br><br> The key of the map will be the endpoint path of the resource
      * that is handled by the corresponding resource manager e.g: "/Users", "/Groups", "/Roles", "/Clients" etc.
      *
@@ -185,7 +185,7 @@ public class BulkResourceManager {
     }
 
     /**
-     * tries to get the resource manager that is capable of processing the given request operation
+     * tries to get the resource manager that is capable of processing the given request operation.
      *
      * @param bulkRequestContent
      *     the request operation that should be processed

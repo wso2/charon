@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 
 /**
- * This class is used to build a bulk request that can be used by a client
+ * This class is used to build a bulk request that can be used by a client.
  * <br>
  * created at: 23.04.2019 - 10:34
  *
@@ -24,15 +24,13 @@ import java.util.function.BiConsumer;
 public class BulkRequestBuilder {
 
     /**
-     * a list of all bulk operations
+     * a list of all bulk operations.
      */
     private List<BulkRequestOperation> bulkOperationsList = new ArrayList<>();
 
     /**
-     * An integer specifying the number of errors that the service
-     * provider will accept before the operation is terminated and an
-     * error response is returned.  OPTIONAL in a request.  Not valid in
-     * a response.
+     * An integer specifying the number of errors that the service provider will accept before the operation is.
+     * terminated and an error response is returned.  OPTIONAL in a request.  Not valid in a response.
      */
     private Integer failOnErrors;
 
@@ -40,13 +38,11 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * creates the builder class and a bulk operation that must be configured.
+     * creates the builder class and a bulk operation that must be configured..
      *
      * @param failOnErrors
-     *     An integer specifying the number of errors that the service
-     *     provider will accept before the operation is terminated and an
-     *     error response is returned.  OPTIONAL in a request.  Not valid in
-     *     a response.
+     *     An integer specifying the number of errors that the service provider will accept before the operation is
+     *     terminated and an error response is returned.  OPTIONAL in a request.  Not valid in a response.
      *
      * @return the next operation to use
      */
@@ -57,7 +53,7 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * creates the builder class and a bulk operation that must be configured.
+     * creates the builder class and a bulk operation that must be configured..
      *
      * @return the next operation to use
      */
@@ -66,7 +62,7 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * adds a new bulk request operation that must be configured
+     * adds a new bulk request operation that must be configured.
      *
      * @return the next bulk request operation that must be configured
      */
@@ -77,7 +73,7 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * @return builds the bulk operation into a string object
+     * @return builds the bulk operation into a string object.
      */
     public String build() {
         JSONObject request = new JSONObject();
@@ -95,14 +91,14 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * @see #bulkOperationsList
+     * @see #bulkOperationsList.
      */
     public List<BulkRequestOperation> getBulkOperationsList() {
         return bulkOperationsList;
     }
 
     /**
-     * @see #bulkOperationsList
+     * @see #bulkOperationsList.
      */
     public BulkRequestBuilder setBulkOperationsList(
         List<BulkRequestOperation> bulkOperationsList) {
@@ -111,14 +107,14 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * @see #failOnErrors
+     * @see #failOnErrors.
      */
     public Integer getFailOnErrors() {
         return failOnErrors;
     }
 
     /**
-     * @see #failOnErrors
+     * @see #failOnErrors.
      */
     public BulkRequestBuilder setFailOnErrors(Integer failOnErrors) {
         this.failOnErrors = failOnErrors;
@@ -126,56 +122,49 @@ public class BulkRequestBuilder {
     }
 
     /**
-     * represents the HTTP methods that are allowed within a bulk request
+     * represents the HTTP methods that are allowed within a bulk request.
      */
     public static enum Method {
         POST, PUT, PATCH, DELETE
     }
 
     /**
-     * represents a bulk request operation
+     * represents a bulk request operation.
      */
     public static class BulkRequestOperation {
 
         private BulkRequestBuilder bulkRequestBuilder;
 
         /**
-         * The HTTP method of the current operation.  Possible values
-         * are "POST", "PUT", "PATCH", or "DELETE".  REQUIRED.
+         * The HTTP method of the current operation.  Possible values are "POST", "PUT", "PATCH", or "DELETE"..
+         * REQUIRED.
          */
         private Method method;
 
         /**
-         * The resource's relative path to the SCIM service provider's
-         * root.  If "method" is "POST", the value must specify a resource
-         * type endpoint, e.g., /Users or /Groups, whereas all other
-         * "method" values must specify the path to a specific resource,
-         * e.g., /Users/2819c223-7f76-453a-919d-413861904646.  REQUIRED in
-         * a request.
+         * The resource's relative path to the SCIM service provider's root.  If "method" is "POST", the value must.
+         * specify a resource type endpoint, e.g., /Users or /Groups, whereas all other "method" values must specify the
+         * path to a specific resource, e.g., /Users/2819c223-7f76-453a-919d-413861904646.  REQUIRED in a request.
          */
         private String path;
 
         /**
-         * The transient identifier of a newly created resource,
-         * unique within a bulk request and created by the client.  The
-         * bulkId serves as a surrogate resource id enabling clients to
-         * uniquely identify newly created resources in the response and
-         * cross-reference new resources in and across operations within a
-         * bulk request.  REQUIRED when "method" is "POST".
+         * The transient identifier of a newly created resource, unique within a bulk request and created by the client.
+         * The bulkId serves as a surrogate resource id enabling clients to uniquely identify newly created resources in
+         * the response and cross-reference new resources in and across operations within a bulk request.  REQUIRED when
+         * "method" is "POST".
          */
         private String bulkId;
 
         /**
-         * The current resource version.  Version MAY be used if the
-         * service provider supports entity-tags (ETags) (Section 2.3 of
-         * [RFC7232]) and "method" is "PUT", "PATCH", or "DELETE".
+         * The current resource version.  Version MAY be used if the service provider supports entity-tags (ETags).
+         * (Section 2.3 of [RFC7232]) and "method" is "PUT", "PATCH", or "DELETE".
          */
         private String version;
 
         /**
-         * The resource data as it would appear for a single SCIM POST,
-         * PUT, or PATCH operation.  REQUIRED in a request when "method"
-         * is "POST", "PUT", or "PATCH".
+         * The resource data as it would appear for a single SCIM POST, PUT, or PATCH operation.  REQUIRED in a request.
+         * when "method" is "POST", "PUT", or "PATCH".
          */
         private AbstractSCIMObject data;
 
@@ -184,7 +173,7 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @return creates a next operation that will be added to the request
+         * @return creates a next operation that will be added to the request.
          */
         public BulkRequestOperation next() {
             validateOperation();
@@ -194,21 +183,21 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @return the builder instance
+         * @return the builder instance.
          */
         public BulkRequestBuilder getBuilder() {
             return bulkRequestBuilder;
         }
 
         /**
-         * @return the json string of the builder
+         * @return the json string of the builder.
          */
         public String build() {
             return bulkRequestBuilder.build();
         }
 
         /**
-         * checks if the values of the operation have been configured correctly
+         * checks if the values of the operation have been configured correctly.
          */
         private void validateOperation() {
             if (StringUtils.isBlank(path)) {
@@ -227,14 +216,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #bulkRequestBuilder
+         * @see #bulkRequestBuilder.
          */
         public BulkRequestBuilder getBulkRequestBuilder() {
             return bulkRequestBuilder;
         }
 
         /**
-         * @return this object as JSON object
+         * @return this object as JSON object.
          */
         public JSONObject toJsonObject() {
             JSONObject jsonObject = new JSONObject();
@@ -253,14 +242,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #method
+         * @see #method.
          */
         public Method getMethod() {
             return method;
         }
 
         /**
-         * @see #method
+         * @see #method.
          */
         public BulkRequestOperation setMethod(Method method) {
             this.method = method;
@@ -271,14 +260,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #path
+         * @see #path.
          */
         public String getPath() {
             return path;
         }
 
         /**
-         * @see #path
+         * @see #path.
          */
         public BulkRequestOperation setPath(String path) {
             this.path = path;
@@ -286,14 +275,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #bulkId
+         * @see #bulkId.
          */
         public String getBulkId() {
             return bulkId;
         }
 
         /**
-         * @see #bulkId
+         * @see #bulkId.
          */
         public BulkRequestOperation setBulkId(String bulkId) {
             this.bulkId = bulkId;
@@ -301,14 +290,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #version
+         * @see #version.
          */
         public String getVersion() {
             return version;
         }
 
         /**
-         * @see #version
+         * @see #version.
          */
         public BulkRequestOperation setVersion(String version) {
             this.version = version;
@@ -316,14 +305,14 @@ public class BulkRequestBuilder {
         }
 
         /**
-         * @see #data
+         * @see #data.
          */
         public AbstractSCIMObject getData() {
             return data;
         }
 
         /**
-         * @see #data
+         * @see #data.
          */
         public BulkRequestOperation setData(AbstractSCIMObject data) {
             this.data = data;
@@ -332,17 +321,31 @@ public class BulkRequestBuilder {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof BulkRequestOperation)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof BulkRequestOperation)) {
+                return false;
+            }
 
             BulkRequestOperation that = (BulkRequestOperation) o;
 
             if (bulkRequestBuilder != null ? !bulkRequestBuilder.equals(that.bulkRequestBuilder) :
-                that.bulkRequestBuilder != null) return false;
-            if (method != null ? !method.equals(that.method) : that.method != null) return false;
-            if (path != null ? !path.equals(that.path) : that.path != null) return false;
-            if (bulkId != null ? !bulkId.equals(that.bulkId) : that.bulkId != null) return false;
-            if (version != null ? !version.equals(that.version) : that.version != null) return false;
+                that.bulkRequestBuilder != null) {
+                return false;
+            }
+            if (method != null ? !method.equals(that.method) : that.method != null) {
+                return false;
+            }
+            if (path != null ? !path.equals(that.path) : that.path != null) {
+                return false;
+            }
+            if (bulkId != null ? !bulkId.equals(that.bulkId) : that.bulkId != null) {
+                return false;
+            }
+            if (version != null ? !version.equals(that.version) : that.version != null) {
+                return false;
+            }
             return data != null ? data.equals(that.data) : that.data == null;
 
         }

@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * represents a response of a bulk request
+ * represents a response of a bulk request.
  */
 public class BulkResponseData {
 
     private List<String> schemas;
 
     /**
-     * the responses of the bulk-operations
+     * the responses of the bulk-operations.
      */
     private List<BulkResponseContent> operationResponseList;
 

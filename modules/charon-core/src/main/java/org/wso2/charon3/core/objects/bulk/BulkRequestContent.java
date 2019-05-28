@@ -18,7 +18,7 @@
 package org.wso2.charon3.core.objects.bulk;
 
 /**
- *
+ *.
  */
 public class BulkRequestContent {
     private String bulkID;

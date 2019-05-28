@@ -44,14 +44,14 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
 
 /**
- * Represents the User object which is a collection of attributes defined by SCIM User-schema.
+ * Represents the User object which is a collection of attributes defined by SCIM User-schema..
  */
 public class User extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * returns the username of this user
+     * returns the username of this user..
      */
     public String getUsername() {
 
@@ -61,7 +61,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of username and exchanges it with the given value
+     * deletes the current value of username and exchanges it with the given value..
      */
     public void replaceUsername(String username) {
 
@@ -69,7 +69,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the displayName of this user
+     * gets the displayName of this user..
      */
     public String getDisplayName() {
 
@@ -80,7 +80,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of displayName and exchanges it with the given value
+     * deletes the current value of displayName and exchanges it with the given value..
      */
     public void replaceDisplayName(String displayName) {
 
@@ -88,7 +88,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the nickname of this user
+     * gets the nickname of this user..
      */
     public String getNickName() {
 
@@ -99,7 +99,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of nickname and exchanges it with the given value
+     * deletes the current value of nickname and exchanges it with the given value..
      */
     public void replaceNickName(String nickName) {
 
@@ -107,7 +107,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the profile url of this user
+     * gets the profile url of this user..
      */
     public String getProfileUrl() {
 
@@ -117,7 +117,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of profile url and exchanges it with the given value
+     * deletes the current value of profile url and exchanges it with the given value..
      */
     public void replaceProfileUrl(String profileUrl) {
 
@@ -125,7 +125,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the user type of this user
+     * gets the user type of this user..
      */
     public String getUserType() {
 
@@ -136,7 +136,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of user type and exchanges it with the given value
+     * deletes the current value of user type and exchanges it with the given value..
      */
     public void replaceUserType(String userType) {
 
@@ -144,7 +144,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the title value of this user
+     * gets the title value of this user..
      */
     public String getTitle() {
 
@@ -155,7 +155,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of title and exchanges it with the given value
+     * deletes the current value of title and exchanges it with the given value..
      */
     public void replaceTitle(String title) {
 
@@ -163,7 +163,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the preferred language value of this user
+     * gets the preferred language value of this user..
      */
     public String getPreferredLanguage() {
 
@@ -174,7 +174,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of preferred language and exchanges it with the given value
+     * deletes the current value of preferred language and exchanges it with the given value..
      */
     public void setPreferredLanguage(String preferredLanguage) {
 
@@ -182,7 +182,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the preferred language attribute and exchanges it with the given value
+     * deletes the preferred language attribute and exchanges it with the given value..
      *
      * @param preferredLanguage the new preferred language
      */
@@ -192,7 +192,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current locale value of this user
+     * gets the current locale value of this user..
      */
     public String getLocale() {
 
@@ -203,7 +203,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of preferred language and exchanges it with the given value
+     * deletes the current value of preferred language and exchanges it with the given value..
      */
     public void replaceLocale(String locale) {
 
@@ -211,7 +211,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current timezone value of this user
+     * gets the current timezone value of this user..
      */
     public String getTimezone() {
 
@@ -222,7 +222,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of timezone and exchanges it with the given value
+     * deletes the current value of timezone and exchanges it with the given value..
      */
     public void setTimezone(String timezone) {
 
@@ -230,7 +230,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the timezone attribute and exchanges it with the given value
+     * deletes the timezone attribute and exchanges it with the given value..
      *
      * @param timezone the new timezone
      */
@@ -240,7 +240,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current active value of this user
+     * gets the current active value of this user..
      */
     public boolean getActive() {
 
@@ -251,7 +251,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of active and exchanges it with the given value
+     * deletes the current value of active and exchanges it with the given value..
      */
     public void replaceActive(boolean active) {
 
@@ -259,7 +259,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * extracts the complex "name" attribute from the Scim structure
+     * extracts the complex "name" attribute from the Scim structure..
      */
     public ScimName getName() {
 
@@ -289,7 +289,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current complex name attribute and exchanges it with the given value
+     * deletes the current complex name attribute and exchanges it with the given value..
      */
     public void replaceName(ScimName scimName) {
 
@@ -328,7 +328,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the emails from this user or an empty list if there are none present
+     * gets the emails from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getEmails() {
 
@@ -343,7 +343,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current complex emails attributes and exchanges it with the given values
+     * deletes the current complex emails attributes and exchanges it with the given values.
      */
     public void replaceEmails(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -358,7 +358,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the phonenumbers from this user or an empty list if there are none present
+     * gets the phonenumbers from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getPhoneNumbers() {
 
@@ -373,7 +373,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current complex phonenumber attributes and exchanges it with the given values
+     * deletes the current complex phonenumber attributes and exchanges it with the given values.
      */
     public void replacePhoneNumbers(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -388,7 +388,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the instant messaging addresses from this user or an empty list if there are none present
+     * gets the instant messaging addresses from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getInstantMessagingAddresses() {
 
@@ -402,7 +402,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current complex instant messaging addresses attributes and exchanges it with the given values
+     * deletes the current complex instant messaging addresses attributes and exchanges it with the given values.
      */
     public void replaceInstantMessagingAddresses(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -417,7 +417,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the photo uris from this user or an empty list if there are none present
+     * gets the photo uris from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getPhotos() {
 
@@ -431,7 +431,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current photo uri attributes and exchanges it with the given values
+     * deletes the current photo uri attributes and exchanges it with the given values.
      */
     public void replacePhotos(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -446,7 +446,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the x509 certificates from this user or an empty list if there are none present
+     * gets the x509 certificates from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getX509Certificates() {
 
@@ -460,7 +460,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current x509 certificate attributes and exchanges it with the given values
+     * deletes the current x509 certificate attributes and exchanges it with the given values.
      */
     public void replaceX509Certificates(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -475,7 +475,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the groups from this user or an empty list if there are none present
+     * gets the groups from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getGroups() {
 
@@ -489,7 +489,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the group attributes and exchanges it with the given values
+     * deletes the group attributes and exchanges it with the given values.
      */
     public void replaceGroups(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -504,7 +504,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the roles from this user or an empty list if there are none present
+     * gets the roles from this user or an empty list if there are none present.
      */
     public List<MultiValuedComplexType> getRoles() {
 
@@ -517,7 +517,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the role attributes and exchanges it with the given values
+     * deletes the role attributes and exchanges it with the given values.
      */
     public void replaceRoles(List<MultiValuedComplexType> multiValuedComplexTypeList) {
 
@@ -531,7 +531,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the addresses from this user or an empty list if there are none present
+     * gets the addresses from this user or an empty list if there are none present.
      */
     public List<ScimAddress> getAddresses() {
 
@@ -573,7 +573,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the addresses attributes and exchanges it with the given values
+     * deletes the addresses attributes and exchanges it with the given values.
      */
     public void replaceAddresses(List<ScimAddress> addressList) {
 
@@ -614,7 +614,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * return userName of the user
+     * return userName of the user.
      *
      * @return
      * @throws CharonException
@@ -625,7 +625,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the userName of the user
+     * set the userName of the user.
      *
      * @param userName
      * @throws CharonException
@@ -638,7 +638,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the username attribute and exchanges it with the given value
+     * deletes the username attribute and exchanges it with the given value.
      *
      * @param username the new username
      */
@@ -648,7 +648,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * return the password of the user
+     * return the password of the user.
      *
      * @return
      * @throws CharonException
@@ -659,7 +659,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the password of the user
+     * set the password of the user.
      *
      * @param password
      * @throws CharonException
@@ -672,7 +672,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set simple attribute in the scim object
+     * set simple attribute in the scim object.
      *
      * @param attributeName
      * @param attributeSchema
@@ -697,7 +697,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * return simple attribute's string value
+     * return simple attribute's string value.
      *
      * @param attributeName
      * @return
@@ -710,7 +710,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the associated groups of the user
+     * set the associated groups of the user.
      *
      * @param type
      * @param value
@@ -782,7 +782,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the schemas of the user
+     * set the schemas of the user.
      */
     public void setSchemas() {
 

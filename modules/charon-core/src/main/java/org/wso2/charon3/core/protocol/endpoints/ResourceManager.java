@@ -43,7 +43,7 @@ import java.util.Objects;
 
 
 /**
- * implementation for SCIM resource endpoints.
+ * implementation for SCIM resource endpoints..
  *
  * @param <R> the scim object type that should be handled by this manager
  */
@@ -54,12 +54,12 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     private static final String INTERNAL_ERROR_MESSAGE = "an internal error occurred";
 
     /**
-     * the handler that will handle the scim resources
+     * the handler that will handle the scim resources.
      */
     private ResourceHandler<R> resourceHandler;
 
     /**
-     * holds the generic type of this implementation
+     * holds the generic type of this implementation.
      */
     private Class<R> genericType;
 
@@ -70,7 +70,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * Method of resource endpoint which is mapped to HTTP GET request.
+     * Method of resource endpoint which is mapped to HTTP GET request..
      *
      * @param id - unique resource id
      */
@@ -114,7 +114,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * Method of resource endpoint which is mapped to HTTP POST request.
+     * Method of resource endpoint which is mapped to HTTP POST request..
      *
      * @param scimObjectString - Payload of HTTP request, which contains the SCIM object.
      * @return SCIMResponse - From Spec: {Since the server is free to alter and/or ignore POSTed content,
@@ -169,7 +169,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * Method of the ResourceManager that is mapped to HTTP Delete method..
+     * Method of the ResourceManager that is mapped to HTTP Delete method...
      *
      * @param id unique resource id
      */
@@ -189,7 +189,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * get resources
+     * get resources.
      *
      * @param filter the filter expression
      * @param startIndex index of the first entry
@@ -240,7 +240,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * does the actual work for the methods
+     * does the actual work for the methods.
      * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)} and
      * {@link #listWithGET(String, Integer, Integer, String, String, String, String, String)}
      */
@@ -332,7 +332,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * query resources
+     * query resources.
      *
      * @param resourceString the request body
      */
@@ -366,7 +366,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * To update the resource by giving entire attribute set
+     * To update the resource by giving entire attribute set.
      *
      * @param existingId the id of the resource to update
      * @param scimObjectString the request body
@@ -435,7 +435,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * will update an existing resource with the patch operation
+     * will update an existing resource with the patch operation.
      *
      * @param existingId the id of the resource that should be updated
      * @param scimObjectString the request body
@@ -564,7 +564,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
 
 
     /**
-     * Creates the Listed Resource.
+     * Creates the Listed Resource..
      *
      * @param resources the list of resources that should be listed to the client
      * @param startIndex the start index (do not confuse with index of the given list)

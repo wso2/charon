@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM update group sample.
+ * SCIM update group sample..
  */
 public class UpdateGroupSample {
 

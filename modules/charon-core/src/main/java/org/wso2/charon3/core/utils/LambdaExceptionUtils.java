@@ -23,12 +23,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * A Utility which provides a way to throw checked exceptions from the lambda expressions.
+ * A Utility which provides a way to throw checked exceptions from the lambda expressions..
  */
 public final class LambdaExceptionUtils {
 
     /**
-     * This method allows a Consumer which throws exceptions to be used in places which expects a Consumer.
+     * This method allows a Consumer which throws exceptions to be used in places which expects a Consumer..
      *
      * @param consumer instances of the {@code ConsumerWithExceptions} functional interface
      * @param <T>      the type of the input to the function
@@ -47,7 +47,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * This method allows a BiConsumer which throws exceptions to be used in places which expects a BiConsumer.
+     * This method allows a BiConsumer which throws exceptions to be used in places which expects a BiConsumer..
      *
      * @param biConsumer instances of the {@code BiConsumerWithExceptions} functional interface
      * @param <T>        the type of the input to the function
@@ -68,7 +68,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * This method allows a Function which throws exceptions to be used in places which expects a Function.
+     * This method allows a Function which throws exceptions to be used in places which expects a Function..
      *
      * @param <T>      Any Object.
      * @param <R>      Any Object
@@ -90,7 +90,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * This method allows a Supplier which throws exceptions to be used in places which expects a Supplier.
+     * This method allows a Supplier which throws exceptions to be used in places which expects a Supplier..
      *
      * @param <T>      Any Object.
      * @param <E>      Any Exception.
@@ -116,7 +116,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code Consumer} interface which can throw exceptions.
+     * Represents a {@code Consumer} interface which can throw exceptions..
      *
      * @param <T> the type of the input to the operation
      * @param <E> the type of Exception
@@ -128,7 +128,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code BiConsumer} interface which can throw exceptions.
+     * Represents a {@code BiConsumer} interface which can throw exceptions..
      *
      * @param <T> the type of the first input to the operation
      * @param <U> the type of the second input to the operation
@@ -141,7 +141,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code TriConsumer} interface.
+     * Represents a {@code TriConsumer} interface..
      *
      * @param <T> the type of the first input to the operation
      * @param <U> the type of the second input to the operation
@@ -154,7 +154,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code BiConsumer} interface which can throw exceptions.
+     * Represents a {@code BiConsumer} interface which can throw exceptions..
      *
      * @param <T> the type of the first input to the operation
      * @param <U> the type of the second input to the operation
@@ -168,7 +168,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code Function} interface which can throw exceptions.
+     * Represents a {@code Function} interface which can throw exceptions..
      *
      * @param <T> the type of the input to the function
      * @param <R> the type of the result of the function
@@ -181,7 +181,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code Supplier} interface which can throw exceptions.
+     * Represents a {@code Supplier} interface which can throw exceptions..
      *
      * @param <T> the type of results supplied by this supplier
      * @param <E> the type of Exception
@@ -193,7 +193,7 @@ public final class LambdaExceptionUtils {
     }
 
     /**
-     * Represents a {@code Runnable} interface which can throw exceptions.
+     * Represents a {@code Runnable} interface which can throw exceptions..
      *
      * @param <E> the type of Exception
      */

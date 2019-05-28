@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM get group sample.
+ * SCIM get group sample..
  */
 public class GetGroupSample {
 

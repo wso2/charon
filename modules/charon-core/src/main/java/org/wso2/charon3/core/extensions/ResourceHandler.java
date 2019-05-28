@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * resource handler that will be used by the resource-managers to handle SCIM resources
+ * resource handler that will be used by the resource-managers to handle SCIM resources.
  * <br><br>
  * created at: 01.04.2019
  *
@@ -21,7 +21,7 @@ import java.util.Map;
 public interface ResourceHandler<R extends AbstractSCIMObject> {
 
     /**
-     * creates a resource of the given type
+     * creates a resource of the given type.
      *
      * @param resource the resource that should be created
      * @param requiredAttributes A multi-valued list of strings indicating the names of resource attributes to return
@@ -31,7 +31,7 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
     public R create(R resource, Map<String, Boolean> requiredAttributes) throws AbstractCharonException;
 
     /**
-     * loads a resource based on its id
+     * loads a resource based on its id.
      *
      * @param id the id of the resource
      * @param requiredAttributes A multi-valued list of strings indicating the names of resource attributes to return
@@ -41,14 +41,14 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
     public R get(String id, Map<String, Boolean> requiredAttributes) throws AbstractCharonException;
 
     /**
-     * deletes the resource with the given id
+     * deletes the resource with the given id.
      *
      * @param id the id of the resource to delete
      */
     public void delete(String id) throws AbstractCharonException;
 
     /**
-     * lists all users that match the given parameters
+     * lists all users that match the given parameters.
      *
      * @param node the filter expression
      * @param startIndex index of the first entry
@@ -69,7 +69,7 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
                                       Map<String, Boolean> requiredAttributes) throws AbstractCharonException;
 
     /**
-     * will update the given resource with the new values
+     * will update the given resource with the new values.
      *
      * @param resourceUpdate the resource which values should be used to update the resource under the given id
      * @param requiredAttributes A multi-valued list of strings indicating the names of resource attributes to return
@@ -79,14 +79,14 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
     public R update(R resourceUpdate, Map<String, Boolean> requiredAttributes) throws AbstractCharonException;
 
     /**
-     * the resource endpoint under which the resources are available. For the user endpoint this would be
+     * the resource endpoint under which the resources are available. For the user endpoint this would be.
      * {@link org.wso2.charon3.core.schema.SCIMConstants#USER_ENDPOINT} and for the groups endpoint
      * {@link org.wso2.charon3.core.schema.SCIMConstants#GROUP_ENDPOINT}
      */
     public String getResourceEndpoint();
 
     /**
-     * must return the schema that represents the scim type that should be handled by this implementation.
+     * must return the schema that represents the scim type that should be handled by this implementation..
      *
      * @see org.wso2.charon3.core.schema.SCIMSchemaDefinitions#SCIM_USER_SCHEMA
      * @see org.wso2.charon3.core.schema.SCIMSchemaDefinitions#SCIM_GROUP_SCHEMA

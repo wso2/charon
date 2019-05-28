@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * Exception mapper for Conflict Exception.
+ * Exception mapper for Conflict Exception..
  */
 @Component(
         name = "org.wso2.carbon.identity.inbound.provisioning.scim2.provider.ConflictMapper",

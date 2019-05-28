@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This declares the SCIM resources schema as specified in SCIM core specification 2.0.
+ * This declares the SCIM resources schema as specified in SCIM core specification 2.0..
  */
 
 public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable {
@@ -31,18 +31,18 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * The core schema for the resource type is identified using the following schemas URIs
+     * The core schema for the resource type is identified using the following schemas URIs.
      * e.g.: for 'User' - urn:ietf:params:scim:schemasList:core:2.0:User
      */
     private List<String> schemasList;
 
     /**
-     * set of attributeList in the schema
+     * set of attributeList in the schema.
      */
     private ArrayList<AttributeSchema> attributeList = new ArrayList<>();
 
     /**
-     * a list of extensions that can be added to this schema representation
+     * a list of extensions that can be added to this schema representation.
      */
     private Set<SCIMResourceTypeExtensionSchema> extensions = new HashSet<>();
 
@@ -58,7 +58,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * Create a SCIMResourceTypeSchema according to the schema id and set of attributeList
+     * Create a SCIMResourceTypeSchema according to the schema id and set of attributeList.
      *
      * @param schemas          - json encoded string of user info
      * @param attributeSchemas - SCIM defined user schema
@@ -70,7 +70,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * creates a new resource type schema together with a resource type schema extension
+     * creates a new resource type schema together with a resource type schema extension.
      *
      * @param schemas          - json encoded string of user info
      * @param extensions       - a list of extension schemas for this resource type schema
@@ -84,7 +84,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * schema list contains the specified schema?
+     * schema list contains the specified schema?.
      *
      * @param schema
      * @return
@@ -114,7 +114,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * @see #extensions
+     * @see #extensions.
      */
     @Override
     public Set<SCIMResourceTypeExtensionSchema> getExtensions() {
@@ -122,14 +122,14 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * @see #extensions
+     * @see #extensions.
      */
     public void setExtensions(Set<SCIMResourceTypeExtensionSchema> extensions) {
         this.extensions = extensions;
     }
 
     /**
-     * adds a new extension to this schema
+     * adds a new extension to this schema.
      */
     public void addExtension(SCIMResourceTypeExtensionSchema extension) {
         if (this.extensions == null) {

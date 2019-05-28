@@ -28,7 +28,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Server Side Validator.
+ * Server Side Validator..
  */
 public class ServerSideValidator extends AbstractValidator {
 

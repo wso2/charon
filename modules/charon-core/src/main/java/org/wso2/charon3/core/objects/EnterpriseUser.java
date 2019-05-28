@@ -4,7 +4,7 @@ import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 /**
- * author Pascal Knueppel <br>
+ * author Pascal Knueppel <br>.
  * created at: 18.03.2019 - 16:15 <br>
  * <br>
  * this class serves as a wrapper class for user that helps reading the enterprise user attributes
@@ -12,7 +12,7 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 public class EnterpriseUser extends ScimAttributeAware {
 
     /**
-     * a user object that might hold an enterprise extension
+     * a user object that might hold an enterprise extension.
      */
     private User enterpriseUser;
 
@@ -21,7 +21,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise employee number
+     * @return the enterprise employee number.
      */
     public String getEmployeeNumber() {
         return getExtensionAttributeAsString(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
@@ -29,7 +29,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise cost center
+     * @return the enterprise cost center.
      */
     public String getCostCenter() {
         return getExtensionAttributeAsString(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
@@ -37,7 +37,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise organization
+     * @return the enterprise organization.
      */
     public String getOrganization() {
         return getExtensionAttributeAsString(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
@@ -45,7 +45,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise division
+     * @return the enterprise division.
      */
     public String getDivision() {
         return getExtensionAttributeAsString(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
@@ -53,7 +53,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise employee number
+     * @return the enterprise employee number.
      */
     public String getDepartment() {
         return getExtensionAttributeAsString(SCIMSchemaDefinitions.SCIM_ENTERPRISE_USER_SCHEMA,
@@ -61,7 +61,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * @return the enterprise employee number
+     * @return the enterprise employee number.
      */
     public MultiValuedComplexType getManager() {
         return getExtensionAttributeAsComplexType(
@@ -75,7 +75,7 @@ public class EnterpriseUser extends ScimAttributeAware {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public AbstractSCIMObject getResource() {

@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
+ * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of.
  * ResourceTypeResourceManager
  */
 public class ResourceTypeResourceManager extends ResourceManager {

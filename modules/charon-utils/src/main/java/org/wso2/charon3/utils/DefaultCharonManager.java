@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This illustrates what are the core tasks an implementation should take care of,
+ * This illustrates what are the core tasks an implementation should take care of,..
  * according to their specific implementation, and how the extension points and supportutils
  * implementation provided by charon can be initialized/utilized here.
  */
@@ -50,7 +50,7 @@ public class DefaultCharonManager {
     private static final String GROUPS_URL = "http://localhost:8080/scim/Groups";
 
     /**
-     * Perform initialization.
+     * Perform initialization..
      */
     private void init() throws CharonException {
         //Define endpoint urls to be used in Location Header
@@ -65,7 +65,7 @@ public class DefaultCharonManager {
     }
 
     /**
-     * Should return the static instance of CharonManager implementation.
+     * Should return the static instance of CharonManager implementation..
      * Read the config and initialize extensions as specified in the config.
      *
      * @return
@@ -86,7 +86,7 @@ public class DefaultCharonManager {
     }
 
     /**
-     * Obtain the encoder for the given format.
+     * Obtain the encoder for the given format..
      *
      * @return
      */
@@ -95,7 +95,7 @@ public class DefaultCharonManager {
     }
 
     /**
-     * Obtain the decoder for the given format.
+     * Obtain the decoder for the given format..
      *
      * @return
      */

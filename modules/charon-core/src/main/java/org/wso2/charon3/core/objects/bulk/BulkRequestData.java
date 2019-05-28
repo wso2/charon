@@ -21,22 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * represents the data of a bulk request
+ * represents the data of a bulk request.
  */
 public class BulkRequestData {
 
     /**
-     * the schemas that were added in the schema-tag in the request
+     * the schemas that were added in the schema-tag in the request.
      */
     private List<String> schemas;
 
     /**
-     * number of errors that are allowed to happen before the whole procedure should fail
+     * number of errors that are allowed to happen before the whole procedure should fail.
      */
     private Integer failOnErrors;
 
     /**
-     * the list of bulk operations to execute
+     * the list of bulk operations to execute.
      */
     private List<BulkRequestContent> operationRequests;
 

@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This class acts as an utility class for attributes.
+ * This class acts as an utility class for attributes..
  */
 public class AttributeUtil {
 

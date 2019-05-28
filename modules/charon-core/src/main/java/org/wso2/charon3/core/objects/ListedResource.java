@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents the listed resource object which is a collection of resources.
+ * Represents the listed resource object which is a collection of resources..
  **/
 
 public class ListedResource extends AbstractSCIMObject {
@@ -33,7 +33,7 @@ public class ListedResource extends AbstractSCIMObject {
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * scim resources that are represented by this listed resource
+     * scim resources that are represented by this listed resource.
      */
     private List<SCIMObject> resources = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * set the total results of the listed resource
+     * set the total results of the listed resource.
      *
      * @param totalResults
      */
@@ -67,7 +67,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * @return the items per page value of this listed resource
+     * @return the items per page value of this listed resource.
      */
     public int getItemsPerPage() {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE)) {
@@ -80,7 +80,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * paginated listed resource items per page settings
+     * paginated listed resource items per page settings.
      *
      * @param itemsPerPage
      */
@@ -99,7 +99,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * @return the start index value of this listed resource
+     * @return the start index value of this listed resource.
      */
     public int getStartIndex() {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)) {
@@ -112,7 +112,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * paginated listed resource start index settings
+     * paginated listed resource start index settings.
      *
      * @param startIndex
      */
@@ -131,7 +131,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * set the listed resources
+     * set the listed resources.
      *
      * @param valueWithAttributes
      */
@@ -154,14 +154,14 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * @see #resources
+     * @see #resources.
      */
     public List<SCIMObject> getResources() {
         return resources;
     }
 
     /**
-     * adds a new resource
+     * adds a new resource.
      * @param scimResourceType the new resource
      */
     public void addResource(SCIMObject scimResourceType) {

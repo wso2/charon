@@ -17,7 +17,7 @@ import org.wso2.charon3.core.setup.CharonInitializer;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- *
+ *.
  * <br><br>
  * created at: 03.04.2019
  * @author Pascal Knüppel
@@ -28,7 +28,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
     private static final Logger log = LoggerFactory.getLogger(ResourceManagerTest.class);
 
     /**
-     * will show that a user can successfully be created and that the methods of the
+     * will show that a user can successfully be created and that the methods of the.
      * {@link org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly
      */
     @Test

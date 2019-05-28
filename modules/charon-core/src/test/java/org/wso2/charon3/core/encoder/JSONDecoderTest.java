@@ -22,12 +22,12 @@ import org.wso2.charon3.core.testsetup.FileReferences;
 import java.util.List;
 
 /**
- * @author Pascal Knueppel
+ * @author Pascal Knueppel.
  */
 public class JSONDecoderTest implements FileReferences {
 
     /**
-     * this test will verify that the decoding of resources does work
+     * this test will verify that the decoding of resources does work.
      */
     @Test
     public void testDecodeGroup() throws InternalErrorException, BadRequestException, CharonException {
@@ -41,7 +41,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * this test will verify that the decoding of resources does work
+     * this test will verify that the decoding of resources does work.
      */
     @ParameterizedTest
     @ValueSource(strings = { CREATE_USER_MAXILEIN_FILE, CREATE_ENTERPRISE_USER_MAXILEIN_FILE })
@@ -59,7 +59,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * does the checks for {@link #testDecodeUser(String)}
+     * does the checks for {@link #testDecodeUser(String)}.
      */
     private void testUserDecoding(String fileResource)
         throws BadRequestException, CharonException, InternalErrorException {
@@ -151,7 +151,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * this method will show that the enterprise user is resolved correctly if enterprise details are found within
+     * this method will show that the enterprise user is resolved correctly if enterprise details are found within.
      * the user resource representation
      */
     @Test
@@ -175,7 +175,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * this test will show that the bulk request can be decoded correctly if a single operation is present
+     * this test will show that the bulk request can be decoded correctly if a single operation is present.
      */
     @Test
     public void testDecodeBulkRequestData() throws BadRequestException {
@@ -190,7 +190,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * this test will show that the bulk request can be decoded correctly if a single operation is present
+     * this test will show that the bulk request can be decoded correctly if a single operation is present.
      */
     @Test
     public void testDecodeBulkRequestDataWithTwoOperations() throws BadRequestException {

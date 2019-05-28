@@ -8,8 +8,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * author Pascal Knueppel <br>
- * created at: 25.04.2019 - 09:08 <br>
+ * author Pascal Knueppel <br> created at: 25.04.2019 - 09:08 <br>.
  * <br>
  * this class can be used to build search-post requests for endpoints ending with /.search
  */
@@ -17,56 +16,45 @@ public class SearchRequestBuilder {
 
 
     /**
-     * An integer indicating the desired maximum number of query
-     * results per page.  See Section 3.4.2.4.  OPTIONAL.
+     * An integer indicating the desired maximum number of query results per page.  See Section 3.4.2.4.  OPTIONAL..
      */
     private Integer count;
 
     /**
-     * An integer indicating the 1-based index of the first
-     * query result.  See Section 3.4.2.4.  OPTIONAL.
+     * An integer indicating the 1-based index of the first query result.  See Section 3.4.2.4.  OPTIONAL..
      */
     private Integer startIndex;
 
     /**
-     * A string indicating the order in which the "sortBy"
-     * parameter is applied.  Allowed values are "ascending" and
+     * A string indicating the order in which the "sortBy" parameter is applied.  Allowed values are "ascending" and.
      * "descending".  See Section 3.4.2.3.  OPTIONAL.
      */
     private SortOrder sortOrder;
 
     /**
-     * A string indicating the attribute whose value SHALL be used
-     * to order the returned responses.  The "sortBy" attribute MUST be
-     * in standard attribute notation (Section 3.10) form.  See
-     * Section 3.4.2.3.  OPTIONAL.
+     * A string indicating the attribute whose value SHALL be used to order the returned responses.  The "sortBy".
+     * attribute MUST be in standard attribute notation (Section 3.10) form.  See Section 3.4.2.3.  OPTIONAL.
      */
     private String sortBy;
 
     /**
-     * The filter string used to request a subset of resources.  The
-     * filter string MUST be a valid filter (Section 3.4.2.2) expression.
-     * OPTIONAL.
+     * The filter string used to request a subset of resources.  The filter string MUST be a valid filter (Section.
+     * 3.4.2.2) expression. OPTIONAL.
      */
     private String filter;
 
     /**
-     * A multi-valued list of strings indicating the names of
-     * resource attributes to return in the response, overriding the set
-     * of attributes that would be returned by default.  Attribute names
-     * MUST be in standard attribute notation (Section 3.10) form.  See
-     * Section 3.9 for additional retrieval query parameters.  OPTIONAL.
+     * A multi-valued list of strings indicating the names of resource attributes to return in the response, overriding.
+     * the set of attributes that would be returned by default.  Attribute names MUST be in standard attribute notation
+     * (Section 3.10) form.  See Section 3.9 for additional retrieval query parameters.  OPTIONAL.
      */
     private String attributes;
 
     /**
-     * A multi-valued list of strings indicating the
-     * names of resource attributes to be removed from the default set of
-     * attributes to return.  This parameter SHALL have no effect on
-     * attributes whose schema "returned" setting is "always" (see
-     * Sections 2.2 and 7 of [RFC7643]).  Attribute names MUST be in
-     * standard attribute notation (Section 3.10) form.  See Section 3.9
-     * for additional retrieval query parameters.  OPTIONAL.
+     * A multi-valued list of strings indicating the names of resource attributes to be removed from the default set of.
+     * attributes to return.  This parameter SHALL have no effect on attributes whose schema "returned" setting is
+     * "always" (see Sections 2.2 and 7 of [RFC7643]).  Attribute names MUST be in standard attribute notation (Section
+     * 3.10) form.  See Section 3.9 for additional retrieval query parameters.  OPTIONAL.
      */
     private String excludedAttributes;
 
@@ -75,7 +63,7 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @return a new builder instance
+     * @return a new builder instance.
      */
     public static SearchRequestBuilder builder() {
         return new SearchRequestBuilder();
@@ -83,7 +71,7 @@ public class SearchRequestBuilder {
 
 
     /**
-     * @return the search request as json string
+     * @return the search request as json string.
      */
     public String build() {
         JSONObject searchRequest = new JSONObject();
@@ -109,14 +97,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #count
+     * @see #count.
      */
     public Integer getCount() {
         return count;
     }
 
     /**
-     * @see #count
+     * @see #count.
      */
     public SearchRequestBuilder setCount(Integer count) {
         this.count = count;
@@ -124,14 +112,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #startIndex
+     * @see #startIndex.
      */
     public Integer getStartIndex() {
         return startIndex;
     }
 
     /**
-     * @see #startIndex
+     * @see #startIndex.
      */
     public SearchRequestBuilder setStartIndex(Integer startIndex) {
         this.startIndex = startIndex;
@@ -139,14 +127,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #sortOrder
+     * @see #sortOrder.
      */
     public SortOrder getSortOrder() {
         return sortOrder;
     }
 
     /**
-     * @see #sortOrder
+     * @see #sortOrder.
      */
     public SearchRequestBuilder setSortOrder(SortOrder sortOrder) {
         this.sortOrder = sortOrder;
@@ -154,14 +142,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #sortBy
+     * @see #sortBy.
      */
     public String getSortBy() {
         return sortBy;
     }
 
     /**
-     * @see #sortBy
+     * @see #sortBy.
      */
     public SearchRequestBuilder setSortBy(String sortBy) {
         this.sortBy = sortBy;
@@ -169,14 +157,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #filter
+     * @see #filter.
      */
     public String getFilter() {
         return filter;
     }
 
     /**
-     * @see #filter
+     * @see #filter.
      */
     public SearchRequestBuilder setFilter(String filter) {
         this.filter = filter;
@@ -184,14 +172,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #attributes
+     * @see #attributes.
      */
     public String getAttributes() {
         return attributes;
     }
 
     /**
-     * @see #attributes
+     * @see #attributes.
      */
     public SearchRequestBuilder setAttributes(String attributes) {
         this.attributes = attributes;
@@ -199,14 +187,14 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * @see #excludedAttributes
+     * @see #excludedAttributes.
      */
     public String getExcludedAttributes() {
         return excludedAttributes;
     }
 
     /**
-     * @see #excludedAttributes
+     * @see #excludedAttributes.
      */
     public SearchRequestBuilder setExcludedAttributes(String excludedAttributes) {
         this.excludedAttributes = excludedAttributes;
@@ -214,7 +202,7 @@ public class SearchRequestBuilder {
     }
 
     /**
-     * the allowed values for sortOrder
+     * the allowed values for sortOrder.
      */
     public static enum SortOrder {
         ASCENDING, DESCENDING
@@ -222,17 +210,33 @@ public class SearchRequestBuilder {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SearchRequestBuilder)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SearchRequestBuilder)) {
+            return false;
+        }
 
         SearchRequestBuilder that = (SearchRequestBuilder) o;
 
-        if (count != null ? !count.equals(that.count) : that.count != null) return false;
-        if (startIndex != null ? !startIndex.equals(that.startIndex) : that.startIndex != null) return false;
-        if (sortOrder != that.sortOrder) return false;
-        if (sortBy != null ? !sortBy.equals(that.sortBy) : that.sortBy != null) return false;
-        if (filter != null ? !filter.equals(that.filter) : that.filter != null) return false;
-        if (attributes != null ? !attributes.equals(that.attributes) : that.attributes != null) return false;
+        if (count != null ? !count.equals(that.count) : that.count != null) {
+            return false;
+        }
+        if (startIndex != null ? !startIndex.equals(that.startIndex) : that.startIndex != null) {
+            return false;
+        }
+        if (sortOrder != that.sortOrder) {
+            return false;
+        }
+        if (sortBy != null ? !sortBy.equals(that.sortBy) : that.sortBy != null) {
+            return false;
+        }
+        if (filter != null ? !filter.equals(that.filter) : that.filter != null) {
+            return false;
+        }
+        if (attributes != null ? !attributes.equals(that.attributes) : that.attributes != null) {
+            return false;
+        }
         return excludedAttributes != null ? excludedAttributes.equals(that.excludedAttributes) :
             that.excludedAttributes == null;
 

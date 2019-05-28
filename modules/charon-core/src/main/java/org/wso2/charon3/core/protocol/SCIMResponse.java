@@ -18,7 +18,7 @@ package org.wso2.charon3.core.protocol;
 import java.util.Map;
 
 /**
- * Represents a SCIMResponse to be returned for every operation of SCIM REST API.
+ * Represents a SCIMResponse to be returned for every operation of SCIM REST API..
  */
 public class SCIMResponse {
 

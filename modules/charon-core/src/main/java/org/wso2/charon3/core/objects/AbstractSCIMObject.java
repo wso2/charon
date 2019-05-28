@@ -36,7 +36,7 @@ import java.util.Map;
 
 
 /**
- * This represents the object which is a collection of attributes defined by common-schema.
+ * This represents the object which is a collection of attributes defined by common-schema..
  * These attributes MUST be included in all other objects which become SCIM resources.
  */
 
@@ -44,17 +44,17 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
 
     private static final long serialVersionUID = 6106269076155338045L;
     /**
-     * Collection of attributes which constitute this resource.
+     * Collection of attributes which constitute this resource..
      */
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
     /**
-     * List of schemas where the attributes of this resource, are defined.
+     * List of schemas where the attributes of this resource, are defined..
      */
     protected List<String> schemaList = new ArrayList<String>();
 
     /**
-     * Set the attributes and corresponding schema in the SCIM Object.
+     * Set the attributes and corresponding schema in the SCIM Object..
      *
      * @param newAttribute
      * @param resourceSchema
@@ -66,7 +66,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Set the attributes in the SCIM Object.
+     * Set the attributes in the SCIM Object..
      *
      * @param newAttribute
      */
@@ -105,7 +105,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Deleting an attribute is the responsibility of an attribute holder.
+     * Deleting an attribute is the responsibility of an attribute holder..
      *
      * @param id - name of the attribute
      */
@@ -116,7 +116,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
+     * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder..
      *
      * @param parentAttribute - name of the parent attribute
      * @param childAttribute  - name of the sub attribute
@@ -128,7 +128,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * This deletion method is only applicable for extension schema
+     * This deletion method is only applicable for extension schema.
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
      * @param grandParentAttribute
@@ -146,7 +146,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
+     * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder..
      */
     public void deleteValuesSubAttribute(String attribute, String subAttribute, String subSimpleAttribute) {
         if (attributeList.containsKey(attribute)) {
@@ -186,7 +186,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Set a value for the id attribute. If attribute not already created in the resource,
+     * Set a value for the id attribute. If attribute not already created in the resource,.
      * create attribute and set the value.
      * Unique identifier for the SCIM Resource as defined by the Service Provider
      * This is read-only. So can only set once.
@@ -209,7 +209,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Set a String that is an identifier for the resource as defined by the
+     * Set a String that is an identifier for the resource as defined by the.
      * provisioning client.
      *
      * @param externalId identifier for the SCIM Resource as defined by the provisioning client.
@@ -284,7 +284,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * crete the meta attribute of the scim object
+     * crete the meta attribute of the scim object.
      */
     protected void createMetaAttribute() throws CharonException, BadRequestException {
         ComplexAttribute metaAttribute = (ComplexAttribute) DefaultAttributeFactory.createAttribute(
@@ -299,7 +299,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * Return the meta attribute
+     * Return the meta attribute.
      *
      * @return ComplexAttribute
      */
@@ -312,7 +312,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the location of the meta attribute
+     * set the location of the meta attribute.
      *
      * @param location
      */
@@ -342,7 +342,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the resourceType of the meta attribute
+     * set the resourceType of the meta attribute.
      *
      * @param resourceType
      */
@@ -377,7 +377,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the created date and time of the resource
+     * set the created date and time of the resource.
      *
      * @param createdDate
      */
@@ -393,7 +393,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the last modified date and time of the resource
+     * set the last modified date and time of the resource.
      *
      * @param lastModifiedDate
      */
@@ -594,7 +594,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public AbstractSCIMObject getResource() {

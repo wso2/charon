@@ -21,7 +21,7 @@ import org.wso2.charon3.core.schema.SCIMDefinitions;
 import java.io.Serializable;
 
 /**
- * Interface to represent Attribute defined in SCIM schema spec.
+ * Interface to represent Attribute defined in SCIM schema spec..
  */
 
 //Attribute is extended from Serializable as later in org.wso2.charon.core.util.CopyUtil,

@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.utils.codeutils;
 
 /**
- * Tree node representation.
+ * Tree node representation..
  */
 public abstract class Node {
 

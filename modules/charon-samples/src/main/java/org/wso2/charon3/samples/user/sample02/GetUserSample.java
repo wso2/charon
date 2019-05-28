@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM get user sample.
+ * SCIM get user sample..
  */
 public class GetUserSample {
 

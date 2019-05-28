@@ -48,7 +48,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 /**
- * Endpoints of the UserResource in micro service. This will basically captures
+ * Endpoints of the UserResource in micro service. This will basically captures..
  * the requests from the remote clients and hand over the request to respective operation performer.
  *
  */
@@ -288,7 +288,7 @@ public class UserResource extends AbstractResource {
     }
 
     /**
-     * the user resource manager implementation
+     * the user resource manager implementation..
      */
     public static class UserResourceManager extends ResourceManager<User> {
 

@@ -19,42 +19,42 @@
 package org.wso2.charon3.core.objects.plainobjects;
 
 /**
- * This class representation can be used to easily add a scim name to an
+ * This class representation can be used to easily add a scim name to an.
  * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
  */
 public class ScimName {
 
     /**
-     * The full name, including all middle names, titles, and suffixes as appropriate, formatted for display
+     * The full name, including all middle names, titles, and suffixes as appropriate, formatted for display.
      * (e.g., "Ms. Barbara Jane Jensen, III").
      */
     private String formatted;
 
     /**
-     * The family name of the User, or last name in most Western languages (e.g., "Jensen" given the full name
+     * The family name of the User, or last name in most Western languages (e.g., "Jensen" given the full name.
      * "Ms. Barbara Jane Jensen, III").
      */
     private String familyName;
 
     /**
-     * The given name of the User, or first name in most Western languages (e.g., "Barbara" given the full
+     * The given name of the User, or first name in most Western languages (e.g., "Barbara" given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String givenName;
 
     /**
-     * The middle name(s) of the User (e.g., "Jane" given the full name "Ms. Barbara Jane Jensen, III").
+     * The middle name(s) of the User (e.g., "Jane" given the full name "Ms. Barbara Jane Jensen, III")..
      */
     private String middleName;
 
     /**
-     * The honorific prefix(es) of the User, or title in most Western languages (e.g., "Ms." given the full
+     * The honorific prefix(es) of the User, or title in most Western languages (e.g., "Ms." given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String honorificPrefix;
 
     /**
-     * The honorific suffix(es) of the User, or suffix in most Western languages (e.g., "III" given the full
+     * The honorific suffix(es) of the User, or suffix in most Western languages (e.g., "III" given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String honorificSuffix;
@@ -79,7 +79,7 @@ public class ScimName {
     }
 
     /**
-     * @see #formatted
+     * @see #formatted.
      */
     public String getFormatted() {
 
@@ -87,7 +87,7 @@ public class ScimName {
     }
 
     /**
-     * @see #formatted
+     * @see #formatted.
      */
     public void setFormatted(String formatted) {
 
@@ -95,7 +95,7 @@ public class ScimName {
     }
 
     /**
-     * @see #familyName
+     * @see #familyName.
      */
     public String getFamilyName() {
 
@@ -103,7 +103,7 @@ public class ScimName {
     }
 
     /**
-     * @see #familyName
+     * @see #familyName.
      */
     public void setFamilyName(String familyName) {
 
@@ -111,7 +111,7 @@ public class ScimName {
     }
 
     /**
-     * @see #givenName
+     * @see #givenName.
      */
     public String getGivenName() {
 
@@ -119,7 +119,7 @@ public class ScimName {
     }
 
     /**
-     * @see #givenName
+     * @see #givenName.
      */
     public void setGivenName(String givenName) {
 
@@ -127,7 +127,7 @@ public class ScimName {
     }
 
     /**
-     * @see #middleName
+     * @see #middleName.
      */
     public String getMiddleName() {
 
@@ -135,7 +135,7 @@ public class ScimName {
     }
 
     /**
-     * @see #middleName
+     * @see #middleName.
      */
     public void setMiddleName(String middleName) {
 
@@ -143,7 +143,7 @@ public class ScimName {
     }
 
     /**
-     * @see #honorificPrefix
+     * @see #honorificPrefix.
      */
     public String getHonorificPrefix() {
 
@@ -151,7 +151,7 @@ public class ScimName {
     }
 
     /**
-     * @see #honorificPrefix
+     * @see #honorificPrefix.
      */
     public void setHonorificPrefix(String honorificPrefix) {
 
@@ -159,7 +159,7 @@ public class ScimName {
     }
 
     /**
-     * @see #honorificSuffix
+     * @see #honorificSuffix.
      */
     public String getHonorificSuffix() {
 
@@ -167,7 +167,7 @@ public class ScimName {
     }
 
     /**
-     * @see #honorificSuffix
+     * @see #honorificSuffix.
      */
     public void setHonorificSuffix(String honorificSuffix) {
 

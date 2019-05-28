@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.utils.codeutils;
 
 /**
- * This is the node representation of the AST which is used in the filtering operations.
+ * This is the node representation of the AST which is used in the filtering operations..
  */
 public class ExpressionNode extends Node {
 

@@ -20,14 +20,14 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * This class contains the schema definitions in
+ * This class contains the schema definitions in.
  * https://tools.ietf.org/html/rfc7643 as AttributeSchemas.
  * These are used when constructing SCIMObjects from the decoded payload
  */
 
 public class SCIMSchemaDefinitions {
 
-    /*********** SCIM defined common attribute schemas****************************/
+    /* ********** SCIM defined common attribute schemas*************************** */
 
     /* the default set of sub-attributes for a multi-valued attribute */
 
@@ -116,11 +116,11 @@ public class SCIMSchemaDefinitions {
 
 
     /**
-     * SCIM User Schema Definition.
+     * SCIM User Schema Definition..
      */
     public static class SCIMUserSchemaDefinition {
 
-        /*********** SCIM defined user attribute schemas****************************/
+        /* ********** SCIM defined user attribute schemas*************************** */
 
     /* sub-attribute schemas of the attributes defined in SCIM user schema. */
 
@@ -819,7 +819,7 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * SCIM Enterprise User Schema Definition.
+     * SCIM Enterprise User Schema Definition..
      */
     public static class SCIMEnterpriseUserSchemaDefinition {
 
@@ -972,11 +972,11 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * SCIM defined group attribute schemas.
+     * SCIM defined group attribute schemas..
      */
     public static class SCIMGroupSchemaDefinition {
 
-        /*********** SCIM defined group attribute schemas ****************************/
+        /* ********** SCIM defined group attribute schemas *************************** */
 
     /* sub-attribute schemas of the attributes defined in SCIM group schema. */
 
@@ -1045,11 +1045,11 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * SCIM defined ServiceProviderConfig schemas.
+     * SCIM defined ServiceProviderConfig schemas..
      */
     public static class SCIMServiceProviderConfigSchemaDefinition {
 
-        /*********** SCIM defined ServiceProviderConfig schemas ****************************/
+        /* ********** SCIM defined ServiceProviderConfig schemas *************************** */
 
     /* sub-attribute schemas of the attributes defined in SCIM ServiceProviderConfig schema. */
 
@@ -1284,11 +1284,11 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * SCIM defined resourceType  schemas.
+     * SCIM defined resourceType  schemas..
      */
     public static class SCIMResourceTypeSchemaDefinition {
 
-        /*********** SCIM defined resourceType  schemas. ****************************/
+        /* ********** SCIM defined resourceType  schemas. *************************** */
 
         public static final SCIMAttributeSchema SCHEMA_EXTENSION_SCHEMA =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
@@ -1374,7 +1374,7 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
-     * **********SCIM defined Enterprise User Resource Schema.****************************
+     * **********SCIM defined Enterprise User Resource Schema.****************************.
      */
     public static final SCIMResourceTypeExtensionSchema SCIM_ENTERPRISE_USER_SCHEMA =
             SCIMResourceTypeExtensionSchema.createSCIMResourcetypeExtension(
@@ -1388,7 +1388,7 @@ public class SCIMSchemaDefinitions {
             );
 
     /**
-     * **********SCIM defined User Resource Schema.****************************
+     * **********SCIM defined User Resource Schema.****************************.
      */
     public static final SCIMResourceTypeSchema SCIM_USER_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(
@@ -1419,7 +1419,7 @@ public class SCIMSchemaDefinitions {
 
 
     /**
-     * **********SCIM defined Group Resource Schema.****************************
+     * **********SCIM defined Group Resource Schema.****************************.
      */
     public static final SCIMResourceTypeSchema SCIM_GROUP_SCHEMA =
             SCIMResourceTypeSchema.createSCIMResourceSchema(

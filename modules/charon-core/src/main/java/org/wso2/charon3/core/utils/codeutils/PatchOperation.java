@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.utils.codeutils;
 
 /**
- * This class represents the PATCH operations which are in the body of PATCH request.
+ * This class represents the PATCH operations which are in the body of PATCH request..
  */
 public class PatchOperation {
 

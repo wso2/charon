@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This encodes the in the json format.
+ * This encodes the in the json format..
  */
 
 public class JSONEncoder {
@@ -414,7 +414,7 @@ public class JSONEncoder {
     }
 
     /**
-     *  Build the group resource type json representation.
+     *  Build the group resource type json representation..
      * @return
      */
     public String buildGroupResourceTypeJsonBody() throws JSONException {

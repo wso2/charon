@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 import javax.ws.rs.HttpMethod;
 
 /**
- * Creates the PATCH HTTP method, since JAX-RS does not support it natively yet.
+ * Creates the PATCH HTTP method, since JAX-RS does not support it natively yet..
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

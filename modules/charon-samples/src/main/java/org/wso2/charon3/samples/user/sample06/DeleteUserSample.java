@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM delete user sample.
+ * SCIM delete user sample..
  */
 public class DeleteUserSample {
 

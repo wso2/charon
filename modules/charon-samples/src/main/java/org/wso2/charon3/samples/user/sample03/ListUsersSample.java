@@ -32,7 +32,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * SCIM list user sample.
+ * SCIM list user sample..
  */
 public class ListUsersSample {
     private static final Logger logger = LoggerFactory.getLogger(ListUsersSample.class);

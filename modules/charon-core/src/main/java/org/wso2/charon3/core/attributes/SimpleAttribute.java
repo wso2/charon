@@ -22,7 +22,7 @@ import java.time.Instant;
 import java.util.Date;
 
 /**
- * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec.
+ * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec..
  */
 public class SimpleAttribute extends AbstractAttribute {
 

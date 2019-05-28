@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * author Pascal Knueppel <br>
+ * author Pascal Knueppel <br>.
  * created at: 25.04.2019 - 09:21 <br>
  * <br>
  */

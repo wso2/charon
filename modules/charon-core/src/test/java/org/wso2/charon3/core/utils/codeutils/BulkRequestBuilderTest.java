@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author Pascal Knueppel <br>
+ * author Pascal Knueppel <br>.
  * created at: 23.04.2019 - 11:40 <br>
  * <br>
  */

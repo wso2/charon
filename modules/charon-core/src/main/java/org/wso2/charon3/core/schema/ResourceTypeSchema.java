@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This is the interface for resource schema definition. Default schema definitions included in
+ * This is the interface for resource schema definition. Default schema definitions included in.
  * SCIMResourceTypeSchema.
  * Any SCIM implementation can implement this/extend SCIMSchema to introduce schema extensions.
  */

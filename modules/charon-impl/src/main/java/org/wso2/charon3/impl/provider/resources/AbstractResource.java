@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 
 
 /**
- * Endpoint parent class.
+ * Endpoint parent class..
  */
 
 public class AbstractResource implements Microservice {

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 /**
- * This class will act as a support class for endpoints.
+ * This class will act as a support class for endpoints..
  */
 public class ResourceManagerUtil {
 
@@ -391,7 +391,7 @@ public class ResourceManagerUtil {
     }
 
     /**
-     * Process count value according to SCIM 2.0 specification
+     * Process count value according to SCIM 2.0 specification.
      *
      * @param countStr
      * @return
@@ -418,7 +418,7 @@ public class ResourceManagerUtil {
     }
 
     /**
-     * Process count value according to SCIM 2.0 specification.
+     * Process count value according to SCIM 2.0 specification..
      *
      * @param countInt The count value in the request
      * @return Integer according to the passed value. (NOTE: return NULL when the COUNT is not specified in the
@@ -439,7 +439,7 @@ public class ResourceManagerUtil {
     }
 
     /**
-     * Process startIndex value according to SCIM 2.0 specification
+     * Process startIndex value according to SCIM 2.0 specification.
      *
      * @param startIndex Starting index in the request.
      * @return Integer as the starting index.
@@ -458,7 +458,7 @@ public class ResourceManagerUtil {
     }
 
     /**
-     * Process startIndex value according to SCIM 2.0 specification
+     * Process startIndex value according to SCIM 2.0 specification.
      * @param startIndexStr
      * @return
      * @throws BadRequestException

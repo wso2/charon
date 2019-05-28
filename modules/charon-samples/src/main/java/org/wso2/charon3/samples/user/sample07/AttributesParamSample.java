@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM attributes parameter usage sample.
+ * SCIM attributes parameter usage sample..
  */
 public class AttributesParamSample {
 

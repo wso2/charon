@@ -30,7 +30,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * SCIM create group sample.
+ * SCIM create group sample..
  */
 public class CreateGroupSample {
 

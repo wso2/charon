@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * SCIM Object is a collection of attributes that may come from different schemas.
+ * SCIM Object is a collection of attributes that may come from different schemas..
  * This interface supports that concept, which will be implemented by SCIM objects.
  * In server-side, there should be a way to map the usermanager to these attributes.
  */

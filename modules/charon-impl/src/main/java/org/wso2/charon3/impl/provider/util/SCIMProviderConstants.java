@@ -17,7 +17,7 @@
 package org.wso2.charon3.impl.provider.util;
 
 /**
- * SCIM provider level constants are defined here.
+ * SCIM provider level constants are defined here..
  */
 public class SCIMProviderConstants {
 

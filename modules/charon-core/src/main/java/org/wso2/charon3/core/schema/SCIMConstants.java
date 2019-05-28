@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.schema;
 
 /**
- * This defines the constants which can be found in SCIM 2.0 core schema can be found at.
+ * This defines the constants which can be found in SCIM 2.0 core schema can be found at..
  * : https://tools.ietf.org/html/rfc7643
  */
 public class SCIMConstants {
@@ -64,7 +64,7 @@ public class SCIMConstants {
 
 
     /**
-     * Constants found in core-common schema.
+     * Constants found in core-common schema..
      */
     public static class CommonSchemaConstants {
 
@@ -93,7 +93,7 @@ public class SCIMConstants {
         public static final String REF = "$ref";
         public static final String VALUE = "value";
 
-        /*******Attributes descriptions of the attributes found in Common Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Common Schema.************** */
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
                 "Provider.";
@@ -112,7 +112,7 @@ public class SCIMConstants {
     }
 
     /**
-     * Constants found in listed resource schema.
+     * Constants found in listed resource schema..
      */
     public static class ListedResourceSchemaConstants {
 
@@ -123,7 +123,7 @@ public class SCIMConstants {
     }
 
     /**
-     * Constants found in user schema.
+     * Constants found in user schema..
      */
     public static class UserSchemaConstants {
 
@@ -226,7 +226,7 @@ public class SCIMConstants {
         public static final String DIRECT_MEMBERSHIP = "direct";
         public static final String INDIRECT_MEMBERSHIP = "indirect";
 
-        /*******URIs of sub and multivalued attributes.**************/
+        /* ******URIs of sub and multivalued attributes.************* */
 
         public static final String EMAILS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.value";
         public static final String EMAILS_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:emails.display";
@@ -284,7 +284,7 @@ public class SCIMConstants {
         public static final String X509CERTIFICATES_PRIMARY_URI =
                 "urn:ietf:params:scim:schemas:core:2.0:User:x509certificates.primary";
 
-        /*******Attributes descriptions of the attributes found in User Schema.***************/
+        /* ******Attributes descriptions of the attributes found in User Schema.************** */
 
         public static final String USERNAME_DESC = "A service provider's unique identifier for the user, typically\n" +
                 "used by the user to directly authenticate to the service provider.Each User MUST include a non-empty" +
@@ -452,7 +452,7 @@ public class SCIMConstants {
     }
 
     /**
-     * represents the constants for the enterprise user schema
+     * represents the constants for the enterprise user schema.
      */
     public static class EnterpriseUserSchemaConstants {
 
@@ -513,7 +513,7 @@ public class SCIMConstants {
         public static final String DISPLAY = "display";
         public static final String TYPE = "type";
 
-        /*******Attributes descriptions of the attributes found in Group Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Group Schema.************** */
 
         public static final String DISPLAY_NAME_DESC = "A human-readable name for the Group. REQUIRED.";
         public static final String MEMBERS_DESC = "A list of members of the Group.";
@@ -523,7 +523,7 @@ public class SCIMConstants {
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
 
-        /*******URIs of sub and multivalued attributes.**************/
+        /* ******URIs of sub and multivalued attributes.************* */
         public static final String VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.value";
         public static final String REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
         public static final String DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.display";
@@ -596,7 +596,7 @@ public class SCIMConstants {
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.documentationUri";
 
 
-        /*******Attributes descriptions of the attributes found in Service Provider Config Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Service Provider Config Schema.************** */
 
         public static final String DOCUMENTATION_URI_DESC = "An HTTP-addressable URL pointing to the service " +
                 "provider's human-consumable help documentation.";
@@ -628,7 +628,7 @@ public class SCIMConstants {
     }
 
     /**
-     * Constants found in Service Resource type schema.
+     * Constants found in Service Resource type schema..
      */
     public static class ResourceTypeSchemaConstants {
         public static final String RESOURCE_TYPE = "resourceType";
@@ -670,7 +670,7 @@ public class SCIMConstants {
     }
 
     /**
-     * Constants found in operations.
+     * Constants found in operations..
      */
     public static class OperationalConstants {
 
