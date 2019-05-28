@@ -60,7 +60,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
