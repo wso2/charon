@@ -293,7 +293,7 @@
         <project.scm.id>my-scm-server</project.scm.id>
 
         <!--plugin versions-->
-        <compiler.plugin.version>2.3.1</compiler.plugin.version>
+        <compiler.plugin.version>3.8.1</compiler.plugin.version>
 
         <war.plugin.version>3.2.3</war.plugin.version>
         <bundle.plugin.version>4.1.0</bundle.plugin.version>
