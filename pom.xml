@@ -296,7 +296,7 @@
         <compiler.plugin.version>3.8.1</compiler.plugin.version>
 
         <war.plugin.version>3.2.3</war.plugin.version>
-        <bundle.plugin.version>4.1.0</bundle.plugin.version>
+        <bundle.plugin.version>4.2.0</bundle.plugin.version>
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
 
