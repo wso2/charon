@@ -42,13 +42,6 @@ public class ScimConfiguration extends AbstractSCIMObject {
      */
     public ScimConfiguration() {
         setSchema(SCIMConstants.SERVICE_PROVIDER_CONFIG_SCHEMA_URI);
-        setPatch(null);
-        setSort(null);
-        seteTag(null);
-        setFilter(null);
-        setBulk(null);
-        setChangePassword(null);
-        setAuthenticationSchemes(null);
     }
 
     /**

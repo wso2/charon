@@ -28,6 +28,19 @@ public final class CharonConfiguration extends ScimConfiguration {
     private static final CharonConfiguration CHARON_CONFIGURATION = new CharonConfiguration();
 
     /**
+     * private default constructor
+     */
+    private CharonConfiguration() {
+        setPatch(null);
+        setSort(null);
+        seteTag(null);
+        setFilter(null);
+        setBulk(null);
+        setChangePassword(null);
+        setAuthenticationSchemes(null);
+    }
+
+    /**
      * return the instance of CharonConfiguration.
      */
     public static CharonConfiguration getInstance() {
