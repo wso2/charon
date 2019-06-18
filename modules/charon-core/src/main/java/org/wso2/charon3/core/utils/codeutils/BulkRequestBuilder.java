@@ -29,6 +29,26 @@ public class BulkRequestBuilder {
     private List<BulkRequestOperation> bulkOperationsList = new ArrayList<>();
 
     /**
+     * the minimum payload is based on the following request that should represent a valid minimal request. It contains
+     * 164 characters and each character is assumed to use a single byte: <br>
+     *
+     * <pre>
+     * {
+     *   "schemas": [
+     *     "urn:ietf:params:scim:api:messages:2.0:BulkRequest"
+     *   ],
+     *   "Operations": [
+     *     {
+     *       "path": "/Users/1",
+     *       "method": "DELETE"
+     *     }
+     *   ]
+     * }
+     * </pre>
+     */
+    public static final int MINIMUM_PAYLOAD = 164;
+
+    /**
      * An integer specifying the number of errors that the service provider will accept before the operation is.
      * terminated and an error response is returned.  OPTIONAL in a request.  Not valid in a response.
      */
@@ -76,18 +96,93 @@ public class BulkRequestBuilder {
      * @return builds the bulk operation into a string object.
      */
     public String build() {
-        JSONObject request = new JSONObject();
-        JSONArray schemas = new JSONArray();
-        schemas.put(SCIMConstants.BULK_REQUEST_URI);
-        request.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, schemas);
-        Optional.ofNullable(failOnErrors)
-            .ifPresent(s -> request.put(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS, s));
+        JSONObject request = getJsonBulkRequestTemplate();
 
         JSONArray operations = new JSONArray();
         bulkOperationsList.forEach(bulkRequestOperation -> operations.put(bulkRequestOperation.toJsonObject()));
 
         request.put(SCIMConstants.OperationalConstants.OPERATIONS, operations);
         return request.toString();
+    }
+
+    private JSONObject getJsonBulkRequestTemplate() {
+        JSONObject request = new JSONObject();
+        JSONArray schemas = new JSONArray();
+        schemas.put(SCIMConstants.BULK_REQUEST_URI);
+        request.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, schemas);
+        Optional.ofNullable(failOnErrors)
+            .ifPresent(s -> request.put(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS, s));
+        return request;
+    }
+
+    /**
+     * this method will create several bulk requests based on the given value. If the number of operations on the
+     * builded bulk request exceeds the maximum number of supported operations on the provider side the bulk request
+     * must be splitted into several requests
+     *
+     * @param maximumNumberOfOperations
+     *     the maximum number that is lower or equal to the maximum number of operations set on the provider side
+     *
+     * @return a list of bulk requests that will contain the given number of operations or less
+     */
+    public List<String> buildWithMaxOperations(int maximumNumberOfOperations) {
+        return build(maximumNumberOfOperations, Integer.MAX_VALUE);
+    }
+
+    /**
+     * this method will create one or several bulk requests based on the given value.
+     *
+     * @param maximumPayload
+     *     the maximum payload as it has been setup at the provider
+     *
+     * @return a list of bulk requests that will not exceed the maximum payload
+     */
+    public List<String> buildWithMaxPayload(int maximumPayload) {
+        return build(Integer.MAX_VALUE, maximumPayload);
+    }
+
+    /**
+     * this method builds one or several bulk requests based on the given parameters. If a single bulk request would
+     * exceed the allowed parameters of the provider the provider would reject the request. In order to prevent this
+     * from happening the provider values should be entered into this method to ensure that the created bulk requests
+     * are always up to the expectations of the provider.
+     *
+     * @param maximumPaylod
+     *     the maximum payload that the service provider will accept at the bulk endpoint
+     *
+     * @return
+     */
+    public List<String> build(int maximumNumberOfOperations, int maximumPaylod) {
+        if (maximumNumberOfOperations < 1) {
+            throw new IllegalArgumentException("maximum number of operations must be a positive int value!");
+        }
+        if (maximumPaylod < MINIMUM_PAYLOAD) {
+            throw new IllegalArgumentException(
+                "maximum payload must not be less than minimum payload of: " + MINIMUM_PAYLOAD);
+        }
+        List<String> bulkRequestList = new ArrayList<>();
+        for (int i = 0, indexJump;
+             i < bulkOperationsList.size();
+             i += indexJump) {
+            indexJump = maximumNumberOfOperations;
+
+            JSONObject request = getJsonBulkRequestTemplate();
+            JSONArray operations = new JSONArray();
+            for (int j = 0;
+                 j < maximumNumberOfOperations && i + j < bulkOperationsList.size();
+                 j++) {
+                BulkRequestOperation bulkRequestOperation = bulkOperationsList.get(i + j);
+                operations.put(bulkRequestOperation.toJsonObject());
+                if (request.toString().getBytes().length + operations.toString().getBytes().length > maximumPaylod) {
+                    operations.remove(operations.length() - 1);
+                    indexJump = j;
+                    break;
+                }
+            }
+            request.put(SCIMConstants.OperationalConstants.OPERATIONS, operations);
+            bulkRequestList.add(request.toString());
+        }
+        return bulkRequestList;
     }
 
     /**
