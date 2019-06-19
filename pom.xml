@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.15-SNAPSHOT</version>
+    <version>3.1.31-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -49,7 +49,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.json</groupId>
+                <groupId>org.json.wso2</groupId>
                 <artifactId>json</artifactId>
                 <version>${json.version}</version>
             </dependency>
@@ -68,7 +68,6 @@
                 <artifactId>axiom-impl</artifactId>
                 <version>${axiom.impl.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -93,7 +92,6 @@
                 <version>${junit.platform.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -234,7 +232,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>2.1</version>
+                <version>3.3.2</version>
             </extension>
         </extensions>
         <pluginManagement>
@@ -335,7 +333,7 @@
         <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
-        <json.version>20090211</json.version>
+        <json.version>3.0.0.wso2v1</json.version>
         <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.11</axiom.api.version>
         <axiom.impl.version>1.2.11</axiom.impl.version>
@@ -346,17 +344,18 @@
         <project.scm.id>my-scm-server</project.scm.id>
 
         <!--plugin versions-->
-        <compiler.plugin.version>2.3.1</compiler.plugin.version>
-        <war.plugin.version>2.1-alpha-2</war.plugin.version>
-        <bundle.plugin.version>4.0.0</bundle.plugin.version>
+        <compiler.plugin.version>3.8.1</compiler.plugin.version>
+
+        <war.plugin.version>3.2.3</war.plugin.version>
+        <bundle.plugin.version>4.2.0</bundle.plugin.version>
+
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
 
         <src.java.version>1.8</src.java.version>
         <target.java.version>1.8</target.java.version>
-        <msf4j.version>2.1.0</msf4j.version>
-        <fasterxml.jackson.core.version>2.7.4</fasterxml.jackson.core.version>
-        <log4j.version>1.2.16</log4j.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <msf4j.version>2.7.3</msf4j.version>
+        <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
+        <slf4j.version>1.7.26</slf4j.version>
 
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
 

@@ -30,7 +30,7 @@ public interface ResourceManager {
      * @param usermanager
      * @return SCIMResponse
      */
-    public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes);
+    SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes);
 
     /*
      * Method of resource endpoint which is mapped to HTTP POST request.
@@ -43,8 +43,7 @@ public interface ResourceManager {
      * client and server views of the new Resource. When a Resource is created, its uri must be returned
      * in the response Location header.}
      */
-    public SCIMResponse create(String scimObjectString, UserManager userManager,
-                               String attributes, String excludeAttributes);
+    SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String excludeAttributes);
 
     /*
      * Method of the ResourceManager that is mapped to HTTP Delete method..
@@ -53,12 +52,12 @@ public interface ResourceManager {
      * @param usermanager
      * @return
      */
-    public SCIMResponse delete(String id, UserManager userManager);
+    SCIMResponse delete(String id, UserManager userManager);
 
-    /*
-     * get resources
+    /**
+     * This method is deprecated
      *
-     * @param usermanager
+     * @param userManager
      * @param filter
      * @param startIndex
      * @param count
@@ -68,10 +67,34 @@ public interface ResourceManager {
      * @param attributes
      * @param excludeAttributes
      * @return
+     * @since 1.2.21
+     * @deprecated Method does not differenticate when the count paramter is not set in the request. Use
+     * {@link org.wso2.charon3.core.protocol.endpoints.ResourceManager#listWithGET(UserManager, String, Integer,
+     * Integer, String, String, String, String, String)}
      */
-    public SCIMResponse listWithGET(UserManager userManager, String filter,
-                                    int startIndex, int count, String sortBy, String sortOrder, String domainName,
-                                    String attributes, String excludeAttributes);
+    @Deprecated
+    SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
+            String sortOrder, String domainName, String attributes, String excludeAttributes);
+
+    /*
+     * Get resources
+     *
+     * @param userManager       User manager
+     * @param filter            Filter to be executed
+     * @param startIndexInt     Starting index value of the filter
+     * @param countInt          Number of required results
+     * @param sortBy            SortBy
+     * @param sortOrder         Sorting order
+     * @param domainName        Domain name
+     * @param attributes        Attributes in the request
+     * @param excludeAttributes Exclude attributes
+     * @return SCIM response
+     */
+    default SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
+            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
+
+        return null;
+    }
 
     /*
      * query resources
@@ -80,7 +103,7 @@ public interface ResourceManager {
      * @param usermanager
      * @return
      */
-    public SCIMResponse listWithPOST(String resourceString, UserManager userManager);
+    SCIMResponse listWithPOST(String resourceString, UserManager userManager);
 
     /*
      * To update the user by giving entire attribute set
@@ -92,9 +115,8 @@ public interface ResourceManager {
      * @param excludeAttributes
      * @return
      */
-
-    public SCIMResponse updateWithPUT(String existingId, String scimObjectString,
-                                      UserManager userManager, String attributes, String excludeAttributes);
+    SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String attributes,
+            String excludeAttributes);
 
     /*
      * @param existingId
@@ -102,8 +124,6 @@ public interface ResourceManager {
      * @param usermanager
      * @return
      */
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString,
-                                        UserManager userManager, String attributes, String excludeAttributes);
-
-
+    SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String attributes,
+            String excludeAttributes);
 }

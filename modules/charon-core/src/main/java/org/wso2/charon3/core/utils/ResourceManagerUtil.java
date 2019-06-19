@@ -392,6 +392,7 @@ public class ResourceManagerUtil {
 
     /**
      * Process count value according to SCIM 2.0 specification
+     *
      * @param countStr
      * @return
      * @throws BadRequestException
@@ -399,7 +400,7 @@ public class ResourceManagerUtil {
     public static int processCount(String countStr) throws BadRequestException {
 
         int count;
-        if (countStr == null || countStr.isEmpty()) {
+        if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
             count = CharonConfiguration.getInstance().getCountValueForPagination();
         } else {
             try {
@@ -417,6 +418,46 @@ public class ResourceManagerUtil {
     }
 
     /**
+     * Process count value according to SCIM 2.0 specification.
+     *
+     * @param countInt The count value in the request
+     * @return Integer according to the passed value. (NOTE: return NULL when the COUNT is not specified in the
+     * request)
+     */
+    public static Integer processCount(Integer countInt) {
+
+        if (countInt == null || countInt.toString().isEmpty()) {
+            return null;
+        } else {
+            // All the negative values are interpreted as zero according to the specification.
+            if (countInt <= 0) {
+                return 0;
+            } else {
+                return countInt;
+            }
+        }
+    }
+
+    /**
+     * Process startIndex value according to SCIM 2.0 specification
+     *
+     * @param startIndex Starting index in the request.
+     * @return Integer as the starting index.
+     */
+    public static Integer processStartIndex(Integer startIndex) {
+
+        if (startIndex == null) {
+            // According to SCIM2 spec, default value of startIndex should be one.
+            return 1;
+        } else if (startIndex >= 1) {
+            return startIndex;
+        } else {
+            // Any value lesser than 1 is interpreted as 1.
+            return 1;
+        }
+    }
+
+    /**
      * Process startIndex value according to SCIM 2.0 specification
      * @param startIndexStr
      * @return
@@ -425,7 +466,7 @@ public class ResourceManagerUtil {
     public static int processStartIndex(String startIndexStr) throws BadRequestException {
 
         int startIndex = 1;
-        if (startIndexStr == null) {
+        if (startIndexStr == null || startIndexStr.trim().isEmpty() || !startIndexStr.matches("\\d+")) {
             return startIndex;
         }
 

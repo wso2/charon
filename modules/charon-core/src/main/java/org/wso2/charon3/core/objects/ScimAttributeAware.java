@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.BiConsumer;
@@ -52,124 +53,6 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 public abstract class ScimAttributeAware {
 
     /**
-     * checks that two given attributes are equals by running through their structure recursively
-     *
-     * @return true if the given attributes are equals, false else
-     */
-    public static boolean attributesEquals(Attribute attribute,
-                                           Attribute attributeOther) {
-
-        if (!attribute.getClass().equals(attributeOther.getClass())) {
-            return false;
-        }
-        if (!attributeMetaEquals(attribute, attributeOther)) {
-            return false;
-        }
-        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
-            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
-        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
-            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
-        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
-            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
-        }
-        return false;
-    }
-
-    /**
-     * tells us if the given two attributes do contain the same meta-data
-     *
-     * @return if the meta-data is identical
-     */
-    public static boolean attributeMetaEquals(Attribute attribute,
-                                              Attribute attributeOther) {
-
-        if (!attribute.getMultiValued().equals(attributeOther.getMultiValued())) {
-            return false;
-        }
-        if (!attribute.getCaseExact().equals(attributeOther.getCaseExact())) {
-            return false;
-        }
-        if (!attribute.getRequired().equals(attributeOther.getRequired())) {
-            return false;
-        }
-        if (!attribute.getMutability().equals(attributeOther.getMutability())) {
-            return false;
-        }
-        if (!attribute.getReturned().equals(attributeOther.getReturned())) {
-            return false;
-        }
-        if (!attribute.getUniqueness().equals(attributeOther.getUniqueness())) {
-            return false;
-        }
-        if (!attribute.getURI().equals(attributeOther.getURI())) {
-            return false;
-        }
-        return attribute.getType().equals(attributeOther.getType());
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean simpleAttributeEquals(SimpleAttribute attribute1,
-                                                SimpleAttribute attribute2) {
-
-        if (!attribute1.getValue().equals(attribute2.getValue())) {
-            return false;
-        }
-        return attributeMetaEquals(attribute1, attribute2);
-    }
-
-    /**
-     * tells us if two simple attributes are identical
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
-                                                     MultiValuedAttribute otherAttribute) {
-
-        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaEquals) {
-            return false;
-        }
-        if (attribute.getAttributePrimitiveValues().isEmpty()) {
-            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
-                return false;
-            }
-            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
-                return otherAttribute.getAttributeValues().stream().anyMatch(
-                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
-            });
-        } else {
-            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
-        }
-    }
-
-    /**
-     * tells us if two complex attributes are identical or not
-     *
-     * @return true if the attributes are identical, false else
-     */
-    public static boolean complexAttributeEquals(ComplexAttribute attribute,
-                                                 ComplexAttribute otherAttribute) {
-
-        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
-        if (!metaDataEquals) {
-            return false;
-        }
-
-        // @formatter:off
-        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
-            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
-                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
-                            otherAttribute.getSubAttribute((String) otherAttributeName)))
-                    .apply(oAttributeName));
-        });
-        // @formatter:on
-    }
-
-    /**
      * @return the id of the SCIM {@link #getResource()}
      */
     public String getId() {
@@ -179,7 +62,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets or overrides the id attribute of the given {@link #getResource()} object
+     * sets or overrides the id attribute of the given {@link #getResource()} object.
      *
      * @param id the id attribute to write
      */
@@ -199,7 +82,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets or overrides the external id attribute of the given {@link #getResource()} object
+     * sets or overrides the external id attribute of the given {@link #getResource()} object.
      *
      * @param externalId the external id attribute to write
      */
@@ -221,7 +104,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets or overrides the resource type attribute of the given {@link #getResource()} object
+     * sets or overrides the resource type attribute of the given {@link #getResource()} object.
      *
      * @param resourceType the resource type attribute to write
      */
@@ -245,7 +128,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets or overrides the location attribute of the given {@link #getResource()} object
+     * sets or overrides the location attribute of the given {@link #getResource()} object.
      *
      * @param resourceType the location attribute to write
      */
@@ -297,7 +180,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets the created date into the given SCIM resource
+     * sets the created date into the given SCIM resource.
      *
      * @param createdDate the java local date time representaiton
      */
@@ -311,7 +194,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets the created date into the given SCIM resource
+     * sets the created date into the given SCIM resource.
      *
      * @param createdDate the java local date time representaiton
      */
@@ -325,7 +208,7 @@ public abstract class ScimAttributeAware {
 
     /**
      * sets the created date into the given SCIM resource as localized date string based on the current system
-     * time
+     * time.
      *
      * @param createdTimestamp the UTC timestamp as long
      */
@@ -383,7 +266,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets the last modified date into the given SCIM resource
+     * sets the last modified date into the given SCIM resource.
      *
      * @param lastModifiedDateTime the java local date time representaiton
      */
@@ -397,7 +280,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets the last modified date into the given SCIM resource
+     * sets the last modified date into the given SCIM resource.
      *
      * @param lastModifiedInstant the java local date time representaiton
      */
@@ -411,7 +294,7 @@ public abstract class ScimAttributeAware {
 
     /**
      * sets the last modified timestamp date into the given SCIM resource as localized date string based on the
-     * current system time
+     * current system time.
      *
      * @param lastModifiedTimestamp the UTC timestamp as long
      */
@@ -425,7 +308,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link SimpleAttribute} from the given {@link #getResource()} object
+     * gets a {@link SimpleAttribute} from the given {@link #getResource()} object.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
      * @return the attribute from the {@link #getResource()} or an empty
@@ -439,7 +322,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object
+     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@code complexAttribute}
      * @param complexAttribute    the attribute that should be read from the {@code complexAttribute}
@@ -457,7 +340,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object
+     * gets a {@link SimpleAttribute} from the given {@code complexAttribute} object.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@code complexAttribute}
      * @param complexAttribute    the attribute that should be read from the {@code complexAttribute} if
@@ -482,7 +365,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link ComplexAttribute} from the given {@link #getResource()} object
+     * gets a {@link ComplexAttribute} from the given {@link #getResource()} object.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
      * @return the attribute from the {@link #getResource()} or an empty
@@ -493,7 +376,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link ComplexAttribute} from the given {@link #getResource()} object
+     * gets a {@link ComplexAttribute} from the given {@link #getResource()} object.
      *
      * @param attributeName the attribute name that should be read from the {@link #getResource()}
      * @return the attribute from the {@link #getResource()} or an empty
@@ -505,7 +388,7 @@ public abstract class ScimAttributeAware {
 
     /**
      * gets a {@link ComplexAttribute} from the given {@link #getResource()} object if it does exist and will
-     * create it if it does not exist
+     * create it if it does not exist.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
      * @return the attribute from the {@link #getResource()} or a new attribute that will also be added to the
@@ -527,7 +410,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets a {@link MultiValuedAttribute} from the given {@link #getResource()} object
+     * gets a {@link MultiValuedAttribute} from the given {@link #getResource()} object.
      *
      * @param scimAttributeSchema the attribute that should be read from the {@link #getResource()}
      * @return the attribute from the {@link #getResource()} or an empty
@@ -538,7 +421,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * sets a {@link SimpleAttribute} for the given {@link #getResource()}
+     * sets a {@link SimpleAttribute} for the given {@link #getResource()}.
      *
      * @param scimAttributeSchema the attribute to set
      * @param value               the value that represents the attribute
@@ -559,7 +442,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * this method will add a {@link MultiValuedComplexType} list to the given {@link #getResource()}
+     * this method will add a {@link MultiValuedComplexType} list to the given {@link #getResource()}.
      *
      * @param multiValuedComplexTypeList the list of attributes that should be added if they are present
      * @param complexDefinition          the definition of the complex attribute that should be added to the
@@ -601,7 +484,7 @@ public abstract class ScimAttributeAware {
 
     /**
      * returns a {@link BiConsumer} that will add a new {@link SimpleAttribute} to the given
-     * {@link ComplexAttribute}
+     * {@link ComplexAttribute}.
      *
      * @param complexAttribute the {@link ComplexAttribute} that will be extended by a {@link SimpleAttribute}
      * @return the consumer that performs the execution of adding a {@link SimpleAttribute} to the given
@@ -623,7 +506,7 @@ public abstract class ScimAttributeAware {
 
     /**
      * extracts a multi-valued-complex-type from the {@link #getResource()} object by the given attribute
-     * definitions
+     * definitions.
      *
      * @param multiValuedDefinition the multi valued complex type definition
      * @param valueDefinition       the value-definition of the multi-valued-complex type
@@ -655,7 +538,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * parses a {@link ComplexAttribute} into a {@link MultiValuedComplexType}
+     * parses a {@link ComplexAttribute} into a {@link MultiValuedComplexType}.
      * @param attributeValue the complex type to parse
      * @param valueDefinition the value attribute description
      * @param displayDefinition the display attribute description
@@ -692,7 +575,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * this method is used to compare to scim objects
+     * this method is used to compare to scim objects.
      *
      * @param object the object to compare with this object
      * @return true if both attributes do contain the same attributes and values
@@ -722,6 +605,122 @@ public abstract class ScimAttributeAware {
         });
     }
 
+    /**
+     * checks that two given attributes are equals by running through their structure recursively.
+     *
+     * @return true if the given attributes are equals, false else
+     */
+    public static boolean attributesEquals(Attribute attribute,
+                                           Attribute attributeOther) {
+
+        if (!attribute.getClass().equals(attributeOther.getClass())) {
+            return false;
+        }
+        if (!attributeMetaEquals(attribute, attributeOther)) {
+            return false;
+        }
+        if (attribute instanceof SimpleAttribute && attributeOther instanceof SimpleAttribute) {
+            return simpleAttributeEquals((SimpleAttribute) attribute, (SimpleAttribute) attributeOther);
+        } else if (attribute instanceof MultiValuedAttribute && attributeOther instanceof MultiValuedAttribute) {
+            return multiValuedAttributeEquals((MultiValuedAttribute) attribute, (MultiValuedAttribute) attributeOther);
+        } else if (attribute instanceof ComplexAttribute && attributeOther instanceof ComplexAttribute) {
+            return complexAttributeEquals((ComplexAttribute) attribute, (ComplexAttribute) attributeOther);
+        }
+        return false;
+    }
+
+    /**
+     * tells us if the given two attributes do contain the same meta-data.
+     *
+     * @return if the meta-data is identical
+     */
+    public static boolean attributeMetaEquals(Attribute attribute, Attribute attributeOther) {
+
+        if (!Objects.equals(attribute.getMultiValued(), attributeOther.getMultiValued())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getCaseExact(), attributeOther.getCaseExact())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getRequired(), attributeOther.getRequired())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getMutability(), attributeOther.getMutability())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getReturned(), attributeOther.getReturned())) {
+            return false;
+        }
+        if (!Objects.equals(attribute.getUniqueness(), attributeOther.getUniqueness())) {
+            return false;
+        }
+        if (attribute.getURI() == null || !attribute.getURI().equals(attributeOther.getURI())) {
+            return false;
+        }
+        return Objects.equals(attribute.getType(), attributeOther.getType());
+    }
+
+    /**
+     * tells us if two simple attributes are identical.
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean simpleAttributeEquals(SimpleAttribute attribute1, SimpleAttribute attribute2) {
+
+        if (!Objects.equals(attribute1.getValue(), attribute2.getValue())) {
+            return false;
+        }
+        return attributeMetaEquals(attribute1, attribute2);
+    }
+
+    /**
+     * tells us if two simple attributes are identical.
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean multiValuedAttributeEquals(MultiValuedAttribute attribute,
+                                                     MultiValuedAttribute otherAttribute) {
+
+        boolean metaEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaEquals) {
+            return false;
+        }
+        if (attribute.getAttributePrimitiveValues().isEmpty()) {
+            if (attribute.getAttributeValues().size() != otherAttribute.getAttributeValues().size()) {
+                return false;
+            }
+            return attribute.getAttributeValues().stream().allMatch(innerAttribute -> {
+                return otherAttribute.getAttributeValues().stream().anyMatch(
+                        otherInnerAttribute -> attributesEquals(innerAttribute, otherInnerAttribute));
+            });
+        } else {
+            return attribute.getAttributePrimitiveValues().containsAll(otherAttribute.getAttributePrimitiveValues());
+        }
+    }
+
+    /**
+     * tells us if two complex attributes are identical or not.
+     *
+     * @return true if the attributes are identical, false else
+     */
+    public static boolean complexAttributeEquals(ComplexAttribute attribute,
+                                                 ComplexAttribute otherAttribute) {
+
+        boolean metaDataEquals = attributeMetaEquals(attribute, otherAttribute);
+        if (!metaDataEquals) {
+            return false;
+        }
+
+        // @formatter:off
+        return attribute.getSubAttributesList().keySet().stream().allMatch(attributeName -> {
+            return otherAttribute.getSubAttributesList().keySet().stream().anyMatch(oAttributeName -> rethrowFunction(
+                    otherAttributeName -> attributesEquals(attribute.getSubAttribute(attributeName),
+                            otherAttribute.getSubAttribute((String) otherAttributeName)))
+                    .apply(oAttributeName));
+        });
+        // @formatter:on
+    }
+
     @Override
     public int hashCode() {
 
@@ -729,7 +728,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * tells us if this string is blank or not
+     * tells us if this string is blank or not.
      */
     protected boolean isBlank(String s) {
 
@@ -737,7 +736,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * tells us if this string is blank or not
+     * tells us if this string is blank or not.
      */
     protected boolean isNotBlank(String s) {
 
@@ -745,7 +744,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * returns null if this string is blank and removed all whitespaces in the front and at the rear if it is not blank
+     * returns null if this string is blank and removed all whitespaces in the front and at the rear if it is not blank.
      */
     protected String stripToNull(String s) {
 
@@ -753,7 +752,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * gets the value of the attribute in the given resource extension as string value
+     * gets the value of the attribute in the given resource extension as string value.
      *
      * @param extensionSchema the resource schema extension that should hold the attribute
      * @param attributeSchema the attribute to read
