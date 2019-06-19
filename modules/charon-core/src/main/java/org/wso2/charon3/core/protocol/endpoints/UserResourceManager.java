@@ -486,7 +486,7 @@ public class UserResourceManager extends AbstractResourceManager {
                 if (!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
                         || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants
                         .DESCENDING))) {
-                    String error = " Invalid sortOrder value is specified";
+                    String error = "Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
