@@ -25,7 +25,9 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
 import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Iterator;
 import java.util.List;
 
@@ -120,10 +122,14 @@ public class AttributeUtil {
      */
     public static Instant parseDateTime(String dateTimeString) throws CharonException {
         try {
-            return OffsetDateTime.parse(dateTimeString).toInstant();
+            return LocalDateTime.parse(dateTimeString).toInstant(ZoneOffset.UTC);
         } catch (DateTimeException e) {
-            throw new CharonException("Error in parsing date time. " +
-                    "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+            try {
+                return OffsetDateTime.parse(dateTimeString).toInstant();
+            } catch (DateTimeException dte) {
+                throw new CharonException("Error in parsing date time. " +
+                        "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+            }
         }
     }
 
