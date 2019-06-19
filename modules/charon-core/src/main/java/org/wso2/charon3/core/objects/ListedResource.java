@@ -16,7 +16,6 @@
 package org.wso2.charon3.core.objects;
 
 import org.wso2.charon3.core.attributes.AbstractAttribute;
-import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
@@ -26,7 +25,6 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
