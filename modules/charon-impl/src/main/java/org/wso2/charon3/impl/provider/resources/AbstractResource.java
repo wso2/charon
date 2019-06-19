@@ -26,8 +26,8 @@ import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.msf4j.Microservice;
 
-import javax.ws.rs.core.Response;
 import java.util.Map;
+import javax.ws.rs.core.Response;
 
 
 /**
