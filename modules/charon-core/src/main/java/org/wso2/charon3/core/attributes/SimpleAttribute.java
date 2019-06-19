@@ -137,7 +137,7 @@ public class SimpleAttribute extends AbstractAttribute {
      *
      * @throws CharonException
      */
-    public void updateValue(Object value) throws CharonException {
+    public void updateValue(Object value) {
         this.value = value;
     }
 }

@@ -258,9 +258,8 @@ public class JSONDecoder {
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
      * @return the int value of the key
-     * @throws CharonException if the value under the given key is not an int value
      */
-    private String getStringValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private String getStringValueFromJson(JSONObject jsonObject, String name) {
         String value = null;
         try {
             value = jsonObject.getString(name);
@@ -277,9 +276,8 @@ public class JSONDecoder {
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
      * @return the int value of the key
-     * @throws CharonException if the value under the given key is not an int value
      */
-    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) {
         try {
             return Optional.of(jsonObject.getInt(name));
         } catch (JSONException e) {

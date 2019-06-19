@@ -166,16 +166,15 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
         private ResourceTypeHandler() {
         }
 
-        public ResourceType create(ResourceType resource, Map<String, Boolean> requiredAttributes)
-            throws AbstractCharonException {
+        public ResourceType create(ResourceType resource, Map<String, Boolean> requiredAttributes) {
             return null;
         }
 
-        public ResourceType get(String id, Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
+        public ResourceType get(String id, Map<String, Boolean> requiredAttributes) {
             return null;
         }
 
-        public void delete(String id) throws AbstractCharonException {
+        public void delete(String id) {
         }
 
         public List<Object> listResources(Node node,
@@ -184,12 +183,11 @@ public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {
                                           String sortBy,
                                           String sortOrder,
                                           String domainName,
-                                          Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
+                                          Map<String, Boolean> requiredAttributes) {
             return null;
         }
 
-        public ResourceType update(ResourceType resourceUpdate, Map<String, Boolean> requiredAttributes)
-            throws AbstractCharonException {
+        public ResourceType update(ResourceType resourceUpdate, Map<String, Boolean> requiredAttributes) {
             return null;
         }
 
