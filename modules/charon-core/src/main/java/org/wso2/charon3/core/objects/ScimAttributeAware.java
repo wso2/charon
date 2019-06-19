@@ -159,7 +159,7 @@ public abstract class ScimAttributeAware {
         SCIMAttributeSchema metaDefinition = SCIMSchemaDefinitions.META;
         SCIMAttributeSchema resourceTypeDefinition = SCIMSchemaDefinitions.CREATED;
         return getComplexAttribute(metaDefinition).map(meta -> getSimpleAttribute(resourceTypeDefinition, meta)
-            .map(rethrowFunction(simpleAttribute -> simpleAttribute.getDateValue().getTime())).orElse(null))
+            .map(rethrowFunction(simpleAttribute -> simpleAttribute.getInstantValue().toEpochMilli())).orElse(null))
             .orElse(null);
     }
 
