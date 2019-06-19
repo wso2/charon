@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
-* This is to check for extension schema for the user and buildTree a custom user schema with it..
+* This is to check for extension schema for the user and buildTree a custom user schema with it.
 * Unless a extension is defined, core-user schema need to be returned.
 */
 public class SCIMResourceSchemaManager {

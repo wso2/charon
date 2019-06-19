@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM excludedAttributes usage sample..
+ * SCIM excludedAttributes usage sample.
  */
 public class ExcludedAttributesParamSample {
 

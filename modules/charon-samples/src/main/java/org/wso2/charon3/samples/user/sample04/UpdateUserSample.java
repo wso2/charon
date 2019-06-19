@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM update user sample..
+ * SCIM update user sample.
  */
 public class UpdateUserSample {
 

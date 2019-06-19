@@ -121,7 +121,7 @@ public class FilterTreeManager {
     }
 
     /**
-     * We build the parser using the recursive descent parser technique..
+     * We build the parser using the recursive descent parser technique.
      *
      * @throws BadRequestException
      */

@@ -25,9 +25,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * This is to create a deep copy of the object using java serialization..
- * SCIMObject instances have complex object graphs and hard to deep copy by
- * overriding clone method. Hence, using serialization to do the deep copy.
+ * This is to create a deep copy of the object using java serialization SCIMObject instances have complex object graphs
+ * and hard to deep copy by overriding clone method. Hence, using serialization to do the deep copy.
  */
 public class CopyUtil {
 

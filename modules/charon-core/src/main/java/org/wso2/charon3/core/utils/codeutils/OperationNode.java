@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.utils.codeutils;
 
 /**
- * Operation Node..
+ * Operation Node.
  * .
  */
 public class OperationNode extends Node {

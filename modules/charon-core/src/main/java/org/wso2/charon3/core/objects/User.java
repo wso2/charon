@@ -51,7 +51,7 @@ public class User extends AbstractSCIMObject {
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * returns the username of this user..
+     * returns the username of this user.
      */
     public String getUsername() {
 
@@ -61,7 +61,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of username and exchanges it with the given value..
+     * deletes the current value of username and exchanges it with the given value.
      */
     public void replaceUsername(String username) {
 
@@ -69,7 +69,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the displayName of this user..
+     * gets the displayName of this user.
      */
     public String getDisplayName() {
 
@@ -80,7 +80,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of displayName and exchanges it with the given value..
+     * deletes the current value of displayName and exchanges it with the given value.
      */
     public void replaceDisplayName(String displayName) {
 
@@ -88,7 +88,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the nickname of this user..
+     * gets the nickname of this user.
      */
     public String getNickName() {
 
@@ -99,7 +99,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of nickname and exchanges it with the given value..
+     * deletes the current value of nickname and exchanges it with the given value.
      */
     public void replaceNickName(String nickName) {
 
@@ -107,7 +107,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the profile url of this user..
+     * gets the profile url of this user.
      */
     public String getProfileUrl() {
 
@@ -117,7 +117,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of profile url and exchanges it with the given value..
+     * deletes the current value of profile url and exchanges it with the given value.
      */
     public void replaceProfileUrl(String profileUrl) {
 
@@ -125,7 +125,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the user type of this user..
+     * gets the user type of this user.
      */
     public String getUserType() {
 
@@ -136,7 +136,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of user type and exchanges it with the given value..
+     * deletes the current value of user type and exchanges it with the given value.
      */
     public void replaceUserType(String userType) {
 
@@ -144,7 +144,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the title value of this user..
+     * gets the title value of this user.
      */
     public String getTitle() {
 
@@ -155,7 +155,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of title and exchanges it with the given value..
+     * deletes the current value of title and exchanges it with the given value.
      */
     public void replaceTitle(String title) {
 
@@ -163,7 +163,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the preferred language value of this user..
+     * gets the preferred language value of this user.
      */
     public String getPreferredLanguage() {
 
@@ -174,7 +174,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of preferred language and exchanges it with the given value..
+     * deletes the current value of preferred language and exchanges it with the given value.
      */
     public void setPreferredLanguage(String preferredLanguage) {
 
@@ -182,7 +182,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the preferred language attribute and exchanges it with the given value..
+     * deletes the preferred language attribute and exchanges it with the given value.
      *
      * @param preferredLanguage the new preferred language
      */
@@ -192,7 +192,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current locale value of this user..
+     * gets the current locale value of this user.
      */
     public String getLocale() {
 
@@ -203,7 +203,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of preferred language and exchanges it with the given value..
+     * deletes the current value of preferred language and exchanges it with the given value.
      */
     public void replaceLocale(String locale) {
 
@@ -211,7 +211,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current timezone value of this user..
+     * gets the current timezone value of this user.
      */
     public String getTimezone() {
 
@@ -222,7 +222,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of timezone and exchanges it with the given value..
+     * deletes the current value of timezone and exchanges it with the given value.
      */
     public void setTimezone(String timezone) {
 
@@ -230,7 +230,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the timezone attribute and exchanges it with the given value..
+     * deletes the timezone attribute and exchanges it with the given value.
      *
      * @param timezone the new timezone
      */
@@ -240,7 +240,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * gets the current active value of this user..
+     * gets the current active value of this user.
      */
     public boolean getActive() {
 
@@ -251,7 +251,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of active and exchanges it with the given value..
+     * deletes the current value of active and exchanges it with the given value.
      */
     public void replaceActive(boolean active) {
 
@@ -259,7 +259,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * extracts the complex "name" attribute from the Scim structure..
+     * extracts the complex "name" attribute from the Scim structure.
      */
     public ScimName getName() {
 
@@ -289,7 +289,7 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current complex name attribute and exchanges it with the given value..
+     * deletes the current complex name attribute and exchanges it with the given value.
      */
     public void replaceName(ScimName scimName) {
 

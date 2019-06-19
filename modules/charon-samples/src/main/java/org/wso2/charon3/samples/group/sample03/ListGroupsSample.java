@@ -31,7 +31,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * SCIM list group sample..
+ * SCIM list group sample.
  */
 public class ListGroupsSample {
 

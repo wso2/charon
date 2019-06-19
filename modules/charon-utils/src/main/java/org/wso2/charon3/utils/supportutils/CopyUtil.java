@@ -26,7 +26,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * This is to create a deep copy of the object using java serialization..
+ * This is to create a deep copy of the object using java serialization.
  */
 public class CopyUtil {
 

@@ -19,7 +19,7 @@ package org.wso2.charon3.core.config;
 import java.util.ArrayList;
 
 /**
- * This extension interface defines the defines the methods for configuring the charon..
+ * This extension interface defines the defines the methods for configuring the charon.
  */
 public interface Configuration {
 

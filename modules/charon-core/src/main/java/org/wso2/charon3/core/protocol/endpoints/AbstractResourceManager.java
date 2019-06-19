@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
@@ -40,12 +41,12 @@ public abstract class AbstractResourceManager {
     private static JSONDecoder decoder = new JSONDecoder();
 
     /**
-     * Keeps  a map of endpoint urls of the exposed resources..
+     * Keeps  a map of endpoint urls of the exposed resources.
      */
     private static Map<String, String> endpointURLMap;
 
     /**
-     * Returns the encoder for json..
+     * Returns the encoder for json.
      *
      * @return JSONEncoder - An json encoder for encoding data
      */
@@ -54,7 +55,7 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns the decoder for json..
+     * Returns the decoder for json.
      *
      *
      * @return JSONDecoder - An json decoder for decoding data
@@ -64,18 +65,23 @@ public abstract class AbstractResourceManager {
     }
 
     /**
-     * Returns the endpoint according to the resource..
+     * Returns the endpoint according to the resource.
      *
      * @param resource -Resource type
      * @return endpoint URL
      * @throws NotFoundException
      */
     public static String getResourceEndpointURL(String resource) throws NotFoundException {
+        String endpoint = null;
         if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
-        } else {
-            throw new NotFoundException();
+            endpoint = endpointURLMap.get(resource);
         }
+        if (StringUtils.isNotBlank(endpoint)) {
+            return endpoint;
+        }
+        logger.error("no location URL was registered for endpoint path '{}'. Please add a location URL to " +
+                         "endpointURLMap", resource);
+        throw new NotFoundException("endpoint path '" + resource + "' was not registered");
     }
 
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {

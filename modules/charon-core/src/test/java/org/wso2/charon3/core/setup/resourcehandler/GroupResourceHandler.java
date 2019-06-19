@@ -6,7 +6,7 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 /**
- *.
+ * .
  * <br><br>
  * created at: 03.04.2019
  * @author Pascal Knüppel

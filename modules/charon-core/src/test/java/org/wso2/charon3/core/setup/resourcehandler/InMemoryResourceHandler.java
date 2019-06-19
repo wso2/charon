@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *.
+ * .
  * <br><br>
  * created at: 03.04.2019
  * @param <R>
@@ -88,8 +88,9 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
         int fromIndex = startIndex - 1;
         fromIndex =  fromIndex >= resources.size() ? resources.size() - 1 : fromIndex;
         int toIndex = startIndex - 1 + count;
-        toIndex = toIndex >= resources.size() ? resources.size() - 1 : toIndex;
+        toIndex = toIndex >= resources.size() ? resources.size() : toIndex;
         resources = resources.subList(fromIndex, toIndex);
+        resources.add(0, resources.size());
         return resources;
     }
 

@@ -16,12 +16,12 @@ public class SearchRequestBuilder {
 
 
     /**
-     * An integer indicating the desired maximum number of query results per page.  See Section 3.4.2.4.  OPTIONAL..
+     * An integer indicating the desired maximum number of query results per page.  See Section 3.4.2.4.  OPTIONAL.
      */
     private Integer count;
 
     /**
-     * An integer indicating the 1-based index of the first query result.  See Section 3.4.2.4.  OPTIONAL..
+     * An integer indicating the 1-based index of the first query result.  See Section 3.4.2.4.  OPTIONAL.
      */
     private Integer startIndex;
 

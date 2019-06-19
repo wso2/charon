@@ -20,7 +20,7 @@ import org.wso2.charon3.core.schema.SCIMDefinitions;
 /**
  * This class abstracts out the common characteristics of different types of attributes defined in.
  * SCIM Core Schema Spec.
-*/
+ */
 public abstract class AbstractAttribute implements Attribute {
 
     //unique identifier for the attribute
@@ -45,10 +45,12 @@ public abstract class AbstractAttribute implements Attribute {
     protected SCIMDefinitions.Uniqueness uniqueness;
 
     public String getURI() {
-        return uri; }
+        return uri;
+    }
 
     public void setURI(String uri) {
-        this.uri = uri; }
+        this.uri = uri;
+    }
 
     public String getName() {
         return name;
@@ -107,7 +109,8 @@ public abstract class AbstractAttribute implements Attribute {
     }
 
     public SCIMDefinitions.Returned getReturned() {
-        return returned; }
+        return returned;
+    }
 
     public void setReturned(SCIMDefinitions.Returned returned) {
         this.returned = returned;
@@ -120,5 +123,32 @@ public abstract class AbstractAttribute implements Attribute {
     public void setUniqueness(SCIMDefinitions.Uniqueness uniqueness) {
         this.uniqueness = uniqueness;
     }
+
+    /**
+     * copies this attribute instance.
+     *
+     * @return a fully qualified copy of this attribute
+     */
+    public final Attribute copy() {
+        AbstractAttribute attribute = copyAttribute();
+        attribute.setCaseExact(this.getCaseExact());
+        attribute.setDescription(this.getDescription());
+        attribute.setMultiValued(this.getMultiValued());
+        attribute.setMutability(this.getMutability());
+        attribute.setRequired(this.getRequired());
+        attribute.setReturned(this.getReturned());
+        attribute.setType(this.getType());
+        attribute.setUniqueness(this.getUniqueness());
+        attribute.setURI(this.getURI());
+        attribute.setName(this.getName());
+        return attribute;
+    }
+
+    /**
+     * contains the copy implementation of the specific attribute types.
+     *
+     * @return a copy of the attribute
+     */
+    protected abstract AbstractAttribute copyAttribute();
 
 }

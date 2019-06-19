@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This provides the methods on the PATCH operation of any resource type..
+ * This provides the methods on the PATCH operation of any resource type.
  */
 public class PatchOperationUtil {
 

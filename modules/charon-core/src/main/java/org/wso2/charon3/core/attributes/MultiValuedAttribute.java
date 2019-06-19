@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is a blueprint of MultiValuedAttribute defined in SCIM Core Schema Spec..
+ * This class is a blueprint of MultiValuedAttribute defined in SCIM Core Schema Spec.
  */
 public class MultiValuedAttribute extends AbstractAttribute {
 
@@ -37,7 +37,9 @@ public class MultiValuedAttribute extends AbstractAttribute {
         this.name = attributeName;
         this.attributeValues = attributeValues;
     }
-    public  MultiValuedAttribute(){}
+
+    public MultiValuedAttribute() {
+    }
 
     public MultiValuedAttribute(String attributeName) {
         this.name = attributeName;
@@ -67,17 +69,17 @@ public class MultiValuedAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         //here we delete the complex type sub attributes which act as sub values
         attributeValues.clear();
     }
 
-     /*
+    /*
      * clear all primitive values
      * @throws CharonException
      */
 
-    public void deletePrimitiveValues() throws CharonException {
+    public void deletePrimitiveValues() {
         //here we delete primitive values
         attributePrimitiveValues.clear();
     }
@@ -124,4 +126,12 @@ public class MultiValuedAttribute extends AbstractAttribute {
         attributePrimitiveValues.add(obj);
     }
 
+    @Override
+    protected MultiValuedAttribute copyAttribute() {
+        MultiValuedAttribute attribute = new MultiValuedAttribute(this.name);
+        this.getAttributeValues().forEach(attr -> {
+            attribute.setAttributeValue(((AbstractAttribute) attr).copy());
+        });
+        return attribute;
+    }
 }

@@ -5,7 +5,7 @@ import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
 
 /**
- *.
+ * .
  * <br><br>
  * created at: 03.04.2019
  * @author Pascal Knüppel

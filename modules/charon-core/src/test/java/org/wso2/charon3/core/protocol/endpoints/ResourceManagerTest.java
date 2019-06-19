@@ -2,11 +2,19 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.charon3.core.config.FilterFeature;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.EnterpriseUser;
+import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.objects.plainobjects.ScimAddress;
@@ -17,9 +25,9 @@ import org.wso2.charon3.core.setup.CharonInitializer;
 import org.wso2.charon3.core.testsetup.FileReferences;
 
 /**
- *.
- * <br><br>
+ * .<br><br>
  * created at: 03.04.2019
+ *
  * @author Pascal Knüppel
  */
 class ResourceManagerTest extends CharonInitializer implements FileReferences {
@@ -32,7 +40,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
      * {@link org.wso2.charon3.core.extensions.ResourceHandler}s are called correctly
      */
     @Test
-    public void testCreateUser() throws AbstractCharonException {
+    public void testCreateUser () throws AbstractCharonException {
         String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
         SCIMResponse scimResponse = userManager.create(enterpriseUserString, null, null);
 
@@ -41,8 +49,8 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         log.warn(scimResponse.getResponseMessage());
         Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, scimResponse.getResponseStatus());
         User user = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
-                                                SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-                                                new User());
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
         checkEnterpriseUservalues(user);
         Assertions.assertEquals(2, user.getSchemaList().size());
 
@@ -102,7 +110,7 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         user.getX509Certificates().forEach(multiValued -> Assertions.assertNotNull(multiValued.getValue()));
     }
 
-    private void checkEnterpriseUservalues(User user) {
+    private void checkEnterpriseUservalues (User user) {
         EnterpriseUser enterpriseUser = new EnterpriseUser(user);
         Assertions.assertEquals("701984", enterpriseUser.getEmployeeNumber());
         Assertions.assertEquals("4130", enterpriseUser.getCostCenter());
@@ -117,14 +125,14 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
     }
 
     @Test
-    public void testUpdateUser() throws AbstractCharonException {
+    public void testUpdateUser () throws AbstractCharonException {
         String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
         SCIMResponse scimResponse = userManager.create(enterpriseUserString, null, null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, scimResponse.getResponseStatus());
         Mockito.verify(userResourceHandler, Mockito.times(1)).create(Mockito.any(), Mockito.any());
         User user = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
-                                                SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-                                                new User());
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
 
         final String nickNameBefore = "Maxi";
         final String nickNameUpdate = "MaxMan";
@@ -136,64 +144,114 @@ class ResourceManagerTest extends CharonInitializer implements FileReferences {
         log.warn(scimResponse.getResponseMessage());
 
         user = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
-                                           SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-                                           new User());
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
         Assertions.assertEquals(nickNameUpdate, user.getNickName());
     }
 
     @Test
-    public void testDeleteUser() throws AbstractCharonException {
+    public void testDeleteUser () throws AbstractCharonException {
         String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
         SCIMResponse scimResponse = userManager.create(enterpriseUserString, null, null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, scimResponse.getResponseStatus());
         Mockito.verify(userResourceHandler, Mockito.times(1)).create(Mockito.any(), Mockito.any());
         User user = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
-                                                SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-                                                new User());
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
 
         userManager.delete(user.getId());
         Mockito.verify(userResourceHandler, Mockito.times(1)).delete(Mockito.eq(user.getId()));
     }
 
     @Test
-    public void testGetSingleUser() throws AbstractCharonException {
+    public void testGetSingleUser () throws AbstractCharonException {
         String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
         SCIMResponse scimResponse = userManager.create(enterpriseUserString, null, null);
         Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, scimResponse.getResponseStatus());
         Mockito.verify(userResourceHandler, Mockito.times(1)).create(Mockito.any(), Mockito.any());
         User user = JSON_DECODER.decodeResource(scimResponse.getResponseMessage(),
-                                                SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
-                                                new User());
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA,
+            new User());
 
         scimResponse = userManager.get(user.getId(), null, null);
         Mockito.verify(userResourceHandler, Mockito.times(1)).get(Mockito.eq(user.getId()), Mockito.any());
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
     }
 
-    @Test
-    public void testListUsersWithGet() throws AbstractCharonException {
-        SCIMResponse scimResponse = userManager.listWithGET(null, null, null, null, null, null, null, null);
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 3, 5, 50})
+    public void testListUsersWithGet (int numberOfResults) throws AbstractCharonException {
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, 50));
+
+        String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        SCIMResponse createResponse = userManager.create(enterpriseUserString, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, createResponse.getResponseStatus());
+
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, numberOfResults, null, null, null, null, null);
         Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any());
+            Mockito.any(),
+            Mockito.eq(numberOfResults),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any());
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
     }
 
     @Test
-    public void testListUsersWithPost() throws AbstractCharonException {
+    public void testCompareReturnedUser () throws BadRequestException, CharonException, InternalErrorException {
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, 50));
+
+        String enterpriseUserString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        SCIMResponse createResponse = userManager.create(enterpriseUserString, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_CREATED, createResponse.getResponseStatus());
+        User user = JSON_DECODER.decodeResource(createResponse.getResponseMessage(),
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
+
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, 1, null, null, null, null, null);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+        ListedResource listedResource = JSON_DECODER.decodeListedResource(scimResponse.getResponseMessage(),
+            SCIMSchemaDefinitions.SCIM_USER_SCHEMA, User.class);
+        Assertions.assertEquals(1, listedResource.getResources().size());
+        Assertions.assertEquals(user, listedResource.getResources().get(0));
+    }
+
+    /**
+     * this test will assure that the count value is reduced to the maximum number of results that was setup in the
+     * service provider configuration if the client defined a value that is greater than the maximum number of results.
+     *
+     * @throws AbstractCharonException
+     */
+    @ParameterizedTest
+    @ValueSource(ints = {5, 8, 13, 21, 50})
+    public void testMaximumResults (int count) throws AbstractCharonException {
+        final int maxNumberOfResults = 1;
+        CharonConfiguration.getInstance().setFilter(new FilterFeature(true, maxNumberOfResults));
+        SCIMResponse scimResponse = userManager.listWithGET(null, null, count, null, null, null, null,
+            null);
+        Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
+            Mockito.any(),
+            Mockito.eq(maxNumberOfResults),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any());
+        Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+    }
+
+    @Test
+    public void testListUsersWithPost () throws AbstractCharonException {
+        final int startIndex = 1;
+        final int count = CharonConfiguration.getInstance().getFilter().getMaxResults();
         String searchRequestString = readResourceFile(SEARCH_REQUEST_FILE);
         SCIMResponse scimResponse = userManager.listWithPOST(searchRequestString);
         Mockito.verify(userResourceHandler, Mockito.times(1)).listResources(Mockito.any(),
-                                                                            Mockito.eq(1),
-                                                                            Mockito.eq(10),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any(),
-                                                                            Mockito.any());
+            Mockito.eq(startIndex),
+            Mockito.eq(count),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any(),
+            Mockito.any());
         Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
     }
 }

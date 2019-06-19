@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * SCIM patch group sample..
+ * SCIM patch group sample.
  */
 public class PatchGroupSample {
 

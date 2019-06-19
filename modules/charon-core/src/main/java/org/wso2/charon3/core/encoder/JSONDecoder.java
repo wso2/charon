@@ -101,7 +101,7 @@ public class JSONDecoder {
     public <T extends AbstractSCIMObject> ListedResource decodeListedResource(String scimResourceString,
                                                                               ResourceTypeSchema resourceSchema,
                                                                               Class<T> scimObjectType)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -111,17 +111,18 @@ public class JSONDecoder {
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
 
-        int totalResults = getIntValueFromJson(decodedJsonObj,
+        Optional<Integer> totalResults = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
-        int startIndex = getIntValueFromJson(decodedJsonObj, SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
-        int itemsPerPage = getIntValueFromJson(decodedJsonObj,
+        Optional<Integer> startIndex = getIntValueFromJson(decodedJsonObj,
+            SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+        Optional<Integer> itemsPerPage = getIntValueFromJson(decodedJsonObj,
             SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
 
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(totalResults);
-        listedResource.setStartIndex(startIndex);
-        listedResource.setItemsPerPage(itemsPerPage);
+        totalResults.ifPresent(listedResource::setTotalResults);
+        startIndex.ifPresent(listedResource::setStartIndex);
+        itemsPerPage.ifPresent(listedResource::setItemsPerPage);
 
         JSONArray resources = null;
         try {
@@ -141,24 +142,43 @@ public class JSONDecoder {
                     SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
                 throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
             }
+
+            T abstractSCIMObject;
             try {
-                T abstractSCIMObject = decodeResource(resource.toString(), resourceSchema,
+                abstractSCIMObject = decodeResource(resource.toString(), resourceSchema,
                     scimObjectType.newInstance());
                 listedResource.addResource(abstractSCIMObject);
             } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
                 throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
+            }
+
+            {
+                // TODO get rid of the inequality problem completely: This means that the schemas in the
+                //      AbstractSCIMObject must be handled as normal attributes not as separate list object
+                // this is actually a workaround. If the class ListedResource was encoded to a string the schemas
+                // attribute was missing in the json structure. But fixing this problem resulted in another problem
+                // where the decoded resources of the ListedResource had the schemas-attribute in their attribute-list.
+                // charon does not handle the schemas array as a normal attribute meaning, that if the method
+                // decodeResources is used for example the schemas attribute is not added into the attributes-list
+                // of the scim object instead it is added into a separate list within the scim object. This problem
+                // caused inequality checks on AbstractSCIMObjects. So when decoding listed resources we need
+                // to remove the schemas attribute again after it was added to the listed resource. But this would
+                // now actually result in the problem that the decoded listedResource cannot be encoded again without
+                // creating inequalities... but since it should not be the normal case to encode the just decoded
+                // list again this solution should do it for a while...
+                abstractSCIMObject.deleteAttribute(SCIMConstants.CommonSchemaConstants.SCHEMAS);
             }
         }
         return listedResource;
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}..
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public AbstractCharonException decodeCharonException(String scimErrorString)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -171,7 +191,6 @@ public class JSONDecoder {
         final String schema = getFirstSchemaValueFromJson(decodedJsonObj);
         final String scimType = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.SCIM_TYPE);
         final String detail = getStringValueFromJson(decodedJsonObj, ResponseCodeConstants.DETAIL);
-        final int httpStatusCode = getIntValueFromJson(decodedJsonObj, ResponseCodeConstants.STATUS);
 
         if (schema == null || !schema.equals(ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI)) {
             throw new CharonException(
@@ -179,16 +198,18 @@ public class JSONDecoder {
                     schema + "'");
         }
 
-        return new AbstractCharonException(httpStatusCode, detail, scimType);
+        final Optional<Integer> httpStatusCode = getIntValueFromJson(decodedJsonObj, ResponseCodeConstants.STATUS);
+        int statusCode = httpStatusCode.orElse(ResponseCodeConstants.CODE_INTERNAL_ERROR);
+        return new AbstractCharonException(statusCode, detail, scimType);
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}..
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public <T extends AbstractCharonException> T decodeCharonException(String scimErrorString, Class<T> exceptionType)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         AbstractCharonException abstractCharonException = decodeCharonException(scimErrorString);
         T exception;
@@ -232,7 +253,7 @@ public class JSONDecoder {
     }
 
     /**
-     * retrieves the string value from the given {@link JSONObject}..
+     * retrieves the string value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
@@ -251,22 +272,20 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves an int value from the given {@link JSONObject}..
+     * retrieves an int value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
      * @return the int value of the key
      * @throws CharonException if the value under the given key is not an int value
      */
-    private int getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
-        int totalResults;
+    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
         try {
-            totalResults = jsonObject.getInt(name);
+            return Optional.of(jsonObject.getInt(name));
         } catch (JSONException e) {
-            logger.error("could not get '{}' value from scim resource", name);
-            throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
+            logger.trace("could not get '{}' value from scim resource", name);
+            return Optional.empty();
         }
-        return totalResults;
     }
 
     /**
@@ -387,26 +406,23 @@ public class JSONDecoder {
     private <T extends AbstractSCIMObject> T resolveExtensionAttributes(JSONObject jsonObject,
                                                                         ResourceTypeSchema resourceSchema,
                                                                         T scimObject)
-        throws InternalErrorException, BadRequestException, CharonException {
+            throws InternalErrorException, BadRequestException, CharonException {
         for (SCIMResourceTypeExtensionSchema extension : resourceSchema.getExtensions()) {
             String resourceString;
             try {
                 resourceString = jsonObject.optString(extension.getSchema());
             } catch (JSONException e) {
-                logger.debug(e.getMessage());
-                return scimObject;
+                logger.debug(e.getMessage(), e);
+                continue;
             }
             if (StringUtils.isBlank(resourceString)) {
-                return scimObject;
+                continue;
             }
             AbstractSCIMObject scimExtension = decodeResource(resourceString, extension, new AbstractSCIMObject());
-            final SCIMAttributeSchema scimAttributeSchema = SCIMAttributeSchema.createSCIMAttributeSchema(
-                extension.getSchema(), extension.getSchema(), COMPLEX, false, null, false, false,
-                SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
-                SCIMDefinitions.Uniqueness.NONE, null, null, null);
+            final SCIMAttributeSchema scimAttributeSchema = extension.getAsAttributeSchema();
             ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
             Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
-                complexAttribute);
+                                                                                   complexAttribute);
             ComplexAttribute complexExtension = (ComplexAttribute) extensionAttribute;
 
             scimExtension.getAttributeList().forEach((s, attribute) -> {
@@ -521,6 +537,7 @@ public class JSONDecoder {
                     String error =
                         "Unknown JSON representation for the MultiValued attribute " + attributeSchema.getName() +
                             " which has data type as " + attributeSchema.getType();
+                    logger.error(error);
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
@@ -711,8 +728,17 @@ public class JSONDecoder {
                 if (subAttributeSchema.getMultiValued()) {
                     if (subAttributeValue instanceof JSONArray) {
 
-                        MultiValuedAttribute multiValuedAttribute = buildPrimitiveMultiValuedAttribute(
-                            subAttributeSchema, (JSONArray) subAttributeValue);
+                        JSONArray jsonArray = (JSONArray) subAttributeValue;
+                        MultiValuedAttribute multiValuedAttribute;
+                        // normally RFC7643 does not allow to place a complex type within another complex type
+                        // but there are two exceptions from which one must be handled here. This exception is the
+                        // schema definition for the schemas-endpoint. The subAttributes of a schema field definition
+                        // represents a complex type within a complex type, so this attribute must be handled here.
+                        if (jsonArray.length() > 0 && !(jsonArray.get(0) instanceof JSONObject)) {
+                            multiValuedAttribute = buildPrimitiveMultiValuedAttribute(subAttributeSchema, jsonArray);
+                        } else {
+                            multiValuedAttribute = buildComplexMultiValuedAttribute(subAttributeSchema, jsonArray);
+                        }
                         //let the attribute factory to set the sub attribute of a complex
                         // attribute to detect schema violations.
                         multiValuedAttribute = (MultiValuedAttribute) DefaultAttributeFactory.createAttribute(
@@ -751,10 +777,10 @@ public class JSONDecoder {
      * @param scimResourceString
      * @return
      */
-    public ArrayList<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
+    public List<PatchOperation> decodeRequest(String scimResourceString) throws BadRequestException {
 
 
-        ArrayList<PatchOperation> operationList = new ArrayList<>();
+        List<PatchOperation> operationList = new ArrayList<>();
         try {
             //decode the string into json representation
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
@@ -818,8 +844,8 @@ public class JSONDecoder {
         try {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
             SearchRequest searchRequest = new SearchRequest();
-            ArrayList<String> attributes = new ArrayList<>();
-            ArrayList<String> excludedAttributes = new ArrayList<>();
+            List<String> attributes = new ArrayList<>();
+            List<String> excludedAttributes = new ArrayList<>();
 
             JSONArray attributesValues = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.ATTRIBUTES);
             JSONArray excludedAttributesValues = (JSONArray) decodedJsonObj.opt(

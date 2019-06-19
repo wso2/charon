@@ -23,7 +23,7 @@ import org.wso2.charon3.impl.provider.resources.UserResource;
 import org.wso2.msf4j.MicroservicesRunner;
 
 /**
- * This performs one-time initialization tasks at the application startup..
+ * This performs one-time initialization tasks at the application startup.
  */
 public class ApplicationInitializer {
 

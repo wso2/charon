@@ -360,7 +360,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -396,6 +396,10 @@
         <servlet.api.version>2.3</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
+
+        <!-- this version has the problematic checkstyle bug fixed
+             (IllegalStateException because of invalid regex group) -->
+        <maven.checkstyleplugin.version>3.0.0</maven.checkstyleplugin.version>
 
         <!--plugin versions-->
         <compiler.plugin.version>3.8.1</compiler.plugin.version>

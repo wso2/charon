@@ -10,6 +10,8 @@ import org.junit.jupiter.api.TestFactory;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.BulkFeature;
+import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -31,7 +33,8 @@ import java.util.UUID;
 import java.util.function.Function;
 
 /**
- * <br><br>.
+ * .
+ * <br><br>
  * created at: 03.04.2019
  *
  * @author Pascal Knüppel
@@ -261,5 +264,33 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
         }));
 
         return dynamicTestList;
+    }
+
+    /**
+     * shows that an exception is thrown if the payload send by the user is too large.
+     */
+    @Test
+    public void testPayloadTooLarge() {
+        final int maxOperations = CharonConfiguration.getInstance().getBulk().getMaxOperations();
+        final int newPayload = 1;
+        CharonConfiguration.getInstance().setBulk(new BulkFeature(true, maxOperations, newPayload));
+        Assertions.assertEquals(newPayload, CharonConfiguration.getInstance().getBulk().getMaxPayLoadSize());
+        String bulkRequestOneOperation = readResourceFile(PUT_BULK_REQUEST_FILE);
+        SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequestOneOperation);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_PAYLOAD_TOO_LARGE, scimResponse.getResponseStatus());
+    }
+
+    /**
+     * shows that an exception is thrown if the payload send by the user is too large.
+     */
+    @Test
+    public void testTooManyOperations() {
+        final int maxPayload = CharonConfiguration.getInstance().getBulk().getMaxPayLoadSize();
+        final int newOperations = 1;
+        CharonConfiguration.getInstance().setBulk(new BulkFeature(true, newOperations, maxPayload));
+        Assertions.assertEquals(newOperations, CharonConfiguration.getInstance().getBulk().getMaxOperations());
+        String bulkRequestOneOperation = readResourceFile(USER_AND_GROUP_POST_BULK_REQUEST_FILE);
+        SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequestOneOperation);
+        Assertions.assertEquals(ResponseCodeConstants.CODE_BAD_REQUEST, scimResponse.getResponseStatus());
     }
 }

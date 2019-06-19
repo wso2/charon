@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This is a sample dynamic user store..
+ * This is a sample dynamic user store.
  */
 public class InMemoryUserManager implements ResourceHandler<User> {
 

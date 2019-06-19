@@ -21,7 +21,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 
 /**
- * This is to perform SCIM client side validation according to SCIM 2.0 spec..
+ * This is to perform SCIM client side validation according to SCIM 2.0 spec.
  */
 public class ClientSideValidator extends AbstractValidator {
 

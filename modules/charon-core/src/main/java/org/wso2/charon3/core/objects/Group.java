@@ -22,6 +22,7 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.VALUE;
 import static org.wso2.charon3.core.schema.SCIMConstants.GroupSchemaConstants.MEMBERS;
@@ -134,6 +136,33 @@ public class Group extends AbstractSCIMObject {
         }
 
         return displayNames;
+    }
+
+    /**
+     * @return all members as {@link MultiValuedComplexType}
+     */
+    public List<MultiValuedComplexType> getMembersAsComplexType() {
+        Optional<MultiValuedAttribute> membersOptional = getMultiValuedAttribute(
+            SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS);
+        if (!membersOptional.isPresent()) {
+            return Collections.emptyList();
+        }
+        MultiValuedAttribute members = membersOptional.get();
+        List<MultiValuedComplexType> memberList = new ArrayList<>();
+        for (Attribute attributeValue : members.getAttributeValues()) {
+            ComplexAttribute memberAttribute = (ComplexAttribute) attributeValue;
+            String type = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.TYPE, memberAttribute)
+                              .orElse(null);
+            String display = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY,
+                memberAttribute).orElse(null);
+            String value = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE,
+                memberAttribute).orElse(null);
+            String reference = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF,
+                memberAttribute).orElse(null);
+            MultiValuedComplexType member = new MultiValuedComplexType(type, false, display, value, reference);
+            memberList.add(member);
+        }
+        return memberList;
     }
 
     /**

@@ -31,7 +31,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 /**
- * SCIM create user sample..
+ * SCIM create user sample.
  */
 public class CreateUserSample {
 

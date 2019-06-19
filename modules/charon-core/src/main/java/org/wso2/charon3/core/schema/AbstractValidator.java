@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This defined the validation algorithms accroding to SCIM spec 2.0..
+ * This defined the validation algorithms accroding to SCIM spec 2.0.
  */
 
 public abstract class AbstractValidator {
@@ -1108,7 +1108,7 @@ public abstract class AbstractValidator {
             BadRequestException {
 
         Map<String, Attribute> attributeList = scimObject.getAttributeList();
-        ArrayList<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
+        List<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
 
         for (AttributeSchema attributeSchema : attributeSchemaList) {
 
