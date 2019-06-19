@@ -32,7 +32,6 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -377,38 +376,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
             getMetaAttribute().setSubAttribute(resourceTypeAttribute);
 
         }
-    }
-
-    @Deprecated
-    public Date getCreatedDate() throws CharonException {
-        Instant created = getCreatedInstant();
-        return created != null ? new Date(created.toEpochMilli()) : null;
-    }
-
-    /**
-     * set the created date and time of the resource.
-     *
-     * @param createdDate
-     */
-    @Deprecated
-    public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
-        setCreatedInstant(createdDate == null ? null : createdDate.toInstant());
-    }
-
-    @Deprecated
-    public Date getLastModified() throws CharonException {
-        Instant lastModified = getLastModifiedInstant();
-        return lastModified != null ? new Date(lastModified.toEpochMilli()) : null;
-    }
-
-    /**
-     * set the last modified date and time of the resource.
-     *
-     * @param lastModifiedDate
-     */
-    @Deprecated
-    public void setLastModified(Date lastModifiedDate) throws CharonException, BadRequestException {
-        setLastModifiedInstant(lastModifiedDate == null ? null : lastModifiedDate.toInstant());
     }
 
     public String toString() {

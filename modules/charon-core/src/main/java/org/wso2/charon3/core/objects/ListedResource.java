@@ -143,30 +143,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * set the listed resources.
-     *
-     * @param valueWithAttributes
-     */
-    @Deprecated
-    public void setResources (Map<String, Attribute> valueWithAttributes) {
-        // set given valueWithAttributes as resource in attributeList
-        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
-            MultiValuedAttribute resourcesAttribute = new MultiValuedAttribute(
-                SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
-            resourcesAttribute.setComplexValueWithSetOfSubAttributes(valueWithAttributes);
-            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
-        } else {
-            ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
-                .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
-        }
-        // set given valueWithAttributes as resource in list resource
-        AbstractSCIMObject resourcesScimObject = new AbstractSCIMObject();
-        valueWithAttributes.forEach((name, attribtue) -> resourcesScimObject.setAttribute(attribtue));
-        resources.add(resourcesScimObject);
-    }
-
-    /**
-     * @see #resources.
+     * @see #resources
      */
     public List<SCIMObject> getResources () {
         return resources;

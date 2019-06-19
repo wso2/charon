@@ -42,10 +42,6 @@ public class SCIMConstants {
     public static final String JSON = "json";
 
     public static final String APPLICATION_JSON = "application/scim+json";
-    @Deprecated
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-    @Deprecated
-    public static final String DATE_TIME_FORMAT2 = "yyyy-MM-dd'T'HH:mm:ss";
 
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";

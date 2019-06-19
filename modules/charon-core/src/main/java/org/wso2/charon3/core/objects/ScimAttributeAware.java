@@ -266,7 +266,7 @@ public abstract class ScimAttributeAware {
     }
 
     /**
-     * @return the created timestamp as long of the SCIM {@link #getResource()} in UTC.
+     * @return the last modified timestamp as long of the SCIM {@link #getResource()} in UTC.
      */
     public Long getLastModifiedLong() {
 
