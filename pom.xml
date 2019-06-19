@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.1.22-SNAPSHOT</version>
+    <version>3.1.31-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -68,7 +68,6 @@
                 <artifactId>axiom-impl</artifactId>
                 <version>${axiom.impl.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -111,7 +110,6 @@
                 <version>${log4j2.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -152,7 +150,6 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -163,7 +160,11 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${findbugs.annotations.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -192,6 +193,10 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
         <!-- for maven to execute junit jupiter tests -->
         <dependency>
@@ -316,6 +321,19 @@
                         <doUpdate>false</doUpdate>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${maven.findbugsplugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.code.findbugs</groupId>
+                            <artifactId>annotations</artifactId>
+                            <version>${findbugs.annotations.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -380,26 +398,27 @@
         <project.scm.id>my-scm-server</project.scm.id>
 
         <!--plugin versions-->
-        <compiler.plugin.version>2.3.1</compiler.plugin.version>
+        <compiler.plugin.version>3.8.1</compiler.plugin.version>
 
-        <war.plugin.version>3.2.2</war.plugin.version>
-        <bundle.plugin.version>4.1.0</bundle.plugin.version>
+        <war.plugin.version>3.2.3</war.plugin.version>
+        <bundle.plugin.version>4.2.0</bundle.plugin.version>
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
 
         <src.java.version>1.8</src.java.version>
         <target.java.version>1.8</target.java.version>
 
-        <msf4j.version>2.7.0</msf4j.version>
+        <msf4j.version>2.7.3</msf4j.version>
         <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
 
-        <log4j.version>1.2.16</log4j.version>
         <slf4j.version>1.7.26</slf4j.version>
 
-        <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
+        <maven.findbugsplugin.version>3.0.5</maven.findbugsplugin.version>
 
         <commons.io.version>2.6</commons.io.version>
         <commons.lang3.version>3.8.1</commons.lang3.version>
+
+        <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
     </properties>
 
 </project>

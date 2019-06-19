@@ -17,6 +17,8 @@
 */
 package org.wso2.charon3.core.objects.bulk;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  *.
  */
@@ -42,7 +44,8 @@ public class BulkRequestContent {
         path = null;
         version = null;
     }
-
+    
+    @SuppressFBWarnings("NM_CONFUSING")
     public String getBulkID() {
         return bulkID;
     }

@@ -1,5 +1,6 @@
 package org.wso2.charon3.core.utils.codeutils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,6 +9,7 @@ import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.utils.LambdaExceptionUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -173,7 +175,8 @@ public class BulkRequestBuilder {
                  j++) {
                 BulkRequestOperation bulkRequestOperation = bulkOperationsList.get(i + j);
                 operations.put(bulkRequestOperation.toJsonObject());
-                if (request.toString().getBytes().length + operations.toString().getBytes().length > maximumPaylod) {
+                if (request.toString().getBytes(StandardCharsets.UTF_8).length +
+                    operations.toString().getBytes(StandardCharsets.UTF_8).length > maximumPaylod) {
                     operations.remove(operations.length() - 1);
                     indexJump = j;
                     break;
@@ -372,6 +375,7 @@ public class BulkRequestBuilder {
         /**
          * @see #bulkId.
          */
+        @SuppressFBWarnings("NM_CONFUSING")
         public String getBulkId() {
             return bulkId;
         }
