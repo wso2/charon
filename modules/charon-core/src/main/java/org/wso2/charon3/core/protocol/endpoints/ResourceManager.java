@@ -195,7 +195,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * gets the specified resources
+     * gets the specified resources.
      *
      * @param filter
      *     the filter expression

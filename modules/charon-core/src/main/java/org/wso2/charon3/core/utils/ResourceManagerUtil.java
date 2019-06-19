@@ -399,7 +399,7 @@ public class ResourceManagerUtil {
      */
     public static int processCount (String countStr) throws BadRequestException {
 
-        if (countStr == null || countStr.isEmpty()) {
+        if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
             return CharonConfiguration.getInstance().getFilter().getMaxResults();
         }
 
@@ -474,7 +474,7 @@ public class ResourceManagerUtil {
     public static int processStartIndex (String startIndexStr) throws BadRequestException {
 
         int startIndex = 1;
-        if (startIndexStr == null) {
+        if (startIndexStr == null || startIndexStr.trim().isEmpty() || !startIndexStr.matches("\\d+")) {
             return startIndex;
         }
 
