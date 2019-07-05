@@ -79,14 +79,14 @@ public interface ResourceHandler<R extends AbstractSCIMObject> {
     public R update(R resourceUpdate, Map<String, Boolean> requiredAttributes) throws AbstractCharonException;
 
     /**
-     * the resource endpoint under which the resources are available. For the user endpoint this would be
+     * the resource endpoint under which the resources are available. For the user endpoint this would be.
      * {@link org.wso2.charon3.core.schema.SCIMConstants#USER_ENDPOINT} and for the groups endpoint
      * {@link org.wso2.charon3.core.schema.SCIMConstants#GROUP_ENDPOINT}
      */
     public String getResourceEndpoint();
 
     /**
-     * must return the schema that represents the scim type that should be handled by this implementation.
+     * must return the schema that represents the scim type that should be handled by this implementation..
      *
      * @see org.wso2.charon3.core.schema.SCIMSchemaDefinitions#SCIM_USER_SCHEMA
      * @see org.wso2.charon3.core.schema.SCIMSchemaDefinitions#SCIM_GROUP_SCHEMA

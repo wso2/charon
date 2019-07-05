@@ -17,7 +17,7 @@
 package org.wso2.charon3.core.protocol;
 
 /**
- * SCIM Protocol uses the response status codes defined in HTTP to indicate
+ * SCIM Protocol uses the response status codes defined in HTTP to indicate.
  * operation success or failure. This class includes those code and relevant description as constants.
  */
 public class ResponseCodeConstants {

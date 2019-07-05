@@ -43,9 +43,9 @@ public class ResourceManagerUtil {
      * @return
      * @throws CharonException
      */
-    public static Map<String, Boolean> getOnlyRequiredAttributesURIs (SCIMResourceTypeSchema schema,
-                                                                      String requestedAttributes,
-                                                                      String requestedExcludingAttributes)
+    public static Map<String, Boolean> getOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema,
+                                                                     String requestedAttributes,
+                                                                     String requestedExcludingAttributes)
         throws CharonException {
 
         List<AttributeSchema> attributeSchemaArrayList = (List<AttributeSchema>) CopyUtil.deepCopy(
@@ -118,12 +118,12 @@ public class ResourceManagerUtil {
      * @param requestedExcludingAttributesList
      * @throws CharonException
      */
-    private static void getOnlyRequiredSubAttributesURIs (AttributeSchema attributeSchema,
-                                                          List<AttributeSchema> attributeSchemaArrayList,
-                                                          String requestedAttributes,
-                                                          String requestedExcludingAttributes,
-                                                          List<String> requestedAttributesList,
-                                                          List<String> requestedExcludingAttributesList)
+    private static void getOnlyRequiredSubAttributesURIs(AttributeSchema attributeSchema,
+                                                         List<AttributeSchema> attributeSchemaArrayList,
+                                                         String requestedAttributes,
+                                                         String requestedExcludingAttributes,
+                                                         List<String> requestedAttributesList,
+                                                         List<String> requestedExcludingAttributesList)
         throws CharonException {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
 
@@ -200,13 +200,13 @@ public class ResourceManagerUtil {
      * @param requestedExcludingAttributesList
      * @throws CharonException
      */
-    private static void getOnlyRequiredSubSubAttributesURIs (AttributeSchema attribute,
-                                                             AttributeSchema subAttribute,
-                                                             List<AttributeSchema> attributeSchemaArrayList,
-                                                             String requestedAttributes,
-                                                             String requestedExcludingAttributes,
-                                                             List<String> requestedAttributesList,
-                                                             List<String> requestedExcludingAttributesList)
+    private static void getOnlyRequiredSubSubAttributesURIs(AttributeSchema attribute,
+                                                            AttributeSchema subAttribute,
+                                                            List<AttributeSchema> attributeSchemaArrayList,
+                                                            String requestedAttributes,
+                                                            String requestedExcludingAttributes,
+                                                            List<String> requestedAttributesList,
+                                                            List<String> requestedExcludingAttributesList)
         throws CharonException {
 
         if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
@@ -281,8 +281,8 @@ public class ResourceManagerUtil {
      * @param attributeSchema
      * @return
      */
-    private static boolean isSubAttributeExistsInList (List<String> requestedAttributes,
-                                                       AttributeSchema attributeSchema) {
+    private static boolean isSubAttributeExistsInList(List<String> requestedAttributes,
+                                                      AttributeSchema attributeSchema) {
         if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
             List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
 
@@ -317,9 +317,9 @@ public class ResourceManagerUtil {
      * @param subAttributeSchema
      * @return
      */
-    private static boolean isSubSubAttributeExistsInList (List<String> requestedAttributes,
-                                                          AttributeSchema attributeSchema,
-                                                          AttributeSchema subAttributeSchema) {
+    private static boolean isSubSubAttributeExistsInList(List<String> requestedAttributes,
+                                                         AttributeSchema attributeSchema,
+                                                         AttributeSchema subAttributeSchema) {
 
         if (subAttributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
             List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
@@ -342,7 +342,7 @@ public class ResourceManagerUtil {
      * @param schemas
      * @return
      */
-    private static Map<String, Boolean> convertSchemasToURIs (List<AttributeSchema> schemas) {
+    private static Map<String, Boolean> convertSchemasToURIs(List<AttributeSchema> schemas) {
 
         Map<String, Boolean> uriList = new HashMap<>();
         for (AttributeSchema schema : schemas) {
@@ -372,8 +372,7 @@ public class ResourceManagerUtil {
      * @param attributeName
      * @throws CharonException
      */
-    private static void removeAttributesFromList (List<AttributeSchema> attributeSchemaList, String attributeName)
-        throws CharonException {
+    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName) {
         List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);
         int count = 0;
         for (AttributeSchema attributeSchema : tempList) {
@@ -384,7 +383,7 @@ public class ResourceManagerUtil {
         }
     }
 
-    public static Map<String, Boolean> getAllAttributeURIs (SCIMResourceTypeSchema schema) throws CharonException {
+    public static Map<String, Boolean> getAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
         return getOnlyRequiredAttributesURIs(schema, null, null);
     }
 
@@ -397,7 +396,7 @@ public class ResourceManagerUtil {
      *
      * @throws BadRequestException
      */
-    public static int processCount (String countStr) throws BadRequestException {
+    public static int processCount(String countStr) throws BadRequestException {
 
         if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
             return CharonConfiguration.getInstance().getFilter().getMaxResults();
@@ -423,46 +422,6 @@ public class ResourceManagerUtil {
     }
 
     /**
-     * Process count value according to SCIM 2.0 specification.
-     *
-     * @param countInt The count value in the request
-     * @return Integer according to the passed value. (NOTE: return NULL when the COUNT is not specified in the
-     * request)
-     */
-    public static Integer processCount(Integer countInt) {
-
-        if (countInt == null || countInt.toString().isEmpty()) {
-            return null;
-        } else {
-            // All the negative values are interpreted as zero according to the specification.
-            if (countInt <= 0) {
-                return 0;
-            } else {
-                return countInt;
-            }
-        }
-    }
-
-    /**
-     * Process startIndex value according to SCIM 2.0 specification.
-     *
-     * @param startIndex Starting index in the request.
-     * @return Integer as the starting index.
-     */
-    public static Integer processStartIndex(Integer startIndex) {
-
-        if (startIndex == null) {
-            // According to SCIM2 spec, default value of startIndex should be one.
-            return 1;
-        } else if (startIndex >= 1) {
-            return startIndex;
-        } else {
-            // Any value lesser than 1 is interpreted as 1.
-            return 1;
-        }
-    }
-
-    /**
      * Process startIndex value according to SCIM 2.0 specification.
      *
      * @param startIndexStr
@@ -471,7 +430,7 @@ public class ResourceManagerUtil {
      *
      * @throws BadRequestException
      */
-    public static int processStartIndex (String startIndexStr) throws BadRequestException {
+    public static int processStartIndex(String startIndexStr) throws BadRequestException {
 
         int startIndex = 1;
         if (startIndexStr == null || startIndexStr.trim().isEmpty() || !startIndexStr.matches("\\d+")) {

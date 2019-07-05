@@ -174,7 +174,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
     }
 
     /**
-     * Method of the ResourceManager that is mapped to HTTP Delete method..
+     * Method of the ResourceManager that is mapped to HTTP Delete method.
      *
      * @param id
      *     unique resource id
@@ -216,8 +216,14 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      *     A multi-valued list of strings indicating the names of resource attributes to be removed from the default set
      *     of attributes to return
      */
-    public SCIMResponse listWithGET(String filter, Integer startIndexInt, Integer countInt, String sortBy,
-                                    String sortOrder, String domainName, String attributes, String excludeAttributes) {
+    public SCIMResponse listWithGET(String filter,
+                                    Integer startIndexInt,
+                                    Integer countInt,
+                                    String sortBy,
+                                    String sortOrder,
+                                    String domainName,
+                                    String attributes,
+                                    String excludeAttributes) {
         try {
             Node rootNode = null;
             if (filter != null) {
@@ -229,6 +235,8 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             return listResources(startIndexInt, countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes,
                 rootNode);
 
+        } catch (AbstractCharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         } catch (IOException e) {
             String error = "Error in tokenization of the input filter";
             CharonException charonException = new CharonException(error);
@@ -333,7 +341,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
             SearchRequest searchRequest = getDecoder().decodeSearchRequestBody(resourceString,
                 resourceHandler.getResourceSchema());
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
 
             if (searchRequest.getSchema() != null && !searchRequest.getSchema().equals(
                 SCIMConstants.SEARCH_SCHEMA_URI)) {
@@ -366,6 +374,7 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      *     A multi-valued list of strings indicating the names of resource attributes to be removed from the default set
      *     of attributes to return
      */
+
     public SCIMResponse updateWithPUT(String existingId,
                                       String scimObjectString,
                                       String attributes,
@@ -429,10 +438,10 @@ public class ResourceManager<R extends AbstractSCIMObject> extends AbstractResou
      * @param scimObjectString
      *     the request body
      */
-    SCIMResponse updateWithPATCH(String existingId,
-                                 String scimObjectString,
-                                 String attributes,
-                                 String excludeAttributes) {
+    public SCIMResponse updateWithPATCH(String existingId,
+                                        String scimObjectString,
+                                        String attributes,
+                                        String excludeAttributes) {
         try {
             // obtain the json decoder.
             JSONDecoder decoder = getDecoder();

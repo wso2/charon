@@ -26,7 +26,6 @@ import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
-
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.extensions.ResourceHandler;

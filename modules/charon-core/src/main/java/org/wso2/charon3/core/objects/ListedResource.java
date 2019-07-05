@@ -16,7 +16,6 @@
 package org.wso2.charon3.core.objects;
 
 import org.wso2.charon3.core.attributes.AbstractAttribute;
-import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
@@ -26,14 +25,13 @@ import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 
 /**
- * Represents the listed resource object which is a collection of resources.
+ * Represents the listed resource object which is a collection of resources..
  **/
 
 public class ListedResource extends AbstractSCIMObject {
@@ -79,7 +77,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * @return the items per page value of this listed resource
+     * @return the items per page value of this listed resource.
      */
     public int getItemsPerPage () {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE)) {
@@ -111,7 +109,7 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
-     * @return the start index value of this listed resource
+     * @return the start index value of this listed resource.
      */
     public int getStartIndex () {
         if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)) {
@@ -140,29 +138,6 @@ public class ListedResource extends AbstractSCIMObject {
             ((SimpleAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.START_INDEX)).setValue(
                 startIndex);
         }
-    }
-
-    /**
-     * set the listed resources.
-     *
-     * @param valueWithAttributes
-     */
-    @Deprecated
-    public void setResources (Map<String, Attribute> valueWithAttributes) {
-        // set given valueWithAttributes as resource in attributeList
-        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.RESOURCES)) {
-            MultiValuedAttribute resourcesAttribute = new MultiValuedAttribute(
-                SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
-            resourcesAttribute.setComplexValueWithSetOfSubAttributes(valueWithAttributes);
-            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesAttribute);
-        } else {
-            ((MultiValuedAttribute) attributeList.get(SCIMConstants.ListedResourceSchemaConstants.RESOURCES))
-                .setComplexValueWithSetOfSubAttributes(valueWithAttributes);
-        }
-        // set given valueWithAttributes as resource in list resource
-        AbstractSCIMObject resourcesScimObject = new AbstractSCIMObject();
-        valueWithAttributes.forEach((name, attribtue) -> resourcesScimObject.setAttribute(attribtue));
-        resources.add(resourcesScimObject);
     }
 
     /**

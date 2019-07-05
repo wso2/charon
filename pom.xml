@@ -110,7 +110,6 @@
                 <version>${log4j2.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
@@ -161,6 +160,11 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${findbugs.annotations.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -189,6 +193,10 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
         <!-- for maven to execute junit jupiter tests -->
         <dependency>
@@ -313,6 +321,19 @@
                         <doUpdate>false</doUpdate>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${maven.findbugsplugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.google.code.findbugs</groupId>
+                            <artifactId>annotations</artifactId>
+                            <version>${findbugs.annotations.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -339,7 +360,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -396,10 +417,12 @@
 
         <slf4j.version>1.7.26</slf4j.version>
 
-        <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
+        <maven.findbugsplugin.version>3.0.5</maven.findbugsplugin.version>
 
         <commons.io.version>2.6</commons.io.version>
         <commons.lang3.version>3.8.1</commons.lang3.version>
+
+        <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
     </properties>
 
 </project>

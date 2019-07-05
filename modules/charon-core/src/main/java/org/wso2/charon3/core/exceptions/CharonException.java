@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * General exceptions in charon server side. Those that are not returned to client
+ * General exceptions in charon server side. Those that are not returned to client.
  * with in the response.
  */
 public class CharonException extends AbstractCharonException {
@@ -28,7 +28,7 @@ public class CharonException extends AbstractCharonException {
     }
 
     /**
-     * Constructs a new exception with the specified detail message and
+     * Constructs a new exception with the specified detail message and.
      * cause. Note that the detail message associated with
      * cause is not automatically incorporated in this exception's detail message.
      *

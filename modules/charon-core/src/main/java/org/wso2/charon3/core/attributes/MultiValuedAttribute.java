@@ -85,7 +85,7 @@ public class MultiValuedAttribute extends AbstractAttribute {
     }
 
     /**
-     * To construct and set a value of a multi-valued attribute, as a complex value containing
+     * To construct and set a value of a multi-valued attribute, as a complex value containing.
      * set of sub attributes.
      */
     public void setComplexValueWithSetOfSubAttributes(Map<String, Attribute> subAttributes) {

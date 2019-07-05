@@ -73,7 +73,7 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
- * This decodes the json encoded resource string and create a SCIM object model according to the specification
+ * This decodes the json encoded resource string and create a SCIM object model according to the specification.
  * according to the info that the user has sent, and returns SCIMUser object.
  */
 
@@ -87,7 +87,7 @@ public class JSONDecoder {
     }
 
     /**
-     * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
+     * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to.
      * {@link ListedResource} object that holds the parsed objects.
      *
      * @param scimResourceString the listed resource string
@@ -227,7 +227,7 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves the first schema string value from the given {@link JSONObject} in the
+     * retrieves the first schema string value from the given {@link JSONObject} in the.
      * {@link ResponseCodeConstants#SCHEMAS} attribute field which should be an array. This method is only useful if
      * this array is expected to contain a single element.
      *
@@ -258,9 +258,8 @@ public class JSONDecoder {
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
      * @return the int value of the key
-     * @throws CharonException if the value under the given key is not an int value
      */
-    private String getStringValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private String getStringValueFromJson(JSONObject jsonObject, String name) {
         String value = null;
         try {
             value = jsonObject.getString(name);
@@ -277,9 +276,8 @@ public class JSONDecoder {
      * @param jsonObject the jsonObject that might hold an int-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as int
      * @return the int value of the key
-     * @throws CharonException if the value under the given key is not an int value
      */
-    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) throws CharonException {
+    private Optional<Integer> getIntValueFromJson(JSONObject jsonObject, String name) {
         try {
             return Optional.of(jsonObject.getInt(name));
         } catch (JSONException e) {
@@ -289,7 +287,7 @@ public class JSONDecoder {
     }
 
     /**
-     * Decode the resource string sent in the SCIM request payload.
+     * Decode the resource string sent in the SCIM request payload..
      *
      * @param scimResourceString - json encoded string of user info
      * @param resourceSchema     - SCIM defined user schema
@@ -893,7 +891,7 @@ public class JSONDecoder {
     }
 
     /**
-     * Decode BulkRequestData Json Sting.
+     * Decode BulkRequestData Json Sting..
      *
      * @param bulkResourceString
      * @return BulkRequestData Object
@@ -902,7 +900,7 @@ public class JSONDecoder {
 
         BulkRequestData bulkRequestDataObject = new BulkRequestData();
         List<BulkRequestContent> endpointOperationList = new ArrayList<>();
-        int failOnErrorsAttribute = 0;
+        Integer failOnErrorsAttribute;
         List<String> schemas = new ArrayList<>();
 
         JSONObject decodedObject;
@@ -958,7 +956,10 @@ public class JSONDecoder {
                 }
             }
             //extract [failOnErrors] attribute from Json string
-            failOnErrorsAttribute = decodedObject.optInt(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS);
+            failOnErrorsAttribute = decodedObject.optInt(SCIMConstants.OperationalConstants.FAIL_ON_ERRORS, -1);
+            if (failOnErrorsAttribute < 0) {
+                failOnErrorsAttribute = null;
+            }
 
             bulkRequestDataObject.setFailOnErrors(failOnErrorsAttribute);
             bulkRequestDataObject.setOperationRequests(endpointOperationList);

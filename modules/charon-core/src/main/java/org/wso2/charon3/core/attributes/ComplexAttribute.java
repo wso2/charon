@@ -15,8 +15,6 @@
  */
 package org.wso2.charon3.core.attributes;
 
-import org.wso2.charon3.core.exceptions.CharonException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +60,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @param attributeName
      * @return Attribute
      */
-    public Attribute getSubAttribute(String attributeName) throws CharonException {
+    public Attribute getSubAttribute(String attributeName) {
         if (subAttributesList.containsKey(attributeName)) {
             return subAttributesList.get(attributeName);
         } else {
@@ -75,7 +73,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         subAttributesList.clear();
     }
 

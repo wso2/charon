@@ -31,7 +31,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     private static final long serialVersionUID = 6106269076155338045L;
 
     /**
-     * The core schema for the resource type is identified using the following schemas URIs
+     * The core schema for the resource type is identified using the following schemas URIs.
      * e.g.: for 'User' - urn:ietf:params:scim:schemasList:core:2.0:User.
      */
     private List<String> schemasList;
@@ -130,7 +130,7 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     }
 
     /**
-     * schema list contains the specified schema?
+     * schema list contains the specified schema?.
      *
      * @param schema
      * @return

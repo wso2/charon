@@ -22,7 +22,7 @@ import org.wso2.charon3.core.testsetup.FileReferences;
 import java.util.List;
 
 /**
- * @author Pascal Knueppel
+ * @author Pascal Knueppel.
  */
 public class JSONDecoderTest implements FileReferences {
 
@@ -151,7 +151,7 @@ public class JSONDecoderTest implements FileReferences {
     }
 
     /**
-     * this method will show that the enterprise user is resolved correctly if enterprise details are found within
+     * this method will show that the enterprise user is resolved correctly if enterprise details are found within.
      * the user resource representation.
      */
     @Test

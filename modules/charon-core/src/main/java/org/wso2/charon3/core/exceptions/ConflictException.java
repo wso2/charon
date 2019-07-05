@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * The specified version number does not match the resource's
+ * The specified version number does not match the resource's.
  "latest version number, or a service provider refused to create a new, duplicate resource.
  */
 public class ConflictException extends AbstractCharonException {

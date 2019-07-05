@@ -17,23 +17,23 @@ public class ScimFeature {
      */
     private boolean supported;
 
-    public ScimFeature () {
+    public ScimFeature() {
     }
 
-    public ScimFeature (boolean supported) {
+    public ScimFeature(boolean supported) {
         this.supported = supported;
     }
 
-    public boolean isSupported () {
+    public boolean isSupported() {
         return supported;
     }
 
-    public void setSupported (boolean supported) {
+    public void setSupported(boolean supported) {
         this.supported = supported;
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -45,12 +45,12 @@ public class ScimFeature {
     }
 
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return Objects.hash(supported);
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "ScimFeature{" + "supported=" + supported + '}';
     }
 }

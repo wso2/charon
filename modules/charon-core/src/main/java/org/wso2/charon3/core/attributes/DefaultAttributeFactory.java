@@ -18,7 +18,6 @@ package org.wso2.charon3.core.attributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
@@ -40,7 +39,7 @@ public class DefaultAttributeFactory {
      * @return Attribute
      */
     public static Attribute createAttribute(AttributeSchema attributeSchema, AbstractAttribute attribute)
-        throws CharonException, BadRequestException {
+        throws BadRequestException {
 
         attribute.setMutability(attributeSchema.getMutability());
         attribute.setRequired(attributeSchema.getRequired());
@@ -68,7 +67,7 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * Once identified that constructing attribute is a simple attribute & related attribute schema is a
+     * Once identified that constructing attribute is a simple attribute & related attribute schema is a.
      * SCIMAttributeSchema, perform attribute construction operations specific to Simple Attribute.
      *
      * @param attributeSchema
@@ -91,7 +90,7 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * When an attribute is created with value and data type provided,
+     * When an attribute is created with value and data type provided,.
      * we need to validate whether they are matching.
      *
      * @param attributeValue
