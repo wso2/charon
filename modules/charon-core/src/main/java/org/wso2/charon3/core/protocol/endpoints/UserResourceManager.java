@@ -268,7 +268,7 @@ public class UserResourceManager extends AbstractResourceManager {
             if (sortOrder != null) {
                 if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
                         || sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
-                    String error = " Invalid sortOrder value is specified";
+                    String error = "Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
@@ -380,14 +380,14 @@ public class UserResourceManager extends AbstractResourceManager {
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
 
             //check whether provided sortOrder is valid or not
             if (searchRequest.getSortOder() != null) {
                 if (!(searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING)
                         || searchRequest.getSortOder().equalsIgnoreCase(SCIMConstants.OperationalConstants
                         .DESCENDING))) {
-                    String error = " Invalid sortOrder value is specified";
+                    String error = "Invalid sortOrder value is specified";
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
