@@ -25,8 +25,6 @@ import io.swagger.annotations.Contact;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.License;
 import io.swagger.annotations.SwaggerDefinition;
-
-
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.FormatNotSupportedException;
 import org.wso2.charon3.core.extensions.ResourceHandler;
@@ -45,11 +43,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
 import javax.ws.rs.core.Response;
 
 /**
- * Endpoints of the GroupResource in micro service. This will basically captures
+ * Endpoints of the GroupResource in micro service. This will basically capture
  * the requests from the remote clients and hand over the request to respective operation performer.
  *
  */

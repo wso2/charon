@@ -4,29 +4,39 @@ import org.hamcrest.Matchers;
 import org.hamcrest.junit.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.BulkFeature;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon3.core.setup.CharonInitializer;
 import org.wso2.charon3.core.testsetup.FileReferences;
+import org.wso2.charon3.core.utils.codeutils.BulkRequestBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * .
  * <br><br>
  * created at: 03.04.2019
+ *
  * @author Pascal Knüppel
  */
 class BulkResourceManagerTest extends CharonInitializer implements FileReferences {
@@ -183,6 +193,77 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
             MatcherAssert.assertThat(bulkResponseContent.getScimResponse().getResponseMessage(),
                 Matchers.emptyString());
         });
+    }
+
+    @TestFactory
+    public List<DynamicTest> testHandleBulkRequestWithTooManyErrors()
+        throws InternalErrorException, BadRequestException, CharonException {
+
+        List<DynamicTest> dynamicTestList = new ArrayList<>();
+
+        String userString = readResourceFile(CREATE_ENTERPRISE_USER_MAXILEIN_FILE);
+        User user = JSON_DECODER.decodeResource(userString, SCIMSchemaDefinitions.SCIM_USER_SCHEMA, new User());
+        String groupString = readResourceFile(CREATE_GROUP_BREMEN_FILE);
+        Group group = JSON_DECODER.decodeResource(groupString, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA, new Group());
+
+        Function<Integer, String> getBulkRequest = failOnErrors -> {
+            return BulkRequestBuilder.builder(failOnErrors)
+                .next()
+                .setMethod(BulkRequestBuilder.Method.POST)
+                .setPath(SCIMConstants.USER_ENDPOINT)
+                .setData(user)
+                .next()
+                .setMethod(BulkRequestBuilder.Method.POST)
+                .setPath(SCIMConstants.GROUP_ENDPOINT)
+                .setData(group)
+                .build();
+        };
+
+        dynamicTestList.add(DynamicTest.dynamicTest("accept 0 error", () -> {
+            String bulkRequest = getBulkRequest.apply(0);
+            Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
+            SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
+            Assertions.assertEquals(ResponseCodeConstants.CODE_BAD_REQUEST, scimResponse.getResponseStatus());
+        }));
+
+        dynamicTestList.add(DynamicTest.dynamicTest("accept 1 error and give 1 error", () -> {
+            String bulkRequest = getBulkRequest.apply(1);
+            Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
+            SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
+            Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+            BulkResponseData bulkResponseData = JSON_DECODER.decodeBulkResponseData(scimResponse.getResponseMessage());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(0).getScimResponse().getResponseStatus());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_CREATED,
+                bulkResponseData.getOperationResponseList().get(1).getScimResponse().getResponseStatus());
+        }));
+
+        dynamicTestList.add(DynamicTest.dynamicTest("accept 2 error and give 2 error", () -> {
+            String bulkRequest = getBulkRequest.apply(2);
+            Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
+            Mockito.doThrow(new CharonException()).when(groupResourceHandler).create(Mockito.any(), Mockito.any());
+            SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
+            Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+            BulkResponseData bulkResponseData = JSON_DECODER.decodeBulkResponseData(scimResponse.getResponseMessage());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(0).getScimResponse().getResponseStatus());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(1).getScimResponse().getResponseStatus());
+        }));
+
+        dynamicTestList.add(DynamicTest.dynamicTest("accept 1 error and give 2 error", () -> {
+            String bulkRequest = getBulkRequest.apply(1);
+            Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
+            Mockito.doThrow(new CharonException()).when(groupResourceHandler).create(Mockito.any(), Mockito.any());
+            SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
+            Assertions.assertEquals(ResponseCodeConstants.CODE_BAD_REQUEST, scimResponse.getResponseStatus());
+        }));
+
+        return dynamicTestList;
     }
 
     /**

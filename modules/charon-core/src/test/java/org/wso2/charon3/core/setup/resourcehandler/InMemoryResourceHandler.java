@@ -17,7 +17,6 @@ import java.util.Map;
  * .
  * <br><br>
  * created at: 03.04.2019
- *
  * @param <R>
  * @author Pascal Knüppel
  */
@@ -47,7 +46,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public R get(String id, Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
@@ -59,7 +58,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void delete(String id) throws AbstractCharonException {
@@ -71,7 +70,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public List<Object> listResources(Node node,
@@ -96,7 +95,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public R update(R resourceUpdate, Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
@@ -110,7 +109,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
     }
 
     /**
-     * @return the resource type that is represented by this handler (used for error messages)
+     * @return the resource type that is represented by this handler (used for error messages).
      */
     protected abstract String getResourceType();
 }

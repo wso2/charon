@@ -44,7 +44,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
 
 /**
- * Represents the User object which is a collection of attributes defined by SCIM User-schema.
+ * Represents the User object which is a collection of attributes defined by SCIM User-schema..
  */
 public class User extends AbstractSCIMObject {
 

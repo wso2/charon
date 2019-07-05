@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * The client is directed to repeat the same HTTP request at the location identified.
+ * The client is directed to repeat the same HTTP request at the location identified..
  */
 public class TemporyRedirectException extends AbstractCharonException {
 

@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This encodes the in the json format.
+ * This encodes the in the json format..
  */
 
 public class JSONEncoder {

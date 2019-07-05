@@ -24,7 +24,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
 /**
  * author Pascal Knueppel <br> created at: 17.06.2019 - 19:20 <br>
  * <br>
- * this class represents a SCIM representation. It should only be used on Client side to decode the service provider
+ * this class represents a SCIM configuration. It should only be used on Client side to decode the service provider
  * configuration of a SCIM provider. To configure the provider side use the {@link CharonConfiguration}
  */
 public class ScimConfiguration extends AbstractSCIMObject {

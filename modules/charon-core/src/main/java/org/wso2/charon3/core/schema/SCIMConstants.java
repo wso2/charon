@@ -30,9 +30,10 @@ public class SCIMConstants {
     public static final String MESSAGE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0";
 
     public static final String SERVICE_PROVIDER_CONFIG_SCHEMA_URI =
-        "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
+            "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig";
     public static final String RESOURCE_TYPE_SCHEMA_URI = CORE_SCHEMA_URI + ":ResourceType";
     public static final String SEARCH_SCHEMA_URI = MESSAGE_SCHEMA_URI + ":SearchRequest";
+    public static final String BULK_REQUEST_URI = MESSAGE_SCHEMA_URI + ":BulkRequest";
     public static final String BULK_RESPONSE_URI = MESSAGE_SCHEMA_URI + ":BulkResponse";
     public static final String SCHEMA_URI = CORE_SCHEMA_URI + ":Schema";
 
@@ -41,10 +42,6 @@ public class SCIMConstants {
     public static final String JSON = "json";
 
     public static final String APPLICATION_JSON = "application/scim+json";
-    @Deprecated
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-    @Deprecated
-    public static final String DATE_TIME_FORMAT2 = "yyyy-MM-dd'T'HH:mm:ss";
 
     /*Resource names as defined in SCIM Schema spec*/
     public static final String USER = "User";
@@ -106,7 +103,7 @@ public class SCIMConstants {
         public static final String REF = "$ref";
         public static final String VALUE = "value";
 
-        /*******Attributes descriptions of the attributes found in Common Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Common Schema.************** */
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
             "Provider.";
@@ -254,7 +251,7 @@ public class SCIMConstants {
         public static final String DIRECT_MEMBERSHIP = "direct";
         public static final String INDIRECT_MEMBERSHIP = "indirect";
 
-        /*******URIs of sub and multivalued attributes.**************/
+        /* ******URIs of sub and multivalued attributes.************* */
 
         public static final String EMAILS_VALUE_URI = CORE_SCHEMA_URI + ":" + USER + ":emails.value";
         public static final String EMAILS_DISPLAY_URI = CORE_SCHEMA_URI + ":" + USER + ":emails.display";
@@ -312,7 +309,7 @@ public class SCIMConstants {
         public static final String X509CERTIFICATES_PRIMARY_URI =
             CORE_SCHEMA_URI + ":" + USER + ":x509certificates.primary";
 
-        /*******Attributes descriptions of the attributes found in User Schema.***************/
+        /* ******Attributes descriptions of the attributes found in User Schema.************** */
 
         public static final String USERNAME_DESC = "A service provider's unique identifier for the user, typically\n" +
             "used by the user to directly authenticate to the service provider.Each User MUST include a non-empty" +
@@ -541,7 +538,7 @@ public class SCIMConstants {
         public static final String DISPLAY = "display";
         public static final String TYPE = "type";
 
-        /*******Attributes descriptions of the attributes found in Group Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Group Schema.************** */
 
         public static final String DISPLAY_NAME_DESC = "A human-readable name for the Group. REQUIRED.";
         public static final String MEMBERS_DESC = "A list of members of the Group.";
@@ -551,7 +548,7 @@ public class SCIMConstants {
         public static final String DISPLAY_DESC = "A human-readable name for the Member";
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
 
-        /*******URIs of sub and multivalued attributes.**************/
+        /* ******URIs of sub and multivalued attributes.************* */
         public static final String VALUE_URI = CORE_SCHEMA_URI + ":" + GROUP + ":members.value";
         public static final String REF_URI = CORE_SCHEMA_URI + ":" + GROUP + ":members.$ref";
         public static final String DISPLAY_URI = CORE_SCHEMA_URI + ":" + GROUP + ":members.display";
@@ -625,7 +622,7 @@ public class SCIMConstants {
             CORE_SCHEMA_URI + ":" + SERVICE_PROVIDER_CONFIG + ":authenticationSchemes.documentationUri";
 
 
-        /*******Attributes descriptions of the attributes found in Service Provider Config Schema.***************/
+        /* ******Attributes descriptions of the attributes found in Service Provider Config Schema.************** */
 
         public static final String DOCUMENTATION_URI_DESC = "An HTTP-addressable URL pointing to the service " +
             "provider's human-consumable help documentation.";

@@ -434,7 +434,7 @@ public class ResourceManagerUtil {
     public static int processStartIndex(String startIndexStr) throws BadRequestException {
 
         int startIndex = 1;
-        if (startIndexStr == null || startIndexStr.isEmpty() || !startIndexStr.matches("\\d+")) {
+        if (startIndexStr == null || startIndexStr.trim().isEmpty() || !startIndexStr.matches("\\d+")) {
             return startIndex;
         }
 

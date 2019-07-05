@@ -107,7 +107,7 @@ public class SCIMUserSchemaExtensionBuilder {
                 extensionConfig.put(attrubteConfig.getName(), attrubteConfig);
 
                 /**
-                 * NOTE: Assume last config is the root config
+                 * NOTE: Assume last config is the root config.
                  */
                 if (index == attributeConfigArray.length() - 1) {
                     extensionRootAttributeName = attrubteConfig.getName();

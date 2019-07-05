@@ -39,7 +39,7 @@ import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.V
 import static org.wso2.charon3.core.schema.SCIMConstants.GroupSchemaConstants.MEMBERS;
 
 /**
- * Represents the Group object which is a collection of attributes defined by SCIM Group-schema.
+ * Represents the Group object which is a collection of attributes defined by SCIM Group-schema..
  */
 public class Group extends AbstractSCIMObject {
 

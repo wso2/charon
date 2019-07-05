@@ -16,7 +16,7 @@
 package org.wso2.charon3.core.config;
 
 /**
- * This class represents the charon SCIM configurations. In order
+ * This class represents the charon SCIM configurations In order.
  */
 public final class CharonConfiguration extends ScimConfiguration {
 
@@ -28,7 +28,7 @@ public final class CharonConfiguration extends ScimConfiguration {
     private static final CharonConfiguration CHARON_CONFIGURATION = new CharonConfiguration();
 
     /**
-     * private default constructor
+     * private default constructor.
      */
     private CharonConfiguration() {
         setPatch(null);

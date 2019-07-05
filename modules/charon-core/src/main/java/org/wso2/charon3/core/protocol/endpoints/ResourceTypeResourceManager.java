@@ -40,7 +40,7 @@ import static org.wso2.charon3.core.schema.ServerSideValidator.validateResourceT
 import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
- * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of
+ * The "RESOURCE_TYPES" schema specifies the metadata about a resource type. This is the spec compatible version of.
  * ResourceTypeResourceManager
  */
 public class ResourceTypeResourceManager extends ResourceManager<ResourceType> {

@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * Authorization failure.
+ * Authorization failure..
  */
 public class UnauthorizedException extends AbstractCharonException {
 

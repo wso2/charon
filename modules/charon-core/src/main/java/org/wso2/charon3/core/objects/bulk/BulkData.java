@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ *.
  */
 public class BulkData {
     private List<String> schemas;

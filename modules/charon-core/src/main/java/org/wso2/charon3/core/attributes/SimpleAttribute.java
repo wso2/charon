@@ -19,7 +19,6 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
 import java.time.Instant;
-import java.util.Date;
 
 /**
  * This class is a blueprint of SimpleAttribute defined in SCIM Core Schema Spec.
@@ -89,17 +88,6 @@ public class SimpleAttribute extends AbstractAttribute {
         } else {
             throw new CharonException("Mismatch in requested data type");
         }
-    }
-
-    /*
-     * return the date type of the attribute value
-     * @return
-     * @throws CharonException
-     */
-    @Deprecated
-    public Date getDateValue() throws CharonException {
-        Instant instant = getInstantValue();
-        return instant != null ? new Date(instant.toEpochMilli()) : null;
     }
 
     /*

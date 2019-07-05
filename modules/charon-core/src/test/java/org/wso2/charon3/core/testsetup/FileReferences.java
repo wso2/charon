@@ -49,7 +49,7 @@ public interface FileReferences {
     public static final String CREATE_USER_MAXILEIN_FILE = BASE_PATH + "user/create-user-maxilein.json";
 
     /**
-     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an
+     * the resource file path to the json structure with a creation representation of an user named "maxilein" with an.
      * enterprise extension.
      */
     public static final String CREATE_ENTERPRISE_USER_MAXILEIN_FILE =

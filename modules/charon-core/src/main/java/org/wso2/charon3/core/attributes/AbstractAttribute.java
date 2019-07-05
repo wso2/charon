@@ -18,7 +18,7 @@ package org.wso2.charon3.core.attributes;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
 /**
- * This class abstracts out the common characteristics of different types of attributes defined in
+ * This class abstracts out the common characteristics of different types of attributes defined in.
  * SCIM Core Schema Spec.
  */
 public abstract class AbstractAttribute implements Attribute {
