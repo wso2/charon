@@ -79,7 +79,7 @@ public abstract class InMemoryResourceHandler<R extends AbstractSCIMObject> impl
                                       String sortBy,
                                       String sortOrder,
                                       String domainName,
-                                      Map<String, Boolean> requiredAttributes) throws AbstractCharonException {
+                                      Map<String, Boolean> requiredAttributes) {
         List<Object> resources = new ArrayList<>(resourceStore.values());
         if (resources.isEmpty()) {
             return resources;

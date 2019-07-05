@@ -372,8 +372,7 @@ public class ResourceManagerUtil {
      * @param attributeName
      * @throws CharonException
      */
-    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName)
-        throws CharonException {
+    private static void removeAttributesFromList(List<AttributeSchema> attributeSchemaList, String attributeName) {
         List<AttributeSchema> tempList = (List<AttributeSchema>) CopyUtil.deepCopy(attributeSchemaList);
         int count = 0;
         for (AttributeSchema attributeSchema : tempList) {
