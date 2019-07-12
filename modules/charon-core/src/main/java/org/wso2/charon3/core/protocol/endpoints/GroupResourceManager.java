@@ -468,7 +468,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             //create the search request object
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processCount(searchRequest.getStartIndexStr()));
+            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
 
             if (searchRequest.getSchema() != null && !searchRequest.getSchema().equals(SCIMConstants
                     .SEARCH_SCHEMA_URI)) {

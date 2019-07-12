@@ -269,4 +269,18 @@ public class ScimAddress {
         result = 31 * result + (primary ? 1 : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ScimAddress{" +
+                 "formatted='" + formatted + '\'' +
+                 ", type='" + type + '\'' +
+                 ", streetAddress='" + streetAddress + '\'' +
+                 ", locality='" + locality + '\'' +
+                 ", region='" + region + '\'' +
+                 ", postalCode='" + postalCode + '\'' +
+                 ", country='" + country + '\'' +
+                 ", primary=" + primary +
+                 '}';
+    }
 }
