@@ -24,6 +24,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.aParser.Parser;
+import org.wso2.charon3.core.aParser.ParserException;
+import org.wso2.charon3.core.aParser.Rule;
+import org.wso2.charon3.core.aParser.Rule_valuePath;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -54,7 +58,7 @@ import java.util.Map;
  */
 public class PatchOperationUtil {
 
-    public static final String OPEN_SQUARE_BRACKET = "[";
+    public static final String PATH_RULE_NAME = "PATH";
 
     private static final Logger log = LoggerFactory.getLogger(PatchOperationUtil.class);
 
@@ -660,28 +664,57 @@ public class PatchOperationUtil {
             AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema, String path)
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
-        if (path.contains(OPEN_SQUARE_BRACKET)) {
-            // Filter condition has been provided in the path.
-            try {
-                doPatchAddOnPathWithFilters(operation, decoder, oldResource, schema);
-            } catch (JSONException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Input JSON object/array is invalid, " + operation.getValues().toString());
+        try {
+            Rule rule = Parser.parse(PATH_RULE_NAME, operation.getPath());
+
+            if (isFilterConditionProvidedInPath(rule)) {
+                // Filter condition has been provided in the path.
+                try {
+                    doPatchAddOnPathWithFilters(operation, decoder, oldResource, schema);
+                } catch (JSONException e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Input JSON object/array is invalid, " + operation.getValues().toString());
+                    }
+                    throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
                 }
-                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            } else {
+                // Provided path doesn't contain filter condition.
+                doPatchAddOnPathWithoutFilters(oldResource, schema, decoder, operation, path);
             }
+        } catch (ParserException e) {
+            throw new BadRequestException(
+                    ("Path value is not a valid syntax according to the SCIM PATCH PATH Rule. path: " + operation
+                            .getPath()), ResponseCodeConstants.INVALID_SYNTAX);
+
+        }
+    }
+
+    /**
+     * Return true when the path contains filter condition(s), else return false. Normally filters surrounded by
+     * square bracket.
+     * According to SCIM spec Rule: valuePath = attributePath "[" valueFilter "]";
+     * Example path with filters: addresses[type eq \"work\"]
+     * Example path without filter: name.familyName
+     *
+     * @param rule
+     * @return
+     */
+    private static boolean isFilterConditionProvidedInPath(Rule rule) {
+
+        if (rule.rules.get(0).rules.size() == 4 && rule.rules.get(0) instanceof Rule_valuePath) {
+            return true;
         } else {
-            doPatchAddOnPathWithoutFilters(oldResource, schema, decoder, operation, path);
+            return false;
         }
     }
 
     /**
      * Perform patch add on the resource according to the specified filter condition provided in the path.
      *
-     * @param operation   Operation to be performed.
-     * @param decoder     JSON decoder.
-     * @param oldResource Original resource SCIM object.
-     * @param schema      SCIM resource schema.
+     * @param operation             Operation to be performed.
+     * @param decoder               JSON decoder.
+     * @param oldResource           Original resource SCIM object.
+     * @param schema                SCIM resource schema.
      * @throws NotImplementedException
      * @throws BadRequestException
      * @throws CharonException
@@ -729,19 +762,16 @@ public class PatchOperationUtil {
             path=AttributeX, as examples it can be path=members or path=nickname.
             if attribute parts length is two, we consider this as a level two case, where path is looks like
             path=AttributeX.subAttributeY, as examples it can be path=name.familyName.
-            if attribute parts length is three, we consider this as a level three case, where path is looks like
-            path=attributeX.subAttributeY.subSubAttributeZ.
-            if attribute parts length is greater than 3, throw NotImplementedException.
+            According to the SCIM specification max one sub attribute is allowed for a SCIM attribute. Hence if
+            attribute parts length is greater than 2, throw BadRequestException.
              */
             if (attributeParts.length == 1) {
                 doPatchAddOnPathWithoutFiltersForLevelOne(oldResource, schema, decoder, operation, attributeParts[0]);
             } else if (attributeParts.length == 2) {
                 doPatchAddOnPathWithoutFiltersForLevelTwo(oldResource, schema, decoder, operation, attributeParts);
-            } else if (attributeParts.length == 3) {
-                doPatchAddOnPathWithoutFiltersForLevelThree(oldResource, schema, decoder, operation, attributeParts);
             } else {
-                throw new NotImplementedException("Provided path is not supported by the system. "
-                        + "Max allowed path is path=AttributeX.subAttributeY.subSubAttributeZ.");
+                throw new BadRequestException(("According to SCIM specification max one sub attribute can be allowed "
+                        + "for SCIM attribute. path: " + operation.getPath()), ResponseCodeConstants.NO_TARGET);
             }
         } else {
             throw new BadRequestException(("Path is empty. path: " + operation.getPath()),
@@ -1050,141 +1080,6 @@ public class PatchOperationUtil {
             throw new BadRequestException(
                     "Attribute: " + attribute.getName() + " is not a instance of ComplexAttribute.",
                     ResponseCodeConstants.INVALID_SYNTAX);
-        }
-    }
-
-    /**
-     * Perform patch add operation for the path which doesn't contain the filters but considered as level three.
-     * As an example attributeX.subAttributeY.subSubAttributeZ.
-     *
-     * @param oldResource
-     * @param schema
-     * @param decoder
-     * @param operation
-     * @param attributeParts
-     * @throws BadRequestException
-     * @throws CharonException
-     * @throws InternalErrorException
-     */
-    private static void doPatchAddOnPathWithoutFiltersForLevelThree(AbstractSCIMObject oldResource,
-            SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts)
-            throws BadRequestException, CharonException {
-
-        if (attributeParts.length != 3) {
-            throw new CharonException("attributeParts length should be three.");
-        }
-
-        Attribute attribute = oldResource.getAttribute(attributeParts[0]);
-        if (attribute != null) {
-            Attribute subAttribute = attribute.getSubAttribute(attributeParts[1]);
-            if (subAttribute != null) {
-                updateSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(schema, decoder, operation,
-                        attributeParts, subAttribute);
-            } else {
-                // Sub attribute is null (i.e attributeParts[0]) so create and add it.
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("Sub attribute: %s is not found in the resource so create newly and add it",
-                            attributeParts[1]));
-                }
-                createSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(schema, operation, attributeParts,
-                        (ComplexAttribute) attribute);
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Attribute: %s is not found in the resource so create newly and add it",
-                        attributeParts[0]));
-            }
-            createAttributeOnResourceWithPathWithoutFiltersForLevelThree(oldResource, schema, operation,
-                    attributeParts);
-        }
-    }
-
-    private static void updateSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(SCIMResourceTypeSchema schema,
-            JSONDecoder decoder, PatchOperation operation, String[] attributeParts, Attribute subAttribute)
-            throws CharonException, BadRequestException {
-
-        if (attributeParts.length != 3) {
-            throw new CharonException("attributeParts length should be three.");
-        }
-
-        if (subAttribute.getMultiValued()) {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Sub attribute: %s is multi-valued complex attribute", subAttribute.getName()));
-            }
-            if (subAttribute instanceof MultiValuedAttribute) {
-                List<Attribute> subValues = ((MultiValuedAttribute) subAttribute).getAttributeValues();
-                if (subValues != null) {
-                    for (Attribute subValue : subValues) {
-                        Attribute subSubAttribute = subValue.getSubAttribute(attributeParts[2]);
-                        if (subSubAttribute != null) {
-                            updateSubSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(schema, decoder,
-                                    operation, attributeParts, (ComplexAttribute) subValue, subSubAttribute);
-                        } else {
-                            // Sub sub attribute (i.e attributeParts[2]) is null so create and add it.
-                            createSubSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(schema, decoder,
-                                    operation, attributeParts, (ComplexAttribute) subValue);
-                        }
-                    }
-                }
-            } else {
-                throw new BadRequestException(
-                        "Attribute: " + subAttribute.getName() + " is not a instance of MultiValuedAttribute.",
-                        ResponseCodeConstants.INVALID_SYNTAX);
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Sub attribute: %s is complex attribute but not multi-valued.",
-                        subAttribute.getName()));
-            }
-            Attribute subSubAttribute = subAttribute.getSubAttribute(attributeParts[2]);
-
-            if (subSubAttribute != null) {
-                if (subSubAttribute instanceof SimpleAttribute) {
-                    ((SimpleAttribute) subSubAttribute).setValue(operation.getValues());
-                } else {
-                    throw new BadRequestException(
-                            "Attribute: " + subSubAttribute.getName() + " is not a instance of SimpleAttribute.",
-                            ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            } else {
-                // Sub sub attribute (i.e. attributeParts[2]) is null so create and add it.
-                if (log.isDebugEnabled()) {
-                    log.debug(String.format("Sub sub attribute: %s is not found in resource so create and add it",
-                            attributeParts[2]));
-                }
-                createSubSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(schema, decoder, operation,
-                        attributeParts, (ComplexAttribute) subAttribute);
-            }
-        }
-    }
-
-    private static void updateSubSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(
-            SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts,
-            ComplexAttribute subValue, Attribute subSubAttribute) throws BadRequestException, CharonException {
-
-        if (attributeParts.length != 3) {
-            throw new CharonException("attributeParts length should be three.");
-        }
-
-        AttributeSchema subSubAttributeSchema = SchemaUtil
-                .getAttributeSchema(attributeParts[0] + "." + attributeParts[1] + "." + attributeParts[2], schema);
-
-        if (subSubAttributeSchema != null) {
-            checkMutability(subSubAttribute);
-            if (subSubAttribute.getMultiValued()) {
-                JSONArray jsonArray = getJsonArray(operation);
-                MultiValuedAttribute multiValuedAttribute = decoder
-                        .buildPrimitiveMultiValuedAttribute(subSubAttributeSchema, jsonArray);
-                subValue.setSubAttribute(multiValuedAttribute);
-            } else {
-                SimpleAttribute simpleAttribute = decoder
-                        .buildSimpleAttribute(subSubAttributeSchema, operation.getValues());
-                subValue.removeSubAttribute(attributeParts[2]);
-                subValue.setSubAttribute(simpleAttribute);
-            }
-        } else {
-            throw new BadRequestException("No such attribute with the name : " + attributeParts[2],
-                    ResponseCodeConstants.NO_TARGET);
         }
     }
 

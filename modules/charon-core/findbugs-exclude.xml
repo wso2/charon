@@ -1,0 +1,5 @@
+<FindBugsFilter>
+    <Match>
+        <Package name="org.wso2.charon3.core.aParser" />
+    </Match>
+</FindBugsFilter>
