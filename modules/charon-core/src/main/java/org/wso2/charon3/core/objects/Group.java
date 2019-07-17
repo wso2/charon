@@ -137,12 +137,12 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set a member to the group
-     * @param value
-     * @param display
-     * @throws BadRequestException
-     * @throws CharonException
+     * This method used to add member (user) to a group. According to the SCIM specification need to add ref
+     * attribute as well along with display and value. Hence deprecated this method.
+     *
+     * @deprecated use {@link #setMember(User user)} instead.
      */
+    @Deprecated
     public void setMember(String value, String display) throws BadRequestException, CharonException {
         setMember(value, display, null, null);
     }
@@ -156,7 +156,6 @@ public class Group extends AbstractSCIMObject {
      * @throws BadRequestException
      * @throws CharonException
      */
-    @Deprecated
     public void setMember(String value, String display, String ref, String type)
            throws BadRequestException, CharonException {
         if (!isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {

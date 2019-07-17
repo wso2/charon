@@ -710,14 +710,13 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the associated groups of the user
+     * This method used to add group details (attributes display and value) of a user.
+     * According to the SCIM specification need to add ref attribute as well along with display and value. Hence
+     * deprecated this method.
      *
-     * @param type
-     * @param value
-     * @param display
-     * @throws CharonException
-     * @throws BadRequestException
+     * @deprecated use {@link #setGroup(String type, Group group)} instead.
      */
+    @Deprecated
     public void setGroup(String type,
                          String value,
                          String display) throws CharonException, BadRequestException {
@@ -764,7 +763,6 @@ public class User extends AbstractSCIMObject {
         }
     }
 
-    @Deprecated
     private void setGroup(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
 
         MultiValuedAttribute groupsAttribute;
@@ -784,6 +782,7 @@ public class User extends AbstractSCIMObject {
 
     /**
      * Set the associated groups of the user.
+     * According to the SCIM specification need to add display, value and ref attributes.
      *
      * @param type
      * @param group
