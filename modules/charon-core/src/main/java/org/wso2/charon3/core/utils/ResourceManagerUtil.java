@@ -398,7 +398,7 @@ public class ResourceManagerUtil {
      */
     public static int processCount(String countStr) throws BadRequestException {
 
-        if (countStr == null || countStr.isEmpty() || !countStr.matches("\\d+")) {
+        if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
             return CharonConfiguration.getInstance().getFilter().getMaxResults();
         }
 
