@@ -18,9 +18,11 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
  * this class representation can be used to easily add a multi valued complex type representation like an email
- * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class MultiValuedComplexType {
 
@@ -34,7 +36,7 @@ public class MultiValuedComplexType {
      * preferred mailing address or the primary email address. The primary attribute value "true" MUST appear
      * no more than once. If not specified, the value of "primary" SHALL be assumed to be "false".
      */
-    private boolean primary;
+    private Boolean primary;
 
     /**
      * A human-readable name, primarily used for display purposes and having a mutability of "immutable".
@@ -59,17 +61,20 @@ public class MultiValuedComplexType {
 
     }
 
-    public MultiValuedComplexType(String type,
-                                  boolean primary,
-                                  String display,
-                                  String value,
-                                  String reference) {
+    public MultiValuedComplexType(String type, Boolean primary, String display, String value, String reference) {
 
         this.type = type;
         this.primary = primary;
         this.display = display;
         this.value = value;
         this.reference = reference;
+    }
+
+    /**
+     * @return true if the values of this complex type are all null
+     */
+    public boolean isEmpty() {
+        return type == null && primary == null && display == null && value == null && reference == null;
     }
 
     /**
@@ -93,13 +98,13 @@ public class MultiValuedComplexType {
      */
     public boolean isPrimary() {
 
-        return primary;
+        return primary == null ? false : primary;
     }
 
     /**
      * @see #primary
      */
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
 
         this.primary = primary;
     }
@@ -154,40 +159,20 @@ public class MultiValuedComplexType {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof MultiValuedComplexType)) {
             return false;
         }
-
         MultiValuedComplexType that = (MultiValuedComplexType) o;
-
-        if (primary != that.primary) {
-            return false;
-        }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
-            return false;
-        }
-        if (display != null ? !display.equals(that.display) : that.display != null) {
-            return false;
-        }
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-        return reference != null ? reference.equals(that.reference) : that.reference == null;
+        return Objects.equals(type, that.type) && Objects.equals(primary, that.primary) && Objects.equals(display,
+            that.display) && Objects.equals(value, that.value) && Objects.equals(reference, that.reference);
     }
 
     @Override
     public int hashCode() {
-
-        int result = type != null ? type.hashCode() : 0;
-        result = 31 * result + (primary ? 1 : 0);
-        result = 31 * result + (display != null ? display.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (reference != null ? reference.hashCode() : 0);
-        return result;
+        return Objects.hash(type, primary, display, value, reference);
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,9 +40,11 @@ import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.ResourceTypeSchema;
+import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
+import org.wso2.charon3.core.schema.SCIMResourceTypeExtensionSchema;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.utils.AttributeUtil;
 import org.wso2.charon3.core.utils.codeutils.FilterTreeManager;
@@ -63,6 +66,7 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
  * This decodes the json encoded resource string and create a SCIM object model according to the specification
@@ -78,22 +82,22 @@ public class JSONDecoder {
 
     }
 
-  /**
-   * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
-   * {@link ListedResource} object that holds the parsed objects
-   *
-   * @param scimResourceString the listed resource string
-   * @param resourceSchema the schema of the resource objects that should be present.
-   * @param scimObjectType the type of the scim resources
-   * @param <T> a {@link AbstractSCIMObject} type as {@link Group} or {@link User}
-   * @return the listed resource object
-   * @throws BadRequestException if the json could not be parsed
-   * @throws CharonException if a value of the json contains data in an unexpected format or type
-   */
+    /**
+     * decodes a string that should match the {@link SCIMConstants#LISTED_RESOURCE_CORE_SCHEMA_URI} scheme to
+     * {@link ListedResource} object that holds the parsed objects.
+     *
+     * @param scimResourceString the listed resource string
+     * @param resourceSchema     the schema of the resource objects that should be present.
+     * @param scimObjectType     the type of the scim resources
+     * @param <T>                a {@link AbstractSCIMObject} type as {@link Group} or {@link User}
+     * @return the listed resource object
+     * @throws BadRequestException if the json could not be parsed
+     * @throws CharonException     if a value of the json contains data in an unexpected format or type
+     */
     public <T extends AbstractSCIMObject> ListedResource decodeListedResource(String scimResourceString,
-                                                                                   ResourceTypeSchema resourceSchema,
-                                                                                   Class<T> scimObjectType)
-        throws BadRequestException, CharonException {
+                                                                              ResourceTypeSchema resourceSchema,
+                                                                              Class<T> scimObjectType)
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -104,11 +108,11 @@ public class JSONDecoder {
         }
 
         int totalResults = getIntValueFromJson(decodedJsonObj,
-                                               SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
+                SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS);
         int startIndex = getIntValueFromJson(decodedJsonObj,
-                                             SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
+                SCIMConstants.ListedResourceSchemaConstants.START_INDEX);
         int itemsPerPage = getIntValueFromJson(decodedJsonObj,
-                                               SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
+                SCIMConstants.ListedResourceSchemaConstants.ITEMS_PER_PAGE);
 
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
@@ -120,9 +124,9 @@ public class JSONDecoder {
         try {
             resources = decodedJsonObj.getJSONArray(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
         } catch (JSONException e) {
-          logger.debug("could not get '{}' from json structure, result is empty",
-                       SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
-          return listedResource;
+            logger.debug("could not get '{}' from json structure, result is empty",
+                    SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            return listedResource;
         }
 
         for (int i = 0; i < resources.length(); i++) {
@@ -131,13 +135,13 @@ public class JSONDecoder {
                 resource = resources.getJSONObject(i);
             } catch (JSONException e) {
                 logger.error("could not get '{}' from json structure",
-                             SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+                        SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
                 throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
             }
             try {
                 T abstractSCIMObject = decodeResource(resource.toString(),
-                                                      resourceSchema,
-                                                      scimObjectType.newInstance());
+                        resourceSchema,
+                        scimObjectType.newInstance());
                 listedResource.addResource(abstractSCIMObject);
             } catch (InternalErrorException | InstantiationException | IllegalAccessException e) {
                 throw new CharonException("could not create resource instance of type " + scimObjectType.getName(), e);
@@ -147,12 +151,12 @@ public class JSONDecoder {
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public AbstractCharonException decodeCharonException(String scimErrorString)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         JSONObject decodedJsonObj;
         try {
@@ -169,19 +173,19 @@ public class JSONDecoder {
 
         if (schema == null || !schema.equals(ResponseCodeConstants.ERROR_RESPONSE_SCHEMA_URI)) {
             throw new CharonException("given scim resource string does not seem to be an error. Expected scim error " +
-                "URI but got: '" + schema + "'");
+                    "URI but got: '" + schema + "'");
         }
 
         return new AbstractCharonException(httpStatusCode, detail, scimType);
     }
 
     /**
-     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}
+     * this method can be used to decode a scim response with the error schema into an {@link AbstractCharonException}.
      *
      * @return the decoded exception
      */
     public <T extends AbstractCharonException> T decodeCharonException(String scimErrorString, Class<T> exceptionType)
-        throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException {
 
         AbstractCharonException abstractCharonException = decodeCharonException(scimErrorString);
         T exception;
@@ -225,7 +229,7 @@ public class JSONDecoder {
     }
 
     /**
-     * retrieves the string value from the given {@link JSONObject}
+     * retrieves the string value from the given {@link JSONObject}.
      *
      * @param jsonObject the jsonObject that might hold a string-value under the given key
      * @param name       the name of the attribute in the json structure that should be retrieved as string
@@ -244,9 +248,10 @@ public class JSONDecoder {
 
 
     /**
-     * retrieves an int value from the given {@link JSONObject}
+     * retrieves an int value from the given {@link JSONObject}.
+     *
      * @param jsonObject the jsonObject that might hold an int-value under the given key
-     * @param name the name of the attribute in the json structure that should be retrieved as int
+     * @param name       the name of the attribute in the json structure that should be retrieved as int
      * @return the int value of the key
      * @throws CharonException if the value under the given key is not an int value
      */
@@ -276,6 +281,7 @@ public class JSONDecoder {
         try {
             //decode the string into json representation
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
+            scimObject = resolveExtensionAttributes(decodedJsonObj, resourceSchema, scimObject);
             //get the attribute schemas list from the schema that defines the given resource
             List<AttributeSchema> attributeSchemas = resourceSchema.getAttributesList();
 
@@ -283,6 +289,7 @@ public class JSONDecoder {
             for (int i = 0; i < resourceSchema.getSchemasList().size(); i++) {
                 scimObject.setSchema(resourceSchema.getSchemasList().get(i));
             }
+
             //iterate through the schema and extract the attributes.
             for (AttributeSchema attributeSchema : attributeSchemas) {
                 //obtain the user defined value for given key- attribute schema name
@@ -362,6 +369,44 @@ public class JSONDecoder {
             logger.error("json error in decoding the resource");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
+    }
+
+    /**
+     * this method will resolve the schema extensions of a resource and will add them to the translated resource.
+     *
+     * @param jsonObject     the json representation of the current scim resource
+     * @param resourceSchema the resource type definition to resolve the extension
+     * @param scimObject     the scim object that will receive the extension attributes
+     */
+    private <T extends AbstractSCIMObject> T resolveExtensionAttributes(JSONObject jsonObject,
+                                                                        ResourceTypeSchema resourceSchema,
+                                                                        T scimObject)
+            throws InternalErrorException, BadRequestException, CharonException {
+        for (SCIMResourceTypeExtensionSchema extension : resourceSchema.getExtensions()) {
+            String resourceString;
+            try {
+                resourceString = jsonObject.optString(extension.getSchema());
+            } catch (JSONException e) {
+                logger.debug(e.getMessage(), e);
+                continue;
+            }
+            if (StringUtils.isBlank(resourceString)) {
+                continue;
+            }
+            AbstractSCIMObject scimExtension = decodeResource(resourceString, extension, new AbstractSCIMObject());
+            final SCIMAttributeSchema scimAttributeSchema = extension.getAsAttributeSchema();
+            ComplexAttribute complexAttribute = new ComplexAttribute(scimAttributeSchema.getName());
+            Attribute extensionAttribute = DefaultAttributeFactory.createAttribute(scimAttributeSchema,
+                                                                                   complexAttribute);
+            ComplexAttribute complexExtension = (ComplexAttribute) extensionAttribute;
+
+            scimExtension.getAttributeList().forEach((s, attribute) -> {
+                rethrowConsumer(attr -> complexExtension.setSubAttribute((Attribute) attr)).accept(attribute);
+            });
+            scimObject.setSchema(scimAttributeSchema.getName());
+            scimObject.setAttribute(complexExtension);
+        }
+        return scimObject;
     }
 
     /*
@@ -445,7 +490,7 @@ public class JSONDecoder {
      * @return MultiValuedAttribute
      */
     public MultiValuedAttribute buildPrimitiveMultiValuedAttribute(AttributeSchema attributeSchema,
-                                                                    JSONArray attributeValues)
+                                                                   JSONArray attributeValues)
             throws CharonException, BadRequestException {
         try {
             MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute(attributeSchema.getName());
@@ -730,7 +775,7 @@ public class JSONDecoder {
             logger.error("json error in decoding the request");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
-        return  operationList;
+        return operationList;
     }
 
     public AbstractSCIMObject decode(String scimResourceString, SCIMResourceTypeSchema schema)
@@ -740,7 +785,7 @@ public class JSONDecoder {
             AbstractSCIMObject scimObject = null;
             if (schema.getSchemasList().contains(SCIMConstants.GROUP_CORE_SCHEMA_URI)) {
                 scimObject = (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new Group());
-            } else  {
+            } else {
                 scimObject = (AbstractSCIMObject) decodeResource(decodedJsonObj.toString(), schema, new User());
             }
             return scimObject;
@@ -878,7 +923,7 @@ public class JSONDecoder {
                         logger.error(error);
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
-                } else  {
+                } else {
                     setRequestData(requestType, requestMethod, requestVersion,
                             member, usersEndpointOperationList, groupsEndpointOperationList);
                 }

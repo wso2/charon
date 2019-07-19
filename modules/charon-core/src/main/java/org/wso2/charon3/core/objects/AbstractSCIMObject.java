@@ -43,10 +43,14 @@ import java.util.Map;
 public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
-    /**Collection of attributes which constitute this resource.*/
+    /**
+     * Collection of attributes which constitute this resource.
+     */
     protected Map<String, Attribute> attributeList = new HashMap<String, Attribute>();
 
-    /**List of schemas where the attributes of this resource, are defined.*/
+    /**
+     * List of schemas where the attributes of this resource, are defined.
+     */
     protected List<String> schemaList = new ArrayList<String>();
 
     /**
@@ -82,7 +86,8 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     public Map<String, Attribute> getAttributeList() {
-        return attributeList; }
+        return attributeList;
+    }
 
     public void setSchema(String schema) {
         schemaList.add(schema);
@@ -114,7 +119,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
      * Deleting a sub attribute of complex attribute is the responsibility of an attribute holder.
      *
      * @param parentAttribute - name of the parent attribute
-     * @param childAttribute - name of the sub attribute
+     * @param childAttribute  - name of the sub attribute
      */
     public void deleteSubAttribute(String parentAttribute, String childAttribute) {
         if (attributeList.containsKey(parentAttribute)) {
@@ -142,7 +147,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
 
     /**
      * Deleting a sub value's sub attribute of multivalued attribute is the responsibility of an attribute holder.
-     *
      */
     public void deleteValuesSubAttribute(String attribute, String subAttribute, String subSimpleAttribute) {
         if (attributeList.containsKey(attribute)) {
@@ -216,16 +220,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         this.setAttribute(externalIdAttribute);
     }
 
-    /**
-     * set the created date and time of the resource
-     *
-     * @param createdDate
-     */
-    @Deprecated
-    public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
-        setCreatedInstant(createdDate == null ? null : createdDate.toInstant());
-    }
-
     /*
      * set the created date and time of the resource
      *
@@ -255,16 +249,6 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
             getMetaAttribute().setSubAttribute(createdDateAttribute);
 
         }
-    }
-
-    /**
-     * set the last modified date and time of the resource
-     *
-     * @param lastModifiedDate
-     */
-    @Deprecated
-    public void setLastModified(Date lastModifiedDate) throws CharonException, BadRequestException {
-        setLastModifiedInstant(lastModifiedDate == null ? null : lastModifiedDate.toInstant());
     }
 
     /*
@@ -298,8 +282,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * crete the meta attribute of the scim object
-     *
+     * crete the meta attribute of the scim object.
      */
     protected void createMetaAttribute() throws CharonException, BadRequestException {
         ComplexAttribute metaAttribute =
@@ -313,8 +296,9 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
             attributeList.put(SCIMConstants.CommonSchemaConstants.META, metaAttribute);
         }
     }
+
     /**
-     * Return the meta attribute
+     * Return the meta attribute.
      *
      * @return ComplexAttribute
      */
@@ -328,7 +312,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the location of the meta attribute
+     * set the location of the meta attribute.
      *
      * @param location
      */
@@ -358,7 +342,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
     }
 
     /**
-     * set the resourceType of the meta attribute
+     * set the resourceType of the meta attribute.
      *
      * @param resourceType
      */
@@ -392,10 +376,30 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         return created != null ? new Date(created.toEpochMilli()) : null;
     }
 
+    /**
+     * set the created date and time of the resource.
+     *
+     * @param createdDate
+     */
+    @Deprecated
+    public void setCreatedDate(Date createdDate) throws CharonException, BadRequestException {
+        setCreatedInstant(createdDate == null ? null : createdDate.toInstant());
+    }
+
     @Deprecated
     public Date getLastModified() throws CharonException {
         Instant lastModified = getLastModifiedInstant();
         return lastModified != null ? new Date(lastModified.toEpochMilli()) : null;
+    }
+
+    /**
+     * set the last modified date and time of the resource.
+     *
+     * @param lastModifiedDate
+     */
+    @Deprecated
+    public void setLastModified(Date lastModifiedDate) throws CharonException, BadRequestException {
+        setLastModifiedInstant(lastModifiedDate == null ? null : lastModifiedDate.toInstant());
     }
 
     public String toString() {
@@ -431,7 +435,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                         } else {
                             String multiValue = null;
 
-                            List<Attribute> subAttributeList  =
+                            List<Attribute> subAttributeList =
                                     ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
 
                             for (Attribute subValue : subAttributeList) {
@@ -443,7 +447,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                 for (Attribute subSubAttribute : subSubAttributes.values()) {
                                     if (subSubAttribute instanceof SimpleAttribute) {
 
-                                        complexSubValue =  simpleAttributeToString(complexSubValue,
+                                        complexSubValue = simpleAttributeToString(complexSubValue,
                                                 (Attribute) ((SimpleAttribute) subSubAttribute));
 
                                     } else if (subSubAttribute instanceof MultiValuedAttribute) {
@@ -465,7 +469,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                                         attribute.getName() + ":{" + subAttribute.getName() + ":[" + multiValue + "]}";
 
                             } else {
-                                scimObjectStringValue =  attribute.getName() +
+                                scimObjectStringValue = attribute.getName() +
                                         ":{" + subAttribute.getName() + ":[" + multiValue + "]}";
                             }
                         }
@@ -488,7 +492,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                             }
                         }
                         complexSubValue = subAttribute.getName() + ":{" + complexSubValue + "}";
-                        complexValue =  complexSubValue;
+                        complexValue = complexSubValue;
                     }
 
                 }
@@ -507,7 +511,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
                 if (multiValuedAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
                     String multiValue = null;
 
-                    List<Attribute> subAttributeList  = multiValuedAttribute.getAttributeValues();
+                    List<Attribute> subAttributeList = multiValuedAttribute.getAttributeValues();
 
                     for (Attribute subAttribute : subAttributeList) {
 
@@ -561,7 +565,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
         return scimObjectStringValue;
     }
 
-    private String simpleAttributeToString (String stringValue, Attribute attribute) {
+    private String simpleAttributeToString(String stringValue, Attribute attribute) {
         SimpleAttribute simpleAttribute = (SimpleAttribute) attribute;
         String simpleValue = simpleAttribute.getName() + " : " + simpleAttribute.getValue();
         if (stringValue != null) {
@@ -574,7 +578,7 @@ public class AbstractSCIMObject extends ScimAttributeAware implements SCIMObject
 
     private String multiValuedPrimitiveAttributeToString(List<Object> attributePrimitiveValues, String attributeName) {
         String complexValue = attributeName + ":[";
-        for (Object item  : attributePrimitiveValues) {
+        for (Object item : attributePrimitiveValues) {
             if (complexValue.equals(attributeName + "[")) {
                 complexValue = (String) item;
 

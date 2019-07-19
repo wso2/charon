@@ -22,6 +22,7 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.VALUE;
 import static org.wso2.charon3.core.schema.SCIMConstants.GroupSchemaConstants.MEMBERS;
@@ -43,7 +45,7 @@ public class Group extends AbstractSCIMObject {
 
     private static final long serialVersionUID = 6106269076155338045L;
     /**
-     * get the display name of the group
+     * get the display name of the group.
      * @return
      * @throws CharonException
      */
@@ -57,7 +59,7 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set the display name of the group
+     * set the display name of the group.
      * @param displayName
      * @throws CharonException
      * @throws BadRequestException
@@ -76,14 +78,14 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * deletes the current value of displayname and exchanges it with the given value
+     * deletes the current value of displayname and exchanges it with the given value.
      */
     public void replaceDisplayName(String displayname) {
         replaceSimpleAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY_NAME, displayname);
     }
 
     /**
-     * get the members of the group
+     * get the members of the group.
      * @return
      */
     public List<Object> getMembers() {
@@ -108,7 +110,7 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * get the members of the group with their display names
+     * get the members of the group with their display names.
      * @return
      */
     public List<String> getMembersWithDisplayName() {
@@ -137,7 +139,34 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set a member to the group
+     * @return all members as {@link MultiValuedComplexType}
+     */
+    public List<MultiValuedComplexType> getMembersAsComplexType() {
+        Optional<MultiValuedAttribute> membersOptional = getMultiValuedAttribute(
+            SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS);
+        if (!membersOptional.isPresent()) {
+            return Collections.emptyList();
+        }
+        MultiValuedAttribute members = membersOptional.get();
+        List<MultiValuedComplexType> memberList = new ArrayList<>();
+        for (Attribute attributeValue : members.getAttributeValues()) {
+            ComplexAttribute memberAttribute = (ComplexAttribute) attributeValue;
+            String type = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.TYPE, memberAttribute)
+                              .orElse(null);
+            String display = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY,
+                memberAttribute).orElse(null);
+            String value = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE,
+                memberAttribute).orElse(null);
+            String reference = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF,
+                memberAttribute).orElse(null);
+            MultiValuedComplexType member = new MultiValuedComplexType(type, false, display, value, reference);
+            memberList.add(member);
+        }
+        return memberList;
+    }
+
+    /**
+     * set a member to the group.
      * @param value
      * @param display
      * @throws BadRequestException
@@ -169,7 +198,7 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set member to the group
+     * set member to the group.
      * @param userId
      * @param userName
      * @return
@@ -209,7 +238,7 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set the schemas for scim object -group
+     * set the schemas for scim object -group.
      */
     public void setSchemas() {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -221,7 +250,7 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * Returns the ID list of all members of type User
+     * Returns the ID list of all members of type User.
      */
     public List<String> getUserIds() {
         return getMemberIdsOfType(SCIMConstants.USER);
@@ -229,7 +258,7 @@ public class Group extends AbstractSCIMObject {
 
 
     /**
-     * Returns the ID list of all members of type Group
+     * Returns the ID list of all members of type Group.
      */
     public List<String> getSubGroupIds() {
         return getMemberIdsOfType(SCIMConstants.GROUP);
@@ -237,7 +266,7 @@ public class Group extends AbstractSCIMObject {
 
 
     /**
-     * Returns the ID list of all members of specified type
+     * Returns the ID list of all members of specified type.
      */
     public List<String> getMemberIdsOfType(String searchType) {
         List<String> memberIds = new ArrayList<>();

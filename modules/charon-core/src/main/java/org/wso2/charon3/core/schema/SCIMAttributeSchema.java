@@ -30,6 +30,12 @@ import java.util.List;
 public class SCIMAttributeSchema implements AttributeSchema, Serializable {
 
     private static final long serialVersionUID = 6106269076155338045L;
+    /**
+     * describes a parent attribute if present. For example the display value for email would be referenced in
+     * filters with "email.display". To be able to easily build this expression from the child nodes the child nodes
+     * need to know which node is the parent node.
+     */
+    private SCIMAttributeSchema parent;
     //unique identifier for the attribute
     private String uri;
     //name of the attribute
@@ -77,6 +83,15 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
         this.subAttributes = subAttributes;
         this.canonicalValues = canonicalValues;
         this.referenceTypes = referenceTypes;
+        // set parent into children
+        if (subAttributes != null) {
+            for (AttributeSchema subAttribute : subAttributes) {
+                if (subAttribute instanceof SCIMAttributeSchema) {
+                    SCIMAttributeSchema child = (SCIMAttributeSchema) subAttribute;
+                    child.setParent(this);
+                }
+            }
+        }
     }
 
     public static SCIMAttributeSchema createSCIMAttributeSchema(String uri, String name, SCIMDefinitions.DataType type,
@@ -94,14 +109,28 @@ public class SCIMAttributeSchema implements AttributeSchema, Serializable {
                 returned, uniqueness, canonicalValues, referenceTypes, subAttributes);
     }
 
-    @Override
-    public void setURI(String uri) {
-        this.uri = uri;
+    /**
+     * @see #parent
+     */
+    public SCIMAttributeSchema getParent() {
+        return parent;
+    }
+
+    /**
+     * @see #parent
+     */
+    public void setParent(SCIMAttributeSchema parent) {
+        this.parent = parent;
     }
 
     @Override
     public String getURI() {
         return uri;
+    }
+
+    @Override
+    public void setURI(String uri) {
+        this.uri = uri;
     }
 
     public String getName() {
