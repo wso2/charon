@@ -42,6 +42,7 @@ import org.wso2.charon3.core.schema.ServerSideValidator;
 import org.wso2.charon3.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class PatchOperationUtil {
         if (parts.length == 3) {
             parts[0] = parts[0] + parts[2];
         }
-        String[] attributeParts = parts[0].split("[\\.]");
+        String[] attributeParts = getAttributeParts(parts[0]);
 
         if (attributeParts.length == 1) {
 
@@ -134,6 +135,37 @@ public class PatchOperationUtil {
             doPatchRemoveWithFiltersForLevelThree(oldResource, attributeParts, expressionNode);
         }
         return oldResource;
+    }
+
+    /**
+     * Calculate the parts of an attribute URI
+     * @param attributeURI
+     * @return
+     */
+    private static String[] getAttributeParts(String attributeURI) {
+        ArrayList<String> tempAttributeNames = new ArrayList<>();
+        String extensionURI = "";
+        String[] attributeURIParts = attributeURI.split(":");
+
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < attributeURIParts.length - 1; ++i) {
+            buf.append(":");
+            buf.append(attributeURIParts[i]);
+        }
+        extensionURI = buf.toString();
+
+        String attributeNameString = attributeURIParts[attributeURIParts.length - 1];
+        String[] attributeNames = attributeNameString.split("\\.");
+
+        if (attributeURIParts.length > 1) {
+            tempAttributeNames.add(extensionURI.substring(1));
+        }
+
+        for (int i = 0; i < attributeNames.length; i++) {
+            tempAttributeNames.add(attributeNames[i]);
+        }
+
+        return tempAttributeNames.toArray(attributeNames);
     }
 
     /*
@@ -471,7 +503,7 @@ public class PatchOperationUtil {
     private static AbstractSCIMObject doPatchRemoveWithoutFilters
     (String[] parts, AbstractSCIMObject oldResource) throws BadRequestException, CharonException {
 
-        String[] attributeParts = parts[0].split("[\\.]");
+        String[] attributeParts = getAttributeParts(parts[0]);
         if (attributeParts.length == 1) {
 
             Attribute attribute = oldResource.getAttribute(parts[0]);
@@ -810,7 +842,7 @@ public class PatchOperationUtil {
                                                                          String[] parts)
             throws BadRequestException, CharonException, InternalErrorException {
 
-        String[] attributeParts = parts[0].split("[\\.]");
+        String[] attributeParts = getAttributeParts(parts[0]);
 
         if (attributeParts.length == 1) {
 
@@ -1666,7 +1698,7 @@ public class PatchOperationUtil {
                 if (parts.length == 3) {
                     parts[0] = parts[0] + parts[2];
                 }
-                String[] attributeParts = parts[0].split("[\\.]");
+                String[] attributeParts = getAttributeParts(parts[0]);
 
                 if (attributeParts.length == 1) {
 
