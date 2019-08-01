@@ -248,23 +248,29 @@ public class Group extends AbstractSCIMObject {
         ComplexAttribute complexAttribute = new ComplexAttribute();
         complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS + "_" + userId + SCIMConstants.DEFAULT);
 
-        SimpleAttribute valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, userId);
-        DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE, valueSimpleAttribute);
+        if (userId != null) {
+            SimpleAttribute valueSimpleAttribute =
+                    new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, userId);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE, valueSimpleAttribute);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
 
-        SimpleAttribute displaySimpleAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY,
-                userName);
-        DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
+        if (userName != null) {
+            SimpleAttribute displaySimpleAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY,
+                    userName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
+            complexAttribute.setSubAttribute(displaySimpleAttribute);
+        }
 
-        SimpleAttribute referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF,
-                reference);
-        DefaultAttributeFactory
-                .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, referenceSimpleAttribute);
-
-        complexAttribute.setSubAttribute(referenceSimpleAttribute);
-        complexAttribute.setSubAttribute(valueSimpleAttribute);
-        complexAttribute.setSubAttribute(displaySimpleAttribute);
+        if (reference != null) {
+            SimpleAttribute referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF,
+                    reference);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+        }
 
         DefaultAttributeFactory
                 .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);

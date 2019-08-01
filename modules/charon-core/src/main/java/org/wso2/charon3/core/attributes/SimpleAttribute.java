@@ -75,7 +75,9 @@ public class SimpleAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     public String getStringValue() throws CharonException {
-        if (this.type.equals(SCIMDefinitions.DataType.STRING)) {
+        if (this.type == null) {
+            return null;
+        } else if (this.type.equals(SCIMDefinitions.DataType.STRING)) {
             return (String) value;
         } else {
             throw new CharonException("Mismatch in requested data type");
