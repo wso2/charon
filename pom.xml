@@ -280,12 +280,9 @@
     </profiles>
 
     <properties>
-        <charon.parent.version>3.0.0-SNAPSHOT</charon.parent.version>
-        <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>3.0.0.wso2v1</json.version>
-        <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.22</axiom.impl.version>
         <junit.version>4.12</junit.version>

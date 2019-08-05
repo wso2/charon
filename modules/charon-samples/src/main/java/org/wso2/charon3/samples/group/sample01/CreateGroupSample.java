@@ -17,7 +17,6 @@
 */
 package org.wso2.charon3.samples.group.sample01;
 
-
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
