@@ -54,11 +54,6 @@
                 <version>${json.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons.logging.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-api</artifactId>
                 <version>${axiom.api.version}</version>
@@ -109,16 +104,22 @@
                 <version>${fasterxml.jackson.core.version}</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+            <!-- Pax Logging -->
+            <dependency>
+                <groupId>org.ops4j.pax.logging</groupId>
+                <artifactId>pax-logging-api</artifactId>
+                <version>${pax.logging.api.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j.api.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -279,12 +280,9 @@
     </profiles>
 
     <properties>
-        <charon.parent.version>3.0.0-SNAPSHOT</charon.parent.version>
-        <charon.parent.package.export.version>${charon.parent.version}</charon.parent.package.export.version>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>3.0.0.wso2v1</json.version>
-        <commons.logging.version>1.2</commons.logging.version>
         <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.22</axiom.impl.version>
         <junit.version>4.12</junit.version>
@@ -305,10 +303,14 @@
 
         <msf4j.version>2.7.3</msf4j.version>
         <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
-  
-        <log4j.version>1.2.17</log4j.version>
+
         <slf4j.version>1.7.26</slf4j.version>
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
+
+        <!-- Pax Logging Version -->
+        <pax.logging.api.version>1.10.1</pax.logging.api.version>
+
+        <log4j.api.version>2.12.0</log4j.api.version>
     </properties>
 
 </project>
