@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class BulkResourceManager extends AbstractResourceManager {
 
-    private Log logger = LogFactory.getLog(BulkResourceManager.class);
+    private static final Log logger = LogFactory.getLog(BulkResourceManager.class);
     private JSONEncoder encoder;
     private JSONDecoder decoder;
     private BulkRequestProcessor bulkRequestProcessor;
