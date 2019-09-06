@@ -223,7 +223,14 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
             String bulkRequest = getBulkRequest.apply(0);
             Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
             SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
-            Assertions.assertEquals(ResponseCodeConstants.CODE_BAD_REQUEST, scimResponse.getResponseStatus());
+            Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+            BulkResponseData bulkResponseData = JSON_DECODER.decodeBulkResponseData(scimResponse.getResponseMessage());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(0).getScimResponse().getResponseStatus());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_PRECONDITION_FAILED,
+                bulkResponseData.getOperationResponseList().get(1).getScimResponse().getResponseStatus());
         }));
 
         dynamicTestList.add(DynamicTest.dynamicTest("accept 1 error and give 1 error", () -> {
@@ -260,7 +267,14 @@ class BulkResourceManagerTest extends CharonInitializer implements FileReference
             Mockito.doThrow(new CharonException()).when(userResourceHandler).create(Mockito.any(), Mockito.any());
             Mockito.doThrow(new CharonException()).when(groupResourceHandler).create(Mockito.any(), Mockito.any());
             SCIMResponse scimResponse = bulkResourceManager.processBulkData(bulkRequest);
-            Assertions.assertEquals(ResponseCodeConstants.CODE_BAD_REQUEST, scimResponse.getResponseStatus());
+            Assertions.assertEquals(ResponseCodeConstants.CODE_OK, scimResponse.getResponseStatus());
+            BulkResponseData bulkResponseData = JSON_DECODER.decodeBulkResponseData(scimResponse.getResponseMessage());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(0).getScimResponse().getResponseStatus());
+            Assertions.assertEquals(
+                ResponseCodeConstants.CODE_INTERNAL_ERROR,
+                bulkResponseData.getOperationResponseList().get(1).getScimResponse().getResponseStatus());
         }));
 
         return dynamicTestList;

@@ -86,18 +86,22 @@ public class BulkResourceManager {
             int errorCount = 0;
             for (BulkRequestContent bulkRequestContent : bulkRequestData.getOperationRequests()) {
                 Optional<ResourceManager> resourceManagerOptional = findResourceManager(bulkRequestContent);
-                if (resourceManagerOptional.isPresent()) {
+                BulkResponseContent responseContent = null;
+                if (isFailOnErrorsExceeded(failOnErrors, errorCount)) {
+                    SCIMResponse preconditionFailedResponse = createExceededErrorsScimResponse(failOnErrors);
+                    responseContent = createBulkResponseContent(preconditionFailedResponse, bulkRequestContent);
+
+                } else if (resourceManagerOptional.isPresent()) {
                     ResourceManager resourceManager = resourceManagerOptional.get();
-                    BulkResponseContent responseContent = processOperationRequest(bulkRequestContent, resourceManager);
-                    bulkResponseData.addOperationResponse(responseContent);
+                    responseContent = processOperationRequest(bulkRequestContent, resourceManager);
                     errorCount += errorsCheck(responseContent.getScimResponse());
                 }
-                if (failOnErrors != null &&
-                    ((failOnErrors == 0 && errorCount > 0) || (errorCount > 0 && errorCount > failOnErrors))) {
-                    throw new BadRequestException("bulk request has failed for too many errors: " + errorCount,
-                        "too_many_errors");
+
+                if (responseContent != null) {
+                    bulkResponseData.addOperationResponse(responseContent);
                 }
             }
+
             //encode the BulkResponseData object
             String finalEncodedResponse = encoder.encodeBulkResponseData(bulkResponseData);
 
@@ -114,10 +118,25 @@ public class BulkResourceManager {
         }
     }
 
+    private SCIMResponse createExceededErrorsScimResponse(int failOnErrors) {
+        String errorMessage = "Operation was not processed for maximum number of errors (" + failOnErrors + ") was " +
+            "exceeded";
+        AbstractCharonException error = new AbstractCharonException(ResponseCodeConstants.CODE_PRECONDITION_FAILED,
+            errorMessage, null);
+        return new SCIMResponse(ResponseCodeConstants.CODE_PRECONDITION_FAILED,
+            AbstractResourceManager.getEncoder().encodeSCIMException(error), null);
+    }
+
+    private boolean isFailOnErrorsExceeded(Integer failOnErrors, int errorCount) {
+        return failOnErrors != null &&
+            ((failOnErrors == 0 && errorCount > 0) || (errorCount > 0 && errorCount > failOnErrors));
+    }
+
     /**
      * checks that the maximum payload is not exceeded.
      *
-     * @param requestBody the request body sent by the client
+     * @param requestBody
+     *     the request body sent by the client
      */
     private void validatePayload(String requestBody) {
         final int currentPayload = requestBody == null ? 0 : requestBody.getBytes(StandardCharsets.UTF_8).length;
@@ -134,7 +153,8 @@ public class BulkResourceManager {
     /**
      * checks that the maximum number of operations are not exceeded.
      *
-     * @param bulkRequestData the decoded bulk request
+     * @param bulkRequestData
+     *     the decoded bulk request
      */
     private void validateMaxOperations(BulkRequestData bulkRequestData) {
         final int currentOperations = bulkRequestData.getOperationRequests().size();
@@ -156,52 +176,51 @@ public class BulkResourceManager {
         if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
 
             SCIMResponse response = resourceManager.create(bulkRequestContent.getData(), null, null);
-            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
-                bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, bulkRequestContent);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
 
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), null, null);
-            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
-                bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, bulkRequestContent);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
 
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.updateWithPATCH(resourceId, bulkRequestContent.getData(), null,
                 null);
-            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
-                bulkRequestContent);
+            bulkResponseContent = createBulkResponseContent(response, bulkRequestContent);
 
         } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
             String resourceId = extractIDFromPath(bulkRequestContent.getPath());
             SCIMResponse response = resourceManager.delete(resourceId);
-            bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
+            bulkResponseContent = createBulkResponseContent(response,
                 bulkRequestContent);
         } else {
             bulkResponseContent = new BulkResponseContent();
+            bulkResponseContent.setStatus(ResponseCodeConstants.METHOD_NOT_ALLOWED);
+            bulkResponseContent.setMethod(bulkRequestContent.getMethod());
             BadRequestException badRequestException = new BadRequestException(
-                "method '" + bulkRequestContent.getMethod() + "' not supported",
-                "unsupported method");
+                ResponseCodeConstants.DESC_METHOD_NOT_ALLOWED + ": " + bulkRequestContent.getMethod());
             bulkResponseContent.setScimResponse(AbstractResourceManager.encodeSCIMException(badRequestException));
         }
         return bulkResponseContent;
     }
 
     private BulkResponseContent createBulkResponseContent(SCIMResponse response,
-                                                          String method,
                                                           BulkRequestContent requestContent) {
         BulkResponseContent bulkResponseContent = new BulkResponseContent();
 
         bulkResponseContent.setScimResponse(response);
-        bulkResponseContent.setMethod(method);
-        if (response.getHeaderParamMap() != null) {
-            bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
+        if (response != null) {
+            if (response.getHeaderParamMap() != null) {
+                bulkResponseContent.setLocation(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER));
+            }
+            bulkResponseContent.setStatus(response.getResponseStatus());
         }
+        bulkResponseContent.setMethod(requestContent.getMethod());
         bulkResponseContent.setBulkID(requestContent.getBulkID());
         bulkResponseContent.setVersion(requestContent.getVersion());
-
         return bulkResponseContent;
     }
 

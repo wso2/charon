@@ -61,6 +61,9 @@ public class ResponseCodeConstants {
     public static final int CODE_RESOURCE_NOT_FOUND = 404;
     public static final String DESC_RESOURCE_NOT_FOUND = "Specified resource (e.g., User) or endpoint does not exist.";
 
+    public static final int METHOD_NOT_ALLOWED = 405;
+    public static final String DESC_METHOD_NOT_ALLOWED = "HTTP method not allowed.";
+
     public static final int CODE_FORMAT_NOT_SUPPORTED = 406;
     public static final String DESC_FORMAT_NOT_SUPPORTED = "Requested format is not supported.";
 
