@@ -138,7 +138,7 @@ public class PatchOperationUtil {
     }
 
     /**
-     * Calculate the parts of an attribute URI
+     * Calculate the parts of an attribute URI.
      * @param attributeURI
      * @return
      */

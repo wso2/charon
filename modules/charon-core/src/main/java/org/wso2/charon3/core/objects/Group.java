@@ -139,12 +139,39 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * This method used to add member (user) to a group. According to the SCIM specification need to add ref
-     * attribute as well along with display and value. Hence deprecated this method.
-     *
-     * @deprecated use {@link #setMember(User user)} instead.
+     * @return all members as {@link MultiValuedComplexType}
      */
-    @Deprecated
+    public List<MultiValuedComplexType> getMembersAsComplexType() {
+        Optional<MultiValuedAttribute> membersOptional = getMultiValuedAttribute(
+            SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS);
+        if (!membersOptional.isPresent()) {
+            return Collections.emptyList();
+        }
+        MultiValuedAttribute members = membersOptional.get();
+        List<MultiValuedComplexType> memberList = new ArrayList<>();
+        for (Attribute attributeValue : members.getAttributeValues()) {
+            ComplexAttribute memberAttribute = (ComplexAttribute) attributeValue;
+            String type = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.TYPE, memberAttribute)
+                              .orElse(null);
+            String display = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY,
+                memberAttribute).orElse(null);
+            String value = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE,
+                memberAttribute).orElse(null);
+            String reference = getSimpleAttributeValue(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF,
+                memberAttribute).orElse(null);
+            MultiValuedComplexType member = new MultiValuedComplexType(type, false, display, value, reference);
+            memberList.add(member);
+        }
+        return memberList;
+    }
+
+    /**
+     * set a member to the group.
+     * @param value
+     * @param display
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     public void setMember(String value, String display) throws BadRequestException, CharonException {
         setMember(value, display, null, null);
     }

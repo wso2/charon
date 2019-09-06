@@ -61,7 +61,7 @@
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-impl</artifactId>
-                <version>${axiom.impl.version}</version>
+                <version>${axiom.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -159,17 +159,6 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${findbugs.annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <!-- Pax Logging -->
-            <dependency>
-                <groupId>org.ops4j.pax.logging</groupId>
-                <artifactId>pax-logging-api</artifactId>
-                <version>${pax.logging.api.version}</version>
             </dependency>
 
             <dependency>
@@ -395,7 +384,6 @@
         <axiom.osgi.version.range>[1.2.11, 2.0.0)</axiom.osgi.version.range>
         <json.version>3.0.0.wso2v1</json.version>
         <axiom.api.version>1.2.22</axiom.api.version>
-        <axiom.impl.version>1.2.11</axiom.impl.version>
         <servlet.api.version>2.5</servlet.api.version>
         <junit.jupiter.version>5.4.0</junit.jupiter.version>
         <junit.platform.version>1.4.0</junit.platform.version>
@@ -433,9 +421,6 @@
 
         <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
         <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
-
-        <!-- Pax Logging Version -->
-        <pax.logging.api.version>1.10.1</pax.logging.api.version>
     </properties>
 
 </project>

@@ -46,10 +46,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowSupplier;
  */
 public class BulkResourceManager {
 
-    private static final Log logger = LogFactory.getLog(BulkResourceManager.class);
-    private JSONEncoder encoder;
-    private JSONDecoder decoder;
-    private BulkRequestProcessor bulkRequestProcessor;
+    private static final Logger logger = LoggerFactory.getLogger(BulkResourceManager.class);
 
     private JSONEncoder encoder = new JSONEncoder();
     private JSONDecoder decoder = new JSONDecoder();
