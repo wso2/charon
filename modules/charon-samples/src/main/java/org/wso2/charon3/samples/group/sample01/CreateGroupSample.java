@@ -17,7 +17,6 @@
 */
 package org.wso2.charon3.samples.group.sample01;
 
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ public class CreateGroupSample {
 
 
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         try {
             String url = "http://localhost:8080/scim/v2/Groups";
             URL obj = new URL(url);

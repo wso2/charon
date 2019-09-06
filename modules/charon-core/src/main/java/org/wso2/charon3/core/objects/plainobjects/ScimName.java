@@ -18,43 +18,45 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
- * This class representation can be used to easily add a scim name to an
- * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * This class representation can be used to easily add a scim name to an.
+ * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class ScimName {
 
     /**
-     * The full name, including all middle names, titles, and suffixes as appropriate, formatted for display
+     * The full name, including all middle names, titles, and suffixes as appropriate, formatted for display.
      * (e.g., "Ms. Barbara Jane Jensen, III").
      */
     private String formatted;
 
     /**
-     * The family name of the User, or last name in most Western languages (e.g., "Jensen" given the full name
+     * The family name of the User, or last name in most Western languages (e.g., "Jensen" given the full name.
      * "Ms. Barbara Jane Jensen, III").
      */
     private String familyName;
 
     /**
-     * The given name of the User, or first name in most Western languages (e.g., "Barbara" given the full
+     * The given name of the User, or first name in most Western languages (e.g., "Barbara" given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String givenName;
 
     /**
-     * The middle name(s) of the User (e.g., "Jane" given the full name "Ms. Barbara Jane Jensen, III").
+     * The middle name(s) of the User (e.g., "Jane" given the full name "Ms. Barbara Jane Jensen, III")..
      */
     private String middleName;
 
     /**
-     * The honorific prefix(es) of the User, or title in most Western languages (e.g., "Ms." given the full
+     * The honorific prefix(es) of the User, or title in most Western languages (e.g., "Ms." given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String honorificPrefix;
 
     /**
-     * The honorific suffix(es) of the User, or suffix in most Western languages (e.g., "III" given the full
+     * The honorific suffix(es) of the User, or suffix in most Western languages (e.g., "III" given the full.
      * name "Ms. Barbara Jane Jensen, III").
      */
     private String honorificSuffix;
@@ -76,6 +78,14 @@ public class ScimName {
         this.middleName = middleName;
         this.honorificPrefix = honorificPrefix;
         this.honorificSuffix = honorificSuffix;
+    }
+
+    /**
+     * @return true if all values of this object are null
+     */
+    public boolean isEmpty() {
+        return formatted == null && familyName == null && givenName == null && middleName == null &&
+                   honorificPrefix == null && honorificSuffix == null;
     }
 
     /**
@@ -176,57 +186,28 @@ public class ScimName {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof ScimName)) {
             return false;
         }
-
         ScimName scimName = (ScimName) o;
-
-        if (formatted != null ? !formatted.equals(scimName.formatted) : scimName.formatted != null) {
-            return false;
-        }
-        if (familyName != null ? !familyName.equals(scimName.familyName) : scimName.familyName != null) {
-            return false;
-        }
-        if (givenName != null ? !givenName.equals(scimName.givenName) : scimName.givenName != null) {
-            return false;
-        }
-        if (middleName != null ? !middleName.equals(scimName.middleName) : scimName.middleName != null) {
-            return false;
-        }
-        if (honorificPrefix != null ? !honorificPrefix
-                .equals(scimName.honorificPrefix) : scimName.honorificPrefix != null) {
-            return false;
-        }
-        return honorificSuffix != null ? honorificSuffix
-                .equals(scimName.honorificSuffix) : scimName.honorificSuffix == null;
+        return Objects.equals(formatted, scimName.formatted) && Objects.equals(familyName, scimName.familyName) &&
+                   Objects.equals(givenName, scimName.givenName) && Objects.equals(middleName, scimName.middleName) &&
+                   Objects.equals(honorificPrefix, scimName.honorificPrefix) && Objects.equals(honorificSuffix,
+            scimName.honorificSuffix);
     }
 
     @Override
     public int hashCode() {
-
-        int result = formatted != null ? formatted.hashCode() : 0;
-        result = 31 * result + (familyName != null ? familyName.hashCode() : 0);
-        result = 31 * result + (givenName != null ? givenName.hashCode() : 0);
-        result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
-        result = 31 * result + (honorificPrefix != null ? honorificPrefix.hashCode() : 0);
-        result = 31 * result + (honorificSuffix != null ? honorificSuffix.hashCode() : 0);
-        return result;
+        return Objects.hash(formatted, familyName, givenName, middleName, honorificPrefix, honorificSuffix);
     }
 
     @Override
     public String toString() {
-        return "ScimName{" +
-                 "formatted='" + formatted + '\'' +
-                 ", familyName='" + familyName + '\'' +
-                 ", givenName='" + givenName + '\'' +
-                 ", middleName='" + middleName + '\'' +
-                 ", honorificPrefix='" + honorificPrefix + '\'' +
-                 ", honorificSuffix='" + honorificSuffix + '\'' +
-                 '}';
+        return "ScimName{" + "formatted='" + formatted + '\'' + ", familyName='" + familyName + '\'' + ", givenName='" +
+                   givenName + '\'' + ", middleName='" + middleName + '\'' + ", honorificPrefix='" + honorificPrefix +
+                   '\'' + ", honorificSuffix='" + honorificSuffix + '\'' + '}';
     }
 }

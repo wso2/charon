@@ -18,9 +18,11 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
  * this class representation can be used to easily add a multi valued complex type representation like an email
- * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * or a phonenumber to an {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class MultiValuedComplexType {
 
@@ -30,11 +32,11 @@ public class MultiValuedComplexType {
     private String type;
 
     /**
-     * A Boolean value indicating the 'primary' or preferred attribute value for this attribute, e.g., the
+     * A Boolean value indicating the 'primary' or preferred attribute value for this attribute, e.g., the.
      * preferred mailing address or the primary email address. The primary attribute value "true" MUST appear
      * no more than once. If not specified, the value of "primary" SHALL be assumed to be "false".
      */
-    private boolean primary;
+    private Boolean primary;
 
     /**
      * A human-readable name, primarily used for display purposes and having a mutability of "immutable".
@@ -47,7 +49,7 @@ public class MultiValuedComplexType {
     private String value;
 
     /**
-     * The reference URI of a target resource, if the attribute is a reference. URIs are canonicalized per
+     * The reference URI of a target resource, if the attribute is a reference. URIs are canonicalized per.
      * Section 6.2 of [RFC3986]. While the representation of a resource may vary in different SCIM protocol
      * API versions (see Section 3.13 of [RFC7644]), URIs for SCIM resources with an API version SHALL be
      * considered comparable to URIs without a version or with a different version. For example,
@@ -59,11 +61,7 @@ public class MultiValuedComplexType {
 
     }
 
-    public MultiValuedComplexType(String type,
-                                  boolean primary,
-                                  String display,
-                                  String value,
-                                  String reference) {
+    public MultiValuedComplexType(String type, Boolean primary, String display, String value, String reference) {
 
         this.type = type;
         this.primary = primary;
@@ -73,7 +71,14 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #type
+     * @return true if the values of this complex type are all null
+     */
+    public boolean isEmpty() {
+        return type == null && primary == null && display == null && value == null && reference == null;
+    }
+
+    /**
+     * @see #type.
      */
     public String getType() {
 
@@ -81,7 +86,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #type
+     * @see #type.
      */
     public void setType(String type) {
 
@@ -89,23 +94,23 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #primary
+     * @see #primary.
      */
     public boolean isPrimary() {
 
-        return primary;
+        return primary == null ? false : primary;
     }
 
     /**
-     * @see #primary
+     * @see #primary.
      */
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
 
         this.primary = primary;
     }
 
     /**
-     * @see #display
+     * @see #display.
      */
     public String getDisplay() {
 
@@ -113,7 +118,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #display
+     * @see #display.
      */
     public void setDisplay(String display) {
 
@@ -121,7 +126,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #value
+     * @see #value.
      */
     public String getValue() {
 
@@ -129,7 +134,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #value
+     * @see #value.
      */
     public void setValue(String value) {
 
@@ -137,7 +142,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #reference
+     * @see #reference.
      */
     public String getReference() {
 
@@ -145,7 +150,7 @@ public class MultiValuedComplexType {
     }
 
     /**
-     * @see #reference
+     * @see #reference.
      */
     public void setReference(String reference) {
 
@@ -154,40 +159,20 @@ public class MultiValuedComplexType {
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof MultiValuedComplexType)) {
             return false;
         }
-
         MultiValuedComplexType that = (MultiValuedComplexType) o;
-
-        if (primary != that.primary) {
-            return false;
-        }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
-            return false;
-        }
-        if (display != null ? !display.equals(that.display) : that.display != null) {
-            return false;
-        }
-        if (value != null ? !value.equals(that.value) : that.value != null) {
-            return false;
-        }
-        return reference != null ? reference.equals(that.reference) : that.reference == null;
+        return Objects.equals(type, that.type) && Objects.equals(primary, that.primary) && Objects.equals(display,
+            that.display) && Objects.equals(value, that.value) && Objects.equals(reference, that.reference);
     }
 
     @Override
     public int hashCode() {
-
-        int result = type != null ? type.hashCode() : 0;
-        result = 31 * result + (primary ? 1 : 0);
-        result = 31 * result + (display != null ? display.hashCode() : 0);
-        result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (reference != null ? reference.hashCode() : 0);
-        return result;
+        return Objects.hash(type, primary, display, value, reference);
     }
 
     @Override

@@ -1,0 +1,18 @@
+{
+  "schemas": [
+    "urn:ietf:params:scim:api:messages:2.0:BulkRequest"
+  ],
+  "Operations": [
+    {
+      "method": "PUT",
+      "path": "/Users/${userId}",
+      "data": {
+        "schemas": [
+          "urn:ietf:params:scim:schemas:core:2.0:User"
+        ],
+        "userName": "Alice",
+        "nickName": "Ally"
+      }
+    }
+  ]
+}

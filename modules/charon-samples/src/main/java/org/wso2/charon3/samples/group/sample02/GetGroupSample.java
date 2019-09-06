@@ -18,7 +18,6 @@
 
 package org.wso2.charon3.samples.group.sample02;
 
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,6 @@ public class GetGroupSample {
     private static final Logger logger = LoggerFactory.getLogger(GetGroupSample.class);
 
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         //get the id of the user
         Scanner reader = new Scanner(System.in, "UTF-8");  // Reading from System.in
         System.out.print("Enter the group ID : ");

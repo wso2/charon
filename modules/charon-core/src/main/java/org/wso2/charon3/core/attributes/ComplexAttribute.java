@@ -15,10 +15,10 @@
  */
 package org.wso2.charon3.core.attributes;
 
-import org.wso2.charon3.core.exceptions.CharonException;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowConsumer;
 
 /**
  * This class is a blueprint of ComplexAttribute defined in SCIM Core Schema Spec.
@@ -30,9 +30,11 @@ public class ComplexAttribute extends AbstractAttribute {
     protected Map<String, Attribute> subAttributesList = new HashMap<String, Attribute>();
 
     public ComplexAttribute(String name) {
-        this.name = name; }
+        this.name = name;
+    }
 
-    public ComplexAttribute() {}
+    public ComplexAttribute() {
+    }
 
     /**
      * Retrieve the map of sub attributes.
@@ -40,8 +42,8 @@ public class ComplexAttribute extends AbstractAttribute {
      * @return Map of Attributes
      */
     public Map<String, Attribute> getSubAttributesList() {
-            return subAttributesList;
-        }
+        return subAttributesList;
+    }
 
     /**
      * Set the map of sub attributes.
@@ -58,7 +60,7 @@ public class ComplexAttribute extends AbstractAttribute {
      * @param attributeName
      * @return Attribute
      */
-    public Attribute getSubAttribute(String attributeName) throws CharonException {
+    public Attribute getSubAttribute(String attributeName) {
         if (subAttributesList.containsKey(attributeName)) {
             return subAttributesList.get(attributeName);
         } else {
@@ -71,8 +73,20 @@ public class ComplexAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         subAttributesList.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComplexAttribute copyAttribute() {
+        ComplexAttribute attribute = new ComplexAttribute(this.getName());
+        this.getSubAttributesList().forEach((s, attr) -> {
+            rethrowConsumer(o -> attribute.setSubAttribute((Attribute) o)).accept(((AbstractAttribute) attr).copy());
+        });
+        return attribute;
     }
 
     /**
@@ -99,10 +113,8 @@ public class ComplexAttribute extends AbstractAttribute {
      * Set a sub attribute of the complex attribute's sub attribute list.
      *
      * @param subAttribute
-     * @throws CharonException
      */
-    public void setSubAttribute(Attribute subAttribute)
-            throws CharonException {
+    public void setSubAttribute(Attribute subAttribute) {
         subAttributesList.put(subAttribute.getName(), subAttribute);
     }
-    }
+}

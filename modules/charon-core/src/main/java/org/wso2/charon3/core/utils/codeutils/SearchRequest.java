@@ -16,10 +16,10 @@
 
 package org.wso2.charon3.core.utils.codeutils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * this corresponds to the /.search request object
+ * this corresponds to the /.search request object.
  * <p>
  * Clients MAY execute queries without passing parameters on the URL by
  * using the HTTP POST verb combined with the "/.search" path extension.
@@ -30,8 +30,8 @@ import java.util.ArrayList;
 public class SearchRequest {
 
     private String schema;
-    private ArrayList<String> attributes = null;
-    private ArrayList<String> excludedAttributes = null;
+    private List<String> attributes = null;
+    private List<String> excludedAttributes = null;
     private int count;
     private int startIndex;
     private String countStr;
@@ -69,24 +69,24 @@ public class SearchRequest {
         return count;
     }
 
-    public ArrayList<String> getAttributes() {
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public List<String> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(ArrayList<String> attributes) {
+    public void setAttributes(List<String> attributes) {
         this.attributes = attributes;
     }
 
-    public ArrayList<String> getExcludedAttributes() {
+    public List<String> getExcludedAttributes() {
         return excludedAttributes;
     }
 
-    public void setExcludedAttributes(ArrayList<String> excludedAttributes) {
+    public void setExcludedAttributes(List<String> excludedAttributes) {
         this.excludedAttributes = excludedAttributes;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     public int getStartIndex() {
@@ -138,7 +138,7 @@ public class SearchRequest {
         String excludedAttributes = null;
         StringBuffer str = new StringBuffer();
         for (String attributeValue : this.excludedAttributes) {
-             str.append(",").append(attributeValue);
+            str.append(",").append(attributeValue);
         }
         excludedAttributes = str.toString();
         if (excludedAttributes.equals("")) {
@@ -147,13 +147,13 @@ public class SearchRequest {
         return excludedAttributes;
     }
 
-    public void setDomainName(String domain) {
-
-        this.domainName = domain;
-    }
-
     public String getDomainName() {
 
         return domainName;
+    }
+
+    public void setDomainName(String domain) {
+
+        this.domainName = domain;
     }
 }

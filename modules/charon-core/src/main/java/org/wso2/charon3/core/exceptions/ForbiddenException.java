@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * Operation is not permitted based on the supplied authorization.
+ * Operation is not permitted based on the supplied authorization..
  */
 public class ForbiddenException extends AbstractCharonException {
 

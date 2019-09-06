@@ -15,12 +15,12 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -29,10 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is an abstract layer for all the resource endpoints to abstract out common
+ * This is an abstract layer for all the resource endpoints to abstract out common.
  * operations. And an entry point for initiating the charon from the outside.
  */
-public abstract class AbstractResourceManager implements ResourceManager {
+public abstract class AbstractResourceManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractResourceManager.class);
 
@@ -40,31 +40,31 @@ public abstract class AbstractResourceManager implements ResourceManager {
 
     private static JSONDecoder decoder = new JSONDecoder();
 
-    //Keeps  a map of endpoint urls of the exposed resources.
+    /**
+     * Keeps  a map of endpoint urls of the exposed resources.
+     */
     private static Map<String, String> endpointURLMap;
 
-    /*
+    /**
      * Returns the encoder for json.
      *
      * @return JSONEncoder - An json encoder for encoding data
-     * @throws CharonException
      */
-    public static JSONEncoder getEncoder() throws CharonException {
+    public static JSONEncoder getEncoder() {
         return encoder;
     }
 
-    /*
+    /**
      * Returns the decoder for json.
      *
      *
      * @return JSONDecoder - An json decoder for decoding data
-     * @throws CharonException
      */
-    public static JSONDecoder getDecoder() throws CharonException {
+    public static JSONDecoder getDecoder() {
         return decoder;
     }
 
-    /*
+    /**
      * Returns the endpoint according to the resource.
      *
      * @param resource -Resource type
@@ -72,19 +72,24 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @throws NotFoundException
      */
     public static String getResourceEndpointURL(String resource) throws NotFoundException {
+        String endpoint = null;
         if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
-        } else {
-            throw new NotFoundException();
+            endpoint = endpointURLMap.get(resource);
         }
+        if (StringUtils.isNotBlank(endpoint)) {
+            return endpoint;
+        }
+        logger.error("no location URL was registered for endpoint path '{}'. Please add a location URL to " +
+                         "endpointURLMap", resource);
+        throw new NotFoundException("endpoint path '" + resource + "' was not registered");
     }
 
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {
         AbstractResourceManager.endpointURLMap = endpointURLMap;
     }
 
-    /*
-     * Returns SCIM Response object after json encoding the exception
+    /**
+     * Returns SCIM Response object after json encoding the exception.
      *
      * @param exception - exception message
      * @return SCIMResponse

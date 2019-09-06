@@ -55,4 +55,20 @@ public class SCIMDefinitions {
         USER, GROUP, EXTERNAL, URI
     }
 
+    /**
+     * a SCIM filter expression used for building filters with
+     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}.
+     */
+    public static enum FilterOperation {
+        EQ, NE, CO, SW, EW, PR, GT, GE, LT, LE
+    }
+
+    /**
+     * a SCIM filter expression used for building filters with
+     * {@link org.wso2.charon3.core.utils.codeutils.FilterBuilder}.
+     */
+    public static enum FilterConcatenation {
+        AND, OR, NOT
+    }
+
 }

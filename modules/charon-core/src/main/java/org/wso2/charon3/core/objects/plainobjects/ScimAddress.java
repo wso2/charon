@@ -18,9 +18,11 @@
 
 package org.wso2.charon3.core.objects.plainobjects;
 
+import java.util.Objects;
+
 /**
  * This class representation can be used to easily add an address to an
- * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object
+ * {@link org.wso2.charon3.core.objects.AbstractSCIMObject} object.
  */
 public class ScimAddress {
 
@@ -67,7 +69,7 @@ public class ScimAddress {
      * preferred mailing address or the primary email address. The primary attribute value "true" MUST appear
      * no more than once. If not specified, the value of "primary" SHALL be assumed to be "false".
      */
-    private boolean primary;
+    private Boolean primary;
 
     public ScimAddress() {
 
@@ -80,7 +82,7 @@ public class ScimAddress {
                        String region,
                        String postalCode,
                        String country,
-                       boolean primary) {
+                       Boolean primary) {
 
         this.formatted = formatted;
         this.type = type;
@@ -90,6 +92,14 @@ public class ScimAddress {
         this.postalCode = postalCode;
         this.country = country;
         this.primary = primary;
+    }
+
+    /**
+     * @return true if all values of this object are null
+     */
+    public boolean isEmpty() {
+        return formatted == null && type == null && streetAddress == null && locality == null && region == null &&
+                   postalCode == null && country == null && primary == null;
     }
 
     /**
@@ -209,78 +219,41 @@ public class ScimAddress {
      */
     public boolean isPrimary() {
 
-        return primary;
+        return primary == null ? false : primary;
     }
 
     /**
      * @see #primary
      */
-    public void setPrimary(boolean primary) {
+    public void setPrimary(Boolean primary) {
 
         this.primary = primary;
     }
 
     @Override
     public boolean equals(Object o) {
-
         if (this == o) {
             return true;
         }
         if (!(o instanceof ScimAddress)) {
             return false;
         }
-
         ScimAddress that = (ScimAddress) o;
-
-        if (primary != that.primary) {
-            return false;
-        }
-        if (formatted != null ? !formatted.equals(that.formatted) : that.formatted != null) {
-            return false;
-        }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
-            return false;
-        }
-        if (streetAddress != null ? !streetAddress.equals(that.streetAddress) : that.streetAddress != null) {
-            return false;
-        }
-        if (locality != null ? !locality.equals(that.locality) : that.locality != null) {
-            return false;
-        }
-        if (region != null ? !region.equals(that.region) : that.region != null) {
-            return false;
-        }
-        if (postalCode != null ? !postalCode.equals(that.postalCode) : that.postalCode != null) {
-            return false;
-        }
-        return country != null ? country.equals(that.country) : that.country == null;
+        return Objects.equals(formatted, that.formatted) && Objects.equals(type, that.type) && Objects.equals(
+            streetAddress, that.streetAddress) && Objects.equals(locality, that.locality) && Objects.equals(region,
+            that.region) && Objects.equals(postalCode, that.postalCode) && Objects.equals(country, that.country) &&
+                   Objects.equals(primary, that.primary);
     }
 
     @Override
     public int hashCode() {
-
-        int result = formatted != null ? formatted.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (streetAddress != null ? streetAddress.hashCode() : 0);
-        result = 31 * result + (locality != null ? locality.hashCode() : 0);
-        result = 31 * result + (region != null ? region.hashCode() : 0);
-        result = 31 * result + (postalCode != null ? postalCode.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (primary ? 1 : 0);
-        return result;
+        return Objects.hash(formatted, type, streetAddress, locality, region, postalCode, country, primary);
     }
 
     @Override
     public String toString() {
-        return "ScimAddress{" +
-                 "formatted='" + formatted + '\'' +
-                 ", type='" + type + '\'' +
-                 ", streetAddress='" + streetAddress + '\'' +
-                 ", locality='" + locality + '\'' +
-                 ", region='" + region + '\'' +
-                 ", postalCode='" + postalCode + '\'' +
-                 ", country='" + country + '\'' +
-                 ", primary=" + primary +
-                 '}';
+        return "ScimAddress{" + "formatted='" + formatted + '\'' + ", type='" + type + '\'' + ", streetAddress='" +
+                   streetAddress + '\'' + ", locality='" + locality + '\'' + ", region='" + region + '\'' +
+                   ", postalCode='" + postalCode + '\'' + ", country='" + country + '\'' + ", primary=" + primary + '}';
     }
 }

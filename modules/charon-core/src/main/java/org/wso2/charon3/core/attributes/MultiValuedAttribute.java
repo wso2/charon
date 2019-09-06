@@ -37,7 +37,9 @@ public class MultiValuedAttribute extends AbstractAttribute {
         this.name = attributeName;
         this.attributeValues = attributeValues;
     }
-    public  MultiValuedAttribute(){}
+
+    public MultiValuedAttribute() {
+    }
 
     public MultiValuedAttribute(String attributeName) {
         this.name = attributeName;
@@ -67,23 +69,23 @@ public class MultiValuedAttribute extends AbstractAttribute {
      * @throws CharonException
      */
     @Override
-    public void deleteSubAttributes() throws CharonException {
+    public void deleteSubAttributes() {
         //here we delete the complex type sub attributes which act as sub values
         attributeValues.clear();
     }
 
-     /*
+    /*
      * clear all primitive values
      * @throws CharonException
      */
 
-    public void deletePrimitiveValues() throws CharonException {
+    public void deletePrimitiveValues() {
         //here we delete primitive values
         attributePrimitiveValues.clear();
     }
 
     /**
-     * To construct and set a value of a multi-valued attribute, as a complex value containing
+     * To construct and set a value of a multi-valued attribute, as a complex value containing.
      * set of sub attributes.
      */
     public void setComplexValueWithSetOfSubAttributes(Map<String, Attribute> subAttributes) {
@@ -124,4 +126,12 @@ public class MultiValuedAttribute extends AbstractAttribute {
         attributePrimitiveValues.add(obj);
     }
 
+    @Override
+    protected MultiValuedAttribute copyAttribute() {
+        MultiValuedAttribute attribute = new MultiValuedAttribute(this.name);
+        this.getAttributeValues().forEach(attr -> {
+            attribute.setAttributeValue(((AbstractAttribute) attr).copy());
+        });
+        return attribute;
+    }
 }

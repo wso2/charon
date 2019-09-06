@@ -15,8 +15,9 @@
  */
 package org.wso2.charon3.core.attributes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.exceptions.BadRequestException;
-import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
@@ -28,6 +29,8 @@ import java.time.Instant;
  */
 public class DefaultAttributeFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultAttributeFactory.class);
+
     /*
      * Returns the defined type of attribute with the user defined value
      * included and necessary attribute characteristics set
@@ -35,8 +38,8 @@ public class DefaultAttributeFactory {
      * @param attribute - attribute
      * @return Attribute
      */
-    public static Attribute createAttribute(AttributeSchema attributeSchema,
-                                            AbstractAttribute attribute) throws CharonException, BadRequestException {
+    public static Attribute createAttribute(AttributeSchema attributeSchema, AbstractAttribute attribute)
+        throws BadRequestException {
 
         attribute.setMutability(attributeSchema.getMutability());
         attribute.setRequired(attributeSchema.getRequired());
@@ -56,28 +59,25 @@ public class DefaultAttributeFactory {
                 attribute.setType(attributeSchema.getType());
             }
             return attribute;
-        } catch (CharonException e) {
-            String error = "Unknown attribute schema.";
-            throw new CharonException(error);
         } catch (BadRequestException e) {
+            log.debug(e.getSchemas(), e);
             String error = "Violation in attribute schema. DataType doesn't match that of the value.";
             throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
         }
     }
 
     /**
-     * Once identified that constructing attribute is a simple attribute & related attribute schema is a
+     * Once identified that constructing attribute is a simple attribute & related attribute schema is a.
      * SCIMAttributeSchema, perform attribute construction operations specific to Simple Attribute.
      *
      * @param attributeSchema
      * @param simpleAttribute
      * @return SimpleAttribute
-     * @throws CharonException
      * @throws BadRequestException
      */
-    protected static SimpleAttribute createSimpleAttribute
-                    (AttributeSchema attributeSchema, SimpleAttribute simpleAttribute)
-            throws CharonException, BadRequestException {
+    protected static SimpleAttribute createSimpleAttribute(AttributeSchema attributeSchema,
+                                                           SimpleAttribute simpleAttribute)
+        throws BadRequestException {
         if (simpleAttribute.getValue() != null) {
             if (isAttributeDataTypeValid(simpleAttribute.getValue(), attributeSchema.getType())) {
                 simpleAttribute.setType(attributeSchema.getType());
@@ -90,7 +90,7 @@ public class DefaultAttributeFactory {
     }
 
     /**
-     * When an attribute is created with value and data type provided,
+     * When an attribute is created with value and data type provided,.
      * we need to validate whether they are matching.
      *
      * @param attributeValue
@@ -98,9 +98,8 @@ public class DefaultAttributeFactory {
      * @return boolean
      * @throws BadRequestException
      */
-    protected static boolean isAttributeDataTypeValid(Object attributeValue,
-                                                      SCIMDefinitions.DataType attributeDataType)
-                                                throws BadRequestException {
+    protected static boolean isAttributeDataTypeValid(Object attributeValue, SCIMDefinitions.DataType attributeDataType)
+        throws BadRequestException {
         switch (attributeDataType) {
             case STRING:
                 return attributeValue instanceof String;

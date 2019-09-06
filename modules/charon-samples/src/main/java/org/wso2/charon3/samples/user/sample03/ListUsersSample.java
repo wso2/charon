@@ -20,7 +20,6 @@ package org.wso2.charon3.samples.user.sample03;
 
 
 
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,6 @@ import java.net.URL;
 public class ListUsersSample {
     private static final Logger logger = LoggerFactory.getLogger(ListUsersSample.class);
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         try {
             String url = "http://localhost:8080/scim/v2/Users";
             URL obj = new URL(url);

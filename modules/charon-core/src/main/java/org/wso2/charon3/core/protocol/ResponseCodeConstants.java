@@ -17,7 +17,7 @@
 package org.wso2.charon3.core.protocol;
 
 /**
- * SCIM Protocol uses the response status codes defined in HTTP to indicate
+ * SCIM Protocol uses the response status codes defined in HTTP to indicate.
  * operation success or failure. This class includes those code and relevant description as constants.
  */
 public class ResponseCodeConstants {
@@ -60,6 +60,9 @@ public class ResponseCodeConstants {
 
     public static final int CODE_RESOURCE_NOT_FOUND = 404;
     public static final String DESC_RESOURCE_NOT_FOUND = "Specified resource (e.g., User) or endpoint does not exist.";
+
+    public static final int METHOD_NOT_ALLOWED = 405;
+    public static final String DESC_METHOD_NOT_ALLOWED = "HTTP method not allowed.";
 
     public static final int CODE_FORMAT_NOT_SUPPORTED = 406;
     public static final String DESC_FORMAT_NOT_SUPPORTED = "Requested format is not supported.";

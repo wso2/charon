@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * This class is basically for creating a binary tree which preserves the precedence order with simple
+ * This class is basically for creating a binary tree which preserves the precedence order with simple.
  * filter (eg : userName eq vindula) expressions as terminals of the tree and all the logical operators
  * (and, or, not)as the non-terminals of the tree.
  * <p>

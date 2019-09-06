@@ -18,7 +18,7 @@ package org.wso2.charon3.core.exceptions;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 
 /**
- * If client requests the response to be returned in a format that is not supported,
+ * If client requests the response to be returned in a format that is not supported,.
  * FormatNotSupportedException is thrown.
  */
 public class FormatNotSupportedException extends AbstractCharonException {

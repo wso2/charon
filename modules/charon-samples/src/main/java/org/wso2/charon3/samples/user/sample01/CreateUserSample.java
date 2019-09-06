@@ -18,7 +18,6 @@
 package org.wso2.charon3.samples.user.sample01;
 
 
-import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +160,6 @@ public class CreateUserSample {
 
     public static void main(String[] args) {
         try {
-            BasicConfigurator.configure();
             String url = "http://localhost:8080/scim/v2/Users";
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();

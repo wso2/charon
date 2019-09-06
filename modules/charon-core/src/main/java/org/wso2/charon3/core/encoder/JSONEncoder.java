@@ -35,7 +35,6 @@ import org.wso2.charon3.core.objects.bulk.BulkResponseData;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
-import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
@@ -45,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This encodes the in the json format.
+ * This encodes the in the json format..
  */
 
 public class JSONEncoder {
@@ -377,66 +376,6 @@ public class JSONEncoder {
     }
 
     /*
-     *  Build the user resource type json representation.
-     * @return
-     */
-    public String buildUserResourceTypeJsonBody() throws JSONException {
-        JSONObject userResourceTypeObject = new JSONObject();
-
-        userResourceTypeObject.put(
-                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.USER);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.USER);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.USER_ENDPOINT);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
-                SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT);
-        userResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
-
-        if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
-            JSONObject extensionSchemaObject = new JSONObject();
-
-            extensionSchemaObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
-                    SCIMResourceSchemaManager.getInstance().getExtensionURI());
-            extensionSchemaObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
-                    SCIMResourceSchemaManager.getInstance().getExtensionRequired());
-            userResourceTypeObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
-        }
-
-        return userResourceTypeObject.toString();
-    }
-
-    /**
-     *  Build the group resource type json representation.
-     * @return
-     */
-    public String buildGroupResourceTypeJsonBody() throws JSONException {
-        JSONObject groupResourceTypeObject = new JSONObject();
-
-        groupResourceTypeObject.put(
-                SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ID, SCIMConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.NAME, SCIMConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.ENDPOINT, SCIMConstants.GROUP_ENDPOINT);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION,
-                SCIMConstants.ResourceTypeSchemaConstants.GROUP);
-        groupResourceTypeObject.put(
-                SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.GROUP_CORE_SCHEMA_URI);
-        return groupResourceTypeObject.toString();
-    }
-
-    /*
      * Encode given bulkResponseData object and return the encoded string
      *
      * @param bulkResponseData
@@ -444,8 +383,7 @@ public class JSONEncoder {
      */
     public String encodeBulkResponseData(BulkResponseData bulkResponseData) throws InternalErrorException {
         String encodedString = "";
-        List<BulkResponseContent> userResponseDataList = bulkResponseData.getUserOperationResponse();
-        List<BulkResponseContent> groupResponseDataList = bulkResponseData.getGroupOperationResponse();
+        List<BulkResponseContent> responseDataList = bulkResponseData.getOperationResponseList();
         JSONObject rootObject = new JSONObject();
 
         //encode schemas
@@ -457,12 +395,8 @@ public class JSONEncoder {
             //[Operations] - multi value attribute
             ArrayList<JSONObject> operationResponseList = new ArrayList<>();
 
-            for (BulkResponseContent userOperationResponse : userResponseDataList) {
-                encodeResponseContent(userOperationResponse, operationResponseList);
-            }
-
-            for (BulkResponseContent groupOperationResponse : groupResponseDataList) {
-                encodeResponseContent(groupOperationResponse, operationResponseList);
+            for (BulkResponseContent operationResponse : responseDataList) {
+                encodeResponseContent(operationResponse, operationResponseList);
             }
             //set operations
             this.encodeArrayOfValues(SCIMConstants.OperationalConstants.OPERATIONS,
@@ -483,16 +417,12 @@ public class JSONEncoder {
             throws JSONException {
 
         JSONObject operationObject = new JSONObject();
-
-        JSONObject status = new JSONObject();
         int statusCode = responseContent.getScimResponse().getResponseStatus();
-        status.put(SCIMConstants.OperationalConstants.CODE, statusCode);
-
 
         operationObject.put(SCIMConstants.CommonSchemaConstants.LOCATION, responseContent.getLocation());
         operationObject.put(SCIMConstants.OperationalConstants.METHOD, responseContent.getMethod());
         operationObject.put(SCIMConstants.OperationalConstants.BULK_ID, responseContent.getBulkID());
-        operationObject.put(SCIMConstants.OperationalConstants.STATUS, status);
+        operationObject.put(SCIMConstants.OperationalConstants.STATUS, statusCode);
 
         //When indicating a response with an HTTP status other than a 200-series response,
         // the response body MUST be included.
