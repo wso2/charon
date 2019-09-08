@@ -784,8 +784,8 @@ public class User extends AbstractSCIMObject {
      * Set the associated groups of the user.
      * According to the SCIM specification need to add display, value and ref attributes.
      *
-     * @param type
-     * @param group
+     * @param type  Type of resource.
+     * @param group Group object.
      * @throws CharonException
      * @throws BadRequestException
      */
