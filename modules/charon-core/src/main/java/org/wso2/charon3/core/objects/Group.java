@@ -234,8 +234,8 @@ public class Group extends AbstractSCIMObject {
     /**
      * Create member attribute with three default attributes such as name, value and $ref.
      *
-     * @param user
-     * @return
+     * @param user User object.
+     * @return Member object as a complex attribute.
      * @throws BadRequestException
      * @throws CharonException
      */
