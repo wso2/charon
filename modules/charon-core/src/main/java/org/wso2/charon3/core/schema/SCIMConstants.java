@@ -51,6 +51,7 @@ public class SCIMConstants {
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
     public static final String RESOURCE_TYPE_ENDPOINT = "/RESOURCE_TYPES";
+    public static final String SCHEMAS_ENDPOINT = "/Schemas";
 
 
     //HTTP Headers used in SCIM request/response other than auth headers.

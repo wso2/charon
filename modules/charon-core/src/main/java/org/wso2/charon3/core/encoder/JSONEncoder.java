@@ -44,6 +44,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.wso2.charon3.core.config.SCIMConfigConstants.CASE_EXACT;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.DESCRIPTION;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.MULTIVALUED;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.MUTABILITY;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.REQUIRED;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.RETURNED;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.SUB_ATTRIBUTES;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.UNIQUENESS;
+import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.TYPE;
+import static org.wso2.charon3.core.schema.SCIMConstants.UserSchemaConstants.NAME;
+
 /**
  * This encodes the in the json format.
  */
@@ -176,6 +187,46 @@ public class JSONEncoder {
         }
     }
 
+    /**
+     * Encode the simple attribute and returns the json object.
+     *
+     * @param simpleAttribute
+     * @return json object of the simple attribute.
+     * @throws JSONException
+     */
+    public JSONObject encodeSimpleAttributeSchema(SimpleAttribute simpleAttribute) throws JSONException {
+
+        return encodeBasicAttributeSchema(simpleAttribute);
+    }
+
+    /**
+     * Encode the attribute schema and return the json object.
+     *
+     * @param attribute
+     * @return json object of the attribute schema.
+     * @throws JSONException
+     */
+    public JSONObject encodeBasicAttributeSchema(Attribute attribute) throws JSONException {
+
+        JSONObject attributeSchema = new JSONObject();
+        attributeSchema.put(NAME, attribute.getName());
+        attributeSchema.put(TYPE, attribute.getType());
+        attributeSchema.put(MULTIVALUED, attribute.getMultiValued());
+        attributeSchema.put(DESCRIPTION, attribute.getDescription());
+        attributeSchema.put(REQUIRED, attribute.getRequired());
+        attributeSchema.put(CASE_EXACT, attribute.getCaseExact());
+        attributeSchema.put(MUTABILITY, attribute.getMutability());
+        attributeSchema.put(RETURNED, attribute.getReturned());
+        attributeSchema.put(UNIQUENESS, attribute.getUniqueness());
+
+        Map<String, String> customAttributes = attribute.getAttributeProperties();
+        for (Map.Entry<String, String> entry : customAttributes.entrySet()) {
+            attributeSchema.put(entry.getKey(), entry.getValue());
+        }
+
+        return attributeSchema;
+    }
+
     /*
      * Encode the complex attribute and include it in root json object to be returned.
      *
@@ -200,6 +251,32 @@ public class JSONEncoder {
             rootObject.put(complexAttribute.getName(), subObject);
         }
 
+    }
+
+    /**
+     * Encode the complex attribute schema and return the json object.
+     *
+     * @param complexAttribute
+     * @return json object of the complex attribute schema.
+     * @throws JSONException
+     */
+    public JSONObject encodeComplexAttributeSchema(ComplexAttribute complexAttribute) throws JSONException {
+
+        JSONObject complexAttributeSchema = encodeBasicAttributeSchema(complexAttribute);
+        Map<String, Attribute> subAttributesMap = complexAttribute.getSubAttributesList();
+
+        if (subAttributesMap != null) {
+            JSONArray subAttributesSchemaArray = new JSONArray();
+
+            for (Map.Entry<String, Attribute> subAttribute : subAttributesMap.entrySet()) {
+                JSONObject subAttributesSchema = encodeBasicAttributeSchema(subAttribute.getValue());
+                subAttributesSchemaArray.put(subAttributesSchema);
+            }
+
+            complexAttributeSchema.put(SUB_ATTRIBUTES, subAttributesSchemaArray);
+        }
+
+        return complexAttributeSchema;
     }
 
 
