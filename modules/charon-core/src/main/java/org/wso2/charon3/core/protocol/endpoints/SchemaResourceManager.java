@@ -33,6 +33,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
     private static final Logger log = LoggerFactory.getLogger(SchemaResourceManager.class);
 
     public SchemaResourceManager() {
+
     }
 
     /*
@@ -53,6 +54,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse create(String scimObjectString, UserManager userManager, String attributes, String
             excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -60,6 +62,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse delete(String id, UserManager userManager) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -68,6 +71,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, int startIndex, int count, String sortBy,
                                     String sortOrder, String domainName, String attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -87,7 +91,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
      */
     @Override
     public SCIMResponse listWithGET(UserManager userManager, String filter, Integer startIndexInt, Integer countInt,
-            String sortBy, String sortOrder, String domainName, String attributes, String excludeAttributes) {
+                                    String sortBy, String sortOrder, String domainName, String attributes,
+                                    String excludeAttributes) {
 
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
@@ -96,15 +101,16 @@ public class SchemaResourceManager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithPOST(String resourceString, UserManager userManager) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
     }
 
-
     @Override
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -113,6 +119,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
     @Override
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
+
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
