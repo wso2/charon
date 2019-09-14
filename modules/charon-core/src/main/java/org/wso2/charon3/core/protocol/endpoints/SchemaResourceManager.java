@@ -15,13 +15,24 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+import org.wso2.charon3.core.schema.SCIMConstants;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The schema resource enables a service
@@ -31,6 +42,13 @@ import org.wso2.charon3.core.protocol.SCIMResponse;
 public class SchemaResourceManager extends AbstractResourceManager {
 
     private static final Logger log = LoggerFactory.getLogger(SchemaResourceManager.class);
+
+    private static final String ATTRIBUTES = "attributes";
+    private static final String MUTABILITY = "mutability";
+    private static final String MULTIVALUED = "multiValued";
+    private static final String CASE_EXACT = "caseExact";
+    private static final String RETURNED = "returned";
+    private static final String UNIQUENESS = "uniqueness";
 
     public SchemaResourceManager() {
 
@@ -45,10 +63,90 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
 
         try {
-            throw new NotImplementedException();
-        } catch (NotImplementedException e) {
+            if (userManager != null) {
+
+                // Handover the retrieving supported schema definition usermanager provided by the SP.
+                List<Map<String, String>> userSchemaAttributes = userManager.getUserSchema();
+
+                // If there are any http headers to be added in the response header.
+                Map<String, String> responseHeaders = new HashMap<String, String>();
+                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+                responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.SCHEMAS_ENDPOINT));
+
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK,
+                        buildSchemaJsonBody(userSchemaAttributes).toString(), responseHeaders);
+
+            } else {
+                String error = "Provided user manager handler is null.";
+                log.error(error);
+                throw new InternalErrorException(error);
+            }
+
+        } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (CharonException | NotImplementedException | BadRequestException | InternalErrorException
+                | JSONException e) {
+            return AbstractResourceManager.encodeSCIMException(new CharonException("Error while encoding"));
         }
+    }
+    /*
+     * Build the service provider config json representation
+     * @param config
+     * @return
+     */
+    public JSONArray buildSchemaJsonBody(List<Map<String, String>> userSchemaAttributeList) throws JSONException {
+
+        JSONArray rootObject = new JSONArray();
+        JSONObject userSchemaObject = getUserSchemaJsonBody(userSchemaAttributeList);
+        rootObject.put(userSchemaObject);
+        return rootObject;
+    }
+
+    private JSONObject getUserSchemaJsonBody(List<Map<String, String>> userSchemaAttributeList) throws JSONException {
+
+        JSONObject userSchemaObject = new JSONObject();
+        userSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, "urn:ietf:params:scim:schemas:core:2.0:User");
+        userSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, "User");
+        userSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, "User Account");
+
+        JSONArray attributesSchemesArray = new JSONArray();
+
+        // Add static username schema definition
+        JSONObject usernameSchemaObject = getUsernameSchema();
+        attributesSchemesArray.put(usernameSchemaObject);
+
+        // Add dynamic user schema definitions
+        for (Map<String, String> userShemaAttributes : userSchemaAttributeList) {
+
+            JSONObject scimAttributeSchemaObject = new JSONObject();
+            for (Map.Entry<String, String> entry : userShemaAttributes.entrySet()) {
+                scimAttributeSchemaObject.put(entry.getKey(), entry.getValue());
+            }
+            attributesSchemesArray.put(userShemaAttributes);
+        }
+
+        userSchemaObject.put(ATTRIBUTES, attributesSchemesArray);
+        return userSchemaObject;
+    }
+
+    private JSONObject getUsernameSchema() throws JSONException {
+        JSONObject usernameSchemaObject = new JSONObject();
+
+        usernameSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, "userName");
+        usernameSchemaObject.put(SCIMConstants.CommonSchemaConstants.TYPE, "string");
+        usernameSchemaObject.put(MULTIVALUED, "false");
+        usernameSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, "Unique identifier for the " +
+                "User, typically used by the user to directly authenticate to the service provider. Each User MUST " +
+                "include a non-empty userName value.  This identifier MUST be unique across the service provider's " +
+                "entire set of Users. REQUIRED.");
+        usernameSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED, "false");
+        usernameSchemaObject.put(CASE_EXACT, "false");
+        usernameSchemaObject.put(MUTABILITY, "readWrite");
+        usernameSchemaObject.put(RETURNED, "default");
+        usernameSchemaObject.put(UNIQUENESS, "server");
+
+        return usernameSchemaObject;
     }
 
     @Override

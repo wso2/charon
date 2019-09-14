@@ -139,5 +139,11 @@ public interface UserManager {
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;;
+            throws NotImplementedException, BadRequestException, CharonException;
+
+
+    default List<Map<String, String>> getUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+        throw new NotImplementedException();
+    }
 }
