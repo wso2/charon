@@ -26,7 +26,6 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.config.SCIMConfigConstants;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
-import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.SCIMObject;
@@ -88,9 +87,7 @@ public class JSONEncoder {
         try {
             //construct error object with details in the exception
             errorObject.put(ResponseCodeConstants.SCHEMAS, new String[]{exception.getSchemas()});
-            if (exception instanceof BadRequestException) {
-                errorObject.put(ResponseCodeConstants.SCIM_TYPE, ((BadRequestException) (exception)).getScimType());
-            }
+            errorObject.put(ResponseCodeConstants.SCIM_TYPE, String.valueOf(exception.getScimType()));
             errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));
             errorObject.put(ResponseCodeConstants.STATUS, String.valueOf(exception.getStatus()));
             //construct the full json obj.
