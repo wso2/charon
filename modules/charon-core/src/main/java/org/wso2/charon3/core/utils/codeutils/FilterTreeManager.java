@@ -24,6 +24,8 @@ import org.wso2.charon3.core.utils.AttributeUtil;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -47,8 +49,10 @@ public class FilterTreeManager {
 
     public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
 
+        String encodedString = URLEncoder.encode(filterString, "UTF-8");
+        String modifiedEncodedString = encodedString.replaceAll("\\+", " ");
         this.schema = schema;
-        input = new StreamTokenizer(new StringReader(filterString));
+        input = new StreamTokenizer(new StringReader(modifiedEncodedString));
         input.resetSyntax();
         // Default settings in StreamTokenizer syntax initializer.
         input.wordChars('a', 'z');
@@ -70,9 +74,11 @@ public class FilterTreeManager {
         input.wordChars('.', '.');
         input.wordChars('*', '*');
         input.wordChars('/', '/');
-        
+        input.wordChars('%', '%');
+
         tokenList = new ArrayList<String>();
         String concatenatedString = "";
+        String decodedValue;
 
         while (input.nextToken() != StreamTokenizer.TT_EOF) {
             //ttype 40 is for the '('
@@ -85,11 +91,16 @@ public class FilterTreeManager {
                 concatenatedString = "";
                 tokenList.add(")");
             } else if (input.ttype == StreamTokenizer.TT_WORD) {
-                if (!(input.sval.equalsIgnoreCase(SCIMConstants.OperationalConstants.AND)
-                        || input.sval.equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
-                        input.sval.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
+                decodedValue = URLDecoder.decode(input.sval, "UTF-8");
+                if (!(decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.AND)
+                        || decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
+                        decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
+
+                    // Remove quotes if there are starting and ending quotes.
+                    decodedValue = removeStartingAndEndingQuotes(decodedValue);
+
                     //concatenate the string by adding spaces in between
-                    concatenatedString += " " + input.sval;
+                    concatenatedString += " " + decodedValue;
 
                 } else {
                     concatenatedString = concatenatedString.trim();
@@ -97,7 +108,7 @@ public class FilterTreeManager {
                         tokenList.add(concatenatedString);
                         concatenatedString = "";
                     }
-                    tokenList.add(input.sval);
+                    tokenList.add(decodedValue);
                 }
             } else if (input.ttype == '\"' || input.ttype == '\'') {
                 concatenatedString += " " + input.sval;
@@ -303,5 +314,15 @@ public class FilterTreeManager {
             tokenList.remove(0);
             return value;
         }
+    }
+
+    private String removeStartingAndEndingQuotes(String decodedValue) {
+
+        if (decodedValue.startsWith("\"") && decodedValue.endsWith("\"")) {
+            decodedValue = decodedValue.replaceFirst("\"", "").replaceAll("\"$", "");
+        } else if (decodedValue.startsWith("'") && decodedValue.endsWith("'")) {
+            decodedValue = decodedValue.replaceFirst("'", "").replaceAll("'$", "");
+        }
+        return decodedValue;
     }
 }
