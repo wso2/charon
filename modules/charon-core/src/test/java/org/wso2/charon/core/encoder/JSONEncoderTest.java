@@ -89,7 +89,7 @@ public class JSONEncoderTest {
             String encodedString = jsonObject.toString();
 
             //Assert encoded string
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
             Assert.assertEquals("{\"created\":\"" + sdf.format(now) + "\"}", encodedString);
 
             //test whether properly encoded
@@ -195,7 +195,7 @@ public class JSONEncoderTest {
             Date lastModified = new Date();
             testUser.setLastModified(lastModified);
 
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
 
             String version = "v1";
             String location = "http://appserver.stratoslive.wso2.com/t/charon.com/webapps/charonDemoApp/scim/Users/";
@@ -216,7 +216,7 @@ public class JSONEncoderTest {
 
             //Assert encoded sting
             String encodedJson = encodedObject.toString();
-            Assert.assertEquals(232, encodedJson.length());
+            Assert.assertEquals(234, encodedJson.length());
             Assert.assertTrue(encodedJson.contains("\"meta\":{"));
             Assert.assertTrue(encodedJson.contains("\"location\":\"http://appserver.stratoslive.wso2"
                     + ".com/t/charon.com/webapps/charonDemoApp/scim/Users/\""));
@@ -296,9 +296,9 @@ public class JSONEncoderTest {
             JSONEncoder jsonEncoder = new JSONEncoder();
             String encodedString = jsonEncoder.encodeSCIMObject(listedResource);
 
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
             //Assert encoded string
-            Assert.assertEquals(551, encodedString.length());
+            Assert.assertEquals(555, encodedString.length());
             Assert.assertTrue(encodedString.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
             Assert.assertTrue(encodedString.contains("\"Resources\":[{"));
             Assert.assertTrue(encodedString.contains("\"totalResults\":2"));
@@ -388,10 +388,10 @@ public class JSONEncoderTest {
             bulkData.addUser(user2);
             bulkData.addUser(user3);
 
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
             String encodedString = jsonEncoder.encodeBulkData(bulkData);
 
-            Assert.assertEquals(encodedString.length(), 1231);
+            Assert.assertEquals(encodedString.length(), 1237);
             Assert.assertTrue(encodedString.contains("\"failOnErrors\":2"));
             Assert.assertTrue(encodedString.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
             Assert.assertTrue(encodedString.contains("\"Operations\":[{"));

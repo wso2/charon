@@ -169,8 +169,7 @@ public class JSONEncoder implements Encoder {
             //if type is DateTime, convert before encoding.
             if (attribute.getDataType() != null &&
                 attribute.getDataType() == SCIMSchemaDefinitions.DataType.DATE_TIME) {
-                rootObject.put(attribute.getName(),
-                               AttributeUtil.formatDateTime((Date) attribute.getValue()));
+                rootObject.put(attribute.getName(), AttributeUtil.formatDateTimeLocal((Date) attribute.getValue()));
                 return;
             }
             rootObject.put(attribute.getName(), attribute.getValue());
@@ -193,7 +192,7 @@ public class JSONEncoder implements Encoder {
             if (attributeValue.getDataType() != null &&
                 attributeValue.getDataType() == SCIMSchemaDefinitions.DataType.DATE_TIME) {
                 attributeValueObject.put(attributeValue.getName(),
-                                         AttributeUtil.formatDateTime((Date) attributeValue.getValue()));
+                        AttributeUtil.formatDateTimeLocal((Date) attributeValue.getValue()));
                 return;
             }
             attributeValueObject.put(attributeValue.getName(), attributeValue.getValue());

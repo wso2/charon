@@ -73,7 +73,7 @@ public class AttributeUtilTest {
                 { false, SCIMSchemaDefinitions.DataType.BOOLEAN, "false" },
                 { new Byte((byte) 1), SCIMSchemaDefinitions.DataType.BINARY, "1" },
                 { -1.1, SCIMSchemaDefinitions.DataType.DECIMAL, "-1.1" },
-                { getTestTime(), SCIMSchemaDefinitions.DataType.DATE_TIME, "2017-10-18T18:00:00" } };
+                { getTestTime(), SCIMSchemaDefinitions.DataType.DATE_TIME, "2017-10-18T18:00:00Z" } };
     }
 
     private static Date getTestTime() {

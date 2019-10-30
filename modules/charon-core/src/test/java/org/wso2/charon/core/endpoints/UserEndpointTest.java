@@ -212,10 +212,10 @@ public class UserEndpointTest {
                                                       new User());
             id = user.getId();
 
-            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat);
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
 
             String responseMessage = scimResponse.getResponseMessage();
-            Assert.assertEquals(2607, responseMessage.length());
+            Assert.assertEquals(2609, responseMessage.length());
             Assert.assertTrue(responseMessage.contains("\"schemas\":[\"urn:scim:schemas:core:1.0\"]"));
             Assert.assertTrue(responseMessage.contains("\"ims\":[{"));
             Assert.assertTrue(responseMessage.contains("\"emails\":[{"));

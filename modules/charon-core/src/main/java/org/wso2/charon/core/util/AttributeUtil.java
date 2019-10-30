@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 public class AttributeUtil {
 
@@ -80,7 +81,7 @@ public class AttributeUtil {
             case INTEGER:
                 return String.valueOf(attributeValue);
             case DATE_TIME:
-                return formatDateTime((Date) attributeValue);
+                return formatDateTimeLocal((Date) attributeValue);
             case BINARY:
                 return String.valueOf(attributeValue);
         }
@@ -110,9 +111,21 @@ public class AttributeUtil {
      * @param date
      */
     public static String formatDateTime(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String formattedDate = sdf.format(date);
-        return formattedDate;
+
+        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return sdf.format(date);
+    }
+
+    /*
+     * SCIM spec requires date time to be adhered to XML Schema Datatypes Specification
+     *
+     * @param date
+     */
+    public static String formatDateTimeLocal(Date date) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
+        return sdf.format(date);
     }
 
 	/**
