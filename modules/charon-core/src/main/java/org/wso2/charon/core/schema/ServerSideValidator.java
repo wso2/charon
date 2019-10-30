@@ -104,7 +104,7 @@ public class ServerSideValidator extends AbstractValidator {
             validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
             //edit last modified date
             Date date = new Date();
-            validatedObject.setLastModified(date);
+            validatedObject.setLastModified(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(date)));
             //check for required attributes.
             validateSCIMObjectForRequiredAttributes(validatedObject, resourceSchema);
         } catch (NotFoundException e) {
