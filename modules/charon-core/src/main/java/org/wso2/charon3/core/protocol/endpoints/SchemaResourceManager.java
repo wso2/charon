@@ -20,6 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
@@ -66,7 +70,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
             if (userManager != null) {
 
                 // Handover the retrieving supported schema definition usermanager provided by the SP.
-                List<Map<String, String>> userSchemaAttributes = userManager.getUserSchema();
+                List<Attribute> userSchemaAttributes = userManager.getUserSchema();
 
                 // If there are any http headers to be added in the response header.
                 Map<String, String> responseHeaders = new HashMap<String, String>();
@@ -75,7 +79,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
                         SCIMConstants.SCHEMAS_ENDPOINT));
 
                 return new SCIMResponse(ResponseCodeConstants.CODE_OK,
-                        buildSchemaJsonBody(userSchemaAttributes).toString(), responseHeaders);
+                         buildSchemaJsonBody(userSchemaAttributes).toString(), responseHeaders);
 
             } else {
                 String error = "Provided user manager handler is null.";
@@ -95,38 +99,55 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @param config
      * @return
      */
-    public JSONArray buildSchemaJsonBody(List<Map<String, String>> userSchemaAttributeList) throws JSONException {
+    public JSONArray buildSchemaJsonBody(List<Attribute> userSchemaAttributeList) throws JSONException {
 
         JSONArray rootObject = new JSONArray();
-        JSONObject userSchemaObject = getUserSchemaJsonBody(userSchemaAttributeList);
-        rootObject.put(userSchemaObject);
+
+        JSONEncoder encoder = null;
+        try {
+            encoder = getEncoder();
+
+            JSONObject userSchemaObject = getUserSchemaJsonBody(userSchemaAttributeList, encoder);
+            rootObject.put(userSchemaObject);
+        } catch (CharonException e) {
+            throw new JSONException(e);
+        }
+
         return rootObject;
     }
 
-    private JSONObject getUserSchemaJsonBody(List<Map<String, String>> userSchemaAttributeList) throws JSONException {
+    private JSONObject getUserSchemaJsonBody(List<Attribute> userSchemaAttributeList, JSONEncoder encoder)
+            throws JSONException {
 
         JSONObject userSchemaObject = new JSONObject();
+        // TODO: 11/5/19 Use constants
         userSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, "urn:ietf:params:scim:schemas:core:2.0:User");
         userSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, "User");
         userSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, "User Account");
 
-        JSONArray attributesSchemesArray = new JSONArray();
+        JSONArray attributesSchemasArray = new JSONArray();
 
         // Add static username schema definition
         JSONObject usernameSchemaObject = getUsernameSchema();
-        attributesSchemesArray.put(usernameSchemaObject);
+        attributesSchemasArray.put(usernameSchemaObject);
 
         // Add dynamic user schema definitions
-        for (Map<String, String> userShemaAttributes : userSchemaAttributeList) {
-
-            JSONObject scimAttributeSchemaObject = new JSONObject();
-            for (Map.Entry<String, String> entry : userShemaAttributes.entrySet()) {
-                scimAttributeSchemaObject.put(entry.getKey(), entry.getValue());
+        for (Attribute userShemaAttributes : userSchemaAttributeList) {
+            JSONObject scimAttributeSchemaObject = null;
+            if (userShemaAttributes instanceof SimpleAttribute) {
+                scimAttributeSchemaObject =
+                        encoder.encodeSimpleAttributeSchema((SimpleAttribute) userShemaAttributes);
+            } else if (userShemaAttributes instanceof ComplexAttribute) {
+                scimAttributeSchemaObject =
+                        encoder.encodeComplexAttributeSchema((ComplexAttribute) userShemaAttributes);
+            } else {
+                // TODO: 11/5/19 Handle else
             }
-            attributesSchemesArray.put(userShemaAttributes);
+
+            attributesSchemasArray.put(scimAttributeSchemaObject);
         }
 
-        userSchemaObject.put(ATTRIBUTES, attributesSchemesArray);
+        userSchemaObject.put(ATTRIBUTES, attributesSchemasArray);
         return userSchemaObject;
     }
 

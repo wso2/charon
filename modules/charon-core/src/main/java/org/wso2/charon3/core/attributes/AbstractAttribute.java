@@ -17,6 +17,9 @@ package org.wso2.charon3.core.attributes;
 
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class abstracts out the common characteristics of different types of attributes defined in
  * SCIM Core Schema Spec.
@@ -43,6 +46,8 @@ public abstract class AbstractAttribute implements Attribute {
     protected SCIMDefinitions.Returned returned;
     //A SCIM defined value that specifies the uniqueness level of an attribute.
     protected SCIMDefinitions.Uniqueness uniqueness;
+    //A container to hold additional custom properties.
+    protected Map<String, String> additionalAttributeProperties = new HashMap<>();
 
     public String getURI() {
         return uri; }
@@ -121,4 +126,23 @@ public abstract class AbstractAttribute implements Attribute {
         this.uniqueness = uniqueness;
     }
 
+    public String getAttributeProperty(String propertyName) {
+
+        return additionalAttributeProperties.get(propertyName);
+    }
+
+    public Map<String, String> getAttributeProperties() {
+
+        return additionalAttributeProperties;
+    }
+
+    public void addAttributeProperty(String propertyName, String propertyValue) {
+
+        this.additionalAttributeProperties.put(propertyName, propertyValue);
+    }
+
+    public String removeAttributeProperty(String propertyName) {
+
+        return additionalAttributeProperties.remove(propertyName);
+    }
 }

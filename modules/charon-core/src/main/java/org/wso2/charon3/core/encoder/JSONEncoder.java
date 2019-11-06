@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.attributes.AbstractAttribute;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
@@ -60,6 +61,18 @@ public class JSONEncoder {
     public String getFormat() {
         return format;
     }
+
+
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
+    private static final String TYPE = "type";
+    private static final String MULTIVALUED = "multiValued";
+    private static final String CASE_EXACT = "caseExact";
+    private static final String REQUIRED = "required";
+    private static final String MUTABILITY = "mutability";
+    private static final String RETURNED = "returned";
+    private static final String UNIQUENESS = "uniqueness";
+    private static final String SUB_ATTRIBUTES = "subAttributes";
 
     /*
      * return encoded string from scim object
@@ -177,6 +190,47 @@ public class JSONEncoder {
     }
 
     /*
+     * Encode the simple attribute schema and return the encoded json object.
+     *
+     * @param simpleAttribute simple attribute
+     * @param encoded json object of the simple attribute schema
+     */
+    public JSONObject encodeSimpleAttributeSchema(SimpleAttribute simpleAttribute)
+            throws JSONException {
+
+        return encodeBasicAttributeSchema(simpleAttribute);
+    }
+
+    /*
+     * Encode the abstract attribute schema and return the encoded json object.
+     *
+     * @param attribute abstract attribute
+     * @param encoded json object of the attribute schema
+     */
+    private JSONObject encodeBasicAttributeSchema(AbstractAttribute attribute)
+            throws JSONException {
+
+        JSONObject attributeSchema = new JSONObject();
+
+        attributeSchema.put(NAME, attribute.getName());
+        attributeSchema.put(TYPE, attribute.getType());
+        attributeSchema.put(MULTIVALUED, attribute.getMultiValued());
+        attributeSchema.put(DESCRIPTION, attribute.getDescription());
+        attributeSchema.put(REQUIRED, attribute.getRequired());
+        attributeSchema.put(CASE_EXACT, attribute.getCaseExact());
+        attributeSchema.put(MUTABILITY, attribute.getMutability());
+        attributeSchema.put(RETURNED, attribute.getReturned());
+        attributeSchema.put(UNIQUENESS, attribute.getUniqueness());
+
+        Map<String, String> customAttributes = attribute.getAttributeProperties();
+        for (Map.Entry<String, String> entry : customAttributes.entrySet()) {
+            attributeSchema.put(entry.getKey(), entry.getValue());
+        }
+
+        return attributeSchema;
+    }
+
+    /*
      * Encode the complex attribute and include it in root json object to be returned.
      *
      * @param complexAttribute
@@ -200,6 +254,40 @@ public class JSONEncoder {
             rootObject.put(complexAttribute.getName(), subObject);
         }
 
+    }
+
+    /*
+     * Encode the complex attribute schema and return the encoded json object.
+     *
+     * @param complexAttribute complex attribute
+     * @param encoded json object of the complex attribute schema
+     */
+    public JSONObject encodeComplexAttributeSchema(ComplexAttribute complexAttribute)
+            throws JSONException {
+
+        JSONObject complexAttributeSchema = encodeBasicAttributeSchema(complexAttribute);
+
+        Map<String, Attribute> subAttributesMap = complexAttribute.getSubAttributesList();
+
+        if (subAttributesMap != null) {
+
+            JSONArray subAttributesSchemaArray = new JSONArray();
+
+            for (Map.Entry<String, Attribute> subAttribute : subAttributesMap.entrySet()) {
+                JSONObject subAttributesSchema = null;
+                if (subAttribute.getValue() instanceof SimpleAttribute) {
+                    subAttributesSchema = encodeSimpleAttributeSchema((SimpleAttribute) subAttribute.getValue());
+                }
+
+                subAttributesSchemaArray.put(subAttributesSchema);
+            }
+
+            complexAttributeSchema.put(SUB_ATTRIBUTES, subAttributesSchemaArray);
+        }
+
+
+
+        return complexAttributeSchema;
     }
 
 

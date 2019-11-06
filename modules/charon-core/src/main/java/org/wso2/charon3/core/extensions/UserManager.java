@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.extensions;
 
+import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -142,7 +143,7 @@ public interface UserManager {
             throws NotImplementedException, BadRequestException, CharonException;
 
 
-    default List<Map<String, String>> getUserSchema() throws CharonException, NotImplementedException,
+    default List<Attribute> getUserSchema() throws CharonException, NotImplementedException,
             BadRequestException {
         throw new NotImplementedException();
     }
