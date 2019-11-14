@@ -19,6 +19,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Interface to represent Attribute defined in SCIM schema spec.
@@ -52,4 +53,13 @@ public interface Attribute extends Serializable {
 
     public void deleteSubAttributes() throws CharonException;
 
+    public default String getAttributeProperty(String propertyName) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    public default Map<String, String> getAttributeProperties() {
+
+        throw new UnsupportedOperationException();
+    }
 }

@@ -86,6 +86,9 @@ Currently following features are supported.
 #### /ResourceType Endpoint
 - [x] Get
 
+#### /Schemas Endpoint
+- [x] Get
+
 #### /Bulk Endpoint
 - [x] Create
 - [x] Get

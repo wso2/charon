@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.extensions;
 
+import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -139,5 +140,10 @@ public interface UserManager {
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;;
+            throws NotImplementedException, BadRequestException, CharonException;
+
+    default List<Attribute> getUserSchema() throws CharonException, NotImplementedException, BadRequestException {
+
+        throw new NotImplementedException();
+    }
 }
