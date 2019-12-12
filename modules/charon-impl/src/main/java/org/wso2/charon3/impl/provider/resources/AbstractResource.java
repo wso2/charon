@@ -49,8 +49,12 @@ public class AbstractResource implements Microservice {
 
     //identify the input format
     public boolean isValidInputFormat(String format) {
+        if(format == null){
+            return true;
+        }
+        
         String mediaType = format.split(";")[0];
-        if (mediaType == null || "*/*".equals(mediaType) ||
+        if ("*/*".equals(mediaType) ||
                 mediaType.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_JSON)
                 || mediaType.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_SCIM_JSON)) {
             return true;
