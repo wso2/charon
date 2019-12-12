@@ -650,7 +650,7 @@ public class PatchOperationUtil {
      * @param oldResource       Original resource SCIM object.
      * @param copyOfOldResource Copy of an original resource.
      * @param schema            SCIM resource schema.
-     * @return
+     * @return Abstract SCIMObject.
      * @throws CharonException
      * @throws BadRequestException
      * @throws NotImplementedException
@@ -661,7 +661,7 @@ public class PatchOperationUtil {
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         if (operation.getValues() == null) {
-            throw new BadRequestException("The value is not provided to perform patch add operation",
+            throw new BadRequestException("The value is not provided to perform patch add operation.",
                     ResponseCodeConstants.INVALID_SYNTAX);
         }
 
@@ -670,7 +670,7 @@ public class PatchOperationUtil {
         }
 
         if (operation.getPath() != null) {
-            doPatchAddOnResourceWithPath(operation, decoder, oldResource, schema, operation.getPath());
+            doPatchAddOnResourceWithPath(operation, decoder, oldResource, schema);
         } else {
             doPatchAddOnResource(operation, decoder, oldResource, copyOfOldResource, schema);
         }
@@ -693,7 +693,7 @@ public class PatchOperationUtil {
      * @throws InternalErrorException
      */
     private static void doPatchAddOnResourceWithPath(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema, String path)
+            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         try {
@@ -711,7 +711,7 @@ public class PatchOperationUtil {
                 }
             } else {
                 // Provided path doesn't contain filter condition.
-                doPatchAddOnPathWithoutFilters(oldResource, schema, decoder, operation, path);
+                doPatchAddOnPathWithoutFilters(operation, decoder, oldResource, schema);
             }
         } catch (ParserException e) {
             throw new BadRequestException(
@@ -728,8 +728,8 @@ public class PatchOperationUtil {
      * Example path with filters: addresses[type eq \"work\"]
      * Example path without filter: name.familyName
      *
-     * @param rule
-     * @return
+     * @param rule Rule.
+     * @return Boolean value.
      */
     private static boolean isFilterConditionProvidedInPath(Rule rule) {
 
@@ -769,21 +769,21 @@ public class PatchOperationUtil {
     /**
      * Perform patch add on the resource according to the specified path without filters.
      *
-     * @param oldResource
-     * @param schema
-     * @param decoder
-     * @param operation
+     * @param operation   Operation to be performed.
+     * @param decoder     JSON decoder.
+     * @param oldResource Original resource SCIM object.
+     * @param schema      SCIM resource schema.
      * @throws BadRequestException
      * @throws CharonException
      * @throws InternalErrorException
      * @throws NotImplementedException
      */
-    private static void doPatchAddOnPathWithoutFilters(AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema,
-            JSONDecoder decoder, PatchOperation operation, String path)
-            throws BadRequestException, CharonException, InternalErrorException, NotImplementedException {
+    private static void doPatchAddOnPathWithoutFilters(PatchOperation operation, JSONDecoder decoder,
+            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
+            throws BadRequestException, CharonException, InternalErrorException {
 
         if (operation.getPath().trim().length() > 0) {
-            String[] attributeParts = operation.getPath().split("[\\.]");
+            String[] attributeParts = getAttributeParts(operation.getPath());
 
             if (log.isDebugEnabled()) {
                 log.debug("After splitting the Path attribute part(s): " + Arrays.toString(attributeParts));
@@ -814,11 +814,11 @@ public class PatchOperationUtil {
     /**
      * Perform patch add operation for the simple path (level one). As example attributes members, nickname, name.
      *
-     * @param oldResource
-     * @param schema
-     * @param decoder
-     * @param operation
-     * @param attributePart
+     * @param oldResource   Original resource SCIM object.
+     * @param schema        SCIM resource schema.
+     * @param decoder       JSON decoder.
+     * @param operation     Operation to be performed.
+     * @param attributePart Attribute provided in path which needs to be added on resource.
      * @throws BadRequestException
      * @throws CharonException
      * @throws InternalErrorException
@@ -899,11 +899,11 @@ public class PatchOperationUtil {
      * Perform patch add operation for the path which doesn't contain the filters but considered as level two.
      * As an example attribute name.familyName
      *
-     * @param oldResource
-     * @param schema
-     * @param decoder
-     * @param operation
-     * @param attributeParts
+     * @param oldResource    Original resource SCIM object.
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array which length is two, considered as a level two case.
      */
     private static void doPatchAddOnPathWithoutFiltersForLevelTwo(AbstractSCIMObject oldResource,
             SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts)
