@@ -157,6 +157,24 @@ public interface UserManager {
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
+    /**
+     *
+     * Updates the group.
+     *
+     * @param oldGroup
+     * @param newGroup
+     *
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws NotFoundException
+     */
+    default void updateGroup(Group oldGroup, Group newGroup)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        throw new NotImplementedException();
+    }
+
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
