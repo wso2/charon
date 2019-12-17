@@ -358,7 +358,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             // Unless configured returns core-user schema or else returns extended user schema.
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
-            //// Build node for filtering.
+            // Build node for filtering.
             Node rootNode = buildNode(filter, schema);
 
             // Obtain the json encoder.
@@ -376,8 +376,9 @@ public class GroupResourceManager extends AbstractResourceManager {
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                // Log the error as well.
-                // Throw internal server error.
+                if(logger.isDebugEnabled()){
+                    logger.debug(error);
+                }
                 throw new InternalErrorException(error);
             }
         } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
@@ -410,25 +411,21 @@ public class GroupResourceManager extends AbstractResourceManager {
         List<Object> returnedGroups;
         if (tempList == null) {
             tempList = Collections.emptyList();
-        }
-        try {
-            totalResults = (int) tempList.get(0);
-            tempList.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Group result list is empty.");
+        } else {
+            if (tempList.size() > 1) {
+                if (tempList.get(0) instanceof Integer) {
+                    totalResults = (int) tempList.get(0);
+                    tempList.remove(0);
+                } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(
+                                "First element in the list is not an int. Setting result count as: " + tempList.size());
+                    }
+                    totalResults = tempList.size();
+                }
             }
-            totalResults = tempList.size();
-        } catch (ClassCastException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "Parse error while getting the group result count. Setting result count as: " + tempList.size(),
-                        ex);
-            }
-            totalResults = tempList.size();
         }
         returnedGroups = tempList;
-
         for (Object group : returnedGroups) {
             // Perform service provider side validation.
             ServerSideValidator
