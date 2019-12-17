@@ -261,14 +261,14 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
-                        .listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
-                                requiredAttributes);
+                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex,
+                        count, sortBy, sortOrder, domainName, requiredAttributes);
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                // Log the error as well.
-                // Throw internal server error.
+                if (logger.isDebugEnabled()) {
+                    logger.error(error);
+                }
                 throw new InternalErrorException(error);
             }
         } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
@@ -291,18 +291,19 @@ public class GroupResourceManager extends AbstractResourceManager {
      */
     private String resolveSortOrder(String sortOrder, String sortBy) throws BadRequestException {
 
-        // Check whether provided sortOrder is valid or not.
+        // Check whether the provided sortOrder is valid or not.
         if (sortOrder != null) {
-            if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
-                    .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+            if (!(SCIMConstants.OperationalConstants.ASCENDING.equalsIgnoreCase(sortOrder)
+                    || SCIMConstants.OperationalConstants.DESCENDING.equalsIgnoreCase(sortOrder))) {
                 String error = " Invalid sortOrder value is specified";
                 throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
             }
-        }
-        // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
-        // ascending.
-        if (sortOrder == null && sortBy != null) {
-            sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+        } else {
+            // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (sortBy != null) {
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
         }
         return sortOrder;
     }
@@ -370,9 +371,8 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
-                        .listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
-                                requiredAttributes);
+                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
+                        sortBy, sortOrder, domainName, requiredAttributes);
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
