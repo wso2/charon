@@ -103,7 +103,7 @@ public class Group extends AbstractSCIMObject {
             }
             return memberList;
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 
