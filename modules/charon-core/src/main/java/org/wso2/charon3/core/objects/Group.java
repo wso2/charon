@@ -101,10 +101,8 @@ public class Group extends AbstractSCIMObject {
                             SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
                 }
             }
-            return memberList;
-        } else {
-            return Collections.emptyList();
         }
+        return memberList;
     }
 
     /**
