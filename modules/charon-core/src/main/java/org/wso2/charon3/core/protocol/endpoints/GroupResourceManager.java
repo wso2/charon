@@ -376,7 +376,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                if(logger.isDebugEnabled()){
+                if (logger.isDebugEnabled()) {
                     logger.debug(error);
                 }
                 throw new InternalErrorException(error);
