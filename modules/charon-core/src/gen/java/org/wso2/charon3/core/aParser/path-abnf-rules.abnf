@@ -1,0 +1,69 @@
+PATH = attributePath / valuePath [subAttribute];
+
+attributePath  = [URI ":"] attributeName *1subAttribute;
+
+valuePath = attributePath "[" valueFilter "]";
+
+valueFilter = attributeExpression / filter / *1"not" "(" valueFilter ")";
+
+attributeExpression = (attributePath SP "pr") / (attributePath SP compareOperation SP compareValue);
+
+filter = ( attributeExpression filterDash ) / (valuePath filterDash) / ( *1"not" "(" filter ")" filterDash );
+
+filterDash = SP ("and" / "or") SP filter filterDash / "";
+
+compareValue = false / null / true / number / string;
+
+compareOperation = "eq" / "ne" / "co" / "sw" / "ew" / "gt" / "lt" / "ge" / "le";
+
+attributeName  = alpha *(nameChar);
+
+nameChar  = "-" / "_" / digit / alpha;
+
+subAttribute   = "." attributeName;
+
+URI ="urn:ietf:params:scim:schemas:core:2.0:User" / "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User" / "urn:ietf:params:scim:schemas:core:2.0:Group";
+
+SP             =  %x20;
+
+alpha          =  (%x41-5A) / (%x61-7A);
+
+digit          =  %x30-39;
+
+string = quotation-mark *char quotation-mark;
+
+char = unescaped / escape ( %x22 / %x5C / %x2F / %x62 / %x66 / %x6E / %x72 / %x74 / %x75 4hexDigit );
+
+escape = %x5C;
+
+quotation-mark = %x22;
+
+unescaped = %x20-21 / %x23-5B / %x5D-10FFFF;
+
+hexDigit         =  digit / "A" / "B" / "C" / "D" / "E" / "F";
+
+false = %x66.61.6c.73.65;
+
+null  = %x6e.75.6c.6c;
+
+true  = %x74.72.75.65;
+
+number = [ minus ] int [ frac ] [ exp ];
+
+exp = e [ minus / plus ] 1*digit;
+
+frac = decimal-point 1*digit;
+
+int = zero / ( digit1-9 *digit );
+
+decimal-point = %x2E;
+
+digit1-9 = %x31-39;
+
+e = %x65 / %x45;
+
+minus = %x2D;
+
+plus = %x2B;
+
+zero = %x30;
