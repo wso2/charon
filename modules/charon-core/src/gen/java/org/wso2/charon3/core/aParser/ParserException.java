@@ -18,6 +18,7 @@ import java.util.Stack;
  */
 
 public class ParserException extends Exception {
+
     static final private String newline = System.getProperty("line.separator", "\n");
     private String reason;
     private String text60;
@@ -34,6 +35,7 @@ public class ParserException extends Exception {
      */
 
     public ParserException(String reason, String text, int index, Stack<String> ruleStack) {
+
         this.reason = reason;
         this.ruleStack = ruleStack;
 
@@ -50,6 +52,7 @@ public class ParserException extends Exception {
      */
 
     public String getReason() {
+
         return reason;
     }
 
@@ -66,6 +69,7 @@ public class ParserException extends Exception {
      */
 
     public String getSubstring() {
+
         return text60;
     }
 
@@ -78,6 +82,7 @@ public class ParserException extends Exception {
      */
 
     public int getSubstringIndex() {
+
         return index60;
     }
 
@@ -88,6 +93,7 @@ public class ParserException extends Exception {
      */
 
     public Stack<String> getRuleStack() {
+
         return ruleStack;
     }
 
@@ -107,6 +113,7 @@ public class ParserException extends Exception {
      */
 
     public String getMessage() {
+
         String marker = "                              ";
 
         StringBuffer buffer = new StringBuffer();

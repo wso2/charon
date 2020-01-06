@@ -11,11 +11,14 @@ package org.wso2.charon3.core.aParser;/* ---------------------------------------
 import java.util.ArrayList;
 
 final public class Rule_compareValue extends Rule {
+
     public Rule_compareValue(String spelling, ArrayList<Rule> rules) {
+
         super(spelling, rules);
     }
 
     public static Rule_compareValue parse(ParserContext context) {
+
         context.push("compareValue");
 
         boolean parsed = true;
@@ -152,6 +155,7 @@ final public class Rule_compareValue extends Rule {
     }
 
     public Object accept(Visitor visitor) {
+
         return visitor.visit(this);
     }
 }

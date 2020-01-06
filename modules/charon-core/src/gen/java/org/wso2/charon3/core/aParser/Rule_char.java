@@ -11,11 +11,14 @@ package org.wso2.charon3.core.aParser;/* ---------------------------------------
 import java.util.ArrayList;
 
 final public class Rule_char extends Rule {
+
     public Rule_char(String spelling, ArrayList<Rule> rules) {
+
         super(spelling, rules);
     }
 
     public static Rule_char parse(ParserContext context) {
+
         context.push("char");
 
         boolean parsed = true;
@@ -313,6 +316,7 @@ final public class Rule_char extends Rule {
     }
 
     public Object accept(Visitor visitor) {
+
         return visitor.visit(this);
     }
 }

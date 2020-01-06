@@ -11,6 +11,7 @@ package org.wso2.charon3.core.aParser;/* ---------------------------------------
 import java.util.Stack;
 
 public class ParserContext {
+
     public final String text;
     private final boolean traceOn;
     public int index;
@@ -21,21 +22,25 @@ public class ParserContext {
     private int errorIndex = 0;
 
     public ParserContext(String text, boolean traceOn) {
+
         this.text = text;
         this.traceOn = traceOn;
         index = 0;
     }
 
     public void push(String rulename) {
+
         push(rulename, "");
     }
 
     public void push(String rulename, String trace) {
+
         callStack.push(rulename);
         startStack.push(new Integer(index));
     }
 
     public void pop(String function, boolean result) {
+
         Integer start = startStack.pop();
         callStack.pop();
 
@@ -55,10 +60,12 @@ public class ParserContext {
     }
 
     public Stack<String> getErrorStack() {
+
         return errorStack;
     }
 
     public int getErrorIndex() {
+
         return errorIndex;
     }
 }

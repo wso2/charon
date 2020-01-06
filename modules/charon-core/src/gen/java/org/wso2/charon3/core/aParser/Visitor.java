@@ -9,6 +9,7 @@ package org.wso2.charon3.core.aParser;/* ---------------------------------------
  */
 
 public interface Visitor {
+
     Object visit(Rule_PATH rule);
 
     Object visit(Rule_attributePath rule);

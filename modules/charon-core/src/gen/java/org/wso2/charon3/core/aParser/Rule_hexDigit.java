@@ -11,11 +11,14 @@ package org.wso2.charon3.core.aParser;/* ---------------------------------------
 import java.util.ArrayList;
 
 final public class Rule_hexDigit extends Rule {
+
     public Rule_hexDigit(String spelling, ArrayList<Rule> rules) {
+
         super(spelling, rules);
     }
 
     public static Rule_hexDigit parse(ParserContext context) {
+
         context.push("hexDigit");
 
         boolean parsed = true;
@@ -194,6 +197,7 @@ final public class Rule_hexDigit extends Rule {
     }
 
     public Object accept(Visitor visitor) {
+
         return visitor.visit(this);
     }
 }

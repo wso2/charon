@@ -16,24 +16,30 @@ import java.io.InputStream;
 import java.util.Stack;
 
 public class Parser {
+
     private Parser() {
+
     }
 
     static public Rule parse(String rulename, String string) throws IllegalArgumentException, ParserException {
+
         return parse(rulename, string, false);
     }
 
     static public Rule parse(String rulename, InputStream in)
             throws IllegalArgumentException, IOException, ParserException {
+
         return parse(rulename, in, false);
     }
 
     static public Rule parse(String rulename, File file) throws IllegalArgumentException, IOException, ParserException {
+
         return parse(rulename, file, false);
     }
 
     static private Rule parse(String rulename, String string, boolean trace)
             throws IllegalArgumentException, ParserException {
+
         if (rulename == null)
             throw new IllegalArgumentException("null rulename");
         if (string == null)
@@ -140,6 +146,7 @@ public class Parser {
 
     static private Rule parse(String rulename, InputStream in, boolean trace)
             throws IllegalArgumentException, IOException, ParserException {
+
         if (rulename == null)
             throw new IllegalArgumentException("null rulename");
         if (in == null)
@@ -155,6 +162,7 @@ public class Parser {
 
     static private Rule parse(String rulename, File file, boolean trace)
             throws IllegalArgumentException, IOException, ParserException {
+
         if (rulename == null)
             throw new IllegalArgumentException("null rulename");
         if (file == null)

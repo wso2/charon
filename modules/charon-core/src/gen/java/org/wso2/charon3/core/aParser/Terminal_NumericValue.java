@@ -12,11 +12,14 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Terminal_NumericValue extends Rule {
+
     private Terminal_NumericValue(String spelling, ArrayList<Rule> rules) {
+
         super(spelling, rules);
     }
 
     public static Terminal_NumericValue parse(ParserContext context, String spelling, String regex, int length) {
+
         context.push("NumericValue", spelling + "," + regex);
 
         boolean parsed = true;
@@ -39,6 +42,7 @@ public class Terminal_NumericValue extends Rule {
     }
 
     public Object accept(Visitor visitor) {
+
         return visitor.visit(this);
     }
 }
