@@ -62,6 +62,7 @@ public class PatchOperationUtil {
     public static final String PATH_RULE_NAME = "PATH";
 
     private static final Logger log = LoggerFactory.getLogger(PatchOperationUtil.class);
+    public static final int VALUE_PATH_RULE_SIZE = 4;
 
     /*
      * This method corresponds to the remove operation in patch requests.
@@ -657,7 +658,8 @@ public class PatchOperationUtil {
      * @throws InternalErrorException
      */
     public static AbstractSCIMObject doPatchAdd(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
+                                                AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource,
+                                                SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         if (operation.getValues() == null) {
@@ -693,13 +695,13 @@ public class PatchOperationUtil {
      * @throws InternalErrorException
      */
     private static void doPatchAddOnResourceWithPath(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
+                                                     AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         try {
-            Rule rule = Parser.parse(PATH_RULE_NAME, operation.getPath());
+            Rule pathAttributeRule = Parser.parse(PATH_RULE_NAME, operation.getPath());
 
-            if (isFilterConditionProvidedInPath(rule)) {
+            if (isFilterConditionProvidedInPath(pathAttributeRule)) {
                 // Filter condition has been provided in the path.
                 try {
                     doPatchAddOnPathWithFilters(operation, decoder, oldResource, schema);
@@ -725,15 +727,17 @@ public class PatchOperationUtil {
      * Return true when the path contains filter condition(s), else return false. Normally filters surrounded by
      * square bracket.
      * According to SCIM spec Rule: valuePath = attributePath "[" valueFilter "]";
+     * Hence rule size is always four.
      * Example path with filters: addresses[type eq \"work\"]
      * Example path without filter: name.familyName
      *
-     * @param rule Rule.
+     * @param pathAttributeRule Rule.
      * @return Boolean value.
      */
-    private static boolean isFilterConditionProvidedInPath(Rule rule) {
+    private static boolean isFilterConditionProvidedInPath(Rule pathAttributeRule) {
 
-        if (rule.rules.get(0).rules.size() == 4 && rule.rules.get(0) instanceof Rule_valuePath) {
+        if (pathAttributeRule.rules.get(0).rules.size() == VALUE_PATH_RULE_SIZE &&
+                pathAttributeRule.rules.get(0) instanceof Rule_valuePath) {
             return true;
         } else {
             return false;
@@ -743,10 +747,10 @@ public class PatchOperationUtil {
     /**
      * Perform patch add on the resource according to the specified filter condition provided in the path.
      *
-     * @param operation             Operation to be performed.
-     * @param decoder               JSON decoder.
-     * @param oldResource           Original resource SCIM object.
-     * @param schema                SCIM resource schema.
+     * @param operation   Operation to be performed.
+     * @param decoder     JSON decoder.
+     * @param oldResource Original resource SCIM object.
+     * @param schema      SCIM resource schema.
      * @throws NotImplementedException
      * @throws BadRequestException
      * @throws CharonException
@@ -754,7 +758,7 @@ public class PatchOperationUtil {
      * @throws InternalErrorException
      */
     private static void doPatchAddOnPathWithFilters(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
+                                                    AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
             throws NotImplementedException, BadRequestException, CharonException, JSONException,
             InternalErrorException {
 
@@ -779,7 +783,7 @@ public class PatchOperationUtil {
      * @throws NotImplementedException
      */
     private static void doPatchAddOnPathWithoutFilters(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
+                                                       AbstractSCIMObject oldResource, SCIMResourceTypeSchema schema)
             throws BadRequestException, CharonException, InternalErrorException {
 
         if (operation.getPath().trim().length() > 0) {
@@ -824,7 +828,8 @@ public class PatchOperationUtil {
      * @throws InternalErrorException
      */
     private static void doPatchAddOnPathWithoutFiltersForLevelOne(AbstractSCIMObject oldResource,
-            SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String attributePart)
+                                                                  SCIMResourceTypeSchema schema, JSONDecoder decoder,
+                                                                  PatchOperation operation, String attributePart)
             throws BadRequestException, CharonException, InternalErrorException {
 
         Attribute attribute = oldResource.getAttribute(attributePart);
@@ -891,7 +896,7 @@ public class PatchOperationUtil {
                         attributePart));
             }
             createAttributeOnResourceWithPathWithoutFiltersForLevelOne(oldResource, schema, decoder, operation,
-                    new String[] { attributePart });
+                    new String[]{attributePart});
         }
     }
 
@@ -906,7 +911,8 @@ public class PatchOperationUtil {
      * @param attributeParts Attribute parts array which length is two, considered as a level two case.
      */
     private static void doPatchAddOnPathWithoutFiltersForLevelTwo(AbstractSCIMObject oldResource,
-            SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts)
+                                                                  SCIMResourceTypeSchema schema, JSONDecoder decoder,
+                                                                  PatchOperation operation, String[] attributeParts)
             throws BadRequestException, CharonException, InternalErrorException {
 
         if (attributeParts.length != 2) {
@@ -928,8 +934,23 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Update the attribute on resource with path without filters for level two case.
+     *
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array which length is two, considered as a level two case.
+     * @param attribute      Attribute.
+     * @throws CharonException
+     * @throws BadRequestException
+     * @throws InternalErrorException
+     */
     private static void updateAttributeOnResourceWithPathWithoutFiltersForLevelTwo(SCIMResourceTypeSchema schema,
-            JSONDecoder decoder, PatchOperation operation, String[] attributeParts, Attribute attribute)
+                                                                                   JSONDecoder decoder,
+                                                                                   PatchOperation operation,
+                                                                                   String[] attributeParts,
+                                                                                   Attribute attribute)
             throws CharonException, BadRequestException, InternalErrorException {
 
         if (attributeParts.length != 2) {
@@ -1000,6 +1021,20 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Update a sub attribute on resource with the path without filters for level two case.
+     *
+     * @param schema             SCIM resource schema.
+     * @param decoder            JSON decoder.
+     * @param operation          Operation to be performed.
+     * @param attributeParts     Attribute parts array which length is two, considered as a level two case.
+     * @param attribute          Attribute.
+     * @param subAttribute       Sub attribute which needs to update
+     * @param subAttributeSchema Sub attribute schema.
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws InternalErrorException
+     */
     private static void updateSubAttributeOnResourceWithPathWithoutFiltersForLevelTwo(SCIMResourceTypeSchema schema,
             JSONDecoder decoder, PatchOperation operation, String[] attributeParts, Attribute attribute,
             Attribute subAttribute, AttributeSchema subAttributeSchema)
@@ -1088,8 +1123,22 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Create sub attribute on resource with path without filters for level two case.
+     *
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array which length is two, considered as a level two case.
+     * @param attribute      Attribute.
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     private static void createSubAttributeOnResourceWithPathWithoutFiltersForLevelTwo(SCIMResourceTypeSchema schema,
-            JSONDecoder decoder, PatchOperation operation, String[] attributeParts, Attribute attribute)
+                                                                                      JSONDecoder decoder,
+                                                                                      PatchOperation operation,
+                                                                                      String[] attributeParts,
+                                                                                      Attribute attribute)
             throws BadRequestException, CharonException {
 
         if (attributeParts.length != 2) {
@@ -1115,8 +1164,19 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Add/update complex but not multi-valued attribute to the resource.
+     *
+     * @param oldAttribute        Original resource SCIM object.
+     * @param newComplexAttribute Complex attribute which needs to be added in to the resource SCIM object.
+     * @param attributePart       Attribute provided in path which needs to be added on resource.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void addComplexAttributeToResourceExcludingMultiValued(Attribute oldAttribute,
-            ComplexAttribute newComplexAttribute, String attributePart) throws CharonException, BadRequestException {
+                                                                          ComplexAttribute newComplexAttribute,
+                                                                          String attributePart)
+            throws CharonException, BadRequestException {
 
         // This is the complex attribute case.
         if (newComplexAttribute != null && oldAttribute instanceof ComplexAttribute) {
@@ -1164,8 +1224,15 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Update simple sub attribute case in level one case.
+     *
+     * @param newSubAttrib    New sub attribute which needs to update.
+     * @param oldSubAttribute Old sub attribute.
+     * @throws BadRequestException
+     */
     private static void handleSubAttributeSimpleCaseInLevelOne(Map.Entry<String, Attribute> newSubAttrib,
-            Attribute oldSubAttribute) throws BadRequestException {
+                                                               Attribute oldSubAttribute) throws BadRequestException {
 
         if (log.isDebugEnabled()) {
             log.debug(String.format("Sub attribute: %s is a simple attribute", oldSubAttribute.getName()));
@@ -1179,8 +1246,16 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Add multi valued sub-attribute in level one case.
+     *
+     * @param newSubAttrib    New sub attribute which needs to add.
+     * @param oldSubAttribute Old sub attribute.
+     * @throws BadRequestException
+     */
     private static void handleSubAttributeMultiValuedCaseInLevelOne(Map.Entry<String, Attribute> newSubAttrib,
-            Attribute oldSubAttribute) throws BadRequestException {
+                                                                    Attribute oldSubAttribute)
+            throws BadRequestException {
 
         if (log.isDebugEnabled()) {
             log.debug(String.format("Sub attribute: %s is a primitive multi-valued attribute",
@@ -1202,8 +1277,19 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Handle complex multi-valued sub attribute case in level one.
+     *
+     * @param subAttribute    Sub attribute.
+     * @param newSubAttribKey New sub attribute key.
+     * @param oldSubAttribute Old sub attribute.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void handleSubAttributeComplexMultiValuedCaseInLevelOne(Attribute subAttribute,
-            String newSubAttribKey, Attribute oldSubAttribute) throws CharonException, BadRequestException {
+                                                                           String newSubAttribKey,
+                                                                           Attribute oldSubAttribute)
+            throws CharonException, BadRequestException {
 
         if (oldSubAttribute instanceof MultiValuedAttribute && subAttribute instanceof MultiValuedAttribute) {
             // Extension schema is the only one who reaches here.
@@ -1223,8 +1309,19 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Handle sub attribute complex but not multi valued case in level one.
+     *
+     * @param newSubAttribute New sub attribute.
+     * @param newSubAttribKey New sub attribute key.
+     * @param oldSubAttribute Old sub attribute.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void handleSubAttributeComplexExcludingMultiValuedCaseInLevelOne(Attribute newSubAttribute,
-            String newSubAttribKey, Attribute oldSubAttribute) throws CharonException, BadRequestException {
+                                                                                    String newSubAttribKey,
+                                                                                    Attribute oldSubAttribute)
+            throws CharonException, BadRequestException {
 
         if (oldSubAttribute instanceof ComplexAttribute && newSubAttribute instanceof ComplexAttribute) {
             // Extension schema is the only one who reaches here.
@@ -1297,6 +1394,13 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Add primitive multi-valued attribute to the resource.
+     *
+     * @param attribute Attribute where we need to add primitive multi-values.
+     * @param jsonArray Input JSON array.
+     * @throws BadRequestException
+     */
     private static void addPrimitiveMultiValuedAttributeToResource(Attribute attribute, JSONArray jsonArray)
             throws BadRequestException {
 
@@ -1320,8 +1424,20 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Generate complex attribute.
+     *
+     * @param decoder         JSON decoder.
+     * @param jsonObject      Input JSON object.
+     * @param attributeSchema Schema of the complex attribute.
+     * @return Newly created complex attribute.
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws InternalErrorException
+     */
     private static ComplexAttribute generateComplexAttribute(JSONDecoder decoder, JSONObject jsonObject,
-            AttributeSchema attributeSchema) throws BadRequestException, CharonException, InternalErrorException {
+                                                             AttributeSchema attributeSchema)
+            throws BadRequestException, CharonException, InternalErrorException {
 
         ComplexAttribute newComplexAttribute = null;
         try {
@@ -1335,6 +1451,12 @@ public class PatchOperationUtil {
         return newComplexAttribute;
     }
 
+    /**
+     * Check the mutability of an attribute.
+     *
+     * @param attribute Attribute.
+     * @throws BadRequestException
+     */
     private static void checkMutability(Attribute attribute) throws BadRequestException {
 
         if (attribute.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) || attribute.getMutability()
@@ -1344,6 +1466,13 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Get JSON object out of provided JSON string value in the operation.
+     *
+     * @param operation Operation to be performed.
+     * @return Input JSON object.
+     * @throws BadRequestException
+     */
     private static JSONObject getJsonObject(PatchOperation operation) throws BadRequestException {
 
         JSONObject jsonObject = null;
@@ -1360,6 +1489,13 @@ public class PatchOperationUtil {
         return jsonObject;
     }
 
+    /**
+     * Get JSON array out of provided JSON string value in the operation.
+     *
+     * @param operation Operation to be performed.
+     * @return Input JSON array.
+     * @throws BadRequestException
+     */
     private static JSONArray getJsonArray(PatchOperation operation) throws BadRequestException {
 
         JSONArray jsonArray = null;
@@ -1376,8 +1512,22 @@ public class PatchOperationUtil {
         return jsonArray;
     }
 
+    /**
+     * perform patch add operation on provided resource where path is not provided.
+     *
+     * @param operation         Operation to be performed.
+     * @param decoder           JSON decoder.
+     * @param oldResource       Original resource SCIM object.
+     * @param copyOfOldResource Copy of the original resource SCIM object.
+     * @param schema            SCIM resource schema.
+     * @return Updated SCIM object resource.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static AbstractSCIMObject doPatchAddOnResource(PatchOperation operation, JSONDecoder decoder,
-            AbstractSCIMObject oldResource, AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
+                                                           AbstractSCIMObject oldResource,
+                                                           AbstractSCIMObject copyOfOldResource,
+                                                           SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException {
 
         try {
@@ -1708,6 +1858,18 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Create attribute on resource with path without filters for level one case.
+     *
+     * @param oldResource    Original resource SCIM object.
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array.
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws InternalErrorException
+     */
     private static void createAttributeOnResourceWithPathWithoutFiltersForLevelOne(AbstractSCIMObject oldResource,
             SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts)
             throws BadRequestException, CharonException, InternalErrorException {
@@ -1983,6 +2145,18 @@ public class PatchOperationUtil {
 
     }
 
+    /**
+     * Create attribute on resource with path without filters for level two case.
+     *
+     * @param oldResource    Original resource SCIM object.
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array.
+     * @throws CharonException
+     * @throws BadRequestException
+     * @throws InternalErrorException
+     */
     private static void createAttributeOnResourceWithPathWithoutFiltersForLevelTwo(AbstractSCIMObject oldResource,
             SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts)
             throws CharonException, BadRequestException, InternalErrorException {
@@ -2164,6 +2338,17 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Create sub sub attribute on resource with path without filters for level three case.
+     *
+     * @param schema         SCIM resource schema.
+     * @param decoder        JSON decoder.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array.
+     * @param subAttribute   Sub attribute.
+     * @throws BadRequestException
+     * @throws CharonException
+     */
     private static void createSubSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(
             SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation, String[] attributeParts,
             ComplexAttribute subAttribute) throws BadRequestException, CharonException {
@@ -2193,6 +2378,16 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Create sub attribute on resource with path without filters for level three case.
+     *
+     * @param schema         SCIM resource schema.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array.
+     * @param attribute      Attribute.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void createSubAttributeOnResourceWithPathWithoutFiltersForLevelThree(SCIMResourceTypeSchema schema,
             PatchOperation operation, String[] attributeParts, ComplexAttribute attribute)
             throws CharonException, BadRequestException {
@@ -2296,6 +2491,16 @@ public class PatchOperationUtil {
         }
     }
 
+    /**
+     * Create attribute on resource with path without filters for level three case.
+     *
+     * @param oldResource    Original resource SCIM object.
+     * @param schema         SCIM resource schema.
+     * @param operation      Operation to be performed.
+     * @param attributeParts Attribute parts array.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
     private static void createAttributeOnResourceWithPathWithoutFiltersForLevelThree(AbstractSCIMObject oldResource,
             SCIMResourceTypeSchema schema, PatchOperation operation, String[] attributeParts)
             throws CharonException, BadRequestException {
