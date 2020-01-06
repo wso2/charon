@@ -16,7 +16,10 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+
+import java.util.Collections;
 
 /**
  * Interface for SCIM resource endpoints.
@@ -126,4 +129,19 @@ public interface ResourceManager {
      */
     SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String attributes,
             String excludeAttributes);
+
+
+    /*
+     * Partially updates a resource. This method does not return the updated resource in the response.
+     *
+     * @param existingId
+     * @param scimObjectString
+     * @param usermanager
+     * @return
+     */
+    default SCIMResponse updateWithPATCH(String existingId, String patchRequest, UserManager userManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED,
+                ResponseCodeConstants.DESC_NOT_IMPLEMENTED, Collections.emptyMap());
+    }
 }
