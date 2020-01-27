@@ -67,13 +67,14 @@ public class AttributeUtilTest {
 
     @DataProvider
     private static final Object[][] getExpectedStringTranslation() {
-        return new Object[][] { { "testVal", SCIMSchemaDefinitions.DataType.STRING, "testVal" },
-                { 1, SCIMSchemaDefinitions.DataType.INTEGER, "1" }, { 0, SCIMSchemaDefinitions.DataType.INTEGER, "0" },
-                { true, SCIMSchemaDefinitions.DataType.BOOLEAN, "true" },
-                { false, SCIMSchemaDefinitions.DataType.BOOLEAN, "false" },
-                { new Byte((byte) 1), SCIMSchemaDefinitions.DataType.BINARY, "1" },
-                { -1.1, SCIMSchemaDefinitions.DataType.DECIMAL, "-1.1" },
-                { getTestTime(), SCIMSchemaDefinitions.DataType.DATE_TIME, "2017-10-18T18:00:00Z" } };
+
+        return new Object[][]{{"testVal", SCIMSchemaDefinitions.DataType.STRING, "testVal"},
+                {1, SCIMSchemaDefinitions.DataType.INTEGER, "1"}, {0, SCIMSchemaDefinitions.DataType.INTEGER, "0"},
+                {true, SCIMSchemaDefinitions.DataType.BOOLEAN, "true"},
+                {false, SCIMSchemaDefinitions.DataType.BOOLEAN, "false"},
+                {new Byte((byte) 1), SCIMSchemaDefinitions.DataType.BINARY, "1"},
+                {-1.1, SCIMSchemaDefinitions.DataType.DECIMAL, "-1.1"},
+                {getTestTime(), SCIMSchemaDefinitions.DataType.DATE_TIME, "2017-10-18T18:00:00Z"}};
     }
 
     private static Date getTestTime() {

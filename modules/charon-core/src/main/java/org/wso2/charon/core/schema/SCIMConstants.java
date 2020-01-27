@@ -36,6 +36,8 @@ public class SCIMConstants {
 
     public static final String dateTimeFormat2 = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
+    public static final String UTC_TIME_ZONE = "UTC";
+
     /**
      * Identify the format, given the Content-Type,Accept-Headers.
      *

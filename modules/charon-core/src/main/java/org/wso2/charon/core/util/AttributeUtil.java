@@ -112,20 +112,26 @@ public class AttributeUtil {
      */
     public static String formatDateTime(Date date) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return sdf.format(date);
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
+            sdf.setTimeZone(TimeZone.getTimeZone(SCIMConstants.UTC_TIME_ZONE));
+            return sdf.format(date);
+        }
+        return null;
     }
 
     /*
-     * SCIM spec requires date time to be adhered to XML Schema Datatypes Specification
+     * SCIM spec requires date time to be adhered to XML Schema Datatypes Specification.
      *
-     * @param date
+     * @param date Date.
      */
     public static String formatDateTimeLocal(Date date) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
-        return sdf.format(date);
+        if (date != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat(SCIMConstants.dateTimeFormat2);
+            return sdf.format(date);
+        }
+        return null;
     }
 
 	/**
