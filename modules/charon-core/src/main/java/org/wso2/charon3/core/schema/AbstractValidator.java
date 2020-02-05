@@ -956,9 +956,11 @@ public abstract class AbstractValidator {
                     ((ComplexAttribute) newAttribute).removeSubAttribute(attributeSchema.getName());
                 } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
                         oldAttributeList.containsKey(attributeSchema.getName())) {
-                    ((ComplexAttribute) newAttribute).setSubAttribute(
-                            (Attribute) (CopyUtil.deepCopy((
-                                    (ComplexAttribute) oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                    if (newAttribute != null) {
+                        ((ComplexAttribute) newAttribute).setSubAttribute(
+                                (Attribute) (CopyUtil.deepCopy((
+                                        (ComplexAttribute) oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                    }
                 }
             } else if (attributeSchema.getMutability().equals(SCIMDefinitions.Mutability.IMMUTABLE)) {
                 if (newAttributeList.containsKey(attributeSchema.getName()) &&
@@ -967,9 +969,11 @@ public abstract class AbstractValidator {
 
                 } else if (!newAttributeList.containsKey(attributeSchema.getName()) &&
                         oldAttributeList.containsKey(attributeSchema.getName())) {
-                    ((ComplexAttribute) newAttribute).setSubAttribute(
-                            (Attribute) (CopyUtil.deepCopy((
-                                    (ComplexAttribute) oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                    if (newAttribute != null) {
+                        ((ComplexAttribute) newAttribute).setSubAttribute(
+                                (Attribute) (CopyUtil.deepCopy((
+                                        (ComplexAttribute) oldAttribute).getSubAttribute(attributeSchema.getName()))));
+                    }
                 }
             }
             if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
