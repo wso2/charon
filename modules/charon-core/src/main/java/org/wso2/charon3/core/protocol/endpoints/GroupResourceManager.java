@@ -412,7 +412,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         if (tempList == null) {
             tempList = Collections.emptyList();
         } else {
-            if (tempList.size() > 1) {
+            if (tempList.size() >= 1) {
                 if (tempList.get(0) instanceof Integer) {
                     totalResults = (int) tempList.get(0);
                     tempList.remove(0);
