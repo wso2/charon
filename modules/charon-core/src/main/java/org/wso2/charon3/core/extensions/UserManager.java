@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.extensions;
 
+import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -46,9 +47,25 @@ public interface UserManager {
     public void deleteUser(String userId)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
+    /**
+     * List users with Get.
+     *
+     * @param node               Node
+     * @param startIndex         Start Index
+     * @param count              Count
+     * @param sortBy             Sort by
+     * @param sortOrder          Sort order
+     * @param domainName         Domain name
+     * @param requiredAttributes Required user attributes
+     * @return Users with requested attributes
+     * @throws CharonException         Error while listing users
+     * @throws NotImplementedException Operation note implemented
+     * @throws BadRequestException     Bad request
+     */
     default List<Object> listUsersWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder,
             String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
+
         return null;
     }
 
@@ -66,6 +83,7 @@ public interface UserManager {
     default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
             String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
+
         return null;
     }
 
@@ -73,6 +91,7 @@ public interface UserManager {
     default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
                                          Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
+
         return listUsersWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
     }
 
@@ -138,6 +157,29 @@ public interface UserManager {
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
+    /**
+     *
+     * Updates the group.
+     *
+     * @param oldGroup
+     * @param newGroup
+     *
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws NotFoundException
+     */
+    default void updateGroup(Group oldGroup, Group newGroup)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        throw new NotImplementedException();
+    }
+
     public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException;;
+            throws NotImplementedException, BadRequestException, CharonException;
+
+    default List<Attribute> getUserSchema() throws CharonException, NotImplementedException, BadRequestException {
+
+        throw new NotImplementedException();
+    }
 }

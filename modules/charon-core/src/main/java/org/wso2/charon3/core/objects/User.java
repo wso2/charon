@@ -710,14 +710,13 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the associated groups of the user
+     * This method used to add group details (attributes display and value) of a user.
+     * According to the SCIM specification need to add ref attribute as well along with display and value. Hence
+     * deprecated this method.
      *
-     * @param type
-     * @param value
-     * @param display
-     * @throws CharonException
-     * @throws BadRequestException
+     * @deprecated use {@link #setGroup(String type, Group group)} instead.
      */
+    @Deprecated
     public void setGroup(String type,
                          String value,
                          String display) throws CharonException, BadRequestException {
@@ -779,6 +778,70 @@ public class User extends AbstractSCIMObject {
             this.attributeList.put(SCIMConstants.UserSchemaConstants.GROUPS, groupsAttribute);
         }
 
+    }
+
+    /**
+     * Set the associated groups of the user.
+     * According to the SCIM specification need to add display, value and ref attributes.
+     *
+     * @param type  Type of resource.
+     * @param group Group object.
+     * @throws CharonException
+     * @throws BadRequestException
+     */
+    public void setGroup(String type, Group group) throws CharonException, BadRequestException {
+        SimpleAttribute typeSimpleAttribute = null;
+        SimpleAttribute valueSimpleAttribute = null;
+        SimpleAttribute displaySimpleAttribute = null;
+        SimpleAttribute referenceSimpleAttribute = null;
+        String reference = group.getLocation();
+        String value = group.getId();
+        String display = group.getDisplayName();
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+        if (type != null) {
+            typeSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.TYPE, type);
+            typeSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_TYPE, typeSimpleAttribute);
+            complexAttribute.setSubAttribute(typeSimpleAttribute);
+        }
+
+        if (value != null) {
+            valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value);
+            valueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_VALUE, valueSimpleAttribute);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
+
+        if (reference != null) {
+            referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+        }
+
+        if (display != null) {
+            displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
+            displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUP_DISPLAY,
+                            displaySimpleAttribute);
+            complexAttribute.setSubAttribute(displaySimpleAttribute);
+        }
+
+        if (complexAttribute.getSubAttributesList().size() != 0) {
+            Object typeVal = SCIMConstants.DEFAULT;
+            Object valueVal = SCIMConstants.DEFAULT;
+            if (typeSimpleAttribute != null && typeSimpleAttribute.getValue() != null) {
+                typeVal = typeSimpleAttribute.getValue();
+            }
+            if (valueSimpleAttribute != null && valueSimpleAttribute.getValue() != null) {
+                valueVal = valueSimpleAttribute.getValue();
+            }
+            String complexAttributeName = SCIMConstants.UserSchemaConstants.GROUPS + "_" + valueVal + "_" + typeVal;
+            complexAttribute.setName(complexAttributeName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
+            setGroup(complexAttribute);
+        }
     }
 
     /**

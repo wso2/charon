@@ -25,6 +25,7 @@ import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.impl.provider.util.SCIMProviderConstants;
 import org.wso2.msf4j.Microservice;
+
 import java.util.Map;
 import javax.ws.rs.core.Response;
 
@@ -49,9 +50,15 @@ public class AbstractResource implements Microservice {
 
     //identify the input format
     public boolean isValidInputFormat(String format) {
-        if (format == null || "*/*".equals(format) ||
-                format.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_JSON)
-                || format.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_SCIM_JSON)) {
+        
+        if (format == null) {
+            return true;
+        }
+
+        String mediaType = format.split(";")[0];
+        if ("*/*".equals(mediaType) ||
+                mediaType.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_JSON)
+                || mediaType.equalsIgnoreCase(SCIMProviderConstants.APPLICATION_SCIM_JSON)) {
             return true;
         } else {
             return false;

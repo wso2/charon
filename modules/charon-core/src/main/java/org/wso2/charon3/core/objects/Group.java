@@ -101,10 +101,8 @@ public class Group extends AbstractSCIMObject {
                             SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
                 }
             }
-            return memberList;
-        } else {
-            return null;
         }
+        return memberList;
     }
 
     /**
@@ -137,12 +135,12 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
-     * set a member to the group
-     * @param value
-     * @param display
-     * @throws BadRequestException
-     * @throws CharonException
+     * This method used to add member (user) to a group. According to the SCIM specification need to add ref
+     * attribute as well along with display and value. Hence deprecated this method.
+     *
+     * @deprecated use {@link #setMember(User user)} instead.
      */
+    @Deprecated
     public void setMember(String value, String display) throws BadRequestException, CharonException {
         setMember(value, display, null, null);
     }
@@ -206,6 +204,75 @@ public class Group extends AbstractSCIMObject {
         DefaultAttributeFactory.createAttribute(
                 SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);
         return  complexAttribute;
+    }
+
+    /**
+     * Set a member to the group, where member will have three default attributes such as name, value and $ref.
+     *
+     * @param user
+     * @throws BadRequestException
+     * @throws CharonException
+     */
+    public void setMember(User user) throws BadRequestException, CharonException {
+
+        if (this.isAttributeExist(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            MultiValuedAttribute members = (MultiValuedAttribute) this.attributeList
+                    .get(SCIMConstants.GroupSchemaConstants.MEMBERS);
+            ComplexAttribute complexAttribute = setMemberCommon(user);
+            members.setAttributeValue(complexAttribute);
+        } else {
+            MultiValuedAttribute members = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.MEMBERS);
+            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, members);
+            ComplexAttribute complexAttribute = setMemberCommon(user);
+            members.setAttributeValue(complexAttribute);
+            this.setAttribute(members);
+        }
+    }
+
+    /**
+     * Create member attribute with three default attributes such as name, value and $ref.
+     *
+     * @param user User object.
+     * @return Member object as a complex attribute.
+     * @throws BadRequestException
+     * @throws CharonException
+     */
+    private ComplexAttribute setMemberCommon(User user) throws BadRequestException, CharonException {
+
+        String userId = user.getId();
+        String userName = user.getUserName();
+        String reference = user.getLocation();
+
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+        complexAttribute.setName(SCIMConstants.GroupSchemaConstants.MEMBERS + "_" + userId + SCIMConstants.DEFAULT);
+
+        if (userId != null) {
+            SimpleAttribute valueSimpleAttribute =
+                    new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, userId);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.VALUE, valueSimpleAttribute);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
+
+        if (userName != null) {
+            SimpleAttribute displaySimpleAttribute = new SimpleAttribute(SCIMConstants.GroupSchemaConstants.DISPLAY,
+                    userName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.DISPLAY, displaySimpleAttribute);
+            complexAttribute.setSubAttribute(displaySimpleAttribute);
+        }
+
+        if (reference != null) {
+            SimpleAttribute referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF,
+                    reference);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.REF, referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+        }
+
+        DefaultAttributeFactory
+                .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.MEMBERS, complexAttribute);
+        return complexAttribute;
     }
 
     /**

@@ -261,14 +261,14 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
-                        .listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
-                                requiredAttributes);
+                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex,
+                        count, sortBy, sortOrder, domainName, requiredAttributes);
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                // Log the error as well.
-                // Throw internal server error.
+                if (logger.isDebugEnabled()) {
+                    logger.error(error);
+                }
                 throw new InternalErrorException(error);
             }
         } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
@@ -291,18 +291,19 @@ public class GroupResourceManager extends AbstractResourceManager {
      */
     private String resolveSortOrder(String sortOrder, String sortBy) throws BadRequestException {
 
-        // Check whether provided sortOrder is valid or not.
+        // Check whether the provided sortOrder is valid or not.
         if (sortOrder != null) {
-            if (!(sortOrder.equalsIgnoreCase(SCIMConstants.OperationalConstants.ASCENDING) || sortOrder
-                    .equalsIgnoreCase(SCIMConstants.OperationalConstants.DESCENDING))) {
+            if (!(SCIMConstants.OperationalConstants.ASCENDING.equalsIgnoreCase(sortOrder)
+                    || SCIMConstants.OperationalConstants.DESCENDING.equalsIgnoreCase(sortOrder))) {
                 String error = " Invalid sortOrder value is specified";
                 throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
             }
-        }
-        // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
-        // ascending.
-        if (sortOrder == null && sortBy != null) {
-            sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+        } else {
+            // If a value for "sortBy" is provided and no "sortOrder" is specified, "sortOrder" SHALL default to
+            // ascending.
+            if (sortBy != null) {
+                sortOrder = SCIMConstants.OperationalConstants.ASCENDING;
+            }
         }
         return sortOrder;
     }
@@ -357,7 +358,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             // Unless configured returns core-user schema or else returns extended user schema.
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
-            //// Build node for filtering.
+            // Build node for filtering.
             Node rootNode = buildNode(filter, schema);
 
             // Obtain the json encoder.
@@ -370,14 +371,14 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
-                        .listGroupsWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
-                                requiredAttributes);
+                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
+                        sortBy, sortOrder, domainName, requiredAttributes);
                 return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
-                // Log the error as well.
-                // Throw internal server error.
+                if (logger.isDebugEnabled()) {
+                    logger.debug(error);
+                }
                 throw new InternalErrorException(error);
             }
         } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
@@ -410,25 +411,21 @@ public class GroupResourceManager extends AbstractResourceManager {
         List<Object> returnedGroups;
         if (tempList == null) {
             tempList = Collections.emptyList();
-        }
-        try {
-            totalResults = (int) tempList.get(0);
-            tempList.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Group result list is empty.");
+        } else {
+            if (tempList.size() > 1) {
+                if (tempList.get(0) instanceof Integer) {
+                    totalResults = (int) tempList.get(0);
+                    tempList.remove(0);
+                } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug(
+                                "First element in the list is not an int. Setting result count as: " + tempList.size());
+                    }
+                    totalResults = tempList.size();
+                }
             }
-            totalResults = tempList.size();
-        } catch (ClassCastException ex) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "Parse error while getting the group result count. Setting result count as: " + tempList.size(),
-                        ex);
-            }
-            totalResults = tempList.size();
         }
         returnedGroups = tempList;
-
         for (Object group : returnedGroups) {
             // Perform service provider side validation.
             ServerSideValidator
@@ -632,118 +629,149 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @param excludeAttributes
      * @return
      */
-    public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager,
+    public SCIMResponse updateWithPATCH(String existingId, String patchRequest, UserManager userManager,
                                         String attributes, String excludeAttributes) {
         try {
             if (userManager == null) {
                 String error = "Provided user manager handler is null.";
                 throw new InternalErrorException(error);
             }
-            //obtain the json decoder.
-            JSONDecoder decoder = getDecoder();
-            //decode the SCIM User object, encoded in the submitted payload.
-            List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
-            //get the group from the user core
-            Group oldGroup = userManager.getGroup(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+            // Get the group from the user core
+            Group oldGroup = userManager.getGroup(existingId, requiredAttributes);
             if (oldGroup == null) {
                 throw new NotFoundException("No group with the id : " + existingId + " in the user store.");
             }
-            //make a copy of the original group
-            Group copyOfOldGroup = (Group) CopyUtil.deepCopy(oldGroup);
-            //make another copy of original group.
-            //this will be used to restore to the original condition if failure occurs.
-            Group originalGroup = (Group) CopyUtil.deepCopy(copyOfOldGroup);
 
-            Group newGroup = null;
+            Group originalGroup = (Group) CopyUtil.deepCopy(oldGroup);
+            Group patchedGroup = doPatchGroup(oldGroup, schema, patchRequest);
 
-            for (PatchOperation operation : opList) {
+            Group updatedGroup = userManager.updateGroup(originalGroup, patchedGroup, requiredAttributes);
+            if (updatedGroup != null) {
+                // Create a deep copy of the group object since we are going to change it.
+                Group copyOfUpdatedGroup = (Group) CopyUtil.deepCopy(updatedGroup);
+                ServerSideValidator.validateReturnedAttributes(copyOfUpdatedGroup, attributes, excludeAttributes);
 
-                if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
-                    if (newGroup == null) {
-                        newGroup = (Group) PatchOperationUtil.doPatchAdd
-                                (operation, getDecoder(), oldGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-
-                    } else {
-                        newGroup = (Group) PatchOperationUtil.doPatchAdd
-                                (operation, getDecoder(), newGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-
-                    }
-                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
-                    if (newGroup == null) {
-                        newGroup = (Group) PatchOperationUtil.doPatchRemove
-                                (operation, oldGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-
-                    } else {
-                        newGroup = (Group) PatchOperationUtil.doPatchRemove
-                                (operation, newGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-                    }
-                } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
-                    if (newGroup == null) {
-                        newGroup = (Group) PatchOperationUtil.doPatchReplace
-                                (operation, getDecoder(), oldGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-
-                    } else {
-                        newGroup = (Group) PatchOperationUtil.doPatchReplace
-                                (operation, getDecoder(), newGroup, copyOfOldGroup, schema);
-                        copyOfOldGroup = (Group) CopyUtil.deepCopy(newGroup);
-                    }
-                } else  {
-                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
-            //get the URIs of required attributes which must be given a value
-            Map<String, Boolean> requiredAttributes =
-                    ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
-                            CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
-
-            Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject
-                    (originalGroup, newGroup, schema);
-            newGroup = userManager.updateGroup(originalGroup, validatedGroup, requiredAttributes);
-
-            //encode the newly created SCIM group object and add id attribute to Location header.
-            String encodedGroup;
-            Map<String, String> httpHeaders = new HashMap<String, String>();
-            if (newGroup != null) {
-                //create a deep copy of the group object since we are going to change it.
-                Group copiedGroup = (Group) CopyUtil.deepCopy(newGroup);
-                //validate before return.
-                ServerSideValidator.validateReturnedAttributes(copiedGroup, attributes, excludeAttributes);
-                encodedGroup = getEncoder().encodeSCIMObject(copiedGroup);
-                //add location header
+                String encodedGroup = getEncoder().encodeSCIMObject(copyOfUpdatedGroup);
+                Map<String, String> httpHeaders = new HashMap<>();
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
-                        SCIMConstants.USER_ENDPOINT) + "/" + newGroup.getId());
+                        SCIMConstants.USER_ENDPOINT) + "/" + updatedGroup.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
             } else {
                 String error = "Updated group resource is null.";
                 throw new CharonException(error);
             }
-            //put the URI of the User object in the response header parameter.
-            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
-
-        } catch (NotFoundException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
+                InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
             return AbstractResourceManager.encodeSCIMException(e1);
         }
+    }
+
+    /**
+     * Updates the group based on the operations defined in the patchRequest. The updated group information is not
+     * sent back in the response.
+     *
+     * @param existingGroupId SCIM2 ID of the existing group
+     * @param patchRequest    SCIM2 patch request
+     * @param userManager     SCIM UserManager that handles the persistence layer.
+     * @return
+     */
+    @Override
+    public SCIMResponse updateWithPATCH(String existingGroupId, String patchRequest, UserManager userManager) {
+
+        try {
+            if (userManager == null) {
+                String error = "Provided user manager handler is null.";
+                throw new InternalErrorException(error);
+            }
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+
+            Group oldGroup = userManager.getGroup(existingGroupId, requestAttributes);
+            if (oldGroup == null) {
+                throw new NotFoundException("No group with the id : " + existingGroupId + " exists in the user store.");
+            }
+
+            // Make a copy of original group. This will be used to restore to the original condition if failure occurs.
+            Group originalGroup = (Group) CopyUtil.deepCopy(oldGroup);
+            Group patchedGroup = doPatchGroup(oldGroup, schema, patchRequest);
+
+            userManager.updateGroup(originalGroup, patchedGroup);
+
+            // Build the 204 response.
+            Map<String, String> httpHeaders = new HashMap<>();
+            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, httpHeaders);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
+                InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            CharonException ex = new CharonException("Error in performing the patch operation on group resource.", e);
+            return AbstractResourceManager.encodeSCIMException(ex);
+        }
+    }
+
+
+    private Group doPatchGroup(Group oldGroup, SCIMResourceTypeSchema groupSchema, String patchRequest)
+            throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
+
+        // Make a copy of the original group.
+        Group originalGroup = (Group) CopyUtil.deepCopy(oldGroup);
+        Group copyOfOldGroup = (Group) CopyUtil.deepCopy(oldGroup);
+
+        Group patchedGroup = null;
+        List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+        for (PatchOperation operation : opList) {
+            switch (operation.getOperation()) {
+                case SCIMConstants.OperationalConstants.ADD:
+                    if (patchedGroup == null) {
+                        patchedGroup = (Group) PatchOperationUtil
+                                .doPatchAdd(operation, getDecoder(), oldGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+                    } else {
+                        patchedGroup = (Group) PatchOperationUtil.doPatchAdd
+                                (operation, getDecoder(), patchedGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+
+                    }
+                    break;
+                case SCIMConstants.OperationalConstants.REMOVE:
+                    if (patchedGroup == null) {
+                        patchedGroup = (Group) PatchOperationUtil.doPatchRemove
+                                (operation, oldGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+
+                    } else {
+                        patchedGroup = (Group) PatchOperationUtil.doPatchRemove
+                                (operation, patchedGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+                    }
+                    break;
+                case SCIMConstants.OperationalConstants.REPLACE:
+                    if (patchedGroup == null) {
+                        patchedGroup = (Group) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), oldGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+
+                    } else {
+                        patchedGroup = (Group) PatchOperationUtil.doPatchReplace
+                                (operation, getDecoder(), patchedGroup, copyOfOldGroup, groupSchema);
+                        copyOfOldGroup = (Group) CopyUtil.deepCopy(patchedGroup);
+                    }
+                    break;
+                default:
+                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
+            }
+        }
+
+        return (Group) ServerSideValidator.validateUpdatedSCIMObject(originalGroup, patchedGroup, groupSchema);
     }
 
     /*
