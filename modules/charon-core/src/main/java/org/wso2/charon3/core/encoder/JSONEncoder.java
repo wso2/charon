@@ -97,7 +97,7 @@ public class JSONEncoder {
         JSONObject errorObject = new JSONObject();
 
         try {
-            //construct error object with details in the exception
+            //construct error object with details in the exception.
             JSONArray arrSchemas = new JSONArray(Collections.singletonList(exception.getSchemas()));
             errorObject.put(ResponseCodeConstants.SCHEMAS, arrSchemas);
             errorObject.put(ResponseCodeConstants.SCIM_TYPE, String.valueOf(exception.getScimType()));
