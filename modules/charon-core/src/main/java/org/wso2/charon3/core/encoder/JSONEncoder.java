@@ -39,6 +39,7 @@ import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,8 @@ public class JSONEncoder {
 
         try {
             //construct error object with details in the exception
-            errorObject.put(ResponseCodeConstants.SCHEMAS, new String[]{exception.getSchemas()});
+            JSONArray arrSchemas = new JSONArray(Collections.singletonList(exception.getSchemas()));
+            errorObject.put(ResponseCodeConstants.SCHEMAS, arrSchemas);
             errorObject.put(ResponseCodeConstants.SCIM_TYPE, String.valueOf(exception.getScimType()));
             errorObject.put(ResponseCodeConstants.DETAIL, String.valueOf(exception.getDetail()));
             errorObject.put(ResponseCodeConstants.STATUS, String.valueOf(exception.getStatus()));
