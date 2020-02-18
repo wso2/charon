@@ -875,7 +875,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME_URI,
                         SCIMConstants.GroupSchemaConstants.DISPLAY_NAME,
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.DISPLAY_NAME_DESC,
-                        false, false,
+                        true, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
