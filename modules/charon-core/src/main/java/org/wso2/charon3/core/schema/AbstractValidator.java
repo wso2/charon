@@ -286,7 +286,7 @@ public abstract class AbstractValidator {
                     //and add only the requested attributes
                     if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                             || attribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                            && (!requestedAttributesList.contains(attribute.getName())
+                            && (requestedAttributesList.stream().noneMatch(attribute.getName()::equalsIgnoreCase)
                             && !isSubAttributeExistsInList(requestedAttributesList, attribute))) {
                         scimObject.deleteAttribute(attribute.getName());
                     }
@@ -298,7 +298,8 @@ public abstract class AbstractValidator {
                     //if exclude attribute is set, set of exclude attributes need to be
                     // removed from the default set of attributes
                     if ((attribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                            && requestedExcludingAttributesList.contains(attribute.getName())) {
+                            && requestedExcludingAttributesList.
+                            stream().anyMatch(attribute.getName()::equalsIgnoreCase)) {
                         scimObject.deleteAttribute(attribute.getName());
                     }
                 }
@@ -418,9 +419,9 @@ public abstract class AbstractValidator {
                 // and add only the requested attributes
                 if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                         || subAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                        && (!requestedAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()) &&
+                        && (requestedAttributesList.stream().noneMatch((attribute.getName() + "."
+                        + subAttribute.getName())::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch(attribute.getName()::equalsIgnoreCase) &&
                         !isSubSubAttributeExistsInList(requestedAttributesList, attribute, subAttribute))) {
                     scimObject.deleteSubAttribute(attribute.getName(), subAttribute.getName());
                 }
@@ -432,8 +433,8 @@ public abstract class AbstractValidator {
                 //if exclude attribute is set, set of exclude attributes need to be
                 // removed from the default set of attributes
                 if ((subAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                        && requestedExcludingAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName())) {
+                        && requestedExcludingAttributesList.stream().anyMatch((attribute.getName() + "."
+                        + subAttribute.getName())::equalsIgnoreCase)) {
                     scimObject.deleteSubAttribute(attribute.getName(), subAttribute.getName());
                 }
             }
@@ -480,10 +481,11 @@ public abstract class AbstractValidator {
                 // and add only the requested attributes
                 if ((subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                         || subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                        && (!requestedAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName() + "." + subSubAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName() + "." + subAttribute.getName()) &&
+                        && (requestedAttributesList.stream().noneMatch((attribute.getName() + "."
+                        + subAttribute.getName() + "." + subSubAttribute.getName())::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch(attribute.getName()::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch((attribute.getName() + "." + subAttribute.getName())
+                                ::equalsIgnoreCase) &&
                         !subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.ALWAYS))) {
                     scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute
                             .getName());
@@ -497,8 +499,8 @@ public abstract class AbstractValidator {
                 //if exclude attribute is set, set of exclude attributes need to be
                 // removed from the default set of attributes
                 if ((subSubAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                        && requestedExcludingAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName() + "." + subSubAttribute.getName())) {
+                        && requestedExcludingAttributesList.stream().anyMatch((attribute.getName() + "."
+                        + subAttribute.getName() + "." + subSubAttribute.getName())::equalsIgnoreCase)) {
                     scimObject.deleteSubSubAttribute(subSubAttribute.getName(), subAttribute.getName(), attribute
                             .getName());
                 }
@@ -542,9 +544,9 @@ public abstract class AbstractValidator {
                 // and add only the requested attributes
                 if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                         || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                        && (!requestedAttributesList.contains(
-                        attribute.getName() + "." + subSimpleAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()) &&
+                        && (requestedAttributesList.stream().noneMatch((attribute.getName() + "."
+                        + subSimpleAttribute.getName())::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch(attribute.getName()::equalsIgnoreCase) &&
                         !isSubSubAttributeExistsInList(requestedAttributesList, attribute, subSimpleAttribute))) {
                     scimObject.deleteValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(), subSimpleAttribute.getName());
@@ -558,8 +560,8 @@ public abstract class AbstractValidator {
                 //if exclude attribute is set, set of exclude attributes need to be
                 // removed from the default set of attributes
                 if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                        && requestedExcludingAttributesList.contains(
-                        attribute.getName() + "." + subSimpleAttribute.getName())) {
+                        && requestedExcludingAttributesList.stream().anyMatch((attribute.getName() + "."
+                        + subSimpleAttribute.getName())::equalsIgnoreCase)) {
                     scimObject.deleteValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(), subSimpleAttribute.getName());
                 }
@@ -611,10 +613,11 @@ public abstract class AbstractValidator {
                 // and add only the requested attributes
                 if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                         || subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                        && (!requestedAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName() + "." + subSimpleAttribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName()) &&
-                        !requestedAttributesList.contains(attribute.getName() + "." + subAttribute.getName()))) {
+                        && (requestedAttributesList.stream().noneMatch((attribute.getName() + "."
+                        + subAttribute.getName() + "." + subSimpleAttribute.getName())::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch(attribute.getName()::equalsIgnoreCase) &&
+                        requestedAttributesList.stream().noneMatch((attribute.getName() + "."
+                                + subAttribute.getName())::equalsIgnoreCase))) {
                     scimObject.deleteSubValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(), subValue.getName(), subSimpleAttribute.getName());
                 }
@@ -627,8 +630,8 @@ public abstract class AbstractValidator {
                 //if exclude attribute is set, set of exclude attributes need to be
                 // removed from the default set of attributes
                 if ((subSimpleAttribute.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                        && requestedExcludingAttributesList.contains(
-                        attribute.getName() + "." + subAttribute.getName() + "." + subSimpleAttribute.getName())) {
+                        && requestedExcludingAttributesList.stream().anyMatch((attribute.getName() + "."
+                        + subAttribute.getName() + "." + subSimpleAttribute.getName())::equalsIgnoreCase)) {
                     scimObject.deleteSubValuesSubAttribute(attribute.getName(),
                             subAttribute.getName(), subValue.getName(), subSimpleAttribute.getName());
                 }
@@ -654,7 +657,8 @@ public abstract class AbstractValidator {
                     ArrayList<Attribute> subSimpleAttributes = new ArrayList<Attribute>((
                             (ComplexAttribute) subAttribute).getSubAttributesList().values());
                     for (Attribute subSimpleAttribute : subSimpleAttributes) {
-                        if (requestedAttributes.contains(attribute.getName() + "." + subSimpleAttribute.getName())) {
+                        if (requestedAttributes.stream().anyMatch((attribute.getName() + "."
+                                + subSimpleAttribute.getName())::equalsIgnoreCase)) {
                             return true;
                         }
                     }
@@ -673,7 +677,8 @@ public abstract class AbstractValidator {
             subAttributes = new ArrayList<Attribute>
                     (((Map) (((ComplexAttribute) attribute).getSubAttributesList())).values());
                 for (Attribute subAttribute : subAttributes) {
-                    if (requestedAttributes.contains(attribute.getName() + "." + subAttribute.getName())) {
+                    if (requestedAttributes.stream().anyMatch((attribute.getName() + "."
+                            + subAttribute.getName())::equalsIgnoreCase)) {
                         return true;
                     }
                     //this case is only valid for extension schema
@@ -710,8 +715,8 @@ public abstract class AbstractValidator {
                     ArrayList<Attribute> subSimpleAttributes = new ArrayList<Attribute>((
                             (ComplexAttribute) subAttribute).getSubAttributesList().values());
                     for (Attribute subSimpleAttribute : subSimpleAttributes) {
-                        if (requestedAttributes.contains(grandParentAttribute.getName() + "." +
-                                parentAttribute.getName() + "." + subSimpleAttribute.getName())) {
+                        if (requestedAttributes.stream().anyMatch((grandParentAttribute.getName() + "."
+                                + parentAttribute.getName() + "." + subSimpleAttribute.getName())::equalsIgnoreCase)) {
                             return true;
                         }
                     }
@@ -722,8 +727,8 @@ public abstract class AbstractValidator {
             subAttributes = new ArrayList<Attribute>
                     (((Map) (((ComplexAttribute) parentAttribute).getSubAttributesList())).values());
             for (Attribute subAttribute : subAttributes) {
-                if (requestedAttributes.contains(grandParentAttribute.getName() + "." +
-                        parentAttribute.getName() + "." + subAttribute.getName())) {
+                if (requestedAttributes.stream().anyMatch((grandParentAttribute.getName() + "."
+                        + parentAttribute.getName() + "." + subAttribute.getName())::equalsIgnoreCase)) {
                     return true;
                 }
             }

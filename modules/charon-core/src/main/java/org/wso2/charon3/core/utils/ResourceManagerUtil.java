@@ -83,7 +83,7 @@ public class ResourceManagerUtil {
                     //and add only the requested attributes
                     if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                             || attributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                            && (!requestedAttributesList.contains(attributeSchema.getName())
+                            && (requestedAttributesList.stream().noneMatch(attributeSchema.getName()::equalsIgnoreCase)
                             && !isSubAttributeExistsInList(requestedAttributesList, attributeSchema))) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
@@ -95,7 +95,8 @@ public class ResourceManagerUtil {
                     //if exclude attribute is set, set of exclude attributes need to be
                     // removed from the default set of attributes
                     if ((attributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                            && requestedExcludingAttributesList.contains(attributeSchema.getName())) {
+                            && requestedExcludingAttributesList.
+                            stream().anyMatch(attributeSchema.getName()::equalsIgnoreCase)) {
                         removeAttributesFromList(attributeSchemaArrayList, attributeSchema.getName());
                     }
                 }
@@ -159,11 +160,12 @@ public class ResourceManagerUtil {
                             //and add only the requested attributes
                             if ((subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                                     || subAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                    && (!requestedAttributesList.contains(attributeSchema.getName() + "." +
-                                    subAttributeSchema.getName())
+                                    && (requestedAttributesList.stream().noneMatch((attributeSchema.getName() + "." +
+                                    subAttributeSchema.getName())::equalsIgnoreCase)
                                     && !isSubSubAttributeExistsInList(requestedAttributesList,
                                     attributeSchema, subAttributeSchema))
-                                    && (!requestedAttributesList.contains(attributeSchema.getName()))) {
+                                    && (requestedAttributesList.stream().
+                                    noneMatch(attributeSchema.getName()::equalsIgnoreCase))) {
                                 realAttributeSchema.removeSubAttribute(subAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -249,11 +251,13 @@ public class ResourceManagerUtil {
                             //and add only the requested attributes
                             if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT)
                                     || subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.REQUEST))
-                                    && (!requestedAttributesList.contains(attribute.getName() + "." +
-                                    subAttribute.getName() + "." + subSubAttributeSchema.getName()))
-                                    && (!requestedAttributesList.contains(attribute.getName()))
-                                    && (!requestedAttributesList.contains(attribute.getName() + "." + subAttribute
-                                    .getName()))) {
+                                    && (requestedAttributesList.stream().noneMatch((attribute.getName() + "." +
+                                    subAttribute.getName() + "." + subSubAttributeSchema.getName())::equalsIgnoreCase))
+                                    && (requestedAttributesList.stream()
+                                    .noneMatch(attribute.getName()::equalsIgnoreCase))
+                                    && (requestedAttributesList.stream()
+                                    .noneMatch((attribute.getName() + "." + subAttribute
+                                    .getName())::equalsIgnoreCase))) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         } else if (requestedExcludingAttributes != null) {
@@ -264,8 +268,9 @@ public class ResourceManagerUtil {
                             //if exclude attribute is set, set of exclude attributes need to be
                             // removed from the default set of attributes
                             if ((subSubAttributeSchema.getReturned().equals(SCIMDefinitions.Returned.DEFAULT))
-                                    && requestedExcludingAttributesList.contains(attribute.getName() +
-                                    "." + subAttribute.getName() + "." + subSubAttributeSchema.getName())) {
+                                    && requestedExcludingAttributesList.stream().anyMatch((attribute.getName() + "."
+                                    + subAttribute.getName() + "." + subSubAttributeSchema.getName())
+                                    ::equalsIgnoreCase)) {
                                 realAttributeSchema.removeSubAttribute(subSubAttributeSchema.getName());
                             }
                         }
@@ -288,7 +293,8 @@ public class ResourceManagerUtil {
             List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
 
             for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
-                if (requestedAttributes.contains(attributeSchema.getName() + "." + subAttributeSchema.getName())) {
+                if (requestedAttributes.stream().anyMatch((attributeSchema.getName() + "."
+                        + subAttributeSchema.getName())::equalsIgnoreCase)) {
                     return true;
                 }
 
@@ -296,10 +302,9 @@ public class ResourceManagerUtil {
                     List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
                     for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
-                        if (requestedAttributes.contains(
-                                attributeSchema.getName() + "." +
-                                        subAttributeSchema.getName() + "." +
-                                        subSubAttributeSchema.getName())) {
+                        if (requestedAttributes.stream().anyMatch((attributeSchema.getName() + "."
+                                + subAttributeSchema.getName() + "." + subSubAttributeSchema.getName())
+                                ::equalsIgnoreCase)) {
                             return true;
                         }
                     }
@@ -327,8 +332,8 @@ public class ResourceManagerUtil {
             List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
 
             for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
-                if (requestedAttributes.contains(attributeSchema.getName() + "." +
-                        subAttributeSchema.getName() + "." + subSubAttributeSchema.getName())) {
+                if (requestedAttributes.stream().anyMatch((attributeSchema.getName() + "."
+                        + subAttributeSchema.getName() + "." + subSubAttributeSchema.getName())::equalsIgnoreCase)) {
                     return true;
                 }
             }
