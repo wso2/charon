@@ -182,4 +182,18 @@ public interface UserManager {
 
         throw new NotImplementedException();
     }
-}
+
+    /**
+     * Retrieve schema of the enterprise user.
+     *
+     * @return List of attributes of enterprise user schema.
+     * @throws CharonException
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     */
+    default List<Attribute> getEnterpriseUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+ }
