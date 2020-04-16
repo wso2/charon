@@ -32,6 +32,8 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
     //set of attributeList in the schema
     private ArrayList<AttributeSchema> attributeList = new ArrayList<AttributeSchema>();
 
+    private String tenantId = null;
+
     private SCIMResourceTypeSchema(List<String> schemas, AttributeSchema[] attributeSchemas) {
         this.schemasList = schemas;
         if (attributeSchemas != null) {
@@ -82,5 +84,13 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
 
     public void setAttributeList(ArrayList attributeList) {
         this.attributeList = attributeList;
+    }
+
+    public void setTenant(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String  getTenant() {
+        return tenantId;
     }
 }

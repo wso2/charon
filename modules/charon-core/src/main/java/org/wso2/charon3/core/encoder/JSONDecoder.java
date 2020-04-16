@@ -349,7 +349,7 @@ public class JSONDecoder {
                             }
                             //if the corresponding json value object is JSONObject, it is a ComplexAttribute.
                             scimObject.setAttribute(buildComplexAttribute(attributeSchema,
-                                    (JSONObject) attributeValObj), resourceSchema);
+                                    (JSONObject) attributeValObj, resourceSchema), resourceSchema);
                         } else {
                             logger.error("Error decoding the complex attribute");
                             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
@@ -538,6 +538,140 @@ public class JSONDecoder {
                 //we need to treat it separately
             } else if (complexAttributeSchema.getName().equals(
                     SCIMResourceSchemaManager.getInstance().getExtensionName())) {
+                if (subAttributeSchemaType.equals(COMPLEX)) {
+                    //check for user defined extension's schema violation
+                    List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
+                    for (AttributeSchema attributeSchema : subList) {
+                        if (attributeSchema.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                            String error = "Complex attribute can not have complex sub attributes";
+                            throw new InternalErrorException(error);
+                        }
+                    }
+                    if (subAttributeSchema.getMultiValued() == true) {
+                        if (attributeValObj instanceof JSONArray || attributeValObj == null) {
+                            if (attributeValObj == null) {
+                                continue;
+                            }
+                            MultiValuedAttribute multiValuedAttribute = new MultiValuedAttribute
+                                    (subAttributeSchema.getName());
+                            JSONArray attributeValues = null;
+
+                            List<Attribute> complexAttributeValues = new ArrayList<Attribute>();
+                            try {
+                                attributeValues = (JSONArray) attributeValObj;
+                            } catch (Exception e) {
+                                logger.error("Error decoding the extension");
+                                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                            }
+                            //iterate through JSONArray and create the list of string values.
+                            for (int i = 0; i < attributeValues.length(); i++) {
+                                Object attributeValue = attributeValues.get(i);
+                                if (attributeValue instanceof JSONObject) {
+                                    JSONObject complexAttributeValue = (JSONObject) attributeValue;
+                                    complexAttributeValues.add(buildComplexValue(subAttributeSchema,
+                                            complexAttributeValue));
+                                } else {
+                                    String error = "Unknown JSON representation for the MultiValued attribute " +
+                                            subAttributeSchema.getName() +
+                                            " which has data type as " + subAttributeSchema.getType();
+                                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_SYNTAX);
+                                }
+                                multiValuedAttribute.setAttributeValues(complexAttributeValues);
+
+                                MultiValuedAttribute complexMultiValuedSubAttribute = (MultiValuedAttribute)
+                                        DefaultAttributeFactory.createAttribute(subAttributeSchema,
+                                                multiValuedAttribute);
+                                subAttributesMap.put(complexMultiValuedSubAttribute.getName(),
+                                        complexMultiValuedSubAttribute);
+
+                            }
+                        } else {
+                            logger.error("Error decoding the extension sub attribute");
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
+                    } else {
+                        if (attributeValObj instanceof JSONObject || attributeValObj == null) {
+                            if (attributeValObj == null) {
+                                continue;
+                            }
+                            ComplexAttribute complexSubAttribute =
+                                    buildComplexAttribute(subAttributeSchema, (JSONObject) attributeValObj);
+                            subAttributesMap.put(complexSubAttribute.getName(), complexSubAttribute);
+                        } else {
+                            logger.error("Error decoding the extension sub attribute");
+                            throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                        }
+                    }
+                }
+            } else {
+                String error = "Complex attribute can not have complex sub attributes";
+                throw new InternalErrorException(error);
+            }
+
+        }
+        complexAttribute.setSubAttributesList(subAttributesMap);
+        return (ComplexAttribute) DefaultAttributeFactory.createAttribute(complexAttributeSchema, complexAttribute);
+    }
+
+    /*
+     * Return a complex attribute with the user defined sub values included and necessary attribute characteristics set
+     *
+     * @param complexAttributeSchema - complex attribute schema
+     * @param jsonObject             - sub attributes values for the complex attribute
+     * @return ComplexAttribute
+     */
+    public ComplexAttribute buildComplexAttribute(AttributeSchema complexAttributeSchema,
+                                                  JSONObject jsonObject, ResourceTypeSchema resourceSchema)
+            throws BadRequestException, CharonException, InternalErrorException, JSONException {
+        ComplexAttribute complexAttribute = new ComplexAttribute(complexAttributeSchema.getName());
+        Map<String, Attribute> subAttributesMap = new HashMap<String, Attribute>();
+        //list of sub attributes of the complex attribute
+        List<AttributeSchema> subAttributeSchemas =
+                ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
+
+        //iterate through the complex attribute schema and extract the sub attributes.
+        for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
+            //obtain the user defined value for given key- attribute schema name
+            Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
+            SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
+            if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
+                    subAttributeSchemaType.equals(BOOLEAN) || subAttributeSchemaType.equals(DATE_TIME) ||
+                    subAttributeSchemaType.equals(DECIMAL) || subAttributeSchemaType.equals(INTEGER) ||
+                    subAttributeSchemaType.equals(REFERENCE)) {
+                if (!subAttributeSchema.getMultiValued()) {
+                    if (attributeValObj instanceof String || attributeValObj instanceof Boolean ||
+                            attributeValObj instanceof Integer ||
+                            JSONObject.NULL.equals(attributeValObj) || attributeValObj == null) {
+                        //If an attribute is passed without a value, no need to save it.
+                        if (attributeValObj == null) {
+                            continue;
+                        }
+                        //if the corresponding schema data type is String/Boolean/Binary/Decimal/Integer/DataTime
+                        // or Reference, it is a SimpleAttribute.
+                        subAttributesMap.put(subAttributeSchema.getName(),
+                                buildSimpleAttribute(subAttributeSchema, attributeValObj));
+                    } else {
+                        logger.error("Error decoding the sub attribute");
+                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                    }
+                } else {
+                    if (attributeValObj instanceof JSONArray || attributeValObj == null) {
+                        //If an attribute is passed without a value, no need to save it.
+                        if (attributeValObj == null) {
+                            continue;
+                        }
+                        subAttributesMap.put(subAttributeSchema.getName(),
+                                buildPrimitiveMultiValuedAttribute(subAttributeSchema, (JSONArray) attributeValObj));
+                    } else {
+                        logger.error("Error decoding the sub attribute");
+                        throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+                    }
+                }
+                //this case is only valid for the extension schema
+                //As according to the spec we have complex attribute inside complex attribute only for extension,
+                //we need to treat it separately
+                //Modified this to check the schema name exists in the schema list for the specific tenant
+            } else if (resourceSchema.getSchemasList().contains(complexAttributeSchema.getName())) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
                     List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();

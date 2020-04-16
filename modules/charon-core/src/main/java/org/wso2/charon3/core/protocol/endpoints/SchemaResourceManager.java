@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -32,6 +33,7 @@ import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMSchemaDefinitions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +42,13 @@ import java.util.Map;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.EnterpriseUserSchemaConstants.ENTERPRISE_USER_DESC;
+import static org.wso2.charon3.core.schema.SCIMConstants.GROUP_CORE_SCHEMA_URI;
+import static org.wso2.charon3.core.schema.SCIMConstants.ResourceTypeSchemaConstants.GROUP;
+import static org.wso2.charon3.core.schema.SCIMConstants.ResourceTypeSchemaConstants.SCHEMA;
 import static org.wso2.charon3.core.schema.SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT;
 import static org.wso2.charon3.core.schema.SCIMConstants.USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.USER_CORE_SCHEMA_URI;
+
 
 /**
  * The schema resource enables a service
@@ -74,12 +80,16 @@ public class SchemaResourceManager extends AbstractResourceManager {
         try {
             List<Attribute> userSchemaAttributes = userManager.getUserSchema();
             List<Attribute> userEnterpriseSchemaAttributes = userManager.getEnterpriseUserSchema();
+            List<Attribute> groupSchemaAttributes = userManager.getGroupSchema();
 
             Map<String, List<Attribute>> schemas = new HashMap<>();
             schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
+            schemas.put(GROUP_CORE_SCHEMA_URI, groupSchemaAttributes);
             schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
 
-            return buildSchemasResponse(schemas);
+            JSONArray extSchemasArr = userManager.getCustomExtensionSchemas();
+
+            return buildSchemasResponse(schemas, extSchemasArr);
         } catch (BadRequestException | CharonException | NotFoundException | NotImplementedException e) {
             // TODO: 11/7/19 Seperate out user errors & server errors
             return AbstractResourceManager.encodeSCIMException(e);
@@ -94,10 +104,10 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @throws CharonException
      * @throws NotFoundException
      */
-    private SCIMResponse buildSchemasResponse(Map<String, List<Attribute>> schemas) throws CharonException,
-            NotFoundException {
+    private SCIMResponse buildSchemasResponse(Map<String, List<Attribute>> schemas, JSONArray extSchemasJson)
+            throws CharonException, NotFoundException, BadRequestException {
 
-        String schemaResponseBody = buildSchemasResponseBody(schemas).toString();
+        String schemaResponseBody = buildSchemasResponseBody(schemas, extSchemasJson).toString();
         Map<String, String> responseHeaders = getResponseHeaders();
         return new SCIMResponse(ResponseCodeConstants.CODE_OK, schemaResponseBody, responseHeaders);
     }
@@ -109,17 +119,38 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @return SCIM schemas config json representation.
      * @throws CharonException
      */
-    private JSONArray buildSchemasResponseBody(Map<String, List<Attribute>> schemas) throws CharonException {
+    private JSONObject buildSchemasResponseBody(Map<String, List<Attribute>> schemas, JSONArray extSchemasArr)
+            throws CharonException, BadRequestException, NotFoundException {
 
-        JSONArray rootObject = new JSONArray();
+        JSONObject rootObject = new JSONObject();
+        rootObject.put(SCIMConstants.ListedResourceSchemaConstants.TOTAL_RESULTS, extSchemasArr.length() + 3);
+
+        JSONArray schemaAttributeArray = new JSONArray();
+        schemaAttributeArray.put(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
+        rootObject.put(SCIMConstants.CommonSchemaConstants.SCHEMAS, schemaAttributeArray);
+
+        JSONArray resourcesRootObject = new JSONArray();
         if (schemas.get(USER_CORE_SCHEMA_URI) != null) {
             JSONObject userSchemaObject = buildUserSchema(schemas.get(USER_CORE_SCHEMA_URI));
-            rootObject.put(userSchemaObject);
+            resourcesRootObject.put(userSchemaObject);
         }
+
+        if (schemas.get(GROUP_CORE_SCHEMA_URI) != null) {
+            JSONObject groupSchemaObject = buildGroupSchema(schemas.get(GROUP_CORE_SCHEMA_URI));
+            resourcesRootObject.put(groupSchemaObject);
+        }
+
         if (schemas.get(ENTERPRISE_USER_SCHEMA_URI) != null) {
             JSONObject enterpriseUserSchemaObject = buildEnterpriseUserSchema(schemas.get(ENTERPRISE_USER_SCHEMA_URI));
-            rootObject.put(enterpriseUserSchemaObject);
+            resourcesRootObject.put(enterpriseUserSchemaObject);
         }
+
+        for (int count = 0; count < extSchemasArr.length(); count++) {
+            resourcesRootObject.put(extSchemasArr.getJSONObject(count));
+        }
+
+        rootObject.put(SCIMConstants.ListedResourceSchemaConstants.RESOURCES, resourcesRootObject);
+
         return rootObject;
     }
 
@@ -130,7 +161,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @return JSON object of enterprise user schema
      * @throws CharonException
      */
-    private JSONObject buildEnterpriseUserSchema(List<Attribute> enterpriseUserSchemaList) throws CharonException {
+    private JSONObject buildEnterpriseUserSchema(List<Attribute> enterpriseUserSchemaList) throws CharonException,
+            BadRequestException, NotFoundException {
 
         try {
             JSONEncoder encoder = getEncoder();
@@ -141,7 +173,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
             enterpriseUserSchemaObject.put(SCIMConstants.
                     EnterpriseUserSchemaConstants.DESCRIPTION, ENTERPRISE_USER_DESC);
 
-            JSONArray enterpriseUserAttributeArray = buildSchemaAttributeArray(enterpriseUserSchemaList, encoder);
+            JSONArray enterpriseUserAttributeArray = buildSchemaAttributeArray(enterpriseUserSchemaList, encoder,
+                    ENTERPRISE_USER_SCHEMA_URI);
             enterpriseUserSchemaObject.put(ATTRIBUTES, enterpriseUserAttributeArray);
             return enterpriseUserSchemaObject;
         } catch (JSONException e) {
@@ -149,7 +182,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONObject buildUserSchema(List<Attribute> userSchemaAttributeList) throws CharonException {
+    private JSONObject buildUserSchema(List<Attribute> userSchemaAttributeList) throws CharonException,
+            BadRequestException, NotFoundException {
 
         try {
             JSONEncoder encoder = getEncoder();
@@ -159,7 +193,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
             userSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, USER);
             userSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, USER_ACCOUNT);
 
-            JSONArray userSchemaAttributeArray = buildSchemaAttributeArray(userSchemaAttributeList, encoder);
+            JSONArray userSchemaAttributeArray = buildSchemaAttributeArray(userSchemaAttributeList, encoder,
+                    USER_CORE_SCHEMA_URI);
             userSchemaObject.put(ATTRIBUTES, userSchemaAttributeArray);
             return userSchemaObject;
         } catch (JSONException e) {
@@ -167,8 +202,29 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONArray buildSchemaAttributeArray(List<Attribute> schemaAttributeList, JSONEncoder encoder)
-            throws JSONException {
+    private JSONObject buildGroupSchema(List<Attribute> groupSchemaAttributeList) throws CharonException,
+            BadRequestException, NotFoundException {
+
+        try {
+            JSONEncoder encoder = getEncoder();
+
+            JSONObject groupSchemaObject = new JSONObject();
+            groupSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, GROUP_CORE_SCHEMA_URI);
+            groupSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, GROUP);
+            groupSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, GROUP);
+
+            JSONArray groupSchemaAttributeArray = buildSchemaAttributeArray(groupSchemaAttributeList, encoder,
+                    GROUP_CORE_SCHEMA_URI);
+            groupSchemaObject.put(ATTRIBUTES, groupSchemaAttributeArray);
+            return groupSchemaObject;
+        } catch (JSONException e) {
+            throw new CharonException("Error while encoding user schema", e);
+        }
+    }
+
+    private JSONArray buildSchemaAttributeArray(List<Attribute> schemaAttributeList, JSONEncoder encoder,
+                                                String schemaURI)
+            throws JSONException, CharonException, BadRequestException, NotFoundException {
 
         JSONArray schemaAttributeArray = new JSONArray();
 
@@ -186,7 +242,43 @@ public class SchemaResourceManager extends AbstractResourceManager {
             schemaAttributeArray.put(schemaJSONAttribute);
         }
 
+        ComplexAttribute metaAttribute = createMetaAttribute();
+        String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
+                SCIMConstants.SCHEMAS_ENDPOINT), schemaURI);
+        SimpleAttribute locationAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.LOCATION,
+                new SimpleAttribute(SCIMConstants.CommonSchemaConstants.LOCATION, location));
+        SimpleAttribute resourceTypeAttribute = (SimpleAttribute) DefaultAttributeFactory.createAttribute(
+                SCIMSchemaDefinitions.RESOURCE_TYPE,
+                new SimpleAttribute(SCIMConstants.CommonSchemaConstants.RESOURCE_TYPE, SCHEMA));
+        metaAttribute.setSubAttribute(locationAttribute);
+        metaAttribute.setSubAttribute(resourceTypeAttribute);
+
+        JSONObject metaSchemaAttribute = new JSONObject();
+
+        encoder.encodeComplexAttribute(metaAttribute, metaSchemaAttribute);
+
+        schemaAttributeArray.put(metaSchemaAttribute);
+
+
         return schemaAttributeArray;
+    }
+
+    /**
+     * crete the meta attribute of the scim object
+     *
+     */
+    protected ComplexAttribute createMetaAttribute() throws CharonException, BadRequestException {
+        ComplexAttribute metaAttribute =
+                (ComplexAttribute) DefaultAttributeFactory.createAttribute(
+                        SCIMSchemaDefinitions.META,
+                        new ComplexAttribute(SCIMConstants.CommonSchemaConstants.META));
+        return metaAttribute;
+    }
+
+    private String createLocationHeader(String location, String resourceID) {
+        String locationString = location + "/" + resourceID;
+        return locationString;
     }
 
     private Map<String, String> getResponseHeaders() throws NotFoundException {

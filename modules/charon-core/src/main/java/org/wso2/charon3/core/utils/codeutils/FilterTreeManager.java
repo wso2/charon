@@ -51,6 +51,8 @@ public class FilterTreeManager {
 
         String encodedString = URLEncoder.encode(filterString, "UTF-8");
         String modifiedEncodedString = encodedString.replaceAll("\\+", " ");
+        modifiedEncodedString = modifiedEncodedString.replaceAll("%28", "(");
+        modifiedEncodedString = modifiedEncodedString.replaceAll("%29", ")");
         this.schema = schema;
         input = new StreamTokenizer(new StringReader(modifiedEncodedString));
         input.resetSyntax();

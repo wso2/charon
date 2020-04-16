@@ -59,7 +59,12 @@ public class MeResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = null;
+            if (userManager.getTenant() != null) {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager.getTenant());
+            } else {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            }
             //get the URIs of required attributes which must be given a value
 
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -100,6 +105,13 @@ public class MeResourceManager extends AbstractResourceManager {
             excludeAttributes) {
         JSONEncoder encoder = null;
         try {
+
+            if (userManager == null) {
+                String error = "Provided user manager handler is null.";
+                //throw internal server error.
+                throw new InternalErrorException(error);
+            }
+
             //obtain the json encoder
             encoder = getEncoder();
 
@@ -108,7 +120,12 @@ public class MeResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = null;
+            if (userManager.getTenant() != null) {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager.getTenant());
+            } else {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            }
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                     (SCIMResourceTypeSchema)
@@ -120,15 +137,10 @@ public class MeResourceManager extends AbstractResourceManager {
 
             User createdUser;
 
-            if (userManager != null) {
             /*handover the SCIM User object to the user usermanager provided by the SP.
             need to send back the newly created user in the response payload*/
-                createdUser = userManager.createMe(user, requiredAttributes);
-            } else {
-                String error = "Provided user manager handler is null.";
-                //throw internal server error.
-                throw new InternalErrorException(error);
-            }
+            createdUser = userManager.createMe(user, requiredAttributes);
+
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
             Map<String, String> responseHeaders = new HashMap<String, String>();
@@ -215,12 +227,22 @@ public class MeResourceManager extends AbstractResourceManager {
         JSONDecoder decoder = null;
 
         try {
+
+            if (userManager == null) {
+                String error = "No user exists with the given userName: " + userName;
+                throw new NotFoundException(error);
+            }
             //obtain the json encoder
             encoder = getEncoder();
             //obtain the json decoder.
             decoder = getDecoder();
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = null;
+            if (userManager.getTenant() != null) {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager.getTenant());
+            } else {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            }
 
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -230,17 +252,14 @@ public class MeResourceManager extends AbstractResourceManager {
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
             User updatedUser = null;
-            if (userManager != null) {
-                //retrieve the old object
-                User oldUser = userManager.getMe(userName, ResourceManagerUtil.getAllAttributeURIs(schema));
-                if (oldUser != null) {
-                    User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
-                    updatedUser = userManager.updateMe(validatedUser, requiredAttributes);
 
-                } else {
-                    String error = "No user exists with the given userName: " + userName;
-                    throw new NotFoundException(error);
-                }
+            //retrieve the old object
+            User oldUser = userManager.getMe(userName, ResourceManagerUtil.getAllAttributeURIs(schema));
+            if (oldUser != null) {
+                User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(oldUser, user, schema);
+                updatedUser = userManager.updateMe(validatedUser, requiredAttributes);
+
+
 
             } else {
                 String error = "Provided user manager handler is null.";
@@ -304,7 +323,13 @@ public class MeResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = null;
+            if (userManager.getTenant() != null) {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager.getTenant());
+            } else {
+                schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            }
+
             //get the user from the user core
             User oldUser = userManager.getMe(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldUser == null) {

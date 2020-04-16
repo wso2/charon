@@ -43,6 +43,10 @@ public class SCIMUserSchemaExtensionBuilder {
     // configuration map
     private static Map<String, ExtensionAttributeSchemaConfig> extensionConfig =
             new HashMap<String, ExtensionAttributeSchemaConfig>();
+
+    private static Map<String, Map<String, AttributeSchema>> extensionSchemaMap =
+            new HashMap<String, Map<String, AttributeSchema>>();
+
     // extension root attribute name
     String extensionRootAttributeName = null;
     // built schema map
@@ -80,6 +84,40 @@ public class SCIMUserSchemaExtensionBuilder {
          * root attribute
          */
         extensionSchema = attributeSchemas.get(extensionRootAttributeName);
+    }
+
+    public void buildUserSchemaExtension(String configFilePath, String tenantId) throws CharonException,
+            InternalErrorException {
+        extensionConfig.clear();
+        attributeSchemas.clear();
+        readConfiguration(configFilePath);
+
+        for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig : extensionConfig.entrySet()) {
+            // if there are no children its a simple attribute, build it
+            if (!attributeSchemaConfig.getValue().hasChildren()) {
+                buildSimpleAttributeSchema(attributeSchemaConfig.getValue());
+            } else {
+                // need to build child schemas first
+                buildComplexAttributeSchema(attributeSchemaConfig.getValue());
+            }
+        }
+        // now get the extension schema
+        /*
+         * Assumption : Final config in the configuration file is the extension
+         * root attribute
+         */
+        extensionSchema = attributeSchemas.get(extensionRootAttributeName);
+
+        Map<String, AttributeSchema> schemaMap = extensionSchemaMap.get(tenantId);
+        if (schemaMap == null) {
+          schemaMap = new HashMap<String, AttributeSchema>();
+        }
+        schemaMap.put(extensionSchema.getURI(), extensionSchema);
+        extensionSchemaMap.put(tenantId, schemaMap);
+    }
+
+    public static Map<String, AttributeSchema> getExtensionSchema(String tenantId) {
+        return  extensionSchemaMap.get(tenantId);
     }
 
     /*

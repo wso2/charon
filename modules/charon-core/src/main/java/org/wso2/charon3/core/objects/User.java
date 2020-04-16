@@ -856,4 +856,16 @@ public class User extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * set the schemas of the user
+     */
+    public void setSchemas(String tenantId) {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(tenantId);
+        java.util.List<String> schemasList = schema.getSchemasList();
+        for (String scheme : schemasList) {
+            setSchema(scheme);
+        }
+    }
+
 }

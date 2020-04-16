@@ -232,4 +232,14 @@ public class InMemoryUserManager implements UserManager {
                 searchRequest.getCount(), searchRequest.getSortBy(), searchRequest.getSortOder(),
                 searchRequest.getDomainName(), requiredAttributes);
     }
+
+    @Override
+    public void setTenant(String tenantId) {
+
+    }
+
+    @Override
+    public String  getTenant() {
+        return null;  
+    }
 }

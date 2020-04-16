@@ -288,6 +288,19 @@ public class Group extends AbstractSCIMObject {
     }
 
     /**
+     * set the schemas of the user
+     */
+    public void setSchemas(String tenantId) {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema(tenantId);
+        java.util.List<String> schemasList = schema.getSchemasList();
+        for (String scheme : schemasList) {
+            setSchema(scheme);
+        }
+    }
+
+
+    /**
      * Returns the ID list of all members of type User
      */
     public List<String> getUserIds() {

@@ -50,8 +50,11 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
      */
     @Override
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
-
-        return getResourceType();
+        if (userManager != null  && userManager.getTenant() != null) {
+            return getResourceType(userManager.getTenant());
+        } else {
+            return getResourceType();
+        }
     }
 
     /*
@@ -74,6 +77,72 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
             String scimUserObjectString = encoder.buildUserResourceTypeJsonBody();
             //create a string in json format for group resource type with relevant values
             String scimGroupObjectString = encoder.buildGroupResourceTypeJsonBody();
+            //build the user abstract scim object
+            AbstractSCIMObject userResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
+                    scimUserObjectString, schema, new AbstractSCIMObject());
+            //add meta data
+            userResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(userResourceTypeObject);
+            //build the group abstract scim object
+            AbstractSCIMObject groupResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
+                    scimGroupObjectString, schema, new AbstractSCIMObject());
+            //add meta data
+            groupResourceTypeObject = ServerSideValidator.validateResourceTypeSCIMObject(groupResourceTypeObject);
+            //build the root abstract scim object
+            AbstractSCIMObject resourceTypeObject = buildCombinedResourceType(userResourceTypeObject,
+                    groupResourceTypeObject);
+            //encode the newly created SCIM Resource Type object.
+            String encodedObject;
+            Map<String, String> responseHeaders = new HashMap<String, String>();
+
+            if (resourceTypeObject != null) {
+                //create a deep copy of the resource type object since we are going to change it.
+                AbstractSCIMObject copiedObject = (AbstractSCIMObject) CopyUtil.deepCopy(resourceTypeObject);
+                encodedObject = encoder.encodeSCIMObject(copiedObject);
+                //add location header
+                responseHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
+                        SCIMConstants.RESOURCE_TYPE_ENDPOINT));
+                responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+            } else {
+                String error = "Newly created User resource is null.";
+                throw new InternalErrorException(error);
+            }
+            //put the uri of the resource type object in the response header parameter.
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK,
+                    encodedObject, responseHeaders);
+        } catch (CharonException e) {
+            return encodeSCIMException(e);
+        } catch (BadRequestException e) {
+            return encodeSCIMException(e);
+        } catch (InternalErrorException e) {
+            return encodeSCIMException(e);
+        } catch (NotFoundException e) {
+            return encodeSCIMException(e);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    /*
+     * return RESOURCE_TYPE schema
+     *
+     * @return
+     */
+    private SCIMResponse getResourceType(String tenantId) {
+
+        JSONEncoder encoder = null;
+        try {
+            //obtain the json encoder
+            encoder = getEncoder();
+            //obtain the json decoder
+            JSONDecoder decoder = getDecoder();
+
+            // get the service provider config schema
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getResourceTypeResourceSchema();
+            //create a string in json format for user resource type with relevant values
+            String scimUserObjectString = encoder.buildUserResourceTypeJsonBody(tenantId);
+            //create a string in json format for group resource type with relevant values
+            String scimGroupObjectString = encoder.buildGroupResourceTypeJsonBody(tenantId);
             //build the user abstract scim object
             AbstractSCIMObject userResourceTypeObject = (AbstractSCIMObject) decoder.decodeResource(
                     scimUserObjectString, schema, new AbstractSCIMObject());
@@ -146,7 +215,7 @@ public class ResourceTypeResourceManager extends AbstractResourceManager {
         return encodeSCIMException(badRequestException);
     }
 
-    /**
+    /**N
      * @param userManager       User manager
      * @param filter            Filter to be executed
      * @param startIndexInt     Starting index value of the filter
