@@ -28,7 +28,7 @@ public class SCIMProviderConstants {
     public static final String START_INDEX = "startIndex";
     public static final String COUNT = "count";
     public static final String SORT_BY = "sortBy";
-    public static final String SORT_ORDER = "sortOder";
+    public static final String SORT_ORDER = "sortOrder";
     public static final String APPLICATION_SCIM_JSON = "application/scim+json";
     public static final String APPLICATION_JSON = "application/json";
     public static final String ACCEPT_HEADER = "Accept";

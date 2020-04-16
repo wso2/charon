@@ -699,7 +699,7 @@ public class PatchOperationUtil {
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         try {
-            Rule pathAttributeRule = Parser.parse(PATH_RULE_NAME, operation.getPath());
+            Rule pathAttributeRule = Parser.parse(PATH_RULE_NAME, operation.getPath(), schema.getSchemasList());
 
             if (isFilterConditionProvidedInPath(pathAttributeRule)) {
                 // Filter condition has been provided in the path.

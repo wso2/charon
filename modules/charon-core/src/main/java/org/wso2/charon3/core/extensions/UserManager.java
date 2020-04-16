@@ -15,12 +15,15 @@
  */
 package org.wso2.charon3.core.extensions;
 
+import org.json.JSONArray;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
+
+
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.utils.codeutils.Node;
@@ -36,7 +39,7 @@ import java.util.Map;
  */
 public interface UserManager {
 
-        /***************User Manipulation operations.*******************/
+    /***************User Manipulation operations.*******************/
 
     public User createUser(User user, Map<String, Boolean> requiredAttributes)
             throws CharonException, ConflictException, BadRequestException;
@@ -196,4 +199,28 @@ public interface UserManager {
 
         throw new NotImplementedException();
     }
- }
+
+    default List<Attribute> getGroupSchema() throws CharonException, NotImplementedException, BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Retrieve schema of the enterprise user.
+     *
+     * @return List of attributes of enterprise user schema.
+     * @throws CharonException
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     */
+    default JSONArray getCustomExtensionSchemas() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+    public void setTenant(String tenantId);
+
+    public String  getTenant();
+
+}
