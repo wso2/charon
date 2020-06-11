@@ -40,8 +40,7 @@ public abstract class AbstractResourceManager implements ResourceManager {
 
     private static JSONDecoder decoder = new JSONDecoder();
 
-    //Keeps  a map of endpoint urls of the exposed resources.
-    private static Map<String, String> endpointURLMap;
+    private static ResourceURLBuilder resourceURLBuilder = new DefaultResourceURLBuilder();
 
     /*
      * Returns the encoder for json.
@@ -64,6 +63,16 @@ public abstract class AbstractResourceManager implements ResourceManager {
         return decoder;
     }
 
+    /**
+     * Sets the resource URL builder implementation.
+     *
+     * @param resourceURLBuilder ResourceURLBuilder.
+     */
+    public static void setResourceURLBuilder(ResourceURLBuilder resourceURLBuilder) {
+
+        AbstractResourceManager.resourceURLBuilder = resourceURLBuilder;
+    }
+
     /*
      * Returns the endpoint according to the resource.
      *
@@ -72,15 +81,15 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @throws NotFoundException
      */
     public static String getResourceEndpointURL(String resource) throws NotFoundException {
-        if (endpointURLMap != null && endpointURLMap.size() != 0) {
-            return endpointURLMap.get(resource);
-        } else {
-            throw new NotFoundException();
-        }
+
+        return resourceURLBuilder.build(resource);
     }
 
     public static void setEndpointURLMap(Map<String, String> endpointURLMap) {
-        AbstractResourceManager.endpointURLMap = endpointURLMap;
+
+        if (resourceURLBuilder instanceof DefaultResourceURLBuilder) {
+            ((DefaultResourceURLBuilder) resourceURLBuilder).setEndpointURIMap(endpointURLMap);
+        }
     }
 
     /*
