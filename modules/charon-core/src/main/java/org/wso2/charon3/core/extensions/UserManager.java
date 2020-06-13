@@ -101,6 +101,26 @@ public interface UserManager {
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
 
+    /**
+     * Identify user claims to be updated and update the user in user store.
+     *
+     * @param updatedUser                    Updated user.
+     * @param requiredAttributes             URIs of required attributes which must be given a value.
+     * @param allSimpleMultiValuedAttributes Simple multi-valued attributes defined in SCIM schema.
+     * @return Updated user stored in the user store.
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes,
+                            List<String> allSimpleMultiValuedAttributes)
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+
+        throw new NotImplementedException(
+                "Updating simple multi-valued attributes independently from simple attributes is not supported");
+    }
+
     public User getMe(String userName, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
 

@@ -131,6 +131,17 @@ public class InMemoryUserManager implements UserManager {
        }
     }
 
+    public User updateUser(User user, Map<String, Boolean> requiredAttributes,
+                           List<String> allSimpleMultiValuedAttributes)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        if (user.getId() == null) {
+            throw new NotFoundException("No user found with the id : " + user.getId());
+        }
+        inMemoryUserList.replace(user.getId(), user);
+        return (User) CopyUtil.deepCopy(user);
+    }
+
     @Override
     public User getMe(String s, Map<String, Boolean> map)
             throws CharonException, BadRequestException, NotFoundException {

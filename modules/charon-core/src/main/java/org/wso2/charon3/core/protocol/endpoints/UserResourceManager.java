@@ -652,6 +652,8 @@ public class UserResourceManager extends AbstractResourceManager {
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            List<String> allSimpleMultiValuedAttributes = ResourceManagerUtil.getAllSimpleMultiValuedAttributes(schema);
+
             //get the user from the user core
             User oldUser = userManager.getUser(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldUser == null) {
@@ -712,7 +714,11 @@ public class UserResourceManager extends AbstractResourceManager {
 
             User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject
                     (originalUser, newUser, schema);
-            newUser = userManager.updateUser(validatedUser, requiredAttributes);
+            try {
+                newUser = userManager.updateUser(validatedUser, requiredAttributes, allSimpleMultiValuedAttributes);
+            } catch (NotImplementedException e) {
+                newUser = userManager.updateUser(validatedUser, requiredAttributes);
+            }
 
             //encode the newly created SCIM user object and add id attribute to Location header.
             String encodedUser;
