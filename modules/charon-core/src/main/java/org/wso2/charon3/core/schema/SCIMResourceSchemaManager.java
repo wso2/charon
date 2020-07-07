@@ -144,6 +144,11 @@ public class SCIMResourceSchemaManager {
         return SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA;
     }
 
+    public SCIMResourceTypeSchema getRoleResourceSchema() {
+
+        return SCIMSchemaDefinitions.SCIM_ROLE_SCHEMA;
+    }
+
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
 
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;

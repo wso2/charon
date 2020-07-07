@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -143,5 +144,105 @@ public interface ResourceManager {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED,
                 ResponseCodeConstants.DESC_NOT_IMPLEMENTED, Collections.emptyMap());
+    }
+
+    /**
+     * GET method to retrieve a specific role.
+     *
+     * @param id                Resource id.
+     * @param roleManager       Role manager.
+     * @param attributes        Attributes in the response.
+     * @param excludeAttributes Exclude attributes in the response.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse getRole(String id, RoleManager roleManager, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to create a new role.
+     *
+     * @param postRequest Post request.
+     * @param roleManager Role manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse createRole(String postRequest, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * DELETE method to delete a specific role.
+     *
+     * @param id          Resource id.
+     * @param roleManager Role manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse deleteRole(String id, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * GET method to list roles.
+     *
+     * @param roleManager Role manager.
+     * @param filter      Filter to be executed.
+     * @param startIndex  Starting index value of the filter.
+     * @param count       Number of required results.
+     * @param sortBy      SortBy.
+     * @param sortOrder   Sorting order.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithGETRole(RoleManager roleManager, String filter, Integer startIndex, Integer count,
+            String sortBy, String sortOrder) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to search roles.
+     *
+     * @param searchRequest Search request.
+     * @param roleManager   Role manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithPOSTRole(String searchRequest, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PUT method To update a role by giving entire attributes set.
+     *
+     * @param id          Resource id.
+     * @param putRequest  Put request.
+     * @param roleManager Role manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPUTRole(String id, String putRequest, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PATCH method to partially updates a role.
+     *
+     * @param id           Resource id.
+     * @param patchRequest Patch request.
+     * @param roleManager  Role manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
     }
 }

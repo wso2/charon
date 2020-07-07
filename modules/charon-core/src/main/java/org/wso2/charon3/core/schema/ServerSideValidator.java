@@ -20,11 +20,15 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -50,14 +54,16 @@ public class ServerSideValidator extends AbstractValidator {
         }
         //remove any read only attributes
         removeAnyReadOnlyAttributes(scimObject, resourceSchema);
-        //add created and last modified dates
-        String id = UUID.randomUUID().toString();
-        scimObject.setId(id);
-        Instant now = Instant.now();
-        //set the created date and time
-        scimObject.setCreatedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
-        //creates date and the last modified are the same if not updated.
-        scimObject.setLastModifiedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
+
+        if (!(scimObject instanceof Role)) {
+            String id = UUID.randomUUID().toString();
+            scimObject.setId(id);
+            Instant now = Instant.now();
+            // Set the created date and time.
+            scimObject.setCreatedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
+            // Creates date and the last modified are the same if not updated.
+            scimObject.setLastModifiedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
+        }
         //set location and resourceType
         if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
@@ -69,6 +75,8 @@ public class ServerSideValidator extends AbstractValidator {
                     SCIMConstants.GROUP_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);
             scimObject.setResourceType(SCIMConstants.GROUP);
+        } else if (resourceSchema.isSchemaAvailable(SCIMConstants.ROLE_SCHEMA_URI)) {
+            scimObject.setResourceType(SCIMConstants.ROLE);
         }
         //check for required attributes
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
@@ -123,6 +131,34 @@ public class ServerSideValidator extends AbstractValidator {
         validateSCIMObjectForRequiredAttributes(scimObject, resourceSchema);
         validateReturnedAttributes(scimObject, reuqestedAttributes, requestedExcludingAttributes);
         validateSchemaList(scimObject, resourceSchema);
+    }
+
+    /**
+     * Validate Retrieved SCIM Role Object.
+     *
+     * @param scimObject                   Role object.
+     * @param requestedExcludingAttributes RequestedExcludingAttributes.
+     */
+    public static void validateRetrievedSCIMRoleObject(Role scimObject, String requestedAttributes,
+            String requestedExcludingAttributes) {
+
+        List<String> requestedExcludingAttributesList = null;
+        List<String> requestedAttributesList = null;
+        if (requestedExcludingAttributes != null) {
+            // Make a list from the comma separated requestedExcludingAttributes.
+            requestedExcludingAttributesList = Arrays.asList(requestedExcludingAttributes.split(","));
+        }
+        if (requestedAttributes != null) {
+            // Make a list from the comma separated requestedAttributes.
+            requestedAttributesList = Arrays.asList(requestedAttributes.split(","));
+        }
+        if (requestedAttributesList != null && requestedAttributesList.
+                stream().noneMatch(SCIMConstants.RoleSchemaConstants.PERMISSIONS::equalsIgnoreCase)) {
+            scimObject.setPermissions(new ArrayList<>());
+        } else if (requestedExcludingAttributesList != null && requestedExcludingAttributesList.
+                stream().anyMatch(SCIMConstants.RoleSchemaConstants.PERMISSIONS::equalsIgnoreCase)) {
+            scimObject.setPermissions(new ArrayList<>());
+        }
     }
 
 

@@ -28,6 +28,7 @@ import org.wso2.charon3.core.config.SCIMConfigConstants;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.SCIMObject;
 import org.wso2.charon3.core.objects.bulk.BulkResponseContent;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -143,6 +144,12 @@ public class JSONEncoder {
                         encodeMultiValuedAttribute((MultiValuedAttribute) attribute, rootObject);
                     }
                 }
+            }
+
+            // Encode permissions of the role.
+            if (scimObject instanceof Role && !((Role) scimObject).getPermissions().isEmpty()) {
+                this.encodeArrayOfValues(SCIMConstants.RoleSchemaConstants.PERMISSIONS,
+                        (((Role) scimObject).getPermissions()).toArray(), rootObject);
             }
 
         } catch (JSONException e) {

@@ -33,6 +33,7 @@ import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.ListedResource;
+import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
@@ -322,6 +323,11 @@ public class JSONDecoder {
                                 continue;
                             }
 
+                            // Assign permissions of the Role.
+                            if (scimObject instanceof Role) {
+                                ((Role) scimObject).setPermissions(toList((JSONArray) attributeValObj));
+                            }
+
                             scimObject.setAttribute(buildPrimitiveMultiValuedAttribute(attributeSchema,
                                     (JSONArray) attributeValObj), resourceSchema);
                         } else {
@@ -362,6 +368,15 @@ public class JSONDecoder {
             logger.error("json error in decoding the resource");
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
+    }
+
+    private List<String> toList(JSONArray array) throws JSONException {
+
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            list.add(array.getString(i));
+        }
+        return list;
     }
 
     /*
