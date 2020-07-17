@@ -17,6 +17,7 @@ package org.wso2.charon3.core.schema;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This class contains the schema definitions in
@@ -87,8 +88,8 @@ public class SCIMSchemaDefinitions {
     //A unique identifier for a SCIM resource as defined by the service provider
     public static final SCIMAttributeSchema ID =
             SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.ID_URI,
-                    SCIMConstants.CommonSchemaConstants.ID,
-                    SCIMDefinitions.DataType.STRING, false, SCIMConstants.CommonSchemaConstants.ID_DESC, true, true,
+                    SCIMConstants.CommonSchemaConstants.ID, SCIMDefinitions.DataType.STRING, false,
+                    SCIMConstants.CommonSchemaConstants.ID_DESC, false, true,
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.ALWAYS,
                     SCIMDefinitions.Uniqueness.SERVER, null, null, null);
 
@@ -891,6 +892,130 @@ public class SCIMSchemaDefinitions {
     }
 
     /**
+     * SCIM defined role attribute schemas.
+     */
+    public static class SCIMRoleSchemaDefinition {
+
+        // Identifier of the user of this Role.
+        public static final SCIMAttributeSchema USERS_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.USERS_VALUE_URI,
+                        SCIMConstants.CommonSchemaConstants.VALUE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.USERS_VALUE_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // The uri corresponding to a SCIM resource that is a user of this Role.
+        public static final SCIMAttributeSchema USERS_REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.USERS_REF_URI,
+                        SCIMConstants.CommonSchemaConstants.REF,
+                        SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.RoleSchemaConstants.USERS_REF_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
+                                        .GROUP)), null);
+
+        // A human-readable name for the Role. REQUIRED.
+        public static final SCIMAttributeSchema USERS_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.USERS_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.USERS_DISPLAY_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A label indicating the type of resource, e.g. 'User' or 'Group'.
+        public static final SCIMAttributeSchema USERS_TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_TYPE_URI,
+                        SCIMConstants.RoleSchemaConstants.TYPE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.TYPE_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Identifier of the group of this Role.
+        public static final SCIMAttributeSchema GROUPS_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_VALUE_URI,
+                        SCIMConstants.CommonSchemaConstants.VALUE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.GROUPS_VALUE_DESC,
+                        false,
+                        false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // The uri corresponding to a SCIM resource that is a group of this Role.
+        public static final SCIMAttributeSchema GROUPS_REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_REF_URI,
+                        SCIMConstants.CommonSchemaConstants.REF,
+                        SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.RoleSchemaConstants.GROUPS_REF_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
+                                        .GROUP)), null);
+
+        // A human-readable name for the ROle. REQUIRED.
+        public static final SCIMAttributeSchema GROUPS_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.GROUPS_DISPLAY_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A label indicating the type of resource, e.g. 'User' or 'Group'.
+        public static final SCIMAttributeSchema GROUPS_TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_TYPE_URI,
+                        SCIMConstants.RoleSchemaConstants.TYPE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.RoleSchemaConstants.TYPE_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Attribute schemas of the attributes defined in role schema.
+
+        // A human-readable name for the Role. REQUIRED.
+        public static final SCIMAttributeSchema DISPLAY_NAME =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY_NAME, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY_NAME_DESC,
+                        true, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A list of users of the Role.
+        public static final SCIMAttributeSchema USERS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.USERS_URI,
+                        SCIMConstants.RoleSchemaConstants.USERS,
+                        SCIMDefinitions.DataType.COMPLEX, true, SCIMConstants.RoleSchemaConstants.USERS_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(Arrays.asList
+                                (USERS_VALUE, USERS_REF, USERS_DISPLAY, USERS_TYPE)));
+
+        // A list of groups of the Role.
+        public static final SCIMAttributeSchema GROUPS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.GROUPS_URI,
+                        SCIMConstants.RoleSchemaConstants.GROUPS,
+                        SCIMDefinitions.DataType.COMPLEX, true, SCIMConstants.RoleSchemaConstants.GROUPS_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(Arrays.asList
+                                (GROUPS_VALUE, GROUPS_REF, GROUPS_DISPLAY, GROUPS_TYPE)));
+
+        // A list of permissions of the Role.
+        public static final SCIMAttributeSchema PERMISSIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_URI,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS, SCIMDefinitions.DataType.REFERENCE, true,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+    }
+
+    /**
      * SCIM defined ServiceProviderConfig schemas.
      */
     public static class SCIMServiceProviderConfigSchemaDefinition {
@@ -1258,6 +1383,18 @@ public class SCIMSchemaDefinitions {
                     ID, EXTERNAL_ID, META,
                     SCIMGroupSchemaDefinition.DISPLAY_NAME,
                     SCIMGroupSchemaDefinition.MEMBERS);
+
+    /**
+     * SCIM defined Role Resource Schema.
+     */
+    public static final SCIMResourceTypeSchema SCIM_ROLE_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<>(Collections.singletonList(SCIMConstants.ROLE_SCHEMA_URI)),
+                    ID,
+                    SCIMRoleSchemaDefinition.DISPLAY_NAME,
+                    SCIMRoleSchemaDefinition.USERS,
+                    SCIMRoleSchemaDefinition.GROUPS,
+                    SCIMRoleSchemaDefinition.PERMISSIONS);
 
     /*
      * **********SCIM defined Service Provider Config Resource Schema.****************************
