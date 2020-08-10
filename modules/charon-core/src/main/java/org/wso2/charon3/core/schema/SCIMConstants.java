@@ -269,6 +269,7 @@ public class SCIMConstants {
         public static final String ROLES_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.display";
         public static final String ROLES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.type";
         public static final String ROLES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.primary";
+        public static final String ROLES_REF_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.$ref";
 
         public static final String ENTITLEMENTS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements" +
                 ".value";
@@ -444,6 +445,8 @@ public class SCIMConstants {
         public static final String ROLES_PRIMARY_DESC = "A Boolean value indicating the 'primary' or preferred " +
                 "attribute value for this attribute.  The primary attribute value 'true' MUST appear no more than " +
                 "once.";
+        public static final String ROLES_REF_DESC = "The uri of the corresponding 'Role' resource to which the user" +
+                " belongs.";
 
         public static final String X509CERTIFICATES_DESC = "A list of certificates issued to the User.";
         public static final String X509CERTIFICATES_VALUE_DESC = "The value of an X.509 certificate.";
@@ -466,6 +469,8 @@ public class SCIMConstants {
         public static final String MEMBERS_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members";
         public static final String DISPLAY = "display";
         public static final String TYPE = "type";
+        public static final String ROLES = "roles";
+        public static final String ROLES_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:roles";
 
         /*******Attributes descriptions of the attributes found in Group Schema.***************/
 
@@ -482,6 +487,17 @@ public class SCIMConstants {
         public static final String REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.$ref";
         public static final String DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.display";
         public static final String TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:members.type";
+
+        public static final String ROLES_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:roles.value";
+        public static final String ROLES_DISPLAY_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:roles.display";
+        public static final String ROLES_REF_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:roles.$ref";
+
+        public static final String ROLES_DESC = "A list of roles of the Group.";
+        public static final String ROLES_VALUE_DESC = "The value of a role.";
+        public static final String ROLES_DISPLAY_DESC =
+                "A human-readable name, primarily used for display purposes.";
+        public static final String ROLES_REF_DESC =
+                "The uri of the corresponding 'Role' resource to which the group belongs.";
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -340,6 +341,74 @@ public class Group extends AbstractSCIMObject {
             memberIds.add(value);
         }
         return memberIds;
+    }
+
+    /**
+     * Set the associated roles of the group.
+     *
+     * @param role Role object.
+     * @throws CharonException     CharonException.
+     * @throws BadRequestException BadRequestException.
+     */
+    public void setRole(Role role) throws CharonException, BadRequestException {
+
+        SimpleAttribute valueSimpleAttribute = null;
+        SimpleAttribute displaySimpleAttribute;
+        SimpleAttribute referenceSimpleAttribute;
+        String reference = role.getLocation();
+        String value = role.getId();
+        String display = role.getDisplayName();
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+
+        if (StringUtils.isNotBlank(value)) {
+            valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value);
+            valueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_VALUE, valueSimpleAttribute);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
+
+        if (StringUtils.isNotBlank(reference)) {
+            referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference);
+            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_REF,
+                    referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+        }
+
+        if (StringUtils.isNotBlank(display)) {
+            displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
+            displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_DISPLAY,
+                            displaySimpleAttribute);
+            complexAttribute.setSubAttribute(displaySimpleAttribute);
+        }
+
+        if (!complexAttribute.getSubAttributesList().isEmpty()) {
+            Object typeVal = SCIMConstants.DEFAULT;
+            Object valueVal = SCIMConstants.DEFAULT;
+            if (valueSimpleAttribute != null && valueSimpleAttribute.getValue() != null) {
+                valueVal = valueSimpleAttribute.getValue();
+            }
+            String complexAttributeName = SCIMConstants.GroupSchemaConstants.ROLES + "_" + valueVal + "_" + typeVal;
+            complexAttribute.setName(complexAttributeName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, complexAttribute);
+            setRole(complexAttribute);
+        }
+    }
+
+    private void setRole(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
+
+        MultiValuedAttribute groupsAttribute;
+        if (this.attributeList.containsKey(SCIMConstants.GroupSchemaConstants.ROLES)) {
+            groupsAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.ROLES);
+            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
+        } else {
+            groupsAttribute = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.ROLES);
+            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
+            groupsAttribute = (MultiValuedAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, groupsAttribute);
+            this.attributeList.put(SCIMConstants.GroupSchemaConstants.ROLES, groupsAttribute);
+        }
     }
 
 }

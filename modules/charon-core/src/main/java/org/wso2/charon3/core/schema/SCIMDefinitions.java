@@ -52,7 +52,7 @@ public class SCIMDefinitions {
      * SCIM resource types that a referenceType attribute that may be referenced.
      */
     public static enum ReferenceType {
-        USER, GROUP, EXTERNAL, URI
+        USER, GROUP, EXTERNAL, URI, ROLE
     }
 
 }

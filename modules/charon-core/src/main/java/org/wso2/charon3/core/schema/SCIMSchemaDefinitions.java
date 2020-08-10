@@ -495,6 +495,17 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        // The uri of the corresponding 'Role' resource to which the user belongs.
+        public static final SCIMAttributeSchema ROLES_REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ROLES_REF_URI,
+                        SCIMConstants.CommonSchemaConstants.REF,
+                        SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.UserSchemaConstants.ROLES_REF_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
+                                        .ROLE)), null);
+
         //sub attributes of x509certificates attribute
 
         //The value of an X.509 certificate.
@@ -782,6 +793,14 @@ public class SCIMSchemaDefinitions {
                         new ArrayList<AttributeSchema>(Arrays.asList(GROUP_VALUE, GROUP_REF, GROUP_DISPLAY,
                                 GROUP_TYPE)));
 
+        public static final SCIMAttributeSchema ROLES_SCHEMA = SCIMAttributeSchema
+                .createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ROLES_URI,
+                        SCIMConstants.UserSchemaConstants.ROLES, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.UserSchemaConstants.ROLES_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(ROLES_VALUE, ROLES_REF, ROLES_DISPLAY)));
+
         //A list of entitlements for the User that represent a thing the User has.
         public static final SCIMAttributeSchema ENTITLEMENTS =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.ENTITLEMENTS_URI,
@@ -889,6 +908,45 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<AttributeSchema>(Arrays.asList
                                 (VALUE, REF, DISPLAY, TYPE)));
+
+        // The value of a role.
+        public static final SCIMAttributeSchema ROLES_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.ROLES_VALUE_URI,
+                        SCIMConstants.CommonSchemaConstants.VALUE,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.ROLES_VALUE_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A human-readable name, primarily used for display purposes.
+        public static final SCIMAttributeSchema ROLES_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.ROLES_DISPLAY_URI,
+                        SCIMConstants.CommonSchemaConstants.DISPLAY,
+                        SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.GroupSchemaConstants
+                                .ROLES_DISPLAY_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // The uri of the corresponding 'Role' resource to which the user belongs.
+        public static final SCIMAttributeSchema ROLES_REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.ROLES_REF_URI,
+                        SCIMConstants.CommonSchemaConstants.REF,
+                        SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.GroupSchemaConstants.ROLES_REF_DESC,
+                        false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.GROUP, SCIMDefinitions.ReferenceType
+                                        .ROLE)), null);
+
+        // A list of roles of the Group.
+        public static final SCIMAttributeSchema ROLES_SCHEMA = SCIMAttributeSchema
+                .createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.ROLES_URI,
+                        SCIMConstants.GroupSchemaConstants.ROLES, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.GroupSchemaConstants.ROLES_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(ROLES_VALUE, ROLES_REF, ROLES_DISPLAY)));
+
     }
 
     /**
@@ -914,8 +972,8 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
-                                (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
-                                        .GROUP)), null);
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.ROLE, SCIMDefinitions.ReferenceType
+                                        .USER)), null);
 
         // A human-readable name for the Role. REQUIRED.
         public static final SCIMAttributeSchema USERS_DISPLAY =
@@ -953,7 +1011,7 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
-                                (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
+                                (Arrays.asList(SCIMDefinitions.ReferenceType.ROLE, SCIMDefinitions.ReferenceType
                                         .GROUP)), null);
 
         // A human-readable name for the ROle. REQUIRED.
