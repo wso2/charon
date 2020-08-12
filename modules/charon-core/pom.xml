@@ -55,6 +55,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -101,6 +105,7 @@
                         <Import-Package>
                             org.json.*,
                             org.apache.commons.logging.*; version="${commons-logging.osgi.version.range}",
+                            org.apache.commons.lang.*; version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.axiom.om.*; version="${axiom.osgi.version.range}",
                             javax.xml.namespace.*,
                             javax.xml.stream.*,

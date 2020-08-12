@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.DefaultAttributeFactory;
@@ -841,6 +842,74 @@ public class User extends AbstractSCIMObject {
             DefaultAttributeFactory
                     .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS, complexAttribute);
             setGroup(complexAttribute);
+        }
+    }
+
+    /**
+     * Set the associated roles of the user.
+     *
+     * @param role Role object.
+     * @throws CharonException     CharonException.
+     * @throws BadRequestException BadRequestException.
+     */
+    public void setRole(Role role) throws CharonException, BadRequestException {
+
+        SimpleAttribute valueSimpleAttribute = null;
+        SimpleAttribute displaySimpleAttribute;
+        SimpleAttribute referenceSimpleAttribute;
+        String reference = role.getLocation();
+        String value = role.getId();
+        String display = role.getDisplayName();
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+
+        if (StringUtils.isNotBlank(value)) {
+            valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value);
+            valueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_VALUE, valueSimpleAttribute);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
+
+        if (StringUtils.isNotBlank(reference)) {
+            referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference);
+            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_REF,
+                    referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+        }
+
+        if (StringUtils.isNotBlank(display)) {
+            displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
+            displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_DISPLAY,
+                            displaySimpleAttribute);
+            complexAttribute.setSubAttribute(displaySimpleAttribute);
+        }
+
+        if (!complexAttribute.getSubAttributesList().isEmpty()) {
+            Object typeVal = SCIMConstants.DEFAULT;
+            Object valueVal = SCIMConstants.DEFAULT;
+            if (valueSimpleAttribute != null && valueSimpleAttribute.getValue() != null) {
+                valueVal = valueSimpleAttribute.getValue();
+            }
+            String complexAttributeName = SCIMConstants.UserSchemaConstants.ROLES + "_" + valueVal + "_" + typeVal;
+            complexAttribute.setName(complexAttributeName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_SCHEMA, complexAttribute);
+            setRole(complexAttribute);
+        }
+    }
+
+    private void setRole(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
+
+        MultiValuedAttribute groupsAttribute;
+        if (this.attributeList.containsKey(SCIMConstants.UserSchemaConstants.ROLES)) {
+            groupsAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.UserSchemaConstants.ROLES);
+            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
+        } else {
+            groupsAttribute = new MultiValuedAttribute(SCIMConstants.UserSchemaConstants.ROLES);
+            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
+            groupsAttribute = (MultiValuedAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_SCHEMA, groupsAttribute);
+            this.attributeList.put(SCIMConstants.UserSchemaConstants.ROLES, groupsAttribute);
         }
     }
 
