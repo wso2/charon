@@ -471,6 +471,7 @@ public class SCIMConstants {
         public static final String TYPE = "type";
         public static final String ROLES = "roles";
         public static final String ROLES_URI = "urn:ietf:params:scim:schemas:core:2.0:Group:roles";
+        public static final String VALUE = "value";
 
         /*******Attributes descriptions of the attributes found in Group Schema.***************/
 

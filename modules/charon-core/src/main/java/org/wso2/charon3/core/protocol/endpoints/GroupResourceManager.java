@@ -15,9 +15,14 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -27,6 +32,7 @@ import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -45,8 +51,10 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -619,15 +627,15 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
-
-    /*
-     * method which corresponds to HTTP PATCH - patch the group
-     * @param existingId
-     * @param scimObjectString
-     * @param usermanager
-     * @param attributes
-     * @param excludeAttributes
-     * @return
+    /**
+     * Updates the group based on the operations defined in the patchRequest. The updated group information is sent
+     * back in the response.
+     * @param existingId        SCIM2 ID of the existing group.
+     * @param patchRequest      SCIM2 patch request.
+     * @param userManager       SCIM UserManager that handles the persistence layer.
+     * @param attributes        Attributes to return in the response.
+     * @param excludeAttributes Attributes to exclude in the response.
+     * @return SCIM Response.
      */
     public SCIMResponse updateWithPATCH(String existingId, String patchRequest, UserManager userManager,
                                         String attributes, String excludeAttributes) {
@@ -639,6 +647,14 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isDeleteAllUsersOperationFound(opList)) {
+                return updateWithPatchForAddRemoveOperations(existingId, opList, userManager, attributes,
+                        excludeAttributes);
+            }
+
             // Get the group from the user core
             Group oldGroup = userManager.getGroup(existingId, requiredAttributes);
             if (oldGroup == null) {
@@ -671,6 +687,262 @@ public class GroupResourceManager extends AbstractResourceManager {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
             return AbstractResourceManager.encodeSCIMException(e1);
         }
+    }
+
+    private boolean isDeleteAllUsersOperationFound(List<PatchOperation> patchOperations) throws JSONException {
+
+        for (PatchOperation patchOperation : patchOperations) {
+            String operation = patchOperation.getOperation();
+            String path = patchOperation.getPath();
+            JSONObject valuesJson = (JSONObject) patchOperation.getValues();
+
+            if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
+                    ((path != null && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) ||
+                            (valuesJson != null && valuesJson.has(SCIMConstants.GroupSchemaConstants.MEMBERS)))) {
+                return true;
+            } else if (operation.equals(SCIMConstants.OperationalConstants.REMOVE) && path != null
+                    && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Updates the group based on the operations defined in the patchRequest. The updated group information is sent
+     * back in the response.
+     *
+     * @param existingGroupId   SCIM2 ID of the existing group.
+     * @param opList            List of patch operations.
+     * @param userManager       SCIM UserManager that handles the persistence layer.
+     * @param attributes        Attributes to return in the response.
+     * @param excludeAttributes Attributes to exclude in the response.
+     * @return SCIM Response.
+     */
+    public SCIMResponse updateWithPatchForAddRemoveOperations(String existingGroupId, List<PatchOperation> opList,
+                                                              UserManager userManager, String attributes,
+                                                              String excludeAttributes) {
+
+        try {
+            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
+
+            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
+            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
+            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
+
+            for (PatchOperation patchOperation : opList) {
+                switch (patchOperation.getOperation()) {
+                    case SCIMConstants.OperationalConstants.ADD:
+                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
+                        break;
+                    case SCIMConstants.OperationalConstants.REMOVE:
+                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
+                        break;
+                    case SCIMConstants.OperationalConstants.REPLACE:
+                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
+                        break;
+                    default:
+                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
+                                ResponseCodeConstants.INVALID_SYNTAX);
+                }
+            }
+
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+            String groupName = getGroupName(userManager, existingGroupId);
+
+            processGroupPatchOperations(patchOperations, schema);
+
+            // Get the URIs of required attributes which must be given a value.
+            Map<String, Boolean> requiredAttributes =
+                    ResourceManagerUtil.getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema)
+                            CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+            Group updatedGroup = userManager.patchGroup(existingGroupId, groupName, patchOperations,
+                    requiredAttributes);
+
+            if (updatedGroup != null) {
+                // Create a deep copy of the group object since we are going to change it.
+                Group copyOfUpdatedGroup = (Group) CopyUtil.deepCopy(updatedGroup);
+                ServerSideValidator.validateReturnedAttributes(copyOfUpdatedGroup, attributes, excludeAttributes);
+                // Encode the updated group object and add id attribute to Location header.
+                String encodedGroup = getEncoder().encodeSCIMObject(copyOfUpdatedGroup);
+
+                Map<String, String> httpHeaders = new HashMap<>();
+                httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                        getResourceEndpointURL(SCIMConstants.USER_ENDPOINT) + "/" + updatedGroup.getId());
+                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+                return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
+            } else {
+                String error = "Updated group resource is null.";
+                throw new CharonException(error);
+            }
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
+            return AbstractResourceManager.encodeSCIMException(e1);
+        }
+    }
+
+    private String getGroupName(UserManager userManager, String groupId)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        HashMap<String, Boolean> requiredAttributes = new HashMap<>();
+        requiredAttributes.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME_URI, true);
+        Group group = userManager.getGroup(groupId, requiredAttributes);
+
+        if (group != null) {
+            return group.getDisplayName();
+        } else {
+            throw new CharonException("Group not found for ID: " + groupId);
+        }
+    }
+
+    private void processGroupPatchOperations(Map<String, List<PatchOperation>> patchOperations,
+                                             SCIMResourceTypeSchema schema)
+            throws CharonException, BadRequestException, NotImplementedException, JSONException {
+
+        Iterator<PatchOperation> replaceOperationIterator = patchOperations
+                .get(SCIMConstants.OperationalConstants.REPLACE).iterator();
+
+        while (replaceOperationIterator.hasNext()) {
+            PatchOperation replaceOperation = replaceOperationIterator.next();
+            PatchOperation addOperation = new PatchOperation();
+
+            addOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
+            addOperation.setExecutionOrder(replaceOperation.getExecutionOrder());
+
+            if (replaceOperation.getPath() != null && replaceOperation.getValues() != null) {
+                addOperation.setValues(replaceOperation.getValues());
+                patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(addOperation);
+            } else if (replaceOperation.getValues() != null) {
+                AbstractSCIMObject attributeHoldingSCIMObject = getDecoder().decode(replaceOperation.getValues()
+                        .toString(), schema);
+
+                if (attributeHoldingSCIMObject == null) {
+                    throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+
+                Map<String, Attribute> attributeList = attributeHoldingSCIMObject.getAttributeList();
+
+                if (!attributeList.containsKey(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
+                    throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+
+                addOperation.setValues(replaceOperation.getValues());
+                patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(addOperation);
+            }
+            replaceOperationIterator.remove();
+        }
+
+        for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.ADD)) {
+
+            if (patchOperation.getPath() != null) {
+                if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME) &&
+                        patchOperation.getValues() != null) {
+                    JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
+                    JSONObject attributePrefixedJson = new JSONObject();
+
+                    attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, valuesPropertyJson);
+                    patchOperation.setValues(attributePrefixedJson);
+                } else if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.MEMBERS) &&
+                        patchOperation.getValues() != null) {
+                    JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
+                    JSONObject attributePrefixedJson = new JSONObject();
+
+                    attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.MEMBERS, valuesPropertyJson);
+                    patchOperation.setValues(attributePrefixedJson);
+                } else {
+                    throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+                patchOperation.setPath(null);
+            }
+            processValueAttributeOfOperation(schema, patchOperation);
+        }
+
+        for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.REMOVE)) {
+            if (patchOperation.getPath() == null) {
+                throw new BadRequestException("No path value specified for remove operation",
+                        ResponseCodeConstants.NO_TARGET);
+            }
+
+            String path = patchOperation.getPath();
+            // Split the path to extract the filter if present.
+            String[] parts = path.split("[\\[\\]]");
+
+            if (!SCIMConstants.GroupSchemaConstants.MEMBERS.equalsIgnoreCase(parts[0])) {
+                throw new BadRequestException(parts[0] + " is not a valid attribute.",
+                        ResponseCodeConstants.INVALID_SYNTAX);
+            }
+            patchOperation.setAttributeName(SCIMConstants.GroupSchemaConstants.MEMBERS);
+
+            if (parts.length != 1) {
+                Map<String, String> memberObject = new HashMap<>();
+                memberObject.put(SCIMConstants.GroupSchemaConstants.DISPLAY, null);
+                memberObject.put(SCIMConstants.GroupSchemaConstants.VALUE, null);
+
+                // Currently we only support simple filters here.
+                String[] filterParts = parts[1].split(" ");
+
+                if (filterParts.length != 3 || !memberObject.containsKey(filterParts[0])) {
+                    throw new BadRequestException("Invalid filter", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+
+                if (!filterParts[1].equalsIgnoreCase((SCIMConstants.OperationalConstants.EQ).trim())) {
+                    throw new NotImplementedException("Only Eq filter is supported");
+                }
+                /*
+                According to the specification filter attribute value specified with quotation mark, so we need to
+                remove it if exists.
+                */
+                filterParts[2] = filterParts[2].replaceAll("^\"|\"$", "");
+                memberObject.put(filterParts[0], filterParts[2]);
+                patchOperation.setValues(memberObject);
+            }
+        }
+    }
+
+    private void processValueAttributeOfOperation(SCIMResourceTypeSchema schema, PatchOperation patchOperation)
+            throws CharonException, BadRequestException {
+
+        AbstractSCIMObject attributeHoldingSCIMObject = getDecoder().decode(patchOperation.getValues().toString(),
+                schema);
+        if (attributeHoldingSCIMObject == null) {
+            throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        Map<String, Attribute> attributeList = attributeHoldingSCIMObject.getAttributeList();
+
+        if (attributeList.containsKey(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME)) {
+            patchOperation.setAttributeName(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME);
+            patchOperation.setValues(
+                    ((SimpleAttribute) attributeList.get(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME))
+                            .getStringValue());
+        } else if (attributeList.containsKey(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+            patchOperation.setAttributeName(SCIMConstants.GroupSchemaConstants.MEMBERS);
+            patchOperation.setValues(transformMembersAttributeToMap((MultiValuedAttribute) attributeList
+                    .get(SCIMConstants.GroupSchemaConstants.MEMBERS)));
+        }
+    }
+
+    private List<Map<String, String>> transformMembersAttributeToMap(MultiValuedAttribute multiValuedMembersAttribute)
+            throws CharonException {
+
+        List<Map<String, String>> memberList = new ArrayList<>();
+        List<Attribute> subValuesList = multiValuedMembersAttribute.getAttributeValues();
+        for (Attribute subValue : subValuesList) {
+            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
+            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+
+            Map<String, String> member = new HashMap<>();
+            member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
+                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue());
+            member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
+                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
+            memberList.add(member);
+        }
+        return memberList;
     }
 
     /**

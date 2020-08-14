@@ -24,6 +24,7 @@ import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.utils.codeutils.Node;
+import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.util.List;
@@ -170,6 +171,26 @@ public interface UserManager {
      * @throws NotFoundException
      */
     default void updateGroup(Group oldGroup, Group newGroup)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Updates the group via PATCH.
+     *
+     * @param  groupId                 ID of the group.
+     * @param  currentGroupName        Current name of the group.
+     * @param  patchOperations         A map of patch operations.
+     * @param  requiredAttributes      Attributes to be returned in the response.
+     * @return Updated group.
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default Group patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations,
+                             Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
 
         throw new NotImplementedException();
