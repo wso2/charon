@@ -461,7 +461,9 @@ public class JSONDecoder {
                     if (attributeValue == null) {
                         continue;
                     }
-                    primitiveValues.add(attributeValue);
+                    if (!primitiveValues.contains(attributeValue)) {
+                        primitiveValues.add(attributeValue);
+                    }
                 } else {
                     String error = "Unknown JSON representation for the MultiValued attribute " +
                             attributeSchema.getName() + " which has data type as " + attributeSchema.getType();
