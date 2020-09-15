@@ -24,13 +24,17 @@ import java.util.List;
  *
  */
 public class BulkResponseData {
+
     private List<String> schemas;
     private List<BulkResponseContent> userOperationResponse;
     private List<BulkResponseContent> groupOperationResponse;
+    private List<BulkResponseContent> roleOperationResponse;
 
     public BulkResponseData() {
-        userOperationResponse = new ArrayList<BulkResponseContent>();
-        groupOperationResponse = new ArrayList<BulkResponseContent>();
+
+        userOperationResponse = new ArrayList<>();
+        groupOperationResponse = new ArrayList<>();
+        roleOperationResponse = new ArrayList<>();
         schemas = new ArrayList<>();
     }
 
@@ -39,30 +43,52 @@ public class BulkResponseData {
     }
 
     public void setUserOperationResponse(List<BulkResponseContent> userOperationResponse) {
+
         this.userOperationResponse = userOperationResponse;
     }
 
     public List<BulkResponseContent> getGroupOperationResponse() {
+
         return groupOperationResponse;
     }
 
+    public List<BulkResponseContent> getRoleOperationResponse() {
+
+        return roleOperationResponse;
+    }
+
+    public void setRoleOperationResponse(List<BulkResponseContent> roleOperationResponse) {
+
+        this.roleOperationResponse = roleOperationResponse;
+    }
+
     public void addUserOperation(BulkResponseContent bulkResponseContent) {
+
         userOperationResponse.add(bulkResponseContent);
     }
 
     public void addGroupOperation(BulkResponseContent bulkResponseContent) {
+
         groupOperationResponse.add(bulkResponseContent);
     }
 
+    public void addRoleOperation(BulkResponseContent bulkResponseContent) {
+
+        roleOperationResponse.add(bulkResponseContent);
+    }
+
     public void setGroupOperationResponse(List<BulkResponseContent> groupOperationResponse) {
+
         this.groupOperationResponse = groupOperationResponse;
     }
 
     public List<String> getSchemas() {
+
         return schemas;
     }
 
     public void setSchema(String schema) {
+
         if (schema != null) {
             schemas.add(schema);
         }

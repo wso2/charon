@@ -22,6 +22,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -49,40 +50,41 @@ public class BulkResourceManager extends AbstractResourceManager {
         bulkRequestProcessor = new BulkRequestProcessor();
     }
 
+    public SCIMResponse processBulkData(String data, UserManager userManager, RoleManager roleManager) {
+
+        bulkRequestProcessor.setRoleManager(roleManager);
+        return processBulkData(data, userManager);
+    }
 
     public SCIMResponse processBulkData(String data, UserManager userManager) {
-        BulkResponseData bulkResponseData;
 
+        BulkResponseData bulkResponseData;
         try {
-            //Get encoder and decoder from AbstractResourceEndpoint
+            // Get encoder and decoder from AbstractResourceEndpoint
             encoder = getEncoder();
             decoder = getDecoder();
 
             BulkRequestData bulkRequestDataObject;
-            //decode the request
+            // Decode the request.
             bulkRequestDataObject = decoder.decodeBulkData(data);
 
             bulkRequestProcessor.setFailOnError(bulkRequestDataObject.getFailOnErrors());
             bulkRequestProcessor.setUserManager(userManager);
 
-            //Get bulk response data
+            // Get bulk response data.
             bulkResponseData = bulkRequestProcessor.processBulkRequests(bulkRequestDataObject);
             //encode the BulkResponseData object
             String finalEncodedResponse = encoder.encodeBulkResponseData(bulkResponseData);
 
-            //careate SCIM response message
-            Map<String, String> responseHeaders = new HashMap<String, String>();
+            // Create SCIM response message.
+            Map<String, String> responseHeaders = new HashMap<>();
             //add location header
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
-            //create the final response
+            // Create the final response.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, finalEncodedResponse, responseHeaders);
 
-        } catch (CharonException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (CharonException | BadRequestException | InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
