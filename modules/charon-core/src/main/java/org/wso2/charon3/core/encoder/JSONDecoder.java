@@ -841,12 +841,13 @@ public class JSONDecoder {
     public BulkRequestData decodeBulkData(String bulkResourceString) throws BadRequestException {
 
         BulkRequestData bulkRequestDataObject = new BulkRequestData();
-        List<BulkRequestContent> usersEndpointOperationList = new ArrayList<BulkRequestContent>();
-        List<BulkRequestContent> groupsEndpointOperationList = new ArrayList<BulkRequestContent>();
-        int failOnErrorsAttribute = 0;
-        List<String> schemas = new ArrayList<String>();
+        List<BulkRequestContent> usersEndpointOperationList = new ArrayList<>();
+        List<BulkRequestContent> groupsEndpointOperationList = new ArrayList<>();
+        List<BulkRequestContent> rolesEndpointOperationList = new ArrayList<>();
+        int failOnErrorsAttribute;
+        List<String> schemas = new ArrayList<>();
 
-        JSONObject decodedObject = null;
+        JSONObject decodedObject;
         try {
             decodedObject = new JSONObject(new JSONTokener(bulkResourceString));
 
@@ -884,18 +885,17 @@ public class JSONDecoder {
                     if (!member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals("") &&
                             member.optString(SCIMConstants.OperationalConstants.BULK_ID) != null) {
 
-
-                        setRequestData(requestType, requestMethod, requestVersion,
-                                member, usersEndpointOperationList, groupsEndpointOperationList);
+                        setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
+                                groupsEndpointOperationList, rolesEndpointOperationList);
                     } else {
                         String error = "JSON string could not be decoded properly.Required " +
                                 "attribute BULK_ID is missing in the request";
                         logger.error(error);
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
-                } else  {
-                    setRequestData(requestType, requestMethod, requestVersion,
-                            member, usersEndpointOperationList, groupsEndpointOperationList);
+                } else {
+                    setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
+                            groupsEndpointOperationList, rolesEndpointOperationList);
                 }
             }
             //extract [failOnErrors] attribute from Json string
@@ -904,6 +904,7 @@ public class JSONDecoder {
             bulkRequestDataObject.setFailOnErrors(failOnErrorsAttribute);
             bulkRequestDataObject.setUserOperationRequests(usersEndpointOperationList);
             bulkRequestDataObject.setGroupOperationRequests(groupsEndpointOperationList);
+            bulkRequestDataObject.setRoleOperationRequests(rolesEndpointOperationList);
 
         } catch (JSONException e1) {
             String error = "JSON string could not be decoded properly.";
@@ -913,12 +914,11 @@ public class JSONDecoder {
         return bulkRequestDataObject;
     }
 
+    private void setRequestData(String requestType, String requestMethod, String requestVersion, JSONObject member,
+            List<BulkRequestContent> usersEndpointOperationList, List<BulkRequestContent> groupsEndpointOperationList,
+            List<BulkRequestContent> rolesEndpointOperationList) {
 
-    private void setRequestData(String requestType, String requestMethod,
-                                String requestVersion, JSONObject member,
-                                List<BulkRequestContent> usersEndpointOperationList,
-                                List<BulkRequestContent> groupsEndpointOperationList) {
-        //create user request list
+        // Create user request list.
         if (requestType.contains(SCIMConstants.USER_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
@@ -926,13 +926,20 @@ public class JSONDecoder {
             usersEndpointOperationList.add(newRequestData);
         }
 
-        //create group request list
+        // Create group request list.
         if (requestType.contains(SCIMConstants.GROUP_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
 
             groupsEndpointOperationList.add(newRequestData);
 
+        }
+
+        // Create role request list.
+        if (requestType.contains(SCIMConstants.ROLE_ENDPOINT)) {
+            BulkRequestContent newRequestData =
+                    getBulkRequestContent(member, requestMethod, requestType, requestVersion);
+            rolesEndpointOperationList.add(newRequestData);
         }
     }
 

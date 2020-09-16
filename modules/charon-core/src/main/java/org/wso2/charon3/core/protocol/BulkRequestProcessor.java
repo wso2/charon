@@ -17,8 +17,8 @@
 */
 package org.wso2.charon3.core.protocol;
 
-
 import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestContent;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
@@ -26,6 +26,7 @@ import org.wso2.charon3.core.objects.bulk.BulkResponseContent;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
 import org.wso2.charon3.core.protocol.endpoints.GroupResourceManager;
 import org.wso2.charon3.core.protocol.endpoints.ResourceManager;
+import org.wso2.charon3.core.protocol.endpoints.RoleResourceManager;
 import org.wso2.charon3.core.protocol.endpoints.UserResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
@@ -35,9 +36,11 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 public class BulkRequestProcessor {
     private UserResourceManager userResourceManager;
     private GroupResourceManager groupResourceManager;
+    private RoleResourceManager roleResourceManager;
     private int failOnError;
     private int errors;
     private UserManager userManager;
+    private RoleManager roleManager;
 
 
     public UserResourceManager getUserResourceManager() {
@@ -54,6 +57,16 @@ public class BulkRequestProcessor {
 
     public void setGroupResourceManager(GroupResourceManager groupResourceManager) {
         this.groupResourceManager = groupResourceManager;
+    }
+
+    public RoleResourceManager getRoleResourceManager() {
+
+        return roleResourceManager;
+    }
+
+    public void setRoleResourceManager(RoleResourceManager roleResourceManager) {
+
+        this.roleResourceManager = roleResourceManager;
     }
 
     public int getFailOnError() {
@@ -80,18 +93,30 @@ public class BulkRequestProcessor {
         this.userManager = userManager;
     }
 
+    public RoleManager getRoleManager() {
+
+        return roleManager;
+    }
+
+    public void setRoleManager(RoleManager roleManager) {
+
+        this.roleManager = roleManager;
+    }
+
     public BulkRequestProcessor() {
+
         userResourceManager = new UserResourceManager();
         groupResourceManager = new GroupResourceManager();
+        roleResourceManager = new RoleResourceManager();
         failOnError = 0;
         errors = 0;
         userManager = null;
+        roleManager = null;
     }
 
     public BulkResponseData processBulkRequests(BulkRequestData bulkRequestData) throws BadRequestException {
 
         BulkResponseData bulkResponseData = new BulkResponseData();
-        SCIMResponse response = null;
 
         for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
             if (failOnError == 0) {
@@ -117,6 +142,15 @@ public class BulkRequestProcessor {
             }
 
         }
+        for (BulkRequestContent bulkRequestContent : bulkRequestData.getRoleOperationRequests()) {
+            if (failOnError == 0) {
+                bulkResponseData.addRoleOperation(getBulkResponseContent(bulkRequestContent, roleResourceManager));
+            } else {
+                if (errors < failOnError) {
+                    bulkResponseData.addRoleOperation(getBulkResponseContent(bulkRequestContent, roleResourceManager));
+                }
+            }
+        }
         bulkResponseData.setSchema(SCIMConstants.BULK_RESPONSE_URI);
         return bulkResponseData;
     }
@@ -131,8 +165,12 @@ public class BulkRequestProcessor {
 
        if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.POST)) {
 
-           response = resourceManager.create
-                   (bulkRequestContent.getData(), userManager, null, null);
+           if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+               response = resourceManager.createRole(bulkRequestContent.getData(), roleManager);
+           } else {
+               response = resourceManager.create(bulkRequestContent.getData(), userManager, null, null);
+           }
+
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.POST, bulkRequestContent);
            errorsCheck(response);
@@ -140,8 +178,13 @@ public class BulkRequestProcessor {
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PUT)) {
 
            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.updateWithPUT
-                   (resourceId, bulkRequestContent.getData(), userManager, null, null);
+           if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+               response = resourceManager.updateWithPUTRole(resourceId, bulkRequestContent.getData(), roleManager);
+           } else {
+               response = resourceManager
+                       .updateWithPUT(resourceId, bulkRequestContent.getData(), userManager, null, null);
+           }
+
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.PUT, bulkRequestContent);
            errorsCheck(response);
@@ -149,15 +192,26 @@ public class BulkRequestProcessor {
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.PATCH)) {
 
            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.updateWithPATCH
-                   (resourceId, bulkRequestContent.getData(), userManager, null, null);
+           if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+               response = resourceManager.updateWithPATCHRole(resourceId, bulkRequestContent.getData(), roleManager);
+           } else {
+               response = resourceManager
+                       .updateWithPATCH(resourceId, bulkRequestContent.getData(), userManager, null, null);
+           }
+
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
            errorsCheck(response);
 
        } else if (bulkRequestContent.getMethod().equals(SCIMConstants.OperationalConstants.DELETE)) {
+
            String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-           response = resourceManager.delete(resourceId, userManager);
+           if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+               response = resourceManager.deleteRole(resourceId, roleManager);
+           } else {
+               response = resourceManager.delete(resourceId, userManager);
+           }
+
            bulkResponseContent = createBulkResponseContent
                    (response, SCIMConstants.OperationalConstants.DELETE, bulkRequestContent);
            errorsCheck(response);

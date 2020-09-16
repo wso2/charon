@@ -24,15 +24,19 @@ import java.util.List;
  *
  */
 public class BulkRequestData {
+
     private List<String> schemas;
     private int failOnErrors;
     private List<BulkRequestContent> userOperationRequests;
     private List<BulkRequestContent> groupOperationRequests;
+    private List<BulkRequestContent> roleOperationRequests;
 
     public BulkRequestData() {
-        userOperationRequests = new ArrayList<BulkRequestContent>();
-        groupOperationRequests = new ArrayList<BulkRequestContent>();
-        schemas = new ArrayList<String>();
+
+        userOperationRequests = new ArrayList<>();
+        groupOperationRequests = new ArrayList<>();
+        roleOperationRequests = new ArrayList<>();
+        schemas = new ArrayList<>();
     }
 
     public List<BulkRequestContent> getUserOperationRequests() {
@@ -57,6 +61,16 @@ public class BulkRequestData {
 
     public void setGroupOperationRequests(List<BulkRequestContent> groupOperationRequests) {
         this.groupOperationRequests = groupOperationRequests;
+    }
+
+    public List<BulkRequestContent> getRoleOperationRequests() {
+
+        return roleOperationRequests;
+    }
+
+    public void setRoleOperationRequests(List<BulkRequestContent> roleOperationRequests) {
+
+        this.roleOperationRequests = roleOperationRequests;
     }
 
     public List<String> getSchemas() {

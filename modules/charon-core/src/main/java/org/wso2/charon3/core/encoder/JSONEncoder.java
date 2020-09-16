@@ -521,16 +521,19 @@ public class JSONEncoder {
         return groupResourceTypeObject.toString();
     }
 
-    /*
-     * Encode given bulkResponseData object and return the encoded string
+    /**
+     * Encode given bulkResponseData object and return the encoded string.
      *
-     * @param bulkResponseData
-     * @return
+     * @param bulkResponseData Bulk response data.
+     * @return Encoded bulk response.
+     * @throws InternalErrorException InternalErrorException.
      */
     public String encodeBulkResponseData(BulkResponseData bulkResponseData) throws InternalErrorException {
-        String encodedString = "";
+
+        String encodedString;
         List<BulkResponseContent> userResponseDataList = bulkResponseData.getUserOperationResponse();
         List<BulkResponseContent> groupResponseDataList = bulkResponseData.getGroupOperationResponse();
+        List<BulkResponseContent> roleResponseDataList = bulkResponseData.getRoleOperationResponse();
         JSONObject rootObject = new JSONObject();
 
         //encode schemas
@@ -549,7 +552,11 @@ public class JSONEncoder {
             for (BulkResponseContent groupOperationResponse : groupResponseDataList) {
                 encodeResponseContent(groupOperationResponse, operationResponseList);
             }
-            //set operations
+
+            for (BulkResponseContent roleOperationResponse : roleResponseDataList) {
+                encodeResponseContent(roleOperationResponse, operationResponseList);
+            }
+            // Set operations.
             this.encodeArrayOfValues(SCIMConstants.OperationalConstants.OPERATIONS,
                     operationResponseList.toArray(), rootObject);
 
