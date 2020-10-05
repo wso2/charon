@@ -254,8 +254,7 @@ public class PatchOperationUtil {
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
                     }
                     if (!subSubAttribute.getMultiValued()) {
-                        String error = String.format("Attribute : %s is not a multivalued attribute.",
-                                attributeParts[2]);
+                        String error = "Attribute : " + attributeParts[2] + " is not a multivalued attribute.";
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
                     }
 
