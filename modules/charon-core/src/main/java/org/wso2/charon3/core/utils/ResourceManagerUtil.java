@@ -487,4 +487,47 @@ public class ResourceManagerUtil {
 
         return startIndex;
     }
+
+    /**
+     * Get all simple multi-valued attributes defined in the schema.
+     *
+     * @param schema SCIM schema.
+     * @return All simple multi-valued attributes defined in the schema.
+     */
+    public static List<String> getAllSimpleMultiValuedAttributes(SCIMResourceTypeSchema schema) {
+
+        ArrayList<AttributeSchema> attributeSchemaArrayList = schema.getAttributesList();
+        if (attributeSchemaArrayList == null) {
+            attributeSchemaArrayList = new ArrayList<>();
+        }
+
+        List<String> simpleMultiValuedAttributes = new ArrayList<>();
+
+        for (AttributeSchema attributeSchema : attributeSchemaArrayList) {
+
+            if (!(SCIMDefinitions.DataType.COMPLEX).equals(attributeSchema.getType())) {
+                if (attributeSchema.getMultiValued()) {
+                    simpleMultiValuedAttributes.add(attributeSchema.getURI());
+                }
+                continue;
+            }
+            List<AttributeSchema> subAttributeSchemas = attributeSchema.getSubAttributeSchemas();
+            for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
+                if (!(SCIMDefinitions.DataType.COMPLEX).equals(subAttributeSchema.getType())) {
+                    if (subAttributeSchema.getMultiValued()) {
+                        simpleMultiValuedAttributes.add(subAttributeSchema.getURI());
+                    }
+                    continue;
+                }
+                List<AttributeSchema> subSubAttributeSchemas = subAttributeSchema.getSubAttributeSchemas();
+                for (AttributeSchema subSubAttributeSchema : subSubAttributeSchemas) {
+                    if (subSubAttributeSchema.getMultiValued() &&
+                            !(SCIMDefinitions.DataType.COMPLEX).equals(subSubAttributeSchema.getType())) {
+                        simpleMultiValuedAttributes.add(subSubAttributeSchema.getURI());
+                    }
+                }
+            }
+        }
+        return simpleMultiValuedAttributes;
+    }
 }

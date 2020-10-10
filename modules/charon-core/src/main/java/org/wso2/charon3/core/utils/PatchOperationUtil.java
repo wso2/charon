@@ -129,7 +129,7 @@ public class PatchOperationUtil {
     private static AbstractSCIMObject doPatchRemoveWithFilters(String[] parts,
                                                                AbstractSCIMObject oldResource,
                                                                ExpressionNode expressionNode)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotImplementedException {
 
         if (parts.length == 3) {
             parts[0] = parts[0] + parts[2];
@@ -194,7 +194,7 @@ public class PatchOperationUtil {
     private static AbstractSCIMObject doPatchRemoveWithFiltersForLevelThree(AbstractSCIMObject oldResource,
                                                                             String[] attributeParts,
                                                                             ExpressionNode expressionNode)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotImplementedException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
         if (attribute != null) {
@@ -245,10 +245,45 @@ public class PatchOperationUtil {
                         }
                     }
                 } else {
-                    throw new BadRequestException("Attribute : " + attributeParts[1] + " " +
-                            "is not a multivalued attribute.", ResponseCodeConstants.INVALID_PATH);
-                }
+                    // This is only valid for extensions.
+                    Attribute subSubAttribute = subAttribute.getSubAttribute(attributeParts[2]);
+                    if (subSubAttribute == null) {
+                        String error =
+                                String.format("No such sub attribute with the name : %s within the attribute %s",
+                                        attributeParts[2], attributeParts[1]);
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
+                    }
+                    if (!subSubAttribute.getMultiValued()) {
+                        String error = "Attribute : " + attributeParts[2] + " is not a multivalued attribute.";
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
+                    }
 
+                    // We only support "EQ" filter.
+                    if (!(SCIMConstants.OperationalConstants.VALUE).equals(expressionNode.getAttributeValue()) ||
+                            !((SCIMConstants.OperationalConstants.EQ).trim())
+                                    .equalsIgnoreCase(expressionNode.getOperation())) {
+                        throw new NotImplementedException(
+                                "Only Eq filter is supported based on implicit value attribute.");
+                    }
+
+                    List<Object> valuesList = ((MultiValuedAttribute) (subSubAttribute)).getAttributePrimitiveValues();
+                    for (Iterator<Object> iterator = valuesList.iterator(); iterator.hasNext(); ) {
+                        Object item = iterator.next();
+                        if (item.equals(expressionNode.getValue())) {
+                            if ((SCIMDefinitions.Mutability.READ_ONLY).equals(subSubAttribute.getMutability()) ||
+                                    subSubAttribute.getRequired().equals(true)) {
+                                throw new BadRequestException
+                                        ("Can not remove a required attribute or a read-only attribute",
+                                                ResponseCodeConstants.MUTABILITY);
+                            }
+                            iterator.remove();
+                        }
+                    }
+                    // If the attribute has no values, make it unassigned.
+                    if (((MultiValuedAttribute) (subSubAttribute)).getAttributePrimitiveValues().size() == 0) {
+                        ((ComplexAttribute) subAttribute).removeSubAttribute(subSubAttribute.getName());
+                    }
+                }
             } else {
                 throw new BadRequestException("No such sub attribute with the name : " + attributeParts[1] + " " +
                         "within the attribute " + attributeParts[0], ResponseCodeConstants.INVALID_PATH);
@@ -273,7 +308,7 @@ public class PatchOperationUtil {
     private static AbstractSCIMObject doPatchRemoveWithFiltersForLevelTwo(AbstractSCIMObject oldResource,
                                                                           String[] attributeParts,
                                                                           ExpressionNode expressionNode)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotImplementedException {
 
         Attribute attribute = oldResource.getAttribute(attributeParts[0]);
         if (attribute != null) {
@@ -328,36 +363,61 @@ public class PatchOperationUtil {
                             + attributeParts[1] + " " + "within the attribute " + attributeParts[0],
                             ResponseCodeConstants.INVALID_PATH);
                 }
+                if ((SCIMDefinitions.DataType.COMPLEX).equals(subAttribute.getType())) {
+                    List<Attribute> subValues = ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
+                    if (subValues != null) {
+                        for (Iterator<Attribute> subValueIterator = subValues.iterator();
+                             subValueIterator.hasNext(); ) {
+                            Attribute subValue = subValueIterator.next();
+                            Map<String, Attribute> subValuesSubAttribute =
+                                    ((ComplexAttribute) subValue).getSubAttributesList();
+                            for (Iterator<Attribute> iterator =
+                                 subValuesSubAttribute.values().iterator(); iterator.hasNext(); ) {
+                                Attribute subSubAttribute = iterator.next();
+                                if (subSubAttribute.getName().equals(expressionNode.getAttributeValue())) {
+                                    if (((SimpleAttribute) (subSubAttribute)).getValue().equals
+                                            (expressionNode.getValue())) {
+                                        if (subValue.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
+                                                subValue.getRequired().equals(true)) {
+                                            throw new BadRequestException
+                                                    ("Can not remove a required attribute or a read-only attribute",
+                                                            ResponseCodeConstants.MUTABILITY);
 
-                List<Attribute> subValues = ((MultiValuedAttribute) (subAttribute)).getAttributeValues();
-                if (subValues != null) {
-                    for (Iterator<Attribute> subValueIterator = subValues.iterator(); subValueIterator.hasNext();) {
-                        Attribute subValue = subValueIterator.next();
-
-                        Map<String, Attribute> subValuesSubAttribute =
-                                ((ComplexAttribute) subValue).getSubAttributesList();
-                        for (Iterator<Attribute> iterator =
-                             subValuesSubAttribute.values().iterator(); iterator.hasNext();) {
-
-                            Attribute subSubAttribute = iterator.next();
-                            if (subSubAttribute.getName().equals(expressionNode.getAttributeValue())) {
-                                if (((SimpleAttribute) (subSubAttribute)).getValue().equals
-                                        (expressionNode.getValue())) {
-                                    if (subValue.getMutability().equals(SCIMDefinitions.Mutability.READ_ONLY) ||
-                                            subValue.getRequired().equals(true)) {
-
-                                        throw new BadRequestException
-                                                ("Can not remove a required attribute or a read-only attribute",
-                                                        ResponseCodeConstants.MUTABILITY);
-                                    } else {
+                                        }
                                         subValueIterator.remove();
                                     }
                                 }
                             }
                         }
+                        // If the attribute has no values, make it unassigned.
+                        if (((MultiValuedAttribute) (subAttribute)).getAttributeValues().size() == 0) {
+                            ((ComplexAttribute) attribute).removeSubAttribute(subAttribute.getName());
+                        }
                     }
-                    //if the attribute has no values, make it unassigned
-                    if (((MultiValuedAttribute) (subAttribute)).getAttributeValues().size() == 0) {
+                } else {
+                    // We only support "EQ" filter.
+                    if (!(SCIMConstants.OperationalConstants.VALUE).equals(expressionNode.getAttributeValue()) ||
+                            !((SCIMConstants.OperationalConstants.EQ).trim())
+                                    .equalsIgnoreCase(expressionNode.getOperation())) {
+                        throw new NotImplementedException(
+                                "Only Eq filter is supported based on implicit value attribute.");
+                    }
+
+                    List<Object> subValues = ((MultiValuedAttribute) (subAttribute)).getAttributePrimitiveValues();
+                    for (Iterator<Object> iterator = subValues.iterator(); iterator.hasNext(); ) {
+                        Object item = iterator.next();
+                        if (item.equals(expressionNode.getValue())) {
+                            if ((SCIMDefinitions.Mutability.READ_ONLY).equals(subAttribute.getMutability()) ||
+                                    subAttribute.getRequired().equals(true)) {
+                                throw new BadRequestException(
+                                        "Can not remove a required attribute or a read-only attribute",
+                                        ResponseCodeConstants.MUTABILITY);
+                            }
+                            iterator.remove();
+                        }
+                    }
+                    // If the attribute has no values, make it unassigned.
+                    if (((MultiValuedAttribute) (subAttribute)).getAttributePrimitiveValues().size() == 0) {
                         ((ComplexAttribute) attribute).removeSubAttribute(subAttribute.getName());
                     }
                 }
@@ -1592,12 +1652,15 @@ public class PatchOperationUtil {
 
                                                 if (subSubAttribute != null) {
                                                     if (subSubAttribute.getMultiValued()) {
-                                                        List<Object> items = ((MultiValuedAttribute)
-                                                                (subSubAttrib.getValue())).
-                                                                getAttributePrimitiveValues();
+                                                        List<Object> items =
+                                                                ((MultiValuedAttribute) (subSubAttrib.getValue()))
+                                                                        .getAttributePrimitiveValues();
                                                         for (Object item : items) {
-                                                            ((MultiValuedAttribute) subSubAttribute).
-                                                                    setAttributePrimitiveValue(item);
+                                                            if (!((MultiValuedAttribute) subSubAttribute)
+                                                                    .getAttributePrimitiveValues().contains(item)) {
+                                                                ((MultiValuedAttribute) subSubAttribute).
+                                                                        setAttributePrimitiveValue(item);
+                                                            }
                                                         }
                                                     } else {
                                                         ((SimpleAttribute) subSubAttribute).setValue(
@@ -1616,11 +1679,14 @@ public class PatchOperationUtil {
                                         }
                                     } else {
                                         if (subAttribute.getMultiValued()) {
-                                            List<Object> items = ((MultiValuedAttribute)
-                                                    (subAttrib.getValue())).
+                                            List<Object> items = ((MultiValuedAttribute) (subAttrib.getValue())).
                                                     getAttributePrimitiveValues();
                                             for (Object item : items) {
-                                                ((MultiValuedAttribute) subAttribute).setAttributePrimitiveValue(item);
+                                                if (!((MultiValuedAttribute) subAttribute).getAttributePrimitiveValues()
+                                                        .contains(item)) {
+                                                    ((MultiValuedAttribute) subAttribute).
+                                                            setAttributePrimitiveValue(item);
+                                                }
                                             }
                                         } else {
                                             ((SimpleAttribute) subAttribute).setValue(((SimpleAttribute)

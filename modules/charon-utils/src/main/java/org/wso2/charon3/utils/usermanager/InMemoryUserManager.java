@@ -18,6 +18,7 @@
 package org.wso2.charon3.utils.usermanager;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +130,17 @@ public class InMemoryUserManager implements UserManager {
        } else {
            throw new NotFoundException("No user with the id : " + user.getId());
        }
+    }
+
+    public User updateUser(User user, Map<String, Boolean> requiredAttributes,
+                           List<String> allSimpleMultiValuedAttributes)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        if (StringUtils.isEmpty(user.getId())) {
+            throw new NotFoundException("No user found. User id is empty.");
+        }
+        inMemoryUserList.replace(user.getId(), user);
+        return (User) CopyUtil.deepCopy(user);
     }
 
     @Override
