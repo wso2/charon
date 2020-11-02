@@ -370,7 +370,14 @@ public class JSONDecoder {
         }
     }
 
-    private List<String> toList(JSONArray array) throws JSONException {
+    /**
+     * Converts a JSONArray to a List<String>.
+     *
+     * @param array             JSONArray object.
+     * @return                  List<String> of the JSONArray object.
+     * @throws JSONException    Error when creating List from JSONArray.
+     */
+    public List<String> toList(JSONArray array) throws JSONException {
 
         List<String> list = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
