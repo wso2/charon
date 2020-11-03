@@ -39,6 +39,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -83,6 +84,10 @@ public class PatchOperationUtil {
         if (operation.getPath() == null) {
             throw new BadRequestException
                     ("No path value specified for remove operation", ResponseCodeConstants.NO_TARGET);
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(operation.getPath())) {
+            throw new NotImplementedException("Removing permissions not permitted.");
         }
 
         String path = operation.getPath();
@@ -729,6 +734,10 @@ public class PatchOperationUtil {
 
         if (log.isDebugEnabled()) {
             log.debug("Provided path: " + operation.getPath() + " and value(s): " + operation.getValues().toString());
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(operation.getPath())) {
+            throw new NotImplementedException("Adding permissions not permitted.");
         }
 
         if (operation.getPath() != null) {
@@ -1918,7 +1927,19 @@ public class PatchOperationUtil {
             }
 
         } else {
-            //create and add the attribute
+            // Check whether the patched attributes are permissions of Roles.
+            if (schema.isSchemaAvailable(SCIMConstants.ROLE_SCHEMA_URI) &&
+                    SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(attributeParts[0])) {
+
+                JSONArray permissionsJSONArray = getJsonArray(operation);
+
+                // Assign permissions to the Role.
+                if (oldResource instanceof Role) {
+                    ((Role) oldResource).setPermissions(decoder.toList(permissionsJSONArray));
+                }
+            }
+
+            // Create and add the attribute.
             createAttributeOnResourceWithPathWithoutFiltersForLevelOne(oldResource, schema, decoder, operation,
                     attributeParts);
         }
