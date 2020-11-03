@@ -144,6 +144,7 @@ public class CharonConfiguration implements Configuration {
         configMap.put(SCIMConfigConstants.MAX_RESULTS, maxResults);
         configMap.put(SCIMConfigConstants.PATCH, patchSupport);
         configMap.put(SCIMConfigConstants.AUTHENTICATION_SCHEMES, authenticationSchemes);
+        configMap.put(SCIMConfigConstants.PAGINATION_DEFAULT_COUNT, count);
         return  configMap;
     }
 
