@@ -18,11 +18,13 @@ package org.wso2.charon3.core.utils.codeutils;
 /**
  * This class represents the PATCH operations which are in the body of PATCH request.
  */
-public class PatchOperation {
+public class PatchOperation implements Comparable<PatchOperation> {
 
     private String operation;
     private String path;
     private Object values;
+    private String attributeName;
+    private int executionOrder;
 
     public String getOperation() {
         return operation;
@@ -46,5 +48,43 @@ public class PatchOperation {
 
     public void setValues(Object values) {
         this.values = values;
+    }
+
+    public String getAttributeName() {
+
+        return attributeName;
+    }
+
+    public void setAttributeName(String attributeName) {
+
+        this.attributeName = attributeName;
+    }
+
+    public int getExecutionOrder() {
+
+        return executionOrder;
+    }
+
+    public void setExecutionOrder(int executionOrder) {
+
+        this.executionOrder = executionOrder;
+    }
+
+    @Override
+    public int compareTo(PatchOperation anotherPatchOperation) {
+
+        return this.getExecutionOrder() - anotherPatchOperation.getExecutionOrder();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return super.hashCode();
     }
 }

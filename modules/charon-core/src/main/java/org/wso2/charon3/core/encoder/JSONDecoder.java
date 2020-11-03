@@ -730,6 +730,7 @@ public class JSONDecoder {
                 JSONObject operation = (JSONObject) operationJsonList.get(count);
                 PatchOperation patchOperation = new PatchOperation();
                 String op = (String) operation.opt(SCIMConstants.OperationalConstants.OP);
+                patchOperation.setExecutionOrder(count + 1);
                 if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.ADD)) {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
                 } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REMOVE)) {
