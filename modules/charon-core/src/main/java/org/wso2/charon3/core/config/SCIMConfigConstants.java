@@ -46,6 +46,7 @@ public class SCIMConfigConstants {
     public static final String MAX_RESULTS = "maxResults";
     public static final String AUTHENTICATION_SCHEMES = "authenticationSchemes";
     public static final String SCIM_SCHEMA_EXTENSION_CONFIG = "scim2-schema-extension.config";
+    public static final String PAGINATION_DEFAULT_COUNT = "pagination-default-count";
 
 
 }
