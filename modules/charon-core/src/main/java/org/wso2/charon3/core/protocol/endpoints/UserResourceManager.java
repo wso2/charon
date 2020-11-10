@@ -17,6 +17,7 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
@@ -161,6 +162,12 @@ public class UserResourceManager extends AbstractResourceManager {
             Map<String, String> responseHeaders = new HashMap<String, String>();
 
             if (createdUser != null) {
+                // TODO: Until handled properly, assume a not-null user without a user ID is created when a workflow
+                //  engagement in involved with user addition flow. Hence, respond with 202 Accepted. See issue :
+                //  https://github.com/wso2/product-is/issues/10442 for more info.
+                if (StringUtils.isBlank(createdUser.getId())) {
+                    return new SCIMResponse(ResponseCodeConstants.CODE_ACCEPTED, null, null);
+                }
                 //create a deep copy of the user object since we are going to change it.
                 User copiedUser = (User) CopyUtil.deepCopy(createdUser);
                 //need to remove password before returning
