@@ -32,6 +32,7 @@ public class ResponseCodeConstants {
 
     public static final int CODE_OK = 200;
     public static final int CODE_CREATED = 201;
+    public static final int CODE_ACCEPTED = 202;
     public static final int CODE_NO_CONTENT = 204;
 
     public static final int CODE_TEMPORARY_REDIRECT = 307;
