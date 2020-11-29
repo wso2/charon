@@ -744,6 +744,8 @@ public class JSONDecoder {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.REMOVE);
                 } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REPLACE)) {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+                } else {
+                    throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
                 patchOperation.setPath((String) operation.opt(SCIMConstants.OperationalConstants.PATH));
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
