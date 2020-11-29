@@ -750,7 +750,7 @@ public class JSONDecoder {
                 operationList.add(patchOperation);
             }
         } catch (JSONException e) {
-            logger.error("json error in decoding the request");
+            logger.error("json error in decoding the request", e);
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
         return  operationList;
