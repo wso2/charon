@@ -738,19 +738,24 @@ public class JSONDecoder {
                 PatchOperation patchOperation = new PatchOperation();
                 String op = (String) operation.opt(SCIMConstants.OperationalConstants.OP);
                 patchOperation.setExecutionOrder(count + 1);
-                if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.ADD)) {
+                if (op == null) {
+                    throw new BadRequestException("Operation can not be null.", ResponseCodeConstants
+                            .INVALID_SYNTAX);
+                } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.ADD)) {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
                 } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REMOVE)) {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.REMOVE);
                 } else if (op.equalsIgnoreCase(SCIMConstants.OperationalConstants.REPLACE)) {
                     patchOperation.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+                } else {
+                    throw new BadRequestException("Unknown operation: " + op, ResponseCodeConstants.INVALID_SYNTAX);
                 }
                 patchOperation.setPath((String) operation.opt(SCIMConstants.OperationalConstants.PATH));
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
                 operationList.add(patchOperation);
             }
         } catch (JSONException e) {
-            logger.error("json error in decoding the request");
+            logger.error("json error in decoding the request", e);
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
         return  operationList;
