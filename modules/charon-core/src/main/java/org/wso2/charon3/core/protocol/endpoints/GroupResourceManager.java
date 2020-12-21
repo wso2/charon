@@ -694,15 +694,16 @@ public class GroupResourceManager extends AbstractResourceManager {
         for (PatchOperation patchOperation : patchOperations) {
             String operation = patchOperation.getOperation();
             String path = patchOperation.getPath();
-            JSONObject valuesJson = (JSONObject) patchOperation.getValues();
-
-            if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
-                    ((path != null && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) ||
-                            (valuesJson != null && valuesJson.has(SCIMConstants.GroupSchemaConstants.MEMBERS)))) {
-                return true;
-            } else if (operation.equals(SCIMConstants.OperationalConstants.REMOVE) && path != null
-                    && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-                return true;
+            if (!(patchOperation.getValues() instanceof String)) {
+                JSONObject valuesJson = (JSONObject) patchOperation.getValues();
+                if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
+                        ((path != null && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) ||
+                                (valuesJson != null && valuesJson.has(SCIMConstants.GroupSchemaConstants.MEMBERS)))) {
+                    return true;
+                } else if (operation.equals(SCIMConstants.OperationalConstants.REMOVE) && path != null
+                        && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -815,6 +816,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             if (replaceOperation.getPath() != null && replaceOperation.getValues() != null) {
                 addOperation.setValues(replaceOperation.getValues());
+                addOperation.setPath(replaceOperation.getPath());
                 patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(addOperation);
             } else if (replaceOperation.getValues() != null) {
                 AbstractSCIMObject attributeHoldingSCIMObject = getDecoder().decode(replaceOperation.getValues()
@@ -841,10 +843,14 @@ public class GroupResourceManager extends AbstractResourceManager {
             if (patchOperation.getPath() != null) {
                 if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME) &&
                         patchOperation.getValues() != null) {
-                    JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
                     JSONObject attributePrefixedJson = new JSONObject();
-
-                    attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, valuesPropertyJson);
+                    if (patchOperation.getValues() instanceof String) {
+                        attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME,
+                                patchOperation.getValues());
+                    } else {
+                        JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
+                        attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.DISPLAY_NAME, valuesPropertyJson);
+                    }
                     patchOperation.setValues(attributePrefixedJson);
                 } else if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.MEMBERS) &&
                         patchOperation.getValues() != null) {
