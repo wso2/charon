@@ -852,7 +852,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema VALUE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.GroupSchemaConstants.VALUE_URI,
                         SCIMConstants.CommonSchemaConstants.VALUE,
-                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.VALUE_DESC, false,
+                        SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.VALUE_DESC, true,
                         false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
