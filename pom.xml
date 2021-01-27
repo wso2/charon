@@ -125,6 +125,12 @@
                 <artifactId>log4j-1.2-api</artifactId>
                 <version>${log4j.api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -291,6 +297,7 @@
         <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.22</axiom.impl.version>
         <junit.version>4.12</junit.version>
+        <testng.version>6.1.1</testng.version>
         <servlet.api.version>2.5</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
@@ -302,6 +309,7 @@
         <bundle.plugin.version>4.2.0</bundle.plugin.version>
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
+        <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
 
         <src.java.version>1.8</src.java.version>
         <target.java.version>1.8</target.java.version>
