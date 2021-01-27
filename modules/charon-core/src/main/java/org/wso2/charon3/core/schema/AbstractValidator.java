@@ -27,6 +27,7 @@ import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.utils.CopyUtil;
 
@@ -68,9 +69,10 @@ public abstract class AbstractValidator {
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
+
             //check for required sub attributes.
             AbstractAttribute attribute = (AbstractAttribute) attributeList.get(attributeSchema.getName());
-            validateSCIMObjectForRequiredSubAttributes(attribute, attributeSchema);
+            validateSCIMObjectForRequiredSubAttributes(attribute, attributeSchema, scimObject);
         }
     }
 
@@ -83,7 +85,8 @@ public abstract class AbstractValidator {
      * @throws BadRequestException
      */
     private static void validateSCIMObjectForRequiredSubAttributes(AbstractAttribute attribute,
-                                                                   AttributeSchema attributeSchema) throws
+                                                                   AttributeSchema attributeSchema,
+                                                                   AbstractSCIMObject scimObject) throws
             CharonException, BadRequestException {
         if (attribute != null) {
             List<AttributeSchema> subAttributesSchemaList =
@@ -109,10 +112,34 @@ public abstract class AbstractValidator {
                                                 + ", is missing in the SCIM Attribute: " + attribute.getName();
                                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                                     }
+
                                 }
                             }
                         }
                     }
+
+                    //Check for canonical attributes in groups.
+                    List<String> canonicalValues = subAttributeSchema.getCanonicalValues();
+                    if (scimObject instanceof Group && canonicalValues != null) {
+                        if (attribute instanceof MultiValuedAttribute) {
+                            List<Attribute> values =
+                                    ((MultiValuedAttribute) attribute).getAttributeValues();
+                            for (Attribute value : values) {
+                                if (value instanceof ComplexAttribute) {
+                                    SimpleAttribute valueOfAttribute = (SimpleAttribute) value.getSubAttribute
+                                            (subAttributeSchema.getName());
+                                    if (!canonicalValues.contains(valueOfAttribute.getValue())) {
+                                        String error = "Unsupported member type: " + valueOfAttribute.getValue() +
+                                                " doesn't match with any canonical values defined for type";
+                                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+
                     //Following is only applicable for extension schema validation.
                     AbstractAttribute subAttribute = null;
                     if (attribute instanceof ComplexAttribute) {
@@ -128,10 +155,12 @@ public abstract class AbstractValidator {
                     }
                     List<AttributeSchema> subSubAttributesSchemaList = subAttributeSchema.getSubAttributeSchemas();
                     if (subSubAttributesSchemaList != null) {
-                        validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema);
+                        validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema, scimObject);
                     }
                 }
             }
+
+
         }
     }
 

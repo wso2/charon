@@ -215,6 +215,10 @@ public class SCIMConstants {
         public static final String FAX = "fax";
         public static final String PAGER = "pager";
 
+        // possible group members type
+        public static final String MEMBERS_TYPE_USER = "User";
+        public static final String MEMBERS_TYPE_GROUP = "Group";
+
         public static final String SKYPE = "skpye";
         public static final String YAHOO = "yahoo";
         public static final String AIM = "aim";

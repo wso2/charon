@@ -884,7 +884,10 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.DataType.STRING, false, SCIMConstants.GroupSchemaConstants.TYPE_DESC,
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+                        SCIMDefinitions.Uniqueness.NONE,
+                        new ArrayList<String>(Arrays.asList(SCIMConstants.UserSchemaConstants.MEMBERS_TYPE_USER,
+                                SCIMConstants.UserSchemaConstants.MEMBERS_TYPE_GROUP)),
+                        null, null);
 
     /*------------------------------------------------------------------------------------------------------*/
 
