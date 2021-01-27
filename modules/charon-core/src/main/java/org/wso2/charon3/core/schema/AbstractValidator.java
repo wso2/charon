@@ -112,13 +112,12 @@ public abstract class AbstractValidator {
                                                 + ", is missing in the SCIM Attribute: " + attribute.getName();
                                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                                     }
-
                                 }
                             }
                         }
                     }
 
-                    //Check for canonical attributes in groups.
+                    // Check for canonical attributes in groups.
                     List<String> canonicalValues = subAttributeSchema.getCanonicalValues();
                     if (scimObject instanceof Group && canonicalValues != null) {
                         if (attribute instanceof MultiValuedAttribute) {
@@ -132,12 +131,10 @@ public abstract class AbstractValidator {
                                         String error = "Unsupported member type: " + valueOfAttribute.getValue();
                                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                                     }
-
                                 }
                             }
                         }
                     }
-
 
                     //Following is only applicable for extension schema validation.
                     AbstractAttribute subAttribute = null;
@@ -158,8 +155,6 @@ public abstract class AbstractValidator {
                     }
                 }
             }
-
-
         }
     }
 
