@@ -129,8 +129,7 @@ public abstract class AbstractValidator {
                                     SimpleAttribute valueOfAttribute = (SimpleAttribute) value.getSubAttribute
                                             (subAttributeSchema.getName());
                                     if (!canonicalValues.contains(valueOfAttribute.getValue())) {
-                                        String error = "Unsupported member type: " + valueOfAttribute.getValue() +
-                                                " doesn't match with any canonical values defined for type";
+                                        String error = "Unsupported member type: " + valueOfAttribute.getValue();
                                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                                     }
 
