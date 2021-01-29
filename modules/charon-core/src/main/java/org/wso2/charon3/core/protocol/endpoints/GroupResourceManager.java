@@ -770,7 +770,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
                 Map<String, String> httpHeaders = new HashMap<>();
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                        getResourceEndpointURL(SCIMConstants.USER_ENDPOINT) + "/" + updatedGroup.getId());
+                        getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT) + "/" + updatedGroup.getId());
                 httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
                 return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
