@@ -72,9 +72,15 @@ public interface AttributeSchema {
 
     public void removeSubAttribute(String subAttributeName) throws CharonException;
 
-    public List<String> getCanonicalValues();
+    /**
+     * @return Get list of canonical values.
+     */
+    List<String> getCanonicalValues();
 
-    public void setCanonicalValues(ArrayList<String> canonicalValues);
+    /**
+     * @param canonicalValues canonical values to set.
+     */
+    void setCanonicalValues(ArrayList<String> canonicalValues);
 
 }
 

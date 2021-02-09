@@ -119,11 +119,7 @@ public abstract class AbstractValidator {
                     }
 
                     // Check for canonical attributes in groups.
-                    List<String> canonicalValues = subAttributeSchema.getCanonicalValues();
-                    if (!canonicalValues.isEmpty()) {
-                        validateSCIMObjectForCanonicalAttributes(attribute, subAttributeSchema,
-                                scimObject, canonicalValues);
-                    }
+                    validateCanonicalAttributesInScimObject(attribute, subAttributeSchema, scimObject);
 
                     //Following is only applicable for extension schema validation.
                     AbstractAttribute subAttribute = null;
@@ -147,33 +143,25 @@ public abstract class AbstractValidator {
         }
     }
 
-    /*
-     * Validate SCIMObject for canonical attributes in groups.
-     *
-     * @param attribute
-     * @param subAttributeSchema
-     * @param scimObject
-     * @param canonicalValues
-     * @throws CharonException
-     * @throws BadRequestException
-     */
-    private static void validateSCIMObjectForCanonicalAttributes(AbstractAttribute attribute,
+    private static void validateCanonicalAttributesInScimObject(AbstractAttribute attribute,
                                                                  AttributeSchema subAttributeSchema,
-                                                                 AbstractSCIMObject scimObject,
-                                                                 List<String> canonicalValues) throws
+                                                                 AbstractSCIMObject scimObject) throws
             CharonException, BadRequestException {
-        if (scimObject instanceof Group && canonicalValues != null) {
-            if (attribute instanceof MultiValuedAttribute) {
-                List<Attribute> values =
-                        ((MultiValuedAttribute) attribute).getAttributeValues();
-                for (Attribute value : values) {
-                    if (value instanceof ComplexAttribute) {
-                        SimpleAttribute valueOfAttribute = (SimpleAttribute) value.getSubAttribute
-                                (subAttributeSchema.getName());
-                        if (!canonicalValues.contains(valueOfAttribute.getValue())) {
-                            String error = "Unsupported member type: " + valueOfAttribute.getValue();
-                            throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
-                        }
+
+        List<String> canonicalValues = subAttributeSchema.getCanonicalValues();
+        if (!(scimObject instanceof Group) || canonicalValues == null) {
+            return;
+        }
+        if (attribute instanceof MultiValuedAttribute) {
+            List<Attribute> values =
+                    ((MultiValuedAttribute) attribute).getAttributeValues();
+            for (Attribute value : values) {
+                if (value instanceof ComplexAttribute) {
+                    SimpleAttribute valueOfAttribute = (SimpleAttribute) value.getSubAttribute
+                            (subAttributeSchema.getName());
+                    if (!canonicalValues.contains(valueOfAttribute.getValue())) {
+                        String error = "Unsupported member type: " + valueOfAttribute.getValue();
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
                 }
             }
