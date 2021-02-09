@@ -144,8 +144,8 @@ public abstract class AbstractValidator {
     }
 
     private static void validateCanonicalAttributesInScimObject(AbstractAttribute attribute,
-                                                                 AttributeSchema subAttributeSchema,
-                                                                 AbstractSCIMObject scimObject) throws
+                                                                AttributeSchema subAttributeSchema,
+                                                                AbstractSCIMObject scimObject) throws
             CharonException, BadRequestException {
 
         List<String> canonicalValues = subAttributeSchema.getCanonicalValues();

@@ -74,12 +74,14 @@ public interface AttributeSchema {
 
     /**
      * Get list of canonical values.
+     *
      * @return List of canonical values.
      */
     List<String> getCanonicalValues();
 
     /**
      * Set canonical values.
+     *
      * @param canonicalValues canonical values to set.
      */
     void setCanonicalValues(ArrayList<String> canonicalValues);
