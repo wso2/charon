@@ -124,16 +124,21 @@ public class AttributeUtil {
      * @param dateTimeString
      */
     public static Instant parseDateTime(String dateTimeString) throws CharonException {
-        try {
-            return LocalDateTime.parse(dateTimeString).toInstant(ZoneOffset.UTC);
-        } catch (DateTimeException e) {
+
+        Instant localDateTime = null;
+        if (StringUtils.isNotEmpty(dateTimeString)) {
             try {
-                return OffsetDateTime.parse(dateTimeString).toInstant();
-            } catch (DateTimeException dte) {
-                throw new CharonException("Error in parsing date time. " +
-                        "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+                localDateTime = LocalDateTime.parse(dateTimeString).toInstant(ZoneOffset.UTC);
+            } catch (DateTimeException e) {
+                try {
+                    return OffsetDateTime.parse(dateTimeString).toInstant();
+                } catch (DateTimeException dte) {
+                    throw new CharonException("Error in parsing date time. " +
+                            "Date time should adhere to ISO_OFFSET_DATE_TIME format", e);
+                }
             }
         }
+        return localDateTime;
     }
 
     public static String parseReference(String referenceString) throws CharonException {
