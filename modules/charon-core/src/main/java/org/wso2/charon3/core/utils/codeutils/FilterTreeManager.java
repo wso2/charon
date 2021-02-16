@@ -46,7 +46,7 @@ public class FilterTreeManager {
     private String symbol;
     private Node root;
     private SCIMResourceTypeSchema schema;
-
+    
     public FilterTreeManager(String filterString, SCIMResourceTypeSchema schema) throws IOException {
 
         String encodedString = URLEncoder.encode(filterString, "UTF-8");
@@ -181,7 +181,7 @@ public class FilterTreeManager {
         } else {
             if (!(symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.RIGHT)))) {
                 ExpressionNode expressionNode = new ExpressionNode();
-                validateAndBuildFilterExpression(symbol, expressionNode);
+                validateAndBuildFilterExpression(removeFilterParenthesesAndQuotes(symbol), expressionNode);
                 root = expressionNode;
                 symbol = nextSymbol();
             } else {
@@ -324,5 +324,9 @@ public class FilterTreeManager {
             decodedValue = decodedValue.replaceFirst("'", "").replaceAll("'$", "");
         }
         return decodedValue;
+    }
+
+    private String removeFilterParenthesesAndQuotes(String filterString) {
+        return filterString.replace("(", "").replace(")", "").replace("\"", "").replace("'", "");
     }
 }
