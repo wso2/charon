@@ -157,10 +157,10 @@ public abstract class AbstractValidator {
                     ((MultiValuedAttribute) attribute).getAttributeValues();
             for (Attribute value : values) {
                 if (value instanceof ComplexAttribute) {
-                    SimpleAttribute valueOfAttribute = (SimpleAttribute) value.getSubAttribute
+                    SimpleAttribute subAttribute = (SimpleAttribute) value.getSubAttribute
                             (subAttributeSchema.getName());
-                    if (!canonicalValues.contains(valueOfAttribute.getValue())) {
-                        String error = "Unsupported member type: " + valueOfAttribute.getValue();
+                    if (subAttribute != null && !canonicalValues.contains(subAttribute.getValue())) {
+                        String error = "Unsupported member type: " + subAttribute.getValue();
                         throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
                 }
