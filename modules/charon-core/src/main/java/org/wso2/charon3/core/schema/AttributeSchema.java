@@ -17,6 +17,7 @@ package org.wso2.charon3.core.schema;
 
 import org.wso2.charon3.core.exceptions.CharonException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,6 +71,20 @@ public interface AttributeSchema {
     public AttributeSchema getSubAttributeSchema(String subAttribute);
 
     public void removeSubAttribute(String subAttributeName) throws CharonException;
+
+    /**
+     * Get list of canonical values.
+     *
+     * @return List of canonical values.
+     */
+    List<String> getCanonicalValues();
+
+    /**
+     * Set canonical values.
+     *
+     * @param canonicalValues canonical values to set.
+     */
+    void setCanonicalValues(ArrayList<String> canonicalValues);
 
 }
 

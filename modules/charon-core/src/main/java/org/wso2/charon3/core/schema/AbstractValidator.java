@@ -27,6 +27,7 @@ import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.utils.CopyUtil;
 
@@ -68,9 +69,10 @@ public abstract class AbstractValidator {
                     throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                 }
             }
+
             //check for required sub attributes.
             AbstractAttribute attribute = (AbstractAttribute) attributeList.get(attributeSchema.getName());
-            validateSCIMObjectForRequiredSubAttributes(attribute, attributeSchema);
+            validateSCIMObjectForRequiredSubAttributes(attribute, attributeSchema, scimObject);
         }
     }
 
@@ -79,11 +81,13 @@ public abstract class AbstractValidator {
      *
      * @param attribute
      * @param attributeSchema
+     * @param scimObject
      * @throws CharonException
      * @throws BadRequestException
      */
     private static void validateSCIMObjectForRequiredSubAttributes(AbstractAttribute attribute,
-                                                                   AttributeSchema attributeSchema) throws
+                                                                   AttributeSchema attributeSchema,
+                                                                   AbstractSCIMObject scimObject) throws
             CharonException, BadRequestException {
         if (attribute != null) {
             List<AttributeSchema> subAttributesSchemaList =
@@ -113,6 +117,10 @@ public abstract class AbstractValidator {
                             }
                         }
                     }
+
+                    // Check for canonical attributes in groups.
+                    validateCanonicalAttributesInScimObject(attribute, subAttributeSchema, scimObject);
+
                     //Following is only applicable for extension schema validation.
                     AbstractAttribute subAttribute = null;
                     if (attribute instanceof ComplexAttribute) {
@@ -128,7 +136,32 @@ public abstract class AbstractValidator {
                     }
                     List<AttributeSchema> subSubAttributesSchemaList = subAttributeSchema.getSubAttributeSchemas();
                     if (subSubAttributesSchemaList != null) {
-                        validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema);
+                        validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema, scimObject);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void validateCanonicalAttributesInScimObject(AbstractAttribute attribute,
+                                                                AttributeSchema subAttributeSchema,
+                                                                AbstractSCIMObject scimObject) throws
+            CharonException, BadRequestException {
+
+        List<String> canonicalValues = subAttributeSchema.getCanonicalValues();
+        if (!(scimObject instanceof Group) || canonicalValues == null) {
+            return;
+        }
+        if (attribute instanceof MultiValuedAttribute) {
+            List<Attribute> values =
+                    ((MultiValuedAttribute) attribute).getAttributeValues();
+            for (Attribute value : values) {
+                if (value instanceof ComplexAttribute) {
+                    SimpleAttribute subAttribute = (SimpleAttribute) value.getSubAttribute
+                            (subAttributeSchema.getName());
+                    if (subAttribute != null && !canonicalValues.contains(subAttribute.getValue())) {
+                        String error = "Unsupported member type: " + subAttribute.getValue();
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                     }
                 }
             }
