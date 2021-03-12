@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.config;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,8 @@ public class SCIMUserSchemaExtensionBuilder {
     // configuration map
     private static Map<String, ExtensionAttributeSchemaConfig> extensionConfig =
             new HashMap<String, ExtensionAttributeSchemaConfig>();
-    // extension root attribute name
+    // Extension root attribute name.
+    String extensionRootAttributeName = null;
     String extensionRootAttributeURI = null;
     // built schema map
     private static Map<String, AttributeSchema> attributeSchemas = new HashMap<String, AttributeSchema>();
@@ -110,6 +112,7 @@ public class SCIMUserSchemaExtensionBuilder {
                  */
                 if (index == attributeConfigArray.length() - 1) {
                     extensionRootAttributeURI = schemaAttributeConfig.getURI();
+                    extensionRootAttributeName = schemaAttributeConfig.getName();
                 }
             }
             inputStream.close();
@@ -136,7 +139,8 @@ public class SCIMUserSchemaExtensionBuilder {
 
     private boolean isRootConfig(ExtensionAttributeSchemaConfig config) {
 
-        return config.getURI().equals(config.getName());
+        return StringUtils.isNotBlank(extensionRootAttributeName) &&
+                extensionRootAttributeName.equals(config.getName());
     }
 
     /*
