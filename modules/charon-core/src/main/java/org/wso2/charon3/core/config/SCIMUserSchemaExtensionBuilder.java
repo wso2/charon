@@ -139,10 +139,8 @@ public class SCIMUserSchemaExtensionBuilder {
 
     private boolean isRootConfig(ExtensionAttributeSchemaConfig config) {
 
-        if (StringUtils.isNotBlank(extensionRootAttributeName)) {
-            return extensionRootAttributeName.equals(config.getName());
-        }
-        return config.getURI().equals(config.getName());
+        return StringUtils.isNotBlank(extensionRootAttributeName) &&
+                extensionRootAttributeName.equals(config.getName());
     }
 
     /*
