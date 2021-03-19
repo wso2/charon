@@ -81,27 +81,35 @@ public class FilterTreeManager {
         String decodedValue;
 
         while (input.nextToken() != StreamTokenizer.TT_EOF) {
-            //ttype 40 is for the '('
-            if (input.ttype == 40) {
-                tokenList.add("(");
-            } else if (input.ttype == 41) {
-                //ttype 40 is for the ')'
-                concatenatedString = concatenatedString.trim();
-                tokenList.add(concatenatedString);
-                concatenatedString = "";
-                tokenList.add(")");
-            } else if (input.ttype == StreamTokenizer.TT_WORD) {
+            if (input.ttype == StreamTokenizer.TT_WORD) {
                 decodedValue = URLDecoder.decode(input.sval, "UTF-8");
                 if (!(decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.AND)
                         || decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
                         decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
 
-                    // Remove quotes if there are starting and ending quotes.
-                    decodedValue = removeStartingAndEndingQuotes(decodedValue);
+                    if (decodedValue.startsWith("(")) {
+                        tokenList.add("(");
+                        decodedValue = decodedValue.substring(1);
+                    }
 
-                    //concatenate the string by adding spaces in between
-                    concatenatedString += " " + decodedValue;
+                    if (decodedValue.endsWith(")")) {
+                        decodedValue = decodedValue.substring(0, decodedValue.length()-1);
+                        // Remove quotes if there are starting and ending quotes.
+                        decodedValue = removeStartingAndEndingQuotes(decodedValue);
+                        // Concatenate the string by adding spaces in between.
+                        concatenatedString += " " + decodedValue;
 
+                        concatenatedString = concatenatedString.trim();
+                        tokenList.add(concatenatedString);
+                        concatenatedString = "";
+                        tokenList.add(")");
+                    } else {
+                        // Remove quotes if there are starting and ending quotes.
+                        decodedValue = removeStartingAndEndingQuotes(decodedValue);
+
+                        // Concatenate the string by adding spaces in between
+                        concatenatedString += " " + decodedValue;
+                    }
                 } else {
                     concatenatedString = concatenatedString.trim();
                     if (!concatenatedString.equals("")) {
