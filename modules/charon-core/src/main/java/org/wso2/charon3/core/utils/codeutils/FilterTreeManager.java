@@ -91,9 +91,8 @@ public class FilterTreeManager {
                         tokenList.add("(");
                         decodedValue = decodedValue.substring(1);
                     }
-
                     if (decodedValue.endsWith(")")) {
-                        decodedValue = decodedValue.substring(0, decodedValue.length()-1);
+                        decodedValue = decodedValue.substring(0, decodedValue.length() - 1);
                         // Remove quotes if there are starting and ending quotes.
                         decodedValue = removeStartingAndEndingQuotes(decodedValue);
                         // Concatenate the string by adding spaces in between.
@@ -106,8 +105,7 @@ public class FilterTreeManager {
                     } else {
                         // Remove quotes if there are starting and ending quotes.
                         decodedValue = removeStartingAndEndingQuotes(decodedValue);
-
-                        // Concatenate the string by adding spaces in between
+                        // Concatenate the string by adding spaces in between.
                         concatenatedString += " " + decodedValue;
                     }
                 } else {
@@ -135,6 +133,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     public Node buildTree() throws BadRequestException {
+
         expression();
         return root;
     }
@@ -145,6 +144,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void expression() throws BadRequestException {
+
         term();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.OR))) {
             OperationNode or = new OperationNode(SCIMConstants.OperationalConstants.OR);
@@ -161,6 +161,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void term() throws BadRequestException {
+
         factor();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.AND))) {
             OperationNode and = new OperationNode(SCIMConstants.OperationalConstants.AND);
@@ -177,6 +178,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void factor() throws BadRequestException {
+
         symbol = nextSymbol();
         if (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.NOT))) {
             OperationNode not = new OperationNode(SCIMConstants.OperationalConstants.NOT);
@@ -301,6 +303,7 @@ public class FilterTreeManager {
      */
     private void setExpressionNodeValues(String attributeValue, String operation,
                                          String value, ExpressionNode expressionNode) throws BadRequestException {
+
         expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(), schema));
         expressionNode.setOperation(operation.trim());
         if (value != null) {
@@ -314,6 +317,7 @@ public class FilterTreeManager {
      * @return
      */
     public String nextSymbol() {
+
         if (tokenList.size() == 0) {
             //no tokens are present in the list anymore/at all
             return String.valueOf(-1);
