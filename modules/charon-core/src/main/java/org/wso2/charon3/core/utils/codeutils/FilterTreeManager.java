@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.utils.codeutils;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -81,27 +82,33 @@ public class FilterTreeManager {
         String decodedValue;
 
         while (input.nextToken() != StreamTokenizer.TT_EOF) {
-            //ttype 40 is for the '('
-            if (input.ttype == 40) {
-                tokenList.add("(");
-            } else if (input.ttype == 41) {
-                //ttype 40 is for the ')'
-                concatenatedString = concatenatedString.trim();
-                tokenList.add(concatenatedString);
-                concatenatedString = "";
-                tokenList.add(")");
-            } else if (input.ttype == StreamTokenizer.TT_WORD) {
+            if (input.ttype == StreamTokenizer.TT_WORD) {
                 decodedValue = URLDecoder.decode(input.sval, "UTF-8");
                 if (!(decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.AND)
                         || decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
                         decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
 
-                    // Remove quotes if there are starting and ending quotes.
-                    decodedValue = removeStartingAndEndingQuotes(decodedValue);
+                    if (decodedValue.startsWith("(")) {
+                        tokenList.add("(");
+                        decodedValue = decodedValue.substring(1);
+                    }
+                    if (decodedValue.endsWith(")")) {
+                        decodedValue = decodedValue.substring(0, decodedValue.length() - 1);
+                        // Remove quotes if there are starting and ending quotes.
+                        decodedValue = removeStartingAndEndingQuotes(decodedValue);
+                        // Concatenate the string by adding spaces in between.
+                        concatenatedString += " " + decodedValue;
 
-                    //concatenate the string by adding spaces in between
-                    concatenatedString += " " + decodedValue;
-
+                        concatenatedString = concatenatedString.trim();
+                        tokenList.add(concatenatedString);
+                        concatenatedString = StringUtils.EMPTY;
+                        tokenList.add(")");
+                    } else {
+                        // Remove quotes if there are starting and ending quotes.
+                        decodedValue = removeStartingAndEndingQuotes(decodedValue);
+                        // Concatenate the string by adding spaces in between.
+                        concatenatedString += " " + decodedValue;
+                    }
                 } else {
                     concatenatedString = concatenatedString.trim();
                     if (!concatenatedString.equals("")) {
@@ -127,6 +134,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     public Node buildTree() throws BadRequestException {
+
         expression();
         return root;
     }
@@ -137,6 +145,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void expression() throws BadRequestException {
+
         term();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.OR))) {
             OperationNode or = new OperationNode(SCIMConstants.OperationalConstants.OR);
@@ -153,6 +162,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void term() throws BadRequestException {
+
         factor();
         while (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.AND))) {
             OperationNode and = new OperationNode(SCIMConstants.OperationalConstants.AND);
@@ -169,6 +179,7 @@ public class FilterTreeManager {
      * @throws BadRequestException
      */
     private void factor() throws BadRequestException {
+
         symbol = nextSymbol();
         if (symbol.equals(String.valueOf(SCIMConstants.OperationalConstants.NOT))) {
             OperationNode not = new OperationNode(SCIMConstants.OperationalConstants.NOT);
@@ -293,6 +304,7 @@ public class FilterTreeManager {
      */
     private void setExpressionNodeValues(String attributeValue, String operation,
                                          String value, ExpressionNode expressionNode) throws BadRequestException {
+
         expressionNode.setAttributeValue(AttributeUtil.getAttributeURI(attributeValue.trim(), schema));
         expressionNode.setOperation(operation.trim());
         if (value != null) {
@@ -306,6 +318,7 @@ public class FilterTreeManager {
      * @return
      */
     public String nextSymbol() {
+
         if (tokenList.size() == 0) {
             //no tokens are present in the list anymore/at all
             return String.valueOf(-1);
