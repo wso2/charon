@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.utils.codeutils;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -100,7 +101,7 @@ public class FilterTreeManager {
 
                         concatenatedString = concatenatedString.trim();
                         tokenList.add(concatenatedString);
-                        concatenatedString = "";
+                        concatenatedString = StringUtils.EMPTY;
                         tokenList.add(")");
                     } else {
                         // Remove quotes if there are starting and ending quotes.
