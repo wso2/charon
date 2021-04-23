@@ -21,15 +21,17 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
+import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.*;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Mutability.READ_WRITE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.DEFAULT;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
@@ -38,6 +40,42 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
  * Test class of AttributeUtil.
  */
 public class AttributeUtilTest {
+
+    @DataProvider(name = "dataForGetAttributeValueFromString")
+    public Object[][] dataToGetAttributeValueFromString() {
+
+        return new Object[][]{
+
+                {"username", STRING, String.class},
+                {"", STRING, String.class},
+                {true, BOOLEAN, Boolean.class},
+                {2, INTEGER, Integer.class},
+                {10.0, DECIMAL, Double.class},
+                {"2021-04-20T09:06:19.839Z", DATE_TIME, Instant.class},
+                {0b010110, BINARY, Byte.class},
+                {"referenceString", REFERENCE, String.class},
+                {"complexString", COMPLEX, String.class},
+                {null, STRING, null}
+        };
+    }
+
+    @DataProvider(name = "dataForGetStringValueOfAttribute")
+    public Object[][] dataToGetStringValueOfAttribute() {
+
+        Instant instant= Instant.parse("2021-04-20T09:06:19.839Z");
+
+        return new Object[][]{
+
+                {"username", STRING, "username"},
+                {true, BOOLEAN, "true"},
+                {2, INTEGER, "2"},
+                {10.0, DECIMAL, "10.0"},
+                {instant, DATE_TIME, "2021-04-20T09:06:19.839Z"},
+                {0b010110, BINARY, "22"},
+                {"referenceString", REFERENCE, "referenceString"},
+                {"complexString", COMPLEX, "complexString"}
+        };
+    }
 
     @DataProvider(name = "dataForQueryParamEncoding")
     public Object[][] dataToGetAttributeURI() {
@@ -108,6 +146,28 @@ public class AttributeUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForGetAttributeValueFromString")
+    public void testGetAttributeValueFromString(Object attributeValue, SCIMDefinitions.DataType
+            dataType, Object expectedAttributeValueTypeFromString) throws CharonException, BadRequestException {
+
+        Object attributeValueFromString = AttributeUtil.getAttributeValueFromString(attributeValue, dataType);
+
+        if(attributeValue!=null){
+            Assert.assertEquals(attributeValueFromString.getClass(), expectedAttributeValueTypeFromString);
+        }
+        else{
+            Assert.assertNull(attributeValueFromString);
+        }
+    }
+
+    @Test(dataProvider = "dataForGetStringValueOfAttribute")
+    public void testGetStringValueOfAttribute(Object attributeValue, SCIMDefinitions.DataType
+            dataType, Object expectedStringValueOfAttribute) throws CharonException {
+
+        Object stringValueOfAttribute = AttributeUtil.getStringValueOfAttribute(attributeValue, dataType);
+        Assert.assertEquals(stringValueOfAttribute, expectedStringValueOfAttribute);
+    }
+
     @Test(dataProvider = "dataForQueryParamEncoding")
     public void testGetAttributeURI(String attributeName, SCIMResourceTypeSchema schema,
                                     String expectedAttributeURI) throws BadRequestException {
@@ -115,4 +175,5 @@ public class AttributeUtilTest {
         String attributeURI = AttributeUtil.getAttributeURI(attributeName, schema);
         Assert.assertEquals(attributeURI, expectedAttributeURI);
     }
+
 }
