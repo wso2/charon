@@ -369,4 +369,34 @@ public class Role extends AbstractSCIMObject {
         return this.permissions;
     }
 
+    /**
+     * Set the systemRole attribute of the meta attribute.
+     *
+     * @param isSystemRole Whether this is a read only system role.
+     * @throws CharonException     CharonException.
+     * @throws BadRequestException BadRequestException.
+     */
+    public void setSystemRole(boolean isSystemRole) throws CharonException, BadRequestException {
+
+        // Create the systemRole attribute as defined in schema.
+        SimpleAttribute systemRoleAttribute = (SimpleAttribute) DefaultAttributeFactory
+                .createAttribute(SCIMSchemaDefinitions.SYSTEM_ROLE,
+                        new SimpleAttribute(SCIMConstants.CommonSchemaConstants.SYSTEM_ROLE, isSystemRole));
+
+        // Check whether the meta complex attribute already exist.
+        if (getMetaAttribute() != null) {
+            ComplexAttribute metaAttribute = getMetaAttribute();
+            // Check whether the systemRole attribute already exist.
+            if (metaAttribute.isSubAttributeExist(systemRoleAttribute.getName())) {
+                String error = "Tried to modify a read only attribute.";
+                throw new CharonException(error);
+            } else {
+                metaAttribute.setSubAttribute(systemRoleAttribute);
+            }
+        } else {
+            // Create the meta attribute and set the sub attribute.
+            createMetaAttribute();
+            getMetaAttribute().setSubAttribute(systemRoleAttribute);
+        }
+    }
 }

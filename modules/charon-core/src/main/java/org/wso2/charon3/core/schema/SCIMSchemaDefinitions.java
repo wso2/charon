@@ -71,6 +71,14 @@ public class SCIMSchemaDefinitions {
                     SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                     SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+    // The uri of the resource being returned.
+    public static final SCIMAttributeSchema SYSTEM_ROLE = SCIMAttributeSchema
+            .createSCIMAttributeSchema(SCIMConstants.CommonSchemaConstants.SYSTEM_ROLE_URI,
+                    SCIMConstants.CommonSchemaConstants.SYSTEM_ROLE, SCIMDefinitions.DataType.BOOLEAN, false,
+                    SCIMConstants.CommonSchemaConstants.SYSTEM_ROLE_DESC, false, false,
+                    SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                    SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
     //The version of the resource being returned.
     //This value must be the same as the entity-tag (ETag) HTTP response header.
     public static final SCIMAttributeSchema VERSION =
