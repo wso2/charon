@@ -115,6 +115,15 @@ public class ResourceManagerUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForRequiredAttributesURIs")
+    public void testGetOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema, String requestedAttributes,
+             String requestedExcludingAttributes, Map<String, Boolean> expectedURIList) throws CharonException {
+
+        Map<String, Boolean> uriList = ResourceManagerUtil.getOnlyRequiredAttributesURIs(schema, requestedAttributes,
+                requestedExcludingAttributes);
+        Assert.assertEquals(uriList, expectedURIList);
+    }
+
     @DataProvider(name = "dataForProcessCountString")
     public Object[][] dataToProcessCountString() {
 
@@ -129,6 +138,13 @@ public class ResourceManagerUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForProcessCountString")
+    public void testProcessCount(String countStr, int expectedCount) throws BadRequestException {
+
+        int count = ResourceManagerUtil.processCount(countStr);
+        Assert.assertEquals(count, expectedCount);
+    }
+
     @DataProvider(name = "dataForProcessCountInteger")
     public Object[][] dataToProcessCountInteger() {
 
@@ -140,6 +156,13 @@ public class ResourceManagerUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForProcessCountInteger")
+    public void testProcessCount(Integer countInt, Integer expectedCountInt) {
+
+        Integer count = ResourceManagerUtil.processCount(countInt);
+        Assert.assertEquals(count, expectedCountInt);
+    }
+
     @DataProvider(name = "dataForProcessStartIndexInteger")
     public Object[][] dataToProcessStartIndexInteger() {
 
@@ -149,6 +172,13 @@ public class ResourceManagerUtilTest {
                 {2, 2},
                 {null, 1}
         };
+    }
+
+    @Test(dataProvider = "dataForProcessStartIndexInteger")
+    public void testProcessStartIndex(Integer startIndex, Integer expectedIndex) {
+
+        Integer index = ResourceManagerUtil.processStartIndex(startIndex);
+        Assert.assertEquals(index, expectedIndex);
     }
 
     @DataProvider(name = "dataForProcessStartIndexString")
@@ -165,6 +195,13 @@ public class ResourceManagerUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForProcessStartIndexString")
+    public void testProcessStartIndex(String startIndexStr, int expectedStartIndex) throws BadRequestException {
+
+        int startIndex = ResourceManagerUtil.processStartIndex(startIndexStr);
+        Assert.assertEquals(startIndex, expectedStartIndex);
+    }
+
     @DataProvider(name = "dataForAllSimpleMultiValuedAttributes")
     public Object[][] dataToAllSimpleMultiValuedAttributes() {
 
@@ -174,33 +211,44 @@ public class ResourceManagerUtilTest {
         AttributeSchema subSubAttributeSchema =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city",
-                        "city", STRING, true, "", false, false,
+                        "city", STRING, false, "", false, false,
+                        READ_WRITE, DEFAULT, NONE, null, null, null);
+        AttributeSchema subSubAttributeSchema1 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2.value",
+                        "value", STRING, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
         ArrayList<AttributeSchema> subSubAttributeSchemaList = new ArrayList<>();
         subSubAttributeSchemaList.add(subSubAttributeSchema);
+        ArrayList<AttributeSchema> subSubAttributeSchemaList1 = new ArrayList<>();
+        subSubAttributeSchemaList.add(subSubAttributeSchema1);
         AttributeSchema subAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
-                        "addresses", COMPLEX, true, "", false, false,
+                        "addresses", COMPLEX, false, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null,
                         subSubAttributeSchemaList);
         AttributeSchema subAttributeSchema2 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
                         "department", STRING, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null,
-                        null);
+                        READ_WRITE, DEFAULT, NONE, null, null, null);
         AttributeSchema subAttributeSchema3 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:core:2.0:User:emails.value",
-                        "value", STRING, false, "", false, false,
+                        "urn:ietf:params:scim:schemas:core:2.0:User:attribute3",
+                        "attribute3", STRING, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
+        AttributeSchema subAttributeSchema4 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2",
+                        "attribute2", STRING, false, "", false, false,
+                        READ_WRITE, DEFAULT, NONE, null, null, subSubAttributeSchemaList1);
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
         subAttributeSchemaList.add(subAttributeSchema3);
         ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
-        subAttributeSchemaList1.add(subAttributeSchema3);
+        subAttributeSchemaList1.add(subAttributeSchema4);
         AttributeSchema attributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
@@ -209,64 +257,27 @@ public class ResourceManagerUtilTest {
                         READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList);
         AttributeSchema attributeSchema2 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:core:2.0:User:emails",
-                        "emails", STRING,
+                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1",
+                        "attribute1", STRING,
                         true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList1);
         SCIMResourceTypeSchema scimResourceTypeSchema =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
 
         List<String> multiValuedAttributes = new ArrayList<>();
-        multiValuedAttributes.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city");
-//        multiValuedAttributes.add("urn:ietf:params:scim:schemas:core:2.0:User:emails.value");
-        multiValuedAttributes.add("urn:ietf:params:scim:schemas:core:2.0:User:emails");
-
+        multiValuedAttributes.add
+                ("urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2.value");
+        multiValuedAttributes.add("urn:ietf:params:scim:schemas:core:2.0:User:attribute3");
+        multiValuedAttributes.add("urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1");
         return new Object[][]{
 
                 {scimResourceTypeSchema, multiValuedAttributes}
         };
     }
 
-    @Test(dataProvider = "dataForRequiredAttributesURIs")
-    public void testGetOnlyRequiredAttributesURIs(SCIMResourceTypeSchema schema, String requestedAttributes,
-                                                  String requestedExcludingAttributes, Map<String, Boolean> expectedURIList) throws CharonException {
-
-        Map<String, Boolean> uriList = ResourceManagerUtil.getOnlyRequiredAttributesURIs(schema, requestedAttributes,
-                requestedExcludingAttributes);
-        Assert.assertEquals(uriList, expectedURIList);
-    }
-
-    @Test(dataProvider = "dataForProcessCountString")
-    public void testProcessCount(String countStr, int expectedCount) throws BadRequestException {
-
-        int count = ResourceManagerUtil.processCount(countStr);
-        Assert.assertEquals(count, expectedCount);
-    }
-
-    @Test(dataProvider = "dataForProcessCountInteger")
-    public void testProcessCount(Integer countInt, Integer expectedCountInt) {
-
-        Integer count = ResourceManagerUtil.processCount(countInt);
-        Assert.assertEquals(count, expectedCountInt);
-    }
-
-    @Test(dataProvider = "dataForProcessStartIndexInteger")
-    public void testProcessStartIndex(Integer startIndex, Integer expectedIndex) {
-
-        Integer index = ResourceManagerUtil.processStartIndex(startIndex);
-        Assert.assertEquals(index, expectedIndex);
-    }
-
-    @Test(dataProvider = "dataForProcessStartIndexString")
-    public void testProcessStartIndex(String startIndexStr, int expectedStartIndex) throws BadRequestException {
-
-        int startIndex = ResourceManagerUtil.processStartIndex(startIndexStr);
-        Assert.assertEquals(startIndex, expectedStartIndex);
-    }
-
     @Test(dataProvider = "dataForAllSimpleMultiValuedAttributes")
     public void testGetAllSimpleMultiValuedAttributes(SCIMResourceTypeSchema schema,
-                                                      List<String> expectedSimpleMultiValuedAttributes){
+                                                      List<String> expectedSimpleMultiValuedAttributes) {
 
         List<String> simpleMultiValuedAttributes = ResourceManagerUtil.getAllSimpleMultiValuedAttributes(schema);
         Assert.assertEquals(simpleMultiValuedAttributes, expectedSimpleMultiValuedAttributes);

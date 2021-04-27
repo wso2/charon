@@ -31,7 +31,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.*;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DATE_TIME;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.DECIMAL;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.INTEGER;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Mutability.READ_WRITE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.DEFAULT;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
@@ -59,10 +66,23 @@ public class AttributeUtilTest {
         };
     }
 
+    @Test(dataProvider = "dataForGetAttributeValueFromString")
+    public void testGetAttributeValueFromString(Object attributeValue, SCIMDefinitions.DataType
+            dataType, Object expectedAttributeValueTypeFromString) throws CharonException, BadRequestException {
+
+        Object attributeValueFromString = AttributeUtil.getAttributeValueFromString(attributeValue, dataType);
+
+        if (attributeValue != null) {
+            Assert.assertEquals(attributeValueFromString.getClass(), expectedAttributeValueTypeFromString);
+        } else {
+            Assert.assertNull(attributeValueFromString);
+        }
+    }
+
     @DataProvider(name = "dataForGetStringValueOfAttribute")
     public Object[][] dataToGetStringValueOfAttribute() {
 
-        Instant instant= Instant.parse("2021-04-20T09:06:19.839Z");
+        Instant instant = Instant.parse("2021-04-20T09:06:19.839Z");
 
         return new Object[][]{
 
@@ -75,6 +95,14 @@ public class AttributeUtilTest {
                 {"referenceString", REFERENCE, "referenceString"},
                 {"complexString", COMPLEX, "complexString"}
         };
+    }
+
+    @Test(dataProvider = "dataForGetStringValueOfAttribute")
+    public void testGetStringValueOfAttribute(Object attributeValue, SCIMDefinitions.DataType
+            dataType, Object expectedStringValueOfAttribute) throws CharonException {
+
+        Object stringValueOfAttribute = AttributeUtil.getStringValueOfAttribute(attributeValue, dataType);
+        Assert.assertEquals(stringValueOfAttribute, expectedStringValueOfAttribute);
     }
 
     @DataProvider(name = "dataForQueryParamEncoding")
@@ -144,28 +172,6 @@ public class AttributeUtilTest {
                 {"emails.home", scimResourceTypeSchema,
                         "urn:ietf:params:scim:schemas:core:2.0:User:emails.home"}
         };
-    }
-
-    @Test(dataProvider = "dataForGetAttributeValueFromString")
-    public void testGetAttributeValueFromString(Object attributeValue, SCIMDefinitions.DataType
-            dataType, Object expectedAttributeValueTypeFromString) throws CharonException, BadRequestException {
-
-        Object attributeValueFromString = AttributeUtil.getAttributeValueFromString(attributeValue, dataType);
-
-        if(attributeValue!=null){
-            Assert.assertEquals(attributeValueFromString.getClass(), expectedAttributeValueTypeFromString);
-        }
-        else{
-            Assert.assertNull(attributeValueFromString);
-        }
-    }
-
-    @Test(dataProvider = "dataForGetStringValueOfAttribute")
-    public void testGetStringValueOfAttribute(Object attributeValue, SCIMDefinitions.DataType
-            dataType, Object expectedStringValueOfAttribute) throws CharonException {
-
-        Object stringValueOfAttribute = AttributeUtil.getStringValueOfAttribute(attributeValue, dataType);
-        Assert.assertEquals(stringValueOfAttribute, expectedStringValueOfAttribute);
     }
 
     @Test(dataProvider = "dataForQueryParamEncoding")
