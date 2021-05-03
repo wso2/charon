@@ -59,7 +59,7 @@ public class ResourceManagerUtilTest {
         AttributeSchema subAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
-                        "addresses", COMPLEX, false, "", false, false,
+                        "addresses", COMPLEX, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null,
                         subSubAttributeSchemaList);
         AttributeSchema subAttributeSchema2 =
@@ -96,12 +96,12 @@ public class ResourceManagerUtilTest {
         Map<String, Boolean> uriList1 = new HashMap<>();
 
         Map<String, Boolean> uriList2 = new HashMap<>();
-        uriList2.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", false);
+        uriList2.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", true);
         uriList2.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department", false);
         uriList2.put("urn:ietf:params:scim:schemas:core:2.0:User:emails.value", true);
 
         Map<String, Boolean> uriList3 = new HashMap<>();
-        uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", false);
+        uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", true);
         uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department", false);
         uriList3.put("urn:ietf:params:scim:schemas:core:2.0:User:emails.value", false);
 
@@ -208,26 +208,24 @@ public class ResourceManagerUtilTest {
         List<String> schemasList = new ArrayList<>();
         schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
         schemasList.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
-        AttributeSchema subSubAttributeSchema =
+        AttributeSchema subSubAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city",
                         "city", STRING, false, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
-        AttributeSchema subSubAttributeSchema1 =
+        AttributeSchema subSubAttributeSchema2 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2.value",
-                        "value", STRING, true, "", false, false,
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.attribute3",
+                        "attribute3", STRING, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
         ArrayList<AttributeSchema> subSubAttributeSchemaList = new ArrayList<>();
-        subSubAttributeSchemaList.add(subSubAttributeSchema);
-        ArrayList<AttributeSchema> subSubAttributeSchemaList1 = new ArrayList<>();
         subSubAttributeSchemaList.add(subSubAttributeSchema1);
+        subSubAttributeSchemaList.add(subSubAttributeSchema2);
         AttributeSchema subAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
-                        "addresses", COMPLEX, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null,
-                        subSubAttributeSchemaList);
+                        "addresses", COMPLEX, true, "", false, false,
+                        READ_WRITE, DEFAULT, NONE, null, null, subSubAttributeSchemaList);
         AttributeSchema subAttributeSchema2 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
@@ -235,20 +233,13 @@ public class ResourceManagerUtilTest {
                         READ_WRITE, DEFAULT, NONE, null, null, null);
         AttributeSchema subAttributeSchema3 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:core:2.0:User:attribute3",
-                        "attribute3", STRING, true, "", false, false,
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:attribute2",
+                        "attribute2", STRING, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
-        AttributeSchema subAttributeSchema4 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2",
-                        "attribute2", STRING, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, subSubAttributeSchemaList1);
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
         subAttributeSchemaList.add(subAttributeSchema3);
-        ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
-        subAttributeSchemaList1.add(subAttributeSchema4);
         AttributeSchema attributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
@@ -260,15 +251,15 @@ public class ResourceManagerUtilTest {
                         "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1",
                         "attribute1", STRING,
                         true, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList1);
+                        READ_WRITE, DEFAULT, NONE, null, null, null);
         SCIMResourceTypeSchema scimResourceTypeSchema =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
 
         List<String> multiValuedAttributes = new ArrayList<>();
-        multiValuedAttributes.add
-                ("urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1:attribute2.value");
-        multiValuedAttributes.add("urn:ietf:params:scim:schemas:core:2.0:User:attribute3");
+        multiValuedAttributes.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.attribute3");
+        multiValuedAttributes.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:attribute2");
         multiValuedAttributes.add("urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1");
+
         return new Object[][]{
 
                 {scimResourceTypeSchema, multiValuedAttributes}

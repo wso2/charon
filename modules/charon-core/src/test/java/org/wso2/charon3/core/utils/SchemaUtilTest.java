@@ -51,7 +51,7 @@ public class SchemaUtilTest {
         AttributeSchema subAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
-                        "addresses", COMPLEX, false, "", false, false,
+                        "addresses", COMPLEX, true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null,
                         subSubAttributeSchemaList);
         AttributeSchema subAttributeSchema2 =
