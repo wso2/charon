@@ -27,7 +27,9 @@ import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
+import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +105,64 @@ public class AttributeUtilTest {
 
         Object stringValueOfAttribute = AttributeUtil.getStringValueOfAttribute(attributeValue, dataType);
         Assert.assertEquals(stringValueOfAttribute, expectedStringValueOfAttribute);
+    }
+
+    @DataProvider(name = "dataForParseDateTime")
+    public Object[][] dataToParseDateTime() {
+
+        Instant instant = Instant.parse("2021-04-20T09:06:19.839Z");
+
+        return new Object[][]{
+
+                {"2021-04-20T09:06:19.839Z", instant, "SUCCESS"},
+                {"", null, "SUCCESS"},
+                {"2021-04-20T09", null, "DATE_TIME_EXCEPTION"}
+        };
+    }
+
+    @Test(dataProvider = "dataForParseDateTime")
+    public void testParseDateTime(String dateTimeString, Instant expectedLocalDateTime, String expectedResult)
+            throws CharonException {
+
+        String result = "";
+        try {
+            Instant localDateTime = AttributeUtil.parseDateTime(dateTimeString);
+            Assert.assertEquals(localDateTime, expectedLocalDateTime);
+            result = "SUCCESS";
+        } catch (CharonException e) {
+            try {
+                OffsetDateTime.parse(dateTimeString).toInstant();
+            } catch (DateTimeException dte) {
+                result = "DATE_TIME_EXCEPTION";
+            }
+        }
+        Assert.assertEquals(result, expectedResult);
+    }
+
+    @DataProvider(name = "dataForParseBoolean")
+    public Object[][] dataToParseBoolean() {
+
+        return new Object[][]{
+
+                {"true", true, "SUCCESS"},
+                {true, true, "SUCCESS"},
+                {10, null, "EXCEPTION"}
+        };
+    }
+
+    @Test(dataProvider = "dataForParseBoolean")
+    public void testParseBoolean(Object booleanValueObject, Boolean expectedBooleanValue, String expectedResult)
+            throws BadRequestException {
+
+        String result = "";
+        try {
+            Boolean booleanValue = AttributeUtil.parseBoolean(booleanValueObject);
+            Assert.assertEquals(booleanValue, expectedBooleanValue);
+            result = "SUCCESS";
+        } catch (Exception e) {
+            result = "EXCEPTION";
+        }
+        Assert.assertEquals(result, expectedResult);
     }
 
     @DataProvider(name = "dataForQueryParamEncoding")
