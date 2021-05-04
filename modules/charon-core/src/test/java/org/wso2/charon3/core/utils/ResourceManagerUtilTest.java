@@ -75,7 +75,6 @@ public class ResourceManagerUtilTest {
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
-        subAttributeSchemaList.add(subAttributeSchema3);
         ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
         subAttributeSchemaList1.add(subAttributeSchema3);
         AttributeSchema attributeSchema1 =
@@ -103,7 +102,6 @@ public class ResourceManagerUtilTest {
         Map<String, Boolean> uriList3 = new HashMap<>();
         uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", true);
         uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department", false);
-        uriList3.put("urn:ietf:params:scim:schemas:core:2.0:User:emails.value", false);
 
         Map<String, Boolean> uriList4 = new HashMap<>();
 
