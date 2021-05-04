@@ -143,7 +143,6 @@ public class PatchOperationUtilTest {
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
-        subAttributeSchemaList.add(subAttributeSchema3);
         ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
         subAttributeSchemaList1.add(subAttributeSchema3);
         AttributeSchema attributeSchema1 =
@@ -391,7 +390,6 @@ public class PatchOperationUtilTest {
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
-        subAttributeSchemaList.add(subAttributeSchema3);
         ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
         subAttributeSchemaList1.add(subAttributeSchema3);
         ArrayList<AttributeSchema> subAttributeSchemaList2 = new ArrayList<>();
