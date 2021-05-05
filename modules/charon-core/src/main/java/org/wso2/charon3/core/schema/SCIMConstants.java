@@ -25,6 +25,7 @@ public class SCIMConstants {
     public static final String USER_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:User";
     public static final String ENTERPRISE_USER_SCHEMA_URI =
             "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
+    public static final String CUSTOM_USER_SCHEMA_URI = "urn:scim:custom:schema";
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String ROLE_SCHEMA_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role";
     public static final String LISTED_RESOURCE_CORE_SCHEMA_URI = "urn:ietf:params:scim:api:messages:2.0:ListResponse";
@@ -49,6 +50,8 @@ public class SCIMConstants {
     public static final String GROUP = "Group";
     public static final String ROLE = "Role";
     public static final String ENTERPRISE_USER = "EnterpriseUser";
+    public static final String CUSTOM_USER = "CustomUser";
+
     public static final String RESOURCE_TYPE = "ResourceType";
 
     /*Resource endpoints relative to the base SCIM URL*/
@@ -698,6 +701,14 @@ public class SCIMConstants {
         public static final String DESCRIPTION = "description";
         public static final String ENTERPRISE_USER_DESC = "Enterprise User";
     }
+
+    public static class CustomUserSchemaConstants {
+
+        public static final String NAME = "name";
+        public static final String DESCRIPTION = "description";
+        public static final String CUSTOM_USER_DESC = "Custom User";
+    }
+
 
     /**
      * Constants found in operations.

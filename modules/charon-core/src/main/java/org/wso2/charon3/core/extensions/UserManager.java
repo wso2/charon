@@ -237,4 +237,17 @@ public interface UserManager {
 
         throw new NotImplementedException();
     }
+
+    default List<Attribute> getCustomUserSchema(String tenantDomain) throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+
+    default List<Attribute> getCustomUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
  }
