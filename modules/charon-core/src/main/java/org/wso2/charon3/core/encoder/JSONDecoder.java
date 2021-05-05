@@ -558,8 +558,9 @@ public class JSONDecoder {
                 //this case is only valid for the extension schema
                 //As according to the spec we have complex attribute inside complex attribute only for extension,
                 //we need to treat it separately
-            } else if (complexAttributeSchema.getName().equals(
-                    SCIMResourceSchemaManager.getInstance().getExtensionName())) {
+            } else if ((complexAttributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance()
+                    .getExtensionName())) || (complexAttributeSchema.getName().equals(SCIMResourceSchemaManager
+                    .getInstance().getCustomExtensionName()))) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
                     List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();

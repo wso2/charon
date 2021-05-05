@@ -36,7 +36,9 @@ public class SCIMResourceTypeSchema implements ResourceTypeSchema, Serializable 
         this.schemasList = schemas;
         if (attributeSchemas != null) {
             for (AttributeSchema attributeSchema : attributeSchemas) {
-                this.attributeList.add(attributeSchema);
+                if (attributeSchema != null) {
+                    this.attributeList.add(attributeSchema);
+                }
             }
         }
     }

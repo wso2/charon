@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
@@ -36,6 +37,10 @@ public interface ResourceManager {
      */
     SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes);
 
+    default SCIMResponse get(String id, String tenantDomain, UserManager userManager, String attributes, String excludeAttributes){
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED,
+                ResponseCodeConstants.DESC_NOT_IMPLEMENTED, Collections.emptyMap());
+    }
     /*
      * Method of resource endpoint which is mapped to HTTP POST request.
      *
@@ -245,4 +250,18 @@ public interface ResourceManager {
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());
     }
+
+    default SCIMResponse create(String schemaId, String tenantDomain, String scimObjectString, UserManager userManager, String attributes,
+                                String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED,
+                ResponseCodeConstants.DESC_NOT_IMPLEMENTED, Collections.emptyMap());
+    }
+
+    default SCIMResponse delete(String schemaId, String tenantDomain, String attributeUri, UserManager userManager){
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED,
+                ResponseCodeConstants.DESC_NOT_IMPLEMENTED, Collections.emptyMap());
+    }
+
 }
