@@ -55,26 +55,36 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.DEFAULT;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.SERVER;
 
+/**
+ * Test class of ServerSideValidator.
+ */
 @PrepareForTest({AbstractResourceManager.class})
 public class ServerSideValidatorTest extends PowerMockTestCase {
 
-    @DataProvider(name = "dataForValidateCreatedSCIMObject")
-    public Object[][] dataToValidateCreatedSCIMObject() throws InstantiationException, IllegalAccessException {
+    private User createNewUser() throws InstantiationException, IllegalAccessException {
 
-        User user1 = User.class.newInstance();
-        user1.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
-        user1.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
+        User user = User.class.newInstance();
+        user.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
+        user.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
 
-        SimpleAttribute simpleAttribute = new SimpleAttribute("nickName", "shaggy");
+        SimpleAttribute simpleAttribute = new SimpleAttribute("nickName", "rash");
         simpleAttribute.setMutability(SCIMDefinitions.Mutability.READ_WRITE);
         simpleAttribute.setRequired(false);
-        user1.setAttribute(simpleAttribute);
+        simpleAttribute.setReturned(DEFAULT);
+        simpleAttribute.setType(STRING);
+        user.setAttribute(simpleAttribute);
 
         ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
-        user1.setAttribute(complexAttributeMeta);
+        complexAttributeMeta.setReturned(DEFAULT);
+        complexAttributeMeta.setType(STRING);
+        user.setAttribute(complexAttributeMeta);
 
         SimpleAttribute simpleAttributeEmailType = new SimpleAttribute("type", "home");
+        simpleAttributeEmailType.setReturned(DEFAULT);
+        simpleAttributeEmailType.setType(STRING);
         SimpleAttribute simpleAttributeEmailValue = new SimpleAttribute("value", "rash@gmail.com");
+        simpleAttributeEmailValue.setReturned(DEFAULT);
+        simpleAttributeEmailValue.setType(STRING);
 
         Map<String, Attribute> valuesMap = new HashMap<>();
         valuesMap.put("type", simpleAttributeEmailType);
@@ -84,14 +94,118 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         complexAttributeEmail.setType(COMPLEX);
         complexAttributeEmail.setMutability(READ_WRITE);
         complexAttributeEmail.setRequired(false);
+        complexAttributeEmail.setReturned(DEFAULT);
         complexAttributeEmail.setSubAttributesList(valuesMap);
 
         MultiValuedAttribute multiValuedAttributeEmail = new MultiValuedAttribute("emails");
         multiValuedAttributeEmail.setType(SCIMDefinitions.DataType.COMPLEX);
         multiValuedAttributeEmail.setMultiValued(true);
         multiValuedAttributeEmail.setMutability(READ_WRITE);
+        multiValuedAttributeEmail.setReturned(DEFAULT);
         multiValuedAttributeEmail.setAttributeValue(complexAttributeEmail);
-        user1.setAttribute(multiValuedAttributeEmail);
+        user.setAttribute(multiValuedAttributeEmail);
+
+        return user;
+    }
+
+    private Group createNewGroup() throws InstantiationException, IllegalAccessException {
+
+        Group group = Group.class.newInstance();
+        group.setSchema("urn:ietf:params:scim:schemas:core:2.0:Group");
+
+        SimpleAttribute simpleAttributeGroup = new SimpleAttribute("displayName", "manager");
+        group.setAttribute(simpleAttributeGroup);
+
+        SimpleAttribute simpleAttributeDisplay = new SimpleAttribute("display", "rashN");
+        SimpleAttribute simpleAttributeValue = new SimpleAttribute(
+                "value", "008bba85-451d-414b-87de-c03b5a1f4218");
+
+        Map<String, Attribute> valuesMapGroup = new HashMap<>();
+        valuesMapGroup.put("display", simpleAttributeDisplay);
+        valuesMapGroup.put("value", simpleAttributeValue);
+
+        ComplexAttribute complexAttributeMembers = new ComplexAttribute(
+                "members_008bba85-451d-414b-87de-c03b5a1f4218_default");
+        complexAttributeMembers.setType(COMPLEX);
+        complexAttributeMembers.setMutability(READ_WRITE);
+        complexAttributeMembers.setRequired(false);
+        complexAttributeMembers.setSubAttributesList(valuesMapGroup);
+
+        MultiValuedAttribute multiValuedAttributeMembers = new MultiValuedAttribute("members");
+        multiValuedAttributeMembers.setType(SCIMDefinitions.DataType.COMPLEX);
+        multiValuedAttributeMembers.setMultiValued(true);
+        multiValuedAttributeMembers.setMutability(READ_WRITE);
+        multiValuedAttributeMembers.setAttributeValue(complexAttributeMembers);
+        group.setAttribute(multiValuedAttributeMembers);
+
+        return group;
+    }
+
+    private Role createNewRole() throws InstantiationException, IllegalAccessException {
+
+        Role role = Role.class.newInstance();
+        role.setSchema("urn:ietf:params:scim:schemas:extension:2.0:Role");
+
+        List<String> permissions = new ArrayList<>();
+        permissions.add("/permission/admin/login");
+        role.setPermissions(permissions);
+
+        SimpleAttribute simpleAttributeRole = new SimpleAttribute("displayName", "loginRole");
+        role.setAttribute(simpleAttributeRole);
+
+        MultiValuedAttribute multiValuedAttributePermissions = new MultiValuedAttribute("permissions");
+        multiValuedAttributePermissions.setType(SCIMDefinitions.DataType.REFERENCE);
+        multiValuedAttributePermissions.setMultiValued(true);
+        multiValuedAttributePermissions.setMutability(READ_WRITE);
+        List<Object> permissionsPrimitive = new ArrayList<>();
+        permissionsPrimitive.add("/permission/admin/login");
+        multiValuedAttributePermissions.setAttributePrimitiveValues(permissionsPrimitive);
+        role.setAttribute(multiValuedAttributePermissions);
+
+        MultiValuedAttribute multiValuedAttributeGroups = new MultiValuedAttribute("groups");
+        multiValuedAttributeGroups.setType(COMPLEX);
+        multiValuedAttributeGroups.setMultiValued(true);
+        multiValuedAttributeGroups.setMutability(READ_WRITE);
+
+        SimpleAttribute simpleAttributeGroupValue = new SimpleAttribute(
+                "value", "57ed28f8-a76c-4ebf-b6e2-c345270f9879");
+
+        Map<String, Attribute> valuesMapForGroups = new HashMap<>();
+        valuesMapForGroups.put("value", simpleAttributeGroupValue);
+
+        ComplexAttribute complexAttributeGroup = new ComplexAttribute(
+                "groups_57ed28f8-a76c-4ebf-b6e2-c345270f9879_default");
+        complexAttributeGroup.setType(COMPLEX);
+        complexAttributeGroup.setMutability(READ_WRITE);
+        complexAttributeGroup.setRequired(false);
+        complexAttributeGroup.setSubAttributesList(valuesMapForGroups);
+        multiValuedAttributeGroups.setAttributeValue(complexAttributeGroup);
+        role.setAttribute(multiValuedAttributeGroups);
+
+        MultiValuedAttribute multiValuedAttributeUsers = new MultiValuedAttribute("users");
+        multiValuedAttributeUsers.setType(COMPLEX);
+        multiValuedAttributeUsers.setMultiValued(true);
+        multiValuedAttributeUsers.setMutability(READ_WRITE);
+
+        SimpleAttribute simpleAttributeUserValue = new SimpleAttribute(
+                "value", "f11fc5ba-8684-44a7-a38b-5e2de0ff1751");
+
+        Map<String, Attribute> valuesMapForUsers = new HashMap<>();
+        valuesMapForUsers.put("value", simpleAttributeUserValue);
+
+        ComplexAttribute complexAttributeUsers = new ComplexAttribute(
+                "users_f11fc5ba-8684-44a7-a38b-5e2de0ff1751_default");
+        complexAttributeUsers.setType(COMPLEX);
+        complexAttributeUsers.setMutability(READ_WRITE);
+        complexAttributeUsers.setRequired(false);
+        complexAttributeUsers.setSubAttributesList(valuesMapForUsers);
+        multiValuedAttributeUsers.setAttributeValue(complexAttributeGroup);
+        role.setAttribute(multiValuedAttributeUsers);
+
+        return role;
+    }
+
+    private SCIMResourceTypeSchema createSCIMResourceTypeSchemaUser() {
 
         List<String> schemasList = new ArrayList<>();
         schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
@@ -140,33 +254,10 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         SCIMResourceTypeSchema userResourceSchema =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
 
-        Group group1 = Group.class.newInstance();
-        group1.setSchema("urn:ietf:params:scim:schemas:core:2.0:Group");
+        return userResourceSchema;
+    }
 
-        SimpleAttribute simpleAttributeGroup = new SimpleAttribute("displayName", "manager");
-        group1.setAttribute(simpleAttributeGroup);
-
-        SimpleAttribute simpleAttributeDisplay = new SimpleAttribute("display", "rashN");
-        SimpleAttribute simpleAttributeValue = new SimpleAttribute(
-                "value", "008bba85-451d-414b-87de-c03b5a1f4218");
-
-        Map<String, Attribute> valuesMapGroup = new HashMap<>();
-        valuesMapGroup.put("display", simpleAttributeDisplay);
-        valuesMapGroup.put("value", simpleAttributeValue);
-
-        ComplexAttribute complexAttributeMembers = new ComplexAttribute(
-                "members_008bba85-451d-414b-87de-c03b5a1f4218_default");
-        complexAttributeMembers.setType(COMPLEX);
-        complexAttributeMembers.setMutability(READ_WRITE);
-        complexAttributeMembers.setRequired(false);
-        complexAttributeMembers.setSubAttributesList(valuesMapGroup);
-
-        MultiValuedAttribute multiValuedAttributeMembers = new MultiValuedAttribute("members");
-        multiValuedAttributeMembers.setType(SCIMDefinitions.DataType.COMPLEX);
-        multiValuedAttributeMembers.setMultiValued(true);
-        multiValuedAttributeMembers.setMutability(READ_WRITE);
-        multiValuedAttributeMembers.setAttributeValue(complexAttributeMembers);
-        group1.setAttribute(multiValuedAttributeMembers);
+    private SCIMResourceTypeSchema createSCIMResourceTypeSchemaGroup() {
 
         List<String> schemasListGroup = new ArrayList<>();
         schemasListGroup.add("urn:ietf:params:scim:schemas:core:2.0:Group");
@@ -214,64 +305,10 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasListGroup, attributeSchemaGroup1,
                         attributeSchemaGroup2, attributeSchemaGroup3, attributeSchemaGroup4, attributeSchemaGroup5);
 
-        Role role1 = Role.class.newInstance();
-        role1.setSchema("urn:ietf:params:scim:schemas:extension:2.0:Role");
+        return  groupResourceSchema;
+    }
 
-        List<String> permissions = new ArrayList<>();
-        permissions.add("/permission/admin/login");
-        role1.setPermissions(permissions);
-
-        SimpleAttribute simpleAttributeRole = new SimpleAttribute("displayName", "loginRole");
-        role1.setAttribute(simpleAttributeRole);
-
-        MultiValuedAttribute multiValuedAttributePermissions = new MultiValuedAttribute("permissions");
-        multiValuedAttributePermissions.setType(SCIMDefinitions.DataType.REFERENCE);
-        multiValuedAttributePermissions.setMultiValued(true);
-        multiValuedAttributePermissions.setMutability(READ_WRITE);
-        List<Object> permissionsPrimitive = new ArrayList<>();
-        permissionsPrimitive.add("/permission/admin/login");
-        multiValuedAttributePermissions.setAttributePrimitiveValues(permissionsPrimitive);
-        role1.setAttribute(multiValuedAttributePermissions);
-
-        MultiValuedAttribute multiValuedAttributeGroups = new MultiValuedAttribute("groups");
-        multiValuedAttributeGroups.setType(COMPLEX);
-        multiValuedAttributeGroups.setMultiValued(true);
-        multiValuedAttributeGroups.setMutability(READ_WRITE);
-
-        SimpleAttribute simpleAttributeGroupValue = new SimpleAttribute(
-                "value", "57ed28f8-a76c-4ebf-b6e2-c345270f9879");
-
-        Map<String, Attribute> valuesMapForGroups = new HashMap<>();
-        valuesMapForGroups.put("value", simpleAttributeGroupValue);
-
-        ComplexAttribute complexAttributeGroup = new ComplexAttribute(
-                "groups_57ed28f8-a76c-4ebf-b6e2-c345270f9879_default");
-        complexAttributeGroup.setType(COMPLEX);
-        complexAttributeGroup.setMutability(READ_WRITE);
-        complexAttributeGroup.setRequired(false);
-        complexAttributeGroup.setSubAttributesList(valuesMapForGroups);
-        multiValuedAttributeGroups.setAttributeValue(complexAttributeGroup);
-        role1.setAttribute(multiValuedAttributeGroups);
-
-        MultiValuedAttribute multiValuedAttributeUsers = new MultiValuedAttribute("users");
-        multiValuedAttributeUsers.setType(COMPLEX);
-        multiValuedAttributeUsers.setMultiValued(true);
-        multiValuedAttributeUsers.setMutability(READ_WRITE);
-
-        SimpleAttribute simpleAttributeUserValue = new SimpleAttribute(
-                "value", "f11fc5ba-8684-44a7-a38b-5e2de0ff1751");
-
-        Map<String, Attribute> valuesMapForUsers = new HashMap<>();
-        valuesMapForUsers.put("value", simpleAttributeUserValue);
-
-        ComplexAttribute complexAttributeUsers = new ComplexAttribute(
-                "users_f11fc5ba-8684-44a7-a38b-5e2de0ff1751_default");
-        complexAttributeUsers.setType(COMPLEX);
-        complexAttributeUsers.setMutability(READ_WRITE);
-        complexAttributeUsers.setRequired(false);
-        complexAttributeUsers.setSubAttributesList(valuesMapForUsers);
-        multiValuedAttributeUsers.setAttributeValue(complexAttributeGroup);
-        role1.setAttribute(multiValuedAttributeUsers);
+    private SCIMResourceTypeSchema createSCIMResourceTypeSchemaRole() {
 
         List<String> schemasListRole = new ArrayList<>();
         schemasListRole.add("urn:ietf:params:scim:schemas:extension:2.0:Role");
@@ -319,114 +356,14 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasListRole, attributeSchemaRole1,
                         attributeSchemaRole2, attributeSchemaRole3, attributeSchemaRole4, attributeSchemaRole5);
 
-        return new Object[][]{
-
-                {user1, userResourceSchema, "SUCCESS"},
-                {group1, groupResourceSchema, "SUCCESS"},
-                {user1, groupResourceSchema, "BAD_REQUEST"},
-                {group1, userResourceSchema, "CHARON_EXCEPTION"},
-                {role1, roleResourceSchema, "SUCCESS"}
-
-        };
+        return  roleResourceSchema;
     }
 
-    @Test(dataProvider = "dataForValidateCreatedSCIMObject")
-    public void testValidateCreatedSCIMObject(Object objectScimObject, Object objectResourceSchema, Object objectExpect)
-            throws CharonException, BadRequestException, NotFoundException {
-
-        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String expect = (String) objectExpect;
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Roles");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.SERVICE_PROVIDER_CONFIG_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/ServiceProviderConfig");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/ResourceTypes");
-
-        String result = "";
-
-        try {
-            ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
-            result = "SUCCESS";
-        } catch (BadRequestException e) {
-            result = "BAD_REQUEST";
-        } catch (CharonException e) {
-            result = "CHARON_EXCEPTION";
-        }
-
-        Assert.assertEquals(expect, result);
-    }
-
-    @DataProvider(name = "dataForValidateUpdatedSCIMObject")
-    public Object[][] dataToValidateUpdatedSCIMObject() throws InstantiationException, IllegalAccessException,
-            CharonException {
-
-        User oldObject1 = User.class.newInstance();
-        oldObject1.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
-        oldObject1.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
-
-        SimpleAttribute simpleAttributeId = new SimpleAttribute("id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
-        simpleAttributeId.setMutability(READ_ONLY);
-        simpleAttributeId.setRequired(false);
-        oldObject1.setAttribute(simpleAttributeId);
-
-        ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
-        oldObject1.setAttribute(complexAttributeMeta);
-
-        User newObject1 = (User) CopyUtil.deepCopy(oldObject1);
-        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "shaggy");
-        newObject1.setAttribute(simpleAttributeNickName);
-
-        User oldObject2 = (User) CopyUtil.deepCopy(oldObject1);
-
-        SimpleAttribute simpleAttributeEmailType = new SimpleAttribute("type", "home");
-        SimpleAttribute simpleAttributeEmailValue = new SimpleAttribute("value", "rash@gmail.com");
-
-        Map<String, Attribute> valuesMap = new HashMap<>();
-        valuesMap.put("type", simpleAttributeEmailType);
-        valuesMap.put("value", simpleAttributeEmailValue);
-
-        ComplexAttribute complexAttributeEmail = new ComplexAttribute("emails_rash@gmail.com_home");
-        complexAttributeEmail.setType(COMPLEX);
-        complexAttributeEmail.setMutability(READ_WRITE);
-        complexAttributeEmail.setRequired(false);
-        complexAttributeEmail.setSubAttributesList(valuesMap);
-
-        MultiValuedAttribute multiValuedAttributeEmail = new MultiValuedAttribute("emails");
-        multiValuedAttributeEmail.setType(SCIMDefinitions.DataType.COMPLEX);
-        multiValuedAttributeEmail.setMultiValued(true);
-        multiValuedAttributeEmail.setMutability(READ_WRITE);
-        multiValuedAttributeEmail.setAttributeValue(complexAttributeEmail);
-        oldObject2.setAttribute(multiValuedAttributeEmail);
-
-        User newObject2 = (User) CopyUtil.deepCopy(oldObject2);
-        newObject2.setAttribute(simpleAttributeNickName);
-
-        AbstractSCIMObject oldObject3 = AbstractSCIMObject.class.newInstance();
-        oldObject3.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
-        oldObject3.setAttribute(simpleAttribute1);
-        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
-        oldObject3.setAttribute(simpleAttribute2);
-        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
-        oldObject3.setAttribute(simpleAttribute3);
-        oldObject3.setAttribute(complexAttributeMeta);
-
-        AbstractSCIMObject newObject3 = (AbstractSCIMObject) CopyUtil.deepCopy(oldObject3);
-        SimpleAttribute simpleAttributeDescription = new SimpleAttribute("description", "User Account");
-        newObject3.setAttribute(simpleAttributeDescription);
+    private SCIMResourceTypeSchema createSCIMResourceTypeSchemaCustomUser() {
 
         List<String> schemasList1 = new ArrayList<>();
         schemasList1.add("urn:ietf:params:scim:schemas:core:2.0:User");
         schemasList1.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
-
         AttributeSchema subAttributeSchemaValue =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:core:2.0:User:emails.value",
@@ -447,82 +384,258 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         SCIMResourceTypeSchema scimResourceTypeSchema1 = SCIMResourceTypeSchema.createSCIMResourceSchema(
                 schemasList1, attributeSchemaCustom, attributeSchemaEmail);
 
-        List<String> schemasList = new ArrayList<>();
-        schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
-        schemasList.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
+        return scimResourceTypeSchema1;
+    }
 
-        AttributeSchema subSubAttributeSchema =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city",
-                        "city", STRING, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, null);
-        ArrayList<AttributeSchema> subSubAttributeSchemaList = new ArrayList<>();
-        subSubAttributeSchemaList.add(subSubAttributeSchema);
-        AttributeSchema subAttributeSchema1 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
-                        "addresses", COMPLEX, true, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null,
-                        subSubAttributeSchemaList);
-        AttributeSchema subAttributeSchema2 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
-                        "department", STRING, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, null);
-        AttributeSchema subAttributeSchema3 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:core:2.0:User:emails.value",
-                        "value", STRING, false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, null);
-        ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
-        subAttributeSchemaList.add(subAttributeSchema1);
-        subAttributeSchemaList.add(subAttributeSchema2);
-        ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
-        subAttributeSchemaList1.add(subAttributeSchema3);
-        AttributeSchema attributeSchema1 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", COMPLEX,
-                        false, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList);
-        AttributeSchema attributeSchema2 =
-                SCIMAttributeSchema.createSCIMAttributeSchema(
-                        "urn:ietf:params:scim:schemas:core:2.0:User:emails",
-                        "emails", COMPLEX, true, "", false, false,
-                        READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList1);
-        SCIMResourceTypeSchema scimResourceTypeSchema =
-                SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
+    @DataProvider(name = "dataForValidateCreatedSCIMObjectSuccess")
+    public Object[][] dataToValidateCreatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException {
+
+        User user = createNewUser();
+        Group group = createNewGroup();
+        Role role = createNewRole();
+
+        SCIMResourceTypeSchema userResourceSchema = createSCIMResourceTypeSchemaUser();
+        SCIMResourceTypeSchema groupResourceSchema = createSCIMResourceTypeSchemaGroup();
+        SCIMResourceTypeSchema roleResourceSchema = createSCIMResourceTypeSchemaRole();
 
         return new Object[][]{
 
-                {oldObject1, newObject1, scimResourceTypeSchema1, "BAD_REQUEST"},
-                {oldObject2, newObject2, scimResourceTypeSchema, "SUCCESS"},
-                {oldObject3, newObject3, scimResourceTypeSchema, "CHARON_EXCEPTION"}
+                {user, userResourceSchema},
+                {group, groupResourceSchema},
+                {role, roleResourceSchema}
         };
     }
 
-    @Test(dataProvider = "dataForValidateUpdatedSCIMObject")
-    public void testValidateUpdatedSCIMObject(Object objectOldObject, Object objectNewObject,
-                                              Object objectResourceSchema, Object objectExpect)
-            throws CharonException, BadRequestException {
+    @Test(dataProvider = "dataForValidateCreatedSCIMObjectSuccess")
+    public void testValidateCreatedSCIMObjectSuccess(Object objectScimObject, Object objectResourceSchema)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Roles");
+
+        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
+        Assert.assertTrue(true, "validateCreatedSCIMObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateCreatedSCIMObjectThrowingExceptions")
+    public Object[][] dataToValidateCreatedSCIMObjectThrowingExceptions() throws InstantiationException,
+            IllegalAccessException {
+
+        User user = createNewUser();
+        Group group = createNewGroup();
+
+        SCIMResourceTypeSchema userResourceSchema = createSCIMResourceTypeSchemaUser();
+        SCIMResourceTypeSchema groupResourceSchema = createSCIMResourceTypeSchemaGroup();
+
+        return new Object[][]{
+
+                {user, groupResourceSchema},
+                {group, userResourceSchema}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateCreatedSCIMObjectThrowingExceptions",
+            expectedExceptions = {CharonException.class, BadRequestException.class})
+    public void testValidateCreatedSCIMObjectThrowingExceptions(Object objectScimObject, Object objectResourceSchema)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Roles");
+
+        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMObjectInList")
+    public Object[][] dataToValidateRetrievedSCIMObjectInList() throws InstantiationException, IllegalAccessException {
+
+        User user = createNewUser();
+        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
+
+        return new Object[][]{
+
+                {user, scimResourceTypeSchema, "name", "emails"}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMObjectInList")
+    public void testValidateRetrievedSCIMObjectInList(Object objectScimObject, Object objectResourceSchema,
+            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+            throws BadRequestException, CharonException {
+
+        User scimObject = (User) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMObjectInList(scimObject, resourceSchema, requestedAttributes,
+                requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMObjectInList is successful");
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMObject")
+    public Object[][] dataToValidateRetrievedSCIMObject() throws InstantiationException, IllegalAccessException {
+
+        User user = createNewUser();
+        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
+
+        return new Object[][]{
+
+                {user, scimResourceTypeSchema, "name", "emails"}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMObject")
+    public void testValidateRetrievedSCIMObject(Object objectScimObject, Object objectResourceSchema,
+            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+            throws BadRequestException, CharonException {
+
+        User scimObject = (User) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMObject(scimObject, resourceSchema, requestedAttributes,
+                requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMRoleObject")
+    public Object[][] dataToValidateRetrievedSCIMRoleObject() throws InstantiationException, IllegalAccessException {
+
+        Role role = createNewRole();
+
+        return new Object[][]{
+
+                {role, "displayName", "groups"},
+                {role, null, "users"},
+                {role, null, null}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMRoleObject")
+    public void testValidateRetrievedSCIMRoleObject(Object objectScimObject, Object objectRequestedAttributes,
+                                                    Object objectRequestedExcludingAttributes) {
+
+        Role scimObject = (Role) objectScimObject;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMRoleObject(
+                scimObject, requestedAttributes, requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMRoleObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateUpdatedSCIMObjectSuccess")
+    public Object[][] dataToValidateUpdatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException,
+            CharonException {
+
+        User oldObject = createNewUser();
+
+        SimpleAttribute simpleAttributeId = new SimpleAttribute(
+                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
+        simpleAttributeId.setMutability(READ_ONLY);
+        simpleAttributeId.setRequired(false);
+        oldObject.setAttribute(simpleAttributeId);
+
+        User newObject = (User) CopyUtil.deepCopy(oldObject);
+        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
+        newObject.setAttribute(simpleAttributeNickName);
+
+        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
+
+        return new Object[][]{
+
+                {oldObject, newObject, scimResourceTypeSchema}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectSuccess")
+    public void testValidateUpdatedSCIMObjectSuccess(Object objectOldObject, Object objectNewObject,
+                         Object objectResourceSchema) throws CharonException, BadRequestException {
 
         AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
         AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String expect = (String) objectExpect;
 
-        String result = "";
+        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
 
-        try {
-            ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
-            result = "SUCCESS";
-        } catch (BadRequestException e) {
-            result = "BAD_REQUEST";
-        } catch (CharonException e) {
-            result = "CHARON_EXCEPTION";
-        }
+        Assert.assertTrue(true, "validateUpdatedSCIMObject is successful");
+    }
 
-        Assert.assertEquals(expect, result);
+    @DataProvider(name = "dataForValidateUpdatedSCIMObjectThrowingExceptions")
+    public Object[][] dataToValidateUpdatedSCIMObjectThrowingExceptions() throws InstantiationException,
+            IllegalAccessException, CharonException {
+
+        User oldObject1 = User.class.newInstance();
+        oldObject1.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
+        oldObject1.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
+
+        SimpleAttribute simpleAttributeId = new SimpleAttribute(
+                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
+        simpleAttributeId.setMutability(READ_ONLY);
+        simpleAttributeId.setRequired(false);
+        oldObject1.setAttribute(simpleAttributeId);
+
+        ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
+        oldObject1.setAttribute(complexAttributeMeta);
+
+        User newObject1 = (User) CopyUtil.deepCopy(oldObject1);
+        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
+        newObject1.setAttribute(simpleAttributeNickName);
+
+        AbstractSCIMObject oldObject2 = AbstractSCIMObject.class.newInstance();
+        oldObject2.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
+        oldObject2.setAttribute(simpleAttribute1);
+        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
+        oldObject2.setAttribute(simpleAttribute2);
+        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
+        oldObject2.setAttribute(simpleAttribute3);
+        oldObject2.setAttribute(complexAttributeMeta);
+
+        AbstractSCIMObject newObject2 = (AbstractSCIMObject) CopyUtil.deepCopy(oldObject2);
+        SimpleAttribute simpleAttributeDescription = new SimpleAttribute("description", "User Account");
+        newObject2.setAttribute(simpleAttributeDescription);
+
+        SCIMResourceTypeSchema scimResourceTypeSchema1 = createSCIMResourceTypeSchemaCustomUser();
+        SCIMResourceTypeSchema scimResourceTypeSchema2 = createSCIMResourceTypeSchemaUser();
+
+        return new Object[][]{
+
+                {oldObject1, newObject1, scimResourceTypeSchema1},
+                {oldObject2, newObject2, scimResourceTypeSchema2}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectThrowingExceptions",
+            expectedExceptions = {CharonException.class, BadRequestException.class})
+    public void testValidateUpdatedSCIMObjectThrowingExceptions(Object objectOldObject, Object objectNewObject,
+                                    Object objectResourceSchema) throws CharonException, BadRequestException {
+
+        AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
+        AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
     }
 
     @DataProvider(name = "dataForValidateResourceTypeSCIMObject")
