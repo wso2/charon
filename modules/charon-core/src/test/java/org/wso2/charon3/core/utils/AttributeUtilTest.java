@@ -15,8 +15,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.charon3.core.utils;
 
+import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -27,9 +29,7 @@ import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
-import java.time.DateTimeException;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +64,8 @@ public class AttributeUtilTest {
                 {0b010110, BINARY, Byte.class},
                 {"referenceString", REFERENCE, String.class},
                 {"complexString", COMPLEX, String.class},
-                {null, STRING, null}
+                {null, STRING, null},
+                {JSONObject.NULL, STRING, String.class}
         };
     }
 
@@ -82,7 +83,7 @@ public class AttributeUtilTest {
     }
 
     @DataProvider(name = "dataForGetStringValueOfAttribute")
-    public Object[][] dataToGetStringValueOfAttribute() {
+    public Object[][] dataToGetStringValueOfAttribute() throws InstantiationException, IllegalAccessException {
 
         Instant instant = Instant.parse("2021-04-20T09:06:19.839Z");
 
@@ -107,70 +108,87 @@ public class AttributeUtilTest {
         Assert.assertEquals(stringValueOfAttribute, expectedStringValueOfAttribute);
     }
 
-    @DataProvider(name = "dataForParseDateTime")
-    public Object[][] dataToParseDateTime() {
+    @DataProvider(name = "dataForParseDateTimeSuccess")
+    public Object[][] dataToParseDateTimeSuccess() {
 
         Instant instant = Instant.parse("2021-04-20T09:06:19.839Z");
 
         return new Object[][]{
 
-                {"2021-04-20T09:06:19.839Z", instant, "SUCCESS"},
-                {"", null, "SUCCESS"},
-                {"2021-04-20T09", null, "DATE_TIME_EXCEPTION"}
+                {"2021-04-20T09:06:19.839Z", instant},
+                {"", null}
         };
     }
 
-    @Test(dataProvider = "dataForParseDateTime")
-    public void testParseDateTime(String dateTimeString, Instant expectedLocalDateTime, String expectedResult)
+    @Test(dataProvider = "dataForParseDateTimeSuccess")
+    public void testParseDateTimeSuccess(String dateTimeString, Instant expectedLocalDateTime)
             throws CharonException {
 
-        String result = "";
-        try {
-            Instant localDateTime = AttributeUtil.parseDateTime(dateTimeString);
-            Assert.assertEquals(localDateTime, expectedLocalDateTime);
-            result = "SUCCESS";
-        } catch (CharonException e) {
-            try {
-                OffsetDateTime.parse(dateTimeString).toInstant();
-            } catch (DateTimeException dte) {
-                result = "DATE_TIME_EXCEPTION";
-            }
-        }
-        Assert.assertEquals(result, expectedResult);
+        Instant localDateTime = AttributeUtil.parseDateTime(dateTimeString);
+        Assert.assertEquals(localDateTime, expectedLocalDateTime);
     }
 
-    @DataProvider(name = "dataForParseBoolean")
-    public Object[][] dataToParseBoolean() {
+    @DataProvider(name = "dataForParseDateTimeExceptions")
+    public Object[][] dataToParseDateTimeExceptions() {
 
         return new Object[][]{
 
-                {"true", true, "SUCCESS"},
-                {true, true, "SUCCESS"},
-                {10, null, "EXCEPTION"}
+                {"2021-04-20T09"}
         };
     }
 
-    @Test(dataProvider = "dataForParseBoolean")
-    public void testParseBoolean(Object booleanValueObject, Boolean expectedBooleanValue, String expectedResult)
-            throws BadRequestException {
+    @Test(dataProvider = "dataForParseDateTimeExceptions")
+    public void testParseDateTimeExceptions(String dateTimeString) {
 
-        String result = "";
-        try {
-            Boolean booleanValue = AttributeUtil.parseBoolean(booleanValueObject);
-            Assert.assertEquals(booleanValue, expectedBooleanValue);
-            result = "SUCCESS";
-        } catch (Exception e) {
-            result = "EXCEPTION";
-        }
-        Assert.assertEquals(result, expectedResult);
+        Assert.assertThrows(CharonException.class, () -> AttributeUtil.parseDateTime(dateTimeString));
     }
 
-    @DataProvider(name = "dataForQueryParamEncoding")
-    public Object[][] dataToGetAttributeURI() {
+    @DataProvider(name = "dataForParseBooleanSuccess")
+    public Object[][] dataToParseBooleanSuccess() {
+
+        return new Object[][]{
+
+                {true, true},
+                {false, false},
+                {"true", true},
+                {"false", false},
+                {"abc", false},
+                {"", false},
+                {null, null}
+        };
+    }
+
+    @Test(dataProvider = "dataForParseBooleanSuccess")
+    public void testParseBooleanSuccess(Object booleanValueObject, Boolean expectedBooleanValue)
+            throws BadRequestException {
+
+        Boolean booleanValue = AttributeUtil.parseBoolean(booleanValueObject);
+        Assert.assertEquals(booleanValue, expectedBooleanValue);
+    }
+
+    @DataProvider(name = "dataForParseBooleanExceptions")
+    public Object[][] dataToParseBooleanExceptions() {
+
+        return new Object[][]{
+
+                {10},
+                {0b010110}
+        };
+    }
+
+    @Test(dataProvider = "dataForParseBooleanExceptions")
+    public void testParseBooleanExceptions(Object booleanValueObject) {
+
+        Assert.assertThrows(Exception.class, () -> AttributeUtil.parseBoolean(booleanValueObject));
+
+    }
+
+    private SCIMResourceTypeSchema getResourceSchema() {
 
         List<String> schemasList = new ArrayList<>();
         schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
         schemasList.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
+
         AttributeSchema subSubAttributeSchema =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city",
@@ -215,6 +233,14 @@ public class AttributeUtilTest {
         SCIMResourceTypeSchema scimResourceTypeSchema =
                 SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
 
+        return scimResourceTypeSchema;
+    }
+
+    @DataProvider(name = "dataForQueryParamEncodingSuccess")
+    public Object[][] dataToGetAttributeURISuccess() {
+
+        SCIMResourceTypeSchema scimResourceTypeSchema = getResourceSchema();
+
         return new Object[][]{
 
                 {"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User.addresses.city",
@@ -230,16 +256,35 @@ public class AttributeUtilTest {
                         scimResourceTypeSchema,
                         "urn:ietf:params:scim:schemas:core:2.0:User:emails.home"},
                 {"emails.home", scimResourceTypeSchema,
-                        "urn:ietf:params:scim:schemas:core:2.0:User:emails.home"}
+                        "urn:ietf:params:scim:schemas:core:2.0:User:emails.home"},
+                {"emails", scimResourceTypeSchema,
+                        "urn:ietf:params:scim:schemas:core:2.0:User:emails"}
         };
     }
 
-    @Test(dataProvider = "dataForQueryParamEncoding")
-    public void testGetAttributeURI(String attributeName, SCIMResourceTypeSchema schema,
+    @Test(dataProvider = "dataForQueryParamEncodingSuccess")
+    public void testGetAttributeURISuccess(String attributeName, SCIMResourceTypeSchema schema,
                                     String expectedAttributeURI) throws BadRequestException {
 
         String attributeURI = AttributeUtil.getAttributeURI(attributeName, schema);
         Assert.assertEquals(attributeURI, expectedAttributeURI);
+    }
+
+    @DataProvider(name = "dataForQueryParamEncodingExceptions")
+    public Object[][] dataToGetAttributeURIExceptions() {
+
+        SCIMResourceTypeSchema scimResourceTypeSchema = getResourceSchema();
+
+        return new Object[][]{
+
+                {"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:accountState", scimResourceTypeSchema}
+        };
+    }
+
+    @Test(dataProvider = "dataForQueryParamEncodingExceptions")
+    public void testGetAttributeURIExceptions(String attributeName, SCIMResourceTypeSchema schema) {
+
+        Assert.assertThrows(BadRequestException.class, () -> AttributeUtil.getAttributeURI(attributeName, schema));
     }
 
 }

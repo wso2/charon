@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.charon3.core.utils;
 
 import org.testng.Assert;
@@ -35,17 +36,16 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Mutability.READ_WRITE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.DEFAULT;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.NEVER;
+import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.REQUEST;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
 
 /**
  * Test class of ResourceManagerUtil.
  */
-
 public class ResourceManagerUtilTest {
 
-    @DataProvider(name = "dataForRequiredAttributesURIs")
-    public Object[][] dataToRequiredAttributesURIs() {
-
+    private SCIMResourceTypeSchema getResourceSchema() {
         List<String> schemasList = new ArrayList<>();
         schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
         schemasList.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
@@ -54,8 +54,20 @@ public class ResourceManagerUtilTest {
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city",
                         "city", STRING, false, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
+        AttributeSchema subSubAttributeSchema1 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.subattribute1",
+                        "subattribute1", STRING, false, "", false, false,
+                        READ_WRITE, NEVER, NONE, null, null, null);
+        AttributeSchema subSubAttributeSchema2 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.subattribute2",
+                        "subattribute2", STRING, false, "", false, false,
+                        READ_WRITE, REQUEST, NONE, null, null, null);
         ArrayList<AttributeSchema> subSubAttributeSchemaList = new ArrayList<>();
         subSubAttributeSchemaList.add(subSubAttributeSchema);
+        subSubAttributeSchemaList.add(subSubAttributeSchema1);
+        subSubAttributeSchemaList.add(subSubAttributeSchema2);
         AttributeSchema subAttributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses",
@@ -69,18 +81,36 @@ public class ResourceManagerUtilTest {
                         READ_WRITE, DEFAULT, NONE, null, null, null);
         AttributeSchema subAttributeSchema3 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:attribute3",
+                        "attribute3", STRING, true, "", false, false,
+                        READ_WRITE, NEVER, NONE, null, null, null);
+        AttributeSchema subAttributeSchema4 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:attribute4",
+                        "attribute4", STRING, true, "", false, false,
+                        READ_WRITE, REQUEST, NONE, null, null, null);
+        AttributeSchema subAttributeSchema5 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:core:2.0:User:emails.value",
                         "value", STRING, false, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, null);
+        AttributeSchema subAttributeSchema6 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:core:2.0:User:emails.subattribute",
+                        "subattribute", STRING, false, "", false, false,
+                        READ_WRITE, REQUEST, NONE, null, null, null);
         ArrayList<AttributeSchema> subAttributeSchemaList = new ArrayList<>();
         subAttributeSchemaList.add(subAttributeSchema1);
         subAttributeSchemaList.add(subAttributeSchema2);
+        subAttributeSchemaList.add(subAttributeSchema3);
+        subAttributeSchemaList.add(subAttributeSchema4);
         ArrayList<AttributeSchema> subAttributeSchemaList1 = new ArrayList<>();
-        subAttributeSchemaList1.add(subAttributeSchema3);
+        subAttributeSchemaList1.add(subAttributeSchema5);
+        subAttributeSchemaList1.add(subAttributeSchema6);
         AttributeSchema attributeSchema1 =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
-                        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", COMPLEX,
+                        "user", COMPLEX,
                         false, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList);
         AttributeSchema attributeSchema2 =
@@ -89,8 +119,30 @@ public class ResourceManagerUtilTest {
                         "emails", COMPLEX,
                         true, "", false, false,
                         READ_WRITE, DEFAULT, NONE, null, null, subAttributeSchemaList1);
+        AttributeSchema attributeSchema3 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute1",
+                        "attribute1", STRING,
+                        true, "", false, false,
+                        READ_WRITE, NEVER, NONE, null, null, null);
+        AttributeSchema attributeSchema4 =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        "urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute2",
+                        "attribute2", STRING,
+                        true, "", false, false,
+                        READ_WRITE, REQUEST, NONE, null, null, null);
         SCIMResourceTypeSchema scimResourceTypeSchema =
-                SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2);
+                SCIMResourceTypeSchema.createSCIMResourceSchema(schemasList, attributeSchema1, attributeSchema2,
+                        attributeSchema3, attributeSchema4);
+
+        return scimResourceTypeSchema;
+
+    }
+
+    @DataProvider(name = "dataForRequiredAttributesURIs")
+    public Object[][] dataToRequiredAttributesURIs() {
+
+        SCIMResourceTypeSchema scimResourceTypeSchema = getResourceSchema();
 
         Map<String, Boolean> uriList1 = new HashMap<>();
 
@@ -104,12 +156,28 @@ public class ResourceManagerUtilTest {
         uriList3.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department", false);
 
         Map<String, Boolean> uriList4 = new HashMap<>();
+        uriList4.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:addresses.city", true);
+
+        Map<String, Boolean> uriList5 = new HashMap<>();
+        uriList5.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department", false);
+        uriList5.put("urn:ietf:params:scim:schemas:core:2.0:User:emails.value", true);
+
+        Map<String, Boolean> uriList6 = new HashMap<>();
+        uriList6.put("urn:ietf:params:scim:schemas:core:2.0:User:emails.value", true);
+
+        Map<String, Boolean> uriList7 = new HashMap<>();
+        uriList7.put("urn:ietf:params:scim:schemas:extension:2.0:CustomResource:attribute2", true);
 
         return new Object[][]{
-                {scimResourceTypeSchema, "userName,name.familyName", "emails", uriList1},
+                {scimResourceTypeSchema, "emails.home", "emails.value", uriList1},
                 {scimResourceTypeSchema, null, null, uriList2},
                 {scimResourceTypeSchema, null, "emails", uriList3},
-                {scimResourceTypeSchema, "userName,name.familyName", null, uriList4}
+                {scimResourceTypeSchema, "user.addresses.city", null, uriList4},
+                {scimResourceTypeSchema, null, "user.addresses.city", uriList5},
+                {scimResourceTypeSchema, null, "emails.value", uriList3},
+                {scimResourceTypeSchema, "emails.value", null, uriList6},
+                {scimResourceTypeSchema, "city", null, uriList1},
+                {scimResourceTypeSchema, "attribute2", null, uriList7}
         };
     }
 
@@ -120,6 +188,23 @@ public class ResourceManagerUtilTest {
         Map<String, Boolean> uriList = ResourceManagerUtil.getOnlyRequiredAttributesURIs(schema, requestedAttributes,
                 requestedExcludingAttributes);
         Assert.assertEquals(uriList, expectedURIList);
+    }
+
+    @DataProvider(name = "dataForGetAllAttributeURIs")
+    public Object[][] dataToGetAllAttributeURIs() {
+
+        SCIMResourceTypeSchema scimResourceTypeSchema = getResourceSchema();
+
+        return new Object[][]{
+                {scimResourceTypeSchema}
+        };
+    }
+
+    @Test(dataProvider = "dataForGetAllAttributeURIs")
+    public void testGetAllAttributeURIs(SCIMResourceTypeSchema schema) throws CharonException {
+
+        Map<String, Boolean> uriList = ResourceManagerUtil.getAllAttributeURIs(schema);
+        Assert.assertTrue(true, "getAllAttributeURIs is successful");
     }
 
     @DataProvider(name = "dataForProcessCountString")

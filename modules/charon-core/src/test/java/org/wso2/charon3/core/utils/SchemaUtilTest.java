@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.charon3.core.utils;
 
 import org.testng.Assert;
@@ -33,6 +34,9 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Mutability.READ_WRITE
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Returned.DEFAULT;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
 
+/**
+ * Test class of SchemaUtil.
+ */
 public class SchemaUtilTest {
 
     @DataProvider(name = "dataForAttributeSchema")
