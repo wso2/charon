@@ -61,6 +61,279 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.SERVER;
 @PrepareForTest({AbstractResourceManager.class})
 public class ServerSideValidatorTest extends PowerMockTestCase {
 
+    @DataProvider(name = "dataForValidateCreatedSCIMObjectSuccess")
+    public Object[][] dataToValidateCreatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException {
+
+        return new Object[][]{
+
+                {createNewUser(), createSCIMResourceTypeSchemaUser()},
+                {createNewGroup(), createSCIMResourceTypeSchemaGroup()},
+                {createNewRole(), createSCIMResourceTypeSchemaRole()}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateCreatedSCIMObjectSuccess")
+    public void testValidateCreatedSCIMObjectSuccess(Object objectScimObject, Object objectResourceSchema)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Roles");
+
+        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
+        Assert.assertTrue(true, "validateCreatedSCIMObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateCreatedSCIMObjectThrowingExceptions")
+    public Object[][] dataToValidateCreatedSCIMObjectThrowingExceptions() throws InstantiationException,
+            IllegalAccessException {
+
+        return new Object[][]{
+
+                {createNewUser(), createSCIMResourceTypeSchemaGroup()},
+                {createNewGroup(), createSCIMResourceTypeSchemaUser()}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateCreatedSCIMObjectThrowingExceptions",
+            expectedExceptions = {CharonException.class, BadRequestException.class})
+    public void testValidateCreatedSCIMObjectThrowingExceptions(Object objectScimObject, Object objectResourceSchema)
+            throws CharonException, BadRequestException, NotFoundException {
+
+        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/Roles");
+
+        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMObjectInList")
+    public Object[][] dataToValidateRetrievedSCIMObjectInList() throws InstantiationException, IllegalAccessException {
+
+        return new Object[][]{
+
+                {createNewUser(), createSCIMResourceTypeSchemaUser(), "name", "emails"}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMObjectInList")
+    public void testValidateRetrievedSCIMObjectInList(Object objectScimObject, Object objectResourceSchema,
+            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+            throws BadRequestException, CharonException {
+
+        User scimObject = (User) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMObjectInList(scimObject, resourceSchema, requestedAttributes,
+                requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMObjectInList is successful");
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMObject")
+    public Object[][] dataToValidateRetrievedSCIMObject() throws InstantiationException, IllegalAccessException {
+
+        return new Object[][]{
+
+                {createNewUser(), createSCIMResourceTypeSchemaUser(), "name", "emails"}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMObject")
+    public void testValidateRetrievedSCIMObject(Object objectScimObject, Object objectResourceSchema,
+            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+            throws BadRequestException, CharonException {
+
+        User scimObject = (User) objectScimObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMObject(scimObject, resourceSchema, requestedAttributes,
+                requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateRetrievedSCIMRoleObject")
+    public Object[][] dataToValidateRetrievedSCIMRoleObject() throws InstantiationException, IllegalAccessException {
+
+        Role role = createNewRole();
+
+        return new Object[][]{
+
+                {role, "displayName", "groups"},
+                {role, null, "users"},
+                {role, null, null}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateRetrievedSCIMRoleObject")
+    public void testValidateRetrievedSCIMRoleObject(Object objectScimObject, Object objectRequestedAttributes,
+                                                    Object objectRequestedExcludingAttributes) {
+
+        Role scimObject = (Role) objectScimObject;
+        String requestedAttributes = (String) objectRequestedAttributes;
+        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
+
+        ServerSideValidator.validateRetrievedSCIMRoleObject(
+                scimObject, requestedAttributes, requestedExcludingAttributes);
+
+        Assert.assertTrue(true, "validateRetrievedSCIMRoleObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateUpdatedSCIMObjectSuccess")
+    public Object[][] dataToValidateUpdatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException,
+            CharonException {
+
+        User oldObject = createNewUser();
+
+        SimpleAttribute simpleAttributeId = new SimpleAttribute(
+                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
+        simpleAttributeId.setMutability(READ_ONLY);
+        simpleAttributeId.setRequired(false);
+        oldObject.setAttribute(simpleAttributeId);
+
+        User newObject = (User) CopyUtil.deepCopy(oldObject);
+        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
+        newObject.setAttribute(simpleAttributeNickName);
+
+        return new Object[][]{
+
+                {oldObject, newObject, createSCIMResourceTypeSchemaUser()}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectSuccess")
+    public void testValidateUpdatedSCIMObjectSuccess(Object objectOldObject, Object objectNewObject,
+                         Object objectResourceSchema) throws CharonException, BadRequestException {
+
+        AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
+        AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
+
+        Assert.assertTrue(true, "validateUpdatedSCIMObject is successful");
+    }
+
+    @DataProvider(name = "dataForValidateUpdatedSCIMObjectThrowingExceptions")
+    public Object[][] dataToValidateUpdatedSCIMObjectThrowingExceptions() throws InstantiationException,
+            IllegalAccessException, CharonException {
+
+        User oldObject1 = User.class.newInstance();
+        oldObject1.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
+        oldObject1.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
+
+        SimpleAttribute simpleAttributeId = new SimpleAttribute(
+                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
+        simpleAttributeId.setMutability(READ_ONLY);
+        simpleAttributeId.setRequired(false);
+        oldObject1.setAttribute(simpleAttributeId);
+
+        ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
+        oldObject1.setAttribute(complexAttributeMeta);
+
+        User newObject1 = (User) CopyUtil.deepCopy(oldObject1);
+        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
+        newObject1.setAttribute(simpleAttributeNickName);
+
+        AbstractSCIMObject oldObject2 = AbstractSCIMObject.class.newInstance();
+        oldObject2.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
+        oldObject2.setAttribute(simpleAttribute1);
+        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
+        oldObject2.setAttribute(simpleAttribute2);
+        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
+        oldObject2.setAttribute(simpleAttribute3);
+        oldObject2.setAttribute(complexAttributeMeta);
+
+        AbstractSCIMObject newObject2 = (AbstractSCIMObject) CopyUtil.deepCopy(oldObject2);
+        SimpleAttribute simpleAttributeDescription = new SimpleAttribute("description", "User Account");
+        newObject2.setAttribute(simpleAttributeDescription);
+
+        return new Object[][]{
+
+                {oldObject1, newObject1, createSCIMResourceTypeSchemaCustomUser()},
+                {oldObject2, newObject2, createSCIMResourceTypeSchemaUser()}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectThrowingExceptions",
+            expectedExceptions = {CharonException.class, BadRequestException.class})
+    public void testValidateUpdatedSCIMObjectThrowingExceptions(Object objectOldObject, Object objectNewObject,
+                                    Object objectResourceSchema) throws CharonException, BadRequestException {
+
+        AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
+        AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
+        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
+
+        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
+    }
+
+    @DataProvider(name = "dataForValidateResourceTypeSCIMObject")
+    public Object[][] dataToValidateResourceTypeSCIMObject() throws CharonException,
+            InstantiationException, IllegalAccessException {
+
+        AbstractSCIMObject userResourceTypeObject = AbstractSCIMObject.class.newInstance();
+        userResourceTypeObject.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
+        userResourceTypeObject.setAttribute(simpleAttribute1);
+        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
+        userResourceTypeObject.setAttribute(simpleAttribute2);
+        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
+        userResourceTypeObject.setAttribute(simpleAttribute3);
+
+        AbstractSCIMObject groupResourceTypeObject = AbstractSCIMObject.class.newInstance();
+        groupResourceTypeObject.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
+        SimpleAttribute simpleAttribute4 = new SimpleAttribute("id", "Group");
+        groupResourceTypeObject.setAttribute(simpleAttribute4);
+        SimpleAttribute simpleAttribute5 = new SimpleAttribute("name", "Group");
+        groupResourceTypeObject.setAttribute(simpleAttribute5);
+        SimpleAttribute simpleAttribute6 = new SimpleAttribute("endpoint", "/Groups");
+        groupResourceTypeObject.setAttribute(simpleAttribute6);
+
+        return new Object[][]{
+
+                {userResourceTypeObject, "https://localhost:9443/scim2/ResourceTypes/User", "ResourceType"},
+                {groupResourceTypeObject, "https://localhost:9443/scim2/ResourceTypes/Group", "ResourceType"}
+        };
+    }
+
+    @Test(dataProvider = "dataForValidateResourceTypeSCIMObject")
+    public void testValidateResourceTypeSCIMObject(Object objectScimObject, Object objectExpectedLocation,
+                                                   Object objectExpectedResourceType)
+                                                    throws NotFoundException, BadRequestException, CharonException {
+
+        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
+        String expectedLocation = (String) objectExpectedLocation;
+        String expectedResourceType = (String) objectExpectedResourceType;
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).thenReturn(
+                "https://localhost:9443/scim2/ResourceTypes");
+
+        AbstractSCIMObject outputScimObject = ServerSideValidator.validateResourceTypeSCIMObject(scimObject);
+        Assert.assertEquals(outputScimObject.getLocation(), expectedLocation);
+        Assert.assertEquals(outputScimObject.getResourceType(), expectedResourceType);
+    }
+
     private User createNewUser() throws InstantiationException, IllegalAccessException {
 
         User user = User.class.newInstance();
@@ -387,301 +660,4 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         return scimResourceTypeSchema1;
     }
 
-    @DataProvider(name = "dataForValidateCreatedSCIMObjectSuccess")
-    public Object[][] dataToValidateCreatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException {
-
-        User user = createNewUser();
-        Group group = createNewGroup();
-        Role role = createNewRole();
-
-        SCIMResourceTypeSchema userResourceSchema = createSCIMResourceTypeSchemaUser();
-        SCIMResourceTypeSchema groupResourceSchema = createSCIMResourceTypeSchemaGroup();
-        SCIMResourceTypeSchema roleResourceSchema = createSCIMResourceTypeSchemaRole();
-
-        return new Object[][]{
-
-                {user, userResourceSchema},
-                {group, groupResourceSchema},
-                {role, roleResourceSchema}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateCreatedSCIMObjectSuccess")
-    public void testValidateCreatedSCIMObjectSuccess(Object objectScimObject, Object objectResourceSchema)
-            throws CharonException, BadRequestException, NotFoundException {
-
-        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Roles");
-
-        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
-        Assert.assertTrue(true, "validateCreatedSCIMObject is successful");
-    }
-
-    @DataProvider(name = "dataForValidateCreatedSCIMObjectThrowingExceptions")
-    public Object[][] dataToValidateCreatedSCIMObjectThrowingExceptions() throws InstantiationException,
-            IllegalAccessException {
-
-        User user = createNewUser();
-        Group group = createNewGroup();
-
-        SCIMResourceTypeSchema userResourceSchema = createSCIMResourceTypeSchemaUser();
-        SCIMResourceTypeSchema groupResourceSchema = createSCIMResourceTypeSchemaGroup();
-
-        return new Object[][]{
-
-                {user, groupResourceSchema},
-                {group, userResourceSchema}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateCreatedSCIMObjectThrowingExceptions",
-            expectedExceptions = {CharonException.class, BadRequestException.class})
-    public void testValidateCreatedSCIMObjectThrowingExceptions(Object objectScimObject, Object objectResourceSchema)
-            throws CharonException, BadRequestException, NotFoundException {
-
-        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Roles");
-
-        ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
-    }
-
-    @DataProvider(name = "dataForValidateRetrievedSCIMObjectInList")
-    public Object[][] dataToValidateRetrievedSCIMObjectInList() throws InstantiationException, IllegalAccessException {
-
-        User user = createNewUser();
-        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
-
-        return new Object[][]{
-
-                {user, scimResourceTypeSchema, "name", "emails"}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateRetrievedSCIMObjectInList")
-    public void testValidateRetrievedSCIMObjectInList(Object objectScimObject, Object objectResourceSchema,
-            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
-            throws BadRequestException, CharonException {
-
-        User scimObject = (User) objectScimObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
-
-        ServerSideValidator.validateRetrievedSCIMObjectInList(scimObject, resourceSchema, requestedAttributes,
-                requestedExcludingAttributes);
-
-        Assert.assertTrue(true, "validateRetrievedSCIMObjectInList is successful");
-    }
-
-    @DataProvider(name = "dataForValidateRetrievedSCIMObject")
-    public Object[][] dataToValidateRetrievedSCIMObject() throws InstantiationException, IllegalAccessException {
-
-        User user = createNewUser();
-        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
-
-        return new Object[][]{
-
-                {user, scimResourceTypeSchema, "name", "emails"}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateRetrievedSCIMObject")
-    public void testValidateRetrievedSCIMObject(Object objectScimObject, Object objectResourceSchema,
-            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
-            throws BadRequestException, CharonException {
-
-        User scimObject = (User) objectScimObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
-
-        ServerSideValidator.validateRetrievedSCIMObject(scimObject, resourceSchema, requestedAttributes,
-                requestedExcludingAttributes);
-
-        Assert.assertTrue(true, "validateRetrievedSCIMObject is successful");
-    }
-
-    @DataProvider(name = "dataForValidateRetrievedSCIMRoleObject")
-    public Object[][] dataToValidateRetrievedSCIMRoleObject() throws InstantiationException, IllegalAccessException {
-
-        Role role = createNewRole();
-
-        return new Object[][]{
-
-                {role, "displayName", "groups"},
-                {role, null, "users"},
-                {role, null, null}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateRetrievedSCIMRoleObject")
-    public void testValidateRetrievedSCIMRoleObject(Object objectScimObject, Object objectRequestedAttributes,
-                                                    Object objectRequestedExcludingAttributes) {
-
-        Role scimObject = (Role) objectScimObject;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
-
-        ServerSideValidator.validateRetrievedSCIMRoleObject(
-                scimObject, requestedAttributes, requestedExcludingAttributes);
-
-        Assert.assertTrue(true, "validateRetrievedSCIMRoleObject is successful");
-    }
-
-    @DataProvider(name = "dataForValidateUpdatedSCIMObjectSuccess")
-    public Object[][] dataToValidateUpdatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException,
-            CharonException {
-
-        User oldObject = createNewUser();
-
-        SimpleAttribute simpleAttributeId = new SimpleAttribute(
-                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
-        simpleAttributeId.setMutability(READ_ONLY);
-        simpleAttributeId.setRequired(false);
-        oldObject.setAttribute(simpleAttributeId);
-
-        User newObject = (User) CopyUtil.deepCopy(oldObject);
-        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
-        newObject.setAttribute(simpleAttributeNickName);
-
-        SCIMResourceTypeSchema scimResourceTypeSchema = createSCIMResourceTypeSchemaUser();
-
-        return new Object[][]{
-
-                {oldObject, newObject, scimResourceTypeSchema}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectSuccess")
-    public void testValidateUpdatedSCIMObjectSuccess(Object objectOldObject, Object objectNewObject,
-                         Object objectResourceSchema) throws CharonException, BadRequestException {
-
-        AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
-        AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-
-        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
-
-        Assert.assertTrue(true, "validateUpdatedSCIMObject is successful");
-    }
-
-    @DataProvider(name = "dataForValidateUpdatedSCIMObjectThrowingExceptions")
-    public Object[][] dataToValidateUpdatedSCIMObjectThrowingExceptions() throws InstantiationException,
-            IllegalAccessException, CharonException {
-
-        User oldObject1 = User.class.newInstance();
-        oldObject1.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
-        oldObject1.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
-
-        SimpleAttribute simpleAttributeId = new SimpleAttribute(
-                "id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
-        simpleAttributeId.setMutability(READ_ONLY);
-        simpleAttributeId.setRequired(false);
-        oldObject1.setAttribute(simpleAttributeId);
-
-        ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
-        oldObject1.setAttribute(complexAttributeMeta);
-
-        User newObject1 = (User) CopyUtil.deepCopy(oldObject1);
-        SimpleAttribute simpleAttributeNickName = new SimpleAttribute("nickName", "rash");
-        newObject1.setAttribute(simpleAttributeNickName);
-
-        AbstractSCIMObject oldObject2 = AbstractSCIMObject.class.newInstance();
-        oldObject2.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
-        oldObject2.setAttribute(simpleAttribute1);
-        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
-        oldObject2.setAttribute(simpleAttribute2);
-        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
-        oldObject2.setAttribute(simpleAttribute3);
-        oldObject2.setAttribute(complexAttributeMeta);
-
-        AbstractSCIMObject newObject2 = (AbstractSCIMObject) CopyUtil.deepCopy(oldObject2);
-        SimpleAttribute simpleAttributeDescription = new SimpleAttribute("description", "User Account");
-        newObject2.setAttribute(simpleAttributeDescription);
-
-        SCIMResourceTypeSchema scimResourceTypeSchema1 = createSCIMResourceTypeSchemaCustomUser();
-        SCIMResourceTypeSchema scimResourceTypeSchema2 = createSCIMResourceTypeSchemaUser();
-
-        return new Object[][]{
-
-                {oldObject1, newObject1, scimResourceTypeSchema1},
-                {oldObject2, newObject2, scimResourceTypeSchema2}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateUpdatedSCIMObjectThrowingExceptions",
-            expectedExceptions = {CharonException.class, BadRequestException.class})
-    public void testValidateUpdatedSCIMObjectThrowingExceptions(Object objectOldObject, Object objectNewObject,
-                                    Object objectResourceSchema) throws CharonException, BadRequestException {
-
-        AbstractSCIMObject oldObject = (AbstractSCIMObject) objectOldObject;
-        AbstractSCIMObject newObject = (AbstractSCIMObject) objectNewObject;
-        SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-
-        ServerSideValidator.validateUpdatedSCIMObject(oldObject, newObject, resourceSchema);
-    }
-
-    @DataProvider(name = "dataForValidateResourceTypeSCIMObject")
-    public Object[][] dataToValidateResourceTypeSCIMObject() throws CharonException,
-            InstantiationException, IllegalAccessException {
-
-        AbstractSCIMObject userResourceTypeObject = AbstractSCIMObject.class.newInstance();
-        userResourceTypeObject.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "User");
-        userResourceTypeObject.setAttribute(simpleAttribute1);
-        SimpleAttribute simpleAttribute2 = new SimpleAttribute("name", "User");
-        userResourceTypeObject.setAttribute(simpleAttribute2);
-        SimpleAttribute simpleAttribute3 = new SimpleAttribute("endpoint", "/Users");
-        userResourceTypeObject.setAttribute(simpleAttribute3);
-
-        AbstractSCIMObject groupResourceTypeObject = AbstractSCIMObject.class.newInstance();
-        groupResourceTypeObject.setSchema("urn:ietf:params:scim:api:messages:2.0:ListResponse");
-        SimpleAttribute simpleAttribute4 = new SimpleAttribute("id", "Group");
-        groupResourceTypeObject.setAttribute(simpleAttribute4);
-        SimpleAttribute simpleAttribute5 = new SimpleAttribute("name", "Group");
-        groupResourceTypeObject.setAttribute(simpleAttribute5);
-        SimpleAttribute simpleAttribute6 = new SimpleAttribute("endpoint", "/Groups");
-        groupResourceTypeObject.setAttribute(simpleAttribute6);
-
-        return new Object[][]{
-
-                {userResourceTypeObject, "https://localhost:9443/scim2/ResourceTypes/User", "ResourceType"},
-                {groupResourceTypeObject, "https://localhost:9443/scim2/ResourceTypes/Group", "ResourceType"}
-        };
-    }
-
-    @Test(dataProvider = "dataForValidateResourceTypeSCIMObject")
-    public void testValidateResourceTypeSCIMObject(Object objectScimObject, Object objectExpectedLocation,
-                                                   Object objectExpectedResourceType)
-                                                    throws NotFoundException, BadRequestException, CharonException {
-
-        AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
-        String expectedLocation = (String) objectExpectedLocation;
-        String expectedResourceType = (String) objectExpectedResourceType;
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/ResourceTypes");
-
-        AbstractSCIMObject outputScimObject = ServerSideValidator.validateResourceTypeSCIMObject(scimObject);
-        Assert.assertEquals(outputScimObject.getLocation(), expectedLocation);
-        Assert.assertEquals(outputScimObject.getResourceType(), expectedResourceType);
-    }
 }
