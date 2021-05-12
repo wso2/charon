@@ -80,12 +80,12 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
 
         mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Roles");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Roles");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
         Assert.assertTrue(true, "validateCreatedSCIMObject is successful");
@@ -111,12 +111,12 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
 
         mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/Roles");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Groups");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Roles");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
     }
@@ -132,13 +132,11 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForValidateRetrievedSCIMObjectInList")
     public void testValidateRetrievedSCIMObjectInList(Object objectScimObject, Object objectResourceSchema,
-            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+            String requestedAttributes, String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
 
         User scimObject = (User) objectScimObject;
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
 
         ServerSideValidator.validateRetrievedSCIMObjectInList(scimObject, resourceSchema, requestedAttributes,
                 requestedExcludingAttributes);
@@ -157,13 +155,11 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForValidateRetrievedSCIMObject")
     public void testValidateRetrievedSCIMObject(Object objectScimObject, Object objectResourceSchema,
-            Object objectRequestedAttributes, Object objectRequestedExcludingAttributes)
+                                                String requestedAttributes, String requestedExcludingAttributes)
             throws BadRequestException, CharonException {
 
         User scimObject = (User) objectScimObject;
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
 
         ServerSideValidator.validateRetrievedSCIMObject(scimObject, resourceSchema, requestedAttributes,
                 requestedExcludingAttributes);
@@ -185,12 +181,10 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
     }
 
     @Test(dataProvider = "dataForValidateRetrievedSCIMRoleObject")
-    public void testValidateRetrievedSCIMRoleObject(Object objectScimObject, Object objectRequestedAttributes,
-                                                    Object objectRequestedExcludingAttributes) {
+    public void testValidateRetrievedSCIMRoleObject(Object objectScimObject, String requestedAttributes,
+                                                    String requestedExcludingAttributes) {
 
         Role scimObject = (Role) objectScimObject;
-        String requestedAttributes = (String) objectRequestedAttributes;
-        String requestedExcludingAttributes = (String) objectRequestedExcludingAttributes;
 
         ServerSideValidator.validateRetrievedSCIMRoleObject(
                 scimObject, requestedAttributes, requestedExcludingAttributes);
@@ -317,17 +311,15 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
     }
 
     @Test(dataProvider = "dataForValidateResourceTypeSCIMObject")
-    public void testValidateResourceTypeSCIMObject(Object objectScimObject, Object objectExpectedLocation,
-                                                   Object objectExpectedResourceType)
+    public void testValidateResourceTypeSCIMObject(Object objectScimObject, String expectedLocation,
+                                                   String expectedResourceType)
                                                     throws NotFoundException, BadRequestException, CharonException {
 
         AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
-        String expectedLocation = (String) objectExpectedLocation;
-        String expectedResourceType = (String) objectExpectedResourceType;
 
         mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT)).thenReturn(
-                "https://localhost:9443/scim2/ResourceTypes");
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/ResourceTypes");
 
         AbstractSCIMObject outputScimObject = ServerSideValidator.validateResourceTypeSCIMObject(scimObject);
         Assert.assertEquals(outputScimObject.getLocation(), expectedLocation);
