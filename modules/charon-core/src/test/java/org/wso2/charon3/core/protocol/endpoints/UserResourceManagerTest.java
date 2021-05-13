@@ -107,8 +107,7 @@ public class UserResourceManagerTest extends PowerMockTestCase {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema)
-                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
         mockStatic(AbstractResourceManager.class);
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
@@ -208,5 +207,4 @@ public class UserResourceManagerTest extends PowerMockTestCase {
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
         Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
-
 }
