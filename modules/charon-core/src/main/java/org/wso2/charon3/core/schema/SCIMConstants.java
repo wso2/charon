@@ -87,6 +87,8 @@ public class SCIMConstants {
         public static final String LAST_MODIFIED_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.lastModified";
         public static final String LOCATION = "location";
         public static final String LOCATION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.location";
+        public static final String SYSTEM_ROLE = "systemRole";
+        public static final String SYSTEM_ROLE_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.systemRole";
         public static final String VERSION = "version";
         public static final String VERSION_URI = "urn:ietf:params:scim:schemas:core:2.0:meta.version";
         public static final String TOTAL_RESULTS = "totalResults";
@@ -112,6 +114,7 @@ public class SCIMConstants {
                 "were updated at the service provider.";
         public static final String LOCATION_DESC = "Location  The uri of the resource being returned";
         public static final String VERSION_DESC = "The version of the resource being returned.";
+        public static final String SYSTEM_ROLE_DESC = "Whether the returned role is a read only system role.";
 
     }
 
