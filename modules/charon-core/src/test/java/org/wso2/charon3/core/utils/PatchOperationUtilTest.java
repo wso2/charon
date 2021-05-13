@@ -87,9 +87,10 @@ public class PatchOperationUtilTest {
                                          AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
             throws BadRequestException, NotImplementedException, CharonException {
 
-        PatchOperationUtil.doPatchRemove(operation, oldResource, copyOfOldResource, schema);
+        AbstractSCIMObject validatedResource = PatchOperationUtil.doPatchRemove(operation, oldResource,
+                copyOfOldResource, schema);
 
-        Assert.assertTrue(true, "doPatchRemove is successful");
+        Assert.assertNotNull(validatedResource);
     }
 
     @DataProvider(name = "dataForPatchRemoveExceptions")
@@ -127,7 +128,6 @@ public class PatchOperationUtilTest {
             throws BadRequestException, NotImplementedException, CharonException {
 
         PatchOperationUtil.doPatchRemove(operation, oldResource, copyOfOldResource, schema);
-
     }
 
     @DataProvider(name = "dataForPatchAddSuccess")
@@ -161,9 +161,10 @@ public class PatchOperationUtilTest {
                                       AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
-        PatchOperationUtil.doPatchAdd(operation, decoder, oldResource, copyOfOldResource, schema);
+        AbstractSCIMObject validatedResource = PatchOperationUtil.doPatchAdd(operation, decoder, oldResource,
+                copyOfOldResource, schema);
 
-        Assert.assertTrue(true, "doPatchAdd is successful");
+        Assert.assertNotNull(validatedResource);
     }
 
     @DataProvider(name = "dataForPatchAddExceptions")
@@ -198,7 +199,6 @@ public class PatchOperationUtilTest {
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         PatchOperationUtil.doPatchAdd(operation, decoder, oldResource, copyOfOldResource, schema);
-
     }
 
     @DataProvider(name = "dataForPatchReplaceSuccess")
@@ -237,9 +237,10 @@ public class PatchOperationUtilTest {
                                           AbstractSCIMObject copyOfOldResource, SCIMResourceTypeSchema schema)
             throws CharonException, NotImplementedException, BadRequestException, InternalErrorException {
 
-        PatchOperationUtil.doPatchReplace(operation, decoder, oldResource, copyOfOldResource, schema);
+        AbstractSCIMObject validatedResource = PatchOperationUtil.doPatchReplace(operation, decoder, oldResource,
+                copyOfOldResource, schema);
 
-        Assert.assertTrue(true, "doPatchReplace is successful");
+        Assert.assertNotNull(validatedResource);
     }
 
     @DataProvider(name = "dataForPatchReplaceExceptions")
@@ -279,7 +280,6 @@ public class PatchOperationUtilTest {
             throws CharonException, BadRequestException, NotImplementedException, InternalErrorException {
 
         PatchOperationUtil.doPatchReplace(operation, decoder, oldResource, copyOfOldResource, schema);
-
     }
 
     private SCIMResourceTypeSchema getSchema() {
@@ -363,8 +363,7 @@ public class PatchOperationUtilTest {
         simpleAttribute.setRequired(false);
         user.setAttribute(simpleAttribute);
 
-        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id",
-                "229d3f0d-a07b-4052-bf4d-3071ecafed04");
+        SimpleAttribute simpleAttribute1 = new SimpleAttribute("id", "229d3f0d-a07b-4052-bf4d-3071ecafed04");
         simpleAttribute1.setMutability(SCIMDefinitions.Mutability.READ_ONLY);
         simpleAttribute1.setRequired(false);
         user.setAttribute(simpleAttribute1);
@@ -396,5 +395,4 @@ public class PatchOperationUtilTest {
 
         return user;
     }
-
 }
