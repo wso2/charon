@@ -1394,6 +1394,18 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_URI,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS,
+                        SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<AttributeSchema>(Arrays.asList(SCHEMA_EXTENSION_SCHEMA,
+                                SCHEMA_EXTENSION_REQUIRED)));
+
+        // Have the multivalued as false for SchemaExtensions schema inorder to have the backward compatibility.
+        public static final SCIMAttributeSchema SCHEMA_EXTENSIONS_WITHOUT_MULTIVALUED =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_URI,
+                        SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS,
                         SCIMDefinitions.DataType.COMPLEX, false,
                         SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
@@ -1486,5 +1498,19 @@ public class SCIMSchemaDefinitions {
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
                     SCIMResourceTypeSchemaDefinition.SCHEMA,
                     SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
+
+    /*
+    In the spec it is mentioned to use JSONArray for SchemaExtennsions. Inorder to keep the
+    backward compatibility, this is added.
+     */
+    public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA_WITHOUT_MULTIVALUED_SCHEMA_EXTENSIONS =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI)), META,
+                    SCIMResourceTypeSchemaDefinition.ID,
+                    SCIMResourceTypeSchemaDefinition.NAME,
+                    SCIMResourceTypeSchemaDefinition.ENDPOINT,
+                    SCIMResourceTypeSchemaDefinition.DESCRIPTION,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA,
+                    SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS_WITHOUT_MULTIVALUED);
 
 }

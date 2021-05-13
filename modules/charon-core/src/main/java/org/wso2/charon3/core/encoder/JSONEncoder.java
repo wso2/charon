@@ -484,15 +484,27 @@ public class JSONEncoder {
 
         if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
             JSONObject extensionSchemaObject = new JSONObject();
-
             extensionSchemaObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
                     SCIMResourceSchemaManager.getInstance().getExtensionURI());
             extensionSchemaObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
                     SCIMResourceSchemaManager.getInstance().getExtensionRequired());
+
+            JSONObject customSchemaObject = new JSONObject();
+            customSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+                    SCIMResourceSchemaManager.getInstance().getCustomExtensionName());
+            customSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED, false);
+            
+            JSONArray schemaExtensions = new JSONArray();
+            schemaExtensions.put(extensionSchemaObject);
+            schemaExtensions.put(customSchemaObject);
+
             userResourceTypeObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, schemaExtensions);
+            
         }
 
         return userResourceTypeObject.toString();

@@ -23,6 +23,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
@@ -238,7 +239,7 @@ public interface UserManager {
         throw new NotImplementedException();
     }
 
-    default List<Attribute> getCustomUserSchema(String tenantDomain) throws CharonException, NotImplementedException,
+    default AttributeSchema getCustomUserSchemaExtension() throws CharonException, NotImplementedException,
             BadRequestException {
 
         throw new NotImplementedException();

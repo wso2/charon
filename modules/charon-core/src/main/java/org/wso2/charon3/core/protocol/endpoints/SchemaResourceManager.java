@@ -34,7 +34,6 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +116,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @throws CharonException
      * @throws NotFoundException
      */
-    private SCIMResponse buildSchemasResponse(Map<String, List<Attribute>> schemas) throws CharonException,
+    public SCIMResponse buildSchemasResponse(Map<String, List<Attribute>> schemas) throws CharonException,
             NotFoundException {
 
         String schemaResponseBody = buildSchemasResponseBody(schemas).toString();
@@ -132,7 +131,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @return SCIM schemas config json representation.
      * @throws CharonException
      */
-    private JSONArray buildSchemasResponseBody(Map<String, List<Attribute>> schemas) throws CharonException {
+    public JSONArray buildSchemasResponseBody(Map<String, List<Attribute>> schemas) throws CharonException {
 
         JSONArray rootObject = new JSONArray();
         if (schemas.get(USER_CORE_SCHEMA_URI) != null) {
@@ -157,7 +156,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
      * @return JSON object of enterprise user schema
      * @throws CharonException
      */
-    private JSONObject buildEnterpriseUserSchema(List<Attribute> enterpriseUserSchemaList) throws CharonException {
+    public JSONObject buildEnterpriseUserSchema(List<Attribute> enterpriseUserSchemaList) throws CharonException {
 
         try {
             JSONEncoder encoder = getEncoder();
@@ -176,7 +175,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONObject buildCustomUserSchema(List<Attribute> customUserSchemaList) throws CharonException {
+    public JSONObject buildCustomUserSchema(List<Attribute> customUserSchemaList) throws CharonException {
 
         try {
             JSONEncoder encoder = getEncoder();
@@ -194,7 +193,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONObject buildUserSchema(List<Attribute> userSchemaAttributeList) throws CharonException {
+    public JSONObject buildUserSchema(List<Attribute> userSchemaAttributeList) throws CharonException {
 
         try {
             JSONEncoder encoder = getEncoder();
@@ -212,7 +211,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONArray buildSchemaAttributeArray(List<Attribute> schemaAttributeList, JSONEncoder encoder)
+    public JSONArray buildSchemaAttributeArray(List<Attribute> schemaAttributeList, JSONEncoder encoder)
             throws JSONException {
 
         JSONArray schemaAttributeArray = new JSONArray();
@@ -234,7 +233,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
         return schemaAttributeArray;
     }
 
-    private Map<String, String> getResponseHeaders() throws NotFoundException {
+    public Map<String, String> getResponseHeaders() throws NotFoundException {
 
         Map<String, String> responseHeaders;
         responseHeaders = new HashMap<>();
@@ -303,13 +302,6 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 
-        try {
-            if (!StringUtils.equals(existingId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Updating attribute of custom schema is supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -319,37 +311,6 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse create(String schemaId, String tenantDomain, String scimObjectString, UserManager userManager, String attributes,
-                                String excludeAttributes) {
-
-        try {
-            if (!StringUtils.equals(schemaId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Creating attributes in " + schemaId + " is not supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse delete(String schemaId, String tenantDomain, String attributeUri, UserManager userManager){
-
-        try {
-            if (!StringUtils.equals(schemaId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Deleting attributes in " + schemaId + " is not supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);

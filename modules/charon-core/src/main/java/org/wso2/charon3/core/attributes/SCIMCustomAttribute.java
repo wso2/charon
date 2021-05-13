@@ -14,39 +14,35 @@
  * limitations under the License.
  */
 
-package org.wso2.charon3.core.config;
+package org.wso2.charon3.core.attributes;
 
 import java.util.Map;
 
+/**
+ * This data model represents the attribute of custom schema.
+ */
 public class SCIMCustomAttribute {
 
     private int tenantId;
-
-    private String attributeUri;
-
     private Map<String, String> properties;
 
-    public void setTenantId(int tenantId){
+    public void setTenantId(int tenantId) {
+
         this.tenantId = tenantId;
     }
 
-    public int getTenantId(){
+    public int getTenantId() {
+
         return tenantId;
     }
 
-    public void setAttributeUri(String attributeUri){
-        this.attributeUri = attributeUri;
-    }
+    public void setProperties(Map<String, String> properties) {
 
-    public String getAttributeUri(){
-        return attributeUri;
-    }
-
-    public void setProperties(Map<String, String> properties){
         this.properties = properties;
     }
 
-    public Map<String, String> getProperties(){
+    public Map<String, String> getProperties() {
+
         return properties;
     }
 }

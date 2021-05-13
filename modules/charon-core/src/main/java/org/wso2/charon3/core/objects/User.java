@@ -23,6 +23,8 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.NotImplementedException;
+import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.plainobjects.MultiValuedComplexType;
 import org.wso2.charon3.core.objects.plainobjects.ScimAddress;
 import org.wso2.charon3.core.objects.plainobjects.ScimName;
@@ -925,4 +927,17 @@ public class User extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * set the schemas of the user
+     */
+    public void setSchemas(UserManager userManager) throws BadRequestException,
+            NotImplementedException, CharonException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager);
+
+        java.util.List<String> schemasList = schema.getSchemasList();
+        for (String scheme : schemasList) {
+            setSchema(scheme);
+        }
+    }
 }
