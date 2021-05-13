@@ -80,6 +80,15 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-testng-common</artifactId>
         </dependency>
+<<<<<<< HEAD
+=======
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+        </dependency>
+>>>>>>> Add unit tests for UserResourceManager
     </dependencies>
     <build>
         <plugins>
