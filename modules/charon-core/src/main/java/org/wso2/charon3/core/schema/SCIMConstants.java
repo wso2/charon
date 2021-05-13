@@ -705,6 +705,9 @@ public class SCIMConstants {
         public static final String ENTERPRISE_USER_DESC = "Enterprise User";
     }
 
+    /**
+     * Constants found in custom user schema.
+     */
     public static class CustomUserSchemaConstants {
 
         public static final String NAME = "name";

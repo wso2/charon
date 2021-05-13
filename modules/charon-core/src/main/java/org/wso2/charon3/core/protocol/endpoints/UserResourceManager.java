@@ -82,7 +82,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
 
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -115,6 +115,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         }
     }
 
@@ -137,7 +139,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
             //validate the created user.
@@ -201,6 +203,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (InternalErrorException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (NotFoundException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -270,7 +274,7 @@ public class UserResourceManager extends AbstractResourceManager {
             sortOrder = resolveSortOrder(sortOrder, sortBy);
 
             // Unless configured returns core-user schema or else returns extended user schema.
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);;
 
             // Build node for filtering.
             Node rootNode = buildNode(filter, schema);
@@ -335,7 +339,7 @@ public class UserResourceManager extends AbstractResourceManager {
             sortOrder = resolveSortOrder(sortOrder, sortBy);
 
             // Unless configured returns core-user schema or else returns extended user schema).
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
 
             // Build node for filtering.
             Node rootNode = buildNode(filter, schema);
@@ -481,7 +485,7 @@ public class UserResourceManager extends AbstractResourceManager {
             decoder = getDecoder();
 
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
             //create the search request object
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
@@ -574,7 +578,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //obtain the json decoder.
             decoder = getDecoder();
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
 
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -658,7 +662,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);;
             List<String> allSimpleMultiValuedAttributes = ResourceManagerUtil.getAllSimpleMultiValuedAttributes(schema);
 
             //get the user from the user core
@@ -787,4 +791,17 @@ public class UserResourceManager extends AbstractResourceManager {
         return listedResource;
     }
 
+    private SCIMResourceTypeSchema getSchema(UserManager userManager) throws BadRequestException,
+            NotImplementedException, CharonException {
+
+        SCIMResourceTypeSchema schema;
+        if (userManager != null) {
+            // Unless configured returns core-user schema or else returns extended user schema.
+            schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager);
+        } else {
+            // Unless configured returns core-user schema or else returns extended user schema.
+            schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        }
+        return schema;
+    }
 }

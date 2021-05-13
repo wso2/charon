@@ -21,7 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
-import org.wso2.charon3.core.utils.CopyUtil;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.NotImplementedException;
+import org.wso2.charon3.core.extensions.UserManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,9 +50,48 @@ public class SCIMResourceSchemaManager {
      */
     public SCIMResourceTypeSchema getUserResourceSchema() {
 
+        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension != null) {
+            return SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI, schemaExtension.getURI())),
+                    SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES,
+                    schemaExtension);
+        }
+        return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
+    }
+
+    /*
+     * Return the SCIM User Resource Schema
+     *
+     * @return SCIMResourceTypeSchema
+     */
+    public SCIMResourceTypeSchema getUserResourceSchema(UserManager userManager)
+            throws BadRequestException, NotImplementedException, CharonException {
+
 
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-        AttributeSchema customSchemaExtension = SCIMCustomSchemaExtensionBuilder.getInstance().getCustomSchema();
+        AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
         if (enterpriseSchemaExtension != null) {
             List<String> schemas = new ArrayList<>();
             schemas.add(SCIMConstants.USER_CORE_SCHEMA_URI);
@@ -57,7 +99,9 @@ public class SCIMResourceSchemaManager {
             if (customSchemaExtension != null) {
                 schemas.add(customSchemaExtension.getURI());
             } else {
-                log.warn("Custom schema is null");
+                if (log.isDebugEnabled()) {
+                    log.debug("Could not find Custom schema.");
+                }
             }
             return SCIMResourceTypeSchema.createSCIMResourceSchema(
                     schemas,
@@ -120,7 +164,8 @@ public class SCIMResourceSchemaManager {
      *
      * @return
      */
-    public String getCustomExtensionName() {
+    public String getCustomSchemaExtensionURI() {
+
         return SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
     }
 
@@ -176,6 +221,11 @@ public class SCIMResourceSchemaManager {
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
 
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
+    }
+
+    public SCIMResourceTypeSchema getResourceTypeResourceSchemaWithoutMultiValuedSchemaExtensions() {
+
+        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA_WITHOUT_MULTIVALUED_SCHEMA_EXTENSIONS;
     }
 
 }

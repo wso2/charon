@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
+import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -34,13 +35,11 @@ import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.wso2.charon3.core.schema.SCIMConstants.CUSTOM_USER;
-import static org.wso2.charon3.core.schema.SCIMConstants.CUSTOM_USER_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.CustomUserSchemaConstants.CUSTOM_USER_DESC;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER_SCHEMA_URI;
@@ -79,29 +78,30 @@ public class SchemaResourceManager extends AbstractResourceManager {
         try {
             List<Attribute> userSchemaAttributes = userManager.getUserSchema();
             List<Attribute> userEnterpriseSchemaAttributes = userManager.getEnterpriseUserSchema();
-            List<Attribute> userCustomSchemaAttributes = userManager.getCustomUserSchema();
+            List<Attribute> userCustomSchemaAttributes = userManager.getCustomUserSchemaAttributes();
+            String customUserSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
 
             Map<String, List<Attribute>> schemas = new HashMap<>();
             if (StringUtils.isBlank(id)) {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
-                schemas.put(CUSTOM_USER_SCHEMA_URI, userCustomSchemaAttributes);
+                if (StringUtils.isNotBlank(customUserSchemaURI)) {
+                    schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
+                }
                 return buildSchemasResponse(schemas);
             }
-            switch (id) {
-                case USER_CORE_SCHEMA_URI:
-                    schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
-                    break;
-                case ENTERPRISE_USER_SCHEMA_URI:
-                    schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
-                    break;
-                case CUSTOM_USER_SCHEMA_URI:
-                    schemas.put(CUSTOM_USER_SCHEMA_URI, userCustomSchemaAttributes);
-                    break;
-                default:
-                    // https://tools.ietf.org/html/rfc7643#section-8.7
-                    throw new NotImplementedException("only user, enterprise and custom schema are supported");
+
+            if (USER_CORE_SCHEMA_URI.equalsIgnoreCase(id)) {
+                schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
+            } else if (ENTERPRISE_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
+                schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
+            } else if (StringUtils.isNotBlank(customUserSchemaURI) && customUserSchemaURI.equalsIgnoreCase(id)) {
+                schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
+            } else {
+                // https://tools.ietf.org/html/rfc7643#section-8.7
+                throw new NotImplementedException("only user, enterprise and custom schema are supported");
             }
+
             return buildSchemasResponse(schemas);
         } catch (BadRequestException | CharonException | NotFoundException | NotImplementedException e) {
             // TODO: 11/7/19 Seperate out user errors & server errors
@@ -143,8 +143,9 @@ public class SchemaResourceManager extends AbstractResourceManager {
             JSONObject enterpriseUserSchemaObject = buildEnterpriseUserSchema(schemas.get(ENTERPRISE_USER_SCHEMA_URI));
             rootObject.put(enterpriseUserSchemaObject);
         }
-        if (schemas.get(CUSTOM_USER_SCHEMA_URI) != null) {
-            JSONObject customUserSchemaObject = buildCustomUserSchema(schemas.get(CUSTOM_USER_SCHEMA_URI));
+        String customSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
+        if (StringUtils.isNotBlank(customSchemaURI) && schemas.get(customSchemaURI) != null) {
+            JSONObject customUserSchemaObject = buildCustomUserSchema(customSchemaURI, schemas.get(customSchemaURI));
             rootObject.put(customUserSchemaObject);
         }
         return rootObject;
@@ -176,13 +177,14 @@ public class SchemaResourceManager extends AbstractResourceManager {
         }
     }
 
-    private JSONObject buildCustomUserSchema(List<Attribute> customUserSchemaList) throws CharonException {
+    private JSONObject buildCustomUserSchema(String customSchemaURI, List<Attribute> customUserSchemaList)
+            throws CharonException {
 
         try {
             JSONEncoder encoder = getEncoder();
 
             JSONObject customUserSchemaObject = new JSONObject();
-            customUserSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, CUSTOM_USER_SCHEMA_URI);
+            customUserSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, customSchemaURI);
             customUserSchemaObject.put(SCIMConstants.CustomUserSchemaConstants.NAME, CUSTOM_USER);
             customUserSchemaObject.put(SCIMConstants.CustomUserSchemaConstants.DESCRIPTION, CUSTOM_USER_DESC);
 
@@ -303,13 +305,6 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPUT(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 
-        try {
-            if (!StringUtils.equals(existingId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Updating attribute of custom schema is supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);
@@ -319,37 +314,6 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCH(String existingId, String scimObjectString, UserManager userManager, String
             attributes, String excludeAttributes) {
 
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse create(String schemaId, String tenantDomain, String scimObjectString, UserManager userManager, String attributes,
-                                String excludeAttributes) {
-
-        try {
-            if (!StringUtils.equals(schemaId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Creating attributes in " + schemaId + " is not supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
-        String error = "Request is undefined";
-        BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
-        return encodeSCIMException(badRequestException);
-    }
-
-    @Override
-    public SCIMResponse delete(String schemaId, String tenantDomain, String attributeUri, UserManager userManager){
-
-        try {
-            if (!StringUtils.equals(schemaId, CUSTOM_USER_SCHEMA_URI)) {
-                throw new NotImplementedException("Deleting attributes in " + schemaId + " is not supported");
-            }
-        } catch (NotImplementedException e) {
-            return AbstractResourceManager.encodeSCIMException(e);
-        }
         String error = "Request is undefined";
         BadRequestException badRequestException = new BadRequestException(error, ResponseCodeConstants.INVALID_PATH);
         return encodeSCIMException(badRequestException);

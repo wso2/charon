@@ -182,7 +182,7 @@ public class ResourceManagerUtil {
                             }
                         }
                     }
-                     getOnlyRequiredSubSubAttributesURIs(attributeSchema, subAttributeSchema,
+                    getOnlyRequiredSubSubAttributesURIs(attributeSchema, subAttributeSchema,
                             attributeSchemaArrayList, requestedAttributes,
                             requestedExcludingAttributes, requestedAttributesList,
                             requestedExcludingAttributesList);
