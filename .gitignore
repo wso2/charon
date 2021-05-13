@@ -6,7 +6,6 @@
 *.iws
 *.ipr
 .idea
-.DS_Store
 
 # Package Files #
 *.jar
