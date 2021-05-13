@@ -81,6 +81,7 @@
             <artifactId>powermock-module-testng-common</artifactId>
         </dependency>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         <dependency>
             <groupId>org.powermock</groupId>
@@ -89,6 +90,8 @@
             <scope>test</scope>
         </dependency>
 >>>>>>> Add unit tests for UserResourceManager
+=======
+>>>>>>> Update charon-core pom.xml
     </dependencies>
     <build>
         <plugins>
