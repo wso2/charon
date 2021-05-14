@@ -23,6 +23,8 @@
     <test name="charon-core-endpoint-test-all">
         <classes>
             <class name="org.wso2.charon3.core.utils.AttributeUtilTest"/>
+            <class name="org.wso2.charon3.core.utils.ResourceManagerUtilTest"/>
+            <class name="org.wso2.charon3.core.utils.SchemaUtilTest"/>
             <class name="org.wso2.charon3.core.schema.ServerSideValidatorTest"/>
         </classes>
     </test>
