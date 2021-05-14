@@ -320,7 +320,7 @@
         <json.version>3.0.0.wso2v1</json.version>
         <axiom.api.version>1.2.22</axiom.api.version>
         <axiom.impl.version>1.2.22</axiom.impl.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <servlet.api.version>2.5</servlet.api.version>
         <jsr311.api.version>1.1.1</jsr311.api.version>
         <project.scm.id>my-scm-server</project.scm.id>
