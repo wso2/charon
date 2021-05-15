@@ -52,6 +52,111 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class UserResourceManagerTest extends PowerMockTestCase {
 
     UserResourceManager userResourceManager = new UserResourceManager();
+    UserManager userManager = mock(UserManager.class);
+
+    @DataProvider(name = "dataForGetSuccess")
+    public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
+
+        User user = getNewUser();
+        String id = user.getId();
+
+        return new Object[][]{
+                {id, "userName", null, 200, user}
+        };
+    }
+
+    @Test(dataProvider = "dataForGetSuccess")
+    public void testGetSuccess(String id, String attributes,
+                               String excludeAttributes, int expectedScimResponseStatus, Object objectUser)
+                               throws BadRequestException, NotFoundException, CharonException {
+
+        User user = (User) objectUser;
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
+        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
+        when(userManager.getUser(id, requiredAttributes)).thenReturn(user);
+
+        SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
+        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
+
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(obj.getString("id"), id);
+    }
+
+    @DataProvider(name = "dataForGetThrowingExceptions")
+    public Object[][] dataToGetThrowingExceptions() {
+
+        return new Object[][]{
+                {"1234", "userName", null}
+        };
+    }
+
+    @Test(dataProvider = "dataForGetThrowingExceptions")
+    public void testGetThrowingExceptions(String id, String attributes,
+                     String excludeAttributes) throws CharonException, BadRequestException, NotFoundException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema)
+                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+        mockStatic(AbstractResourceManager.class);
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Users");
+        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
+        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
+        when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
+
+        SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
+
+        Assert.assertNull(outputScimResponse);
+    }
+
+    @DataProvider(name = "dataForListWithGetInt")
+    public Object[][] dataToGetListInt() throws CharonException, BadRequestException, InternalErrorException {
+
+        return new Object[][]{
+                {null, 1, 2, null, null, "PRIMARY", "emails", null, 200}
+        };
+    }
+
+    @Test(dataProvider = "dataForListWithGetInt")
+    public void testListWithGetInt(String filter, int startIndexInt, int countInt,
+                                   String sortBy, String sortOrder, String domainName, String attributes,
+                                   String excludeAttributes, int expectedScimResponseStatus) {
+
+        SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
+                countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
+
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+    }
+
+    @DataProvider(name = "dataForListWithGetInteger")
+    public Object[][] dataToGetListInteger() throws CharonException, BadRequestException, InternalErrorException {
+
+        return new Object[][]{
+                {null, 1, 2, null, null, "PRIMARY", "emails", null, 200},
+                {"userName sw Rash", 1, 2, null, null, "PRIMARY", "userName,name.familyName",
+                        "emails", 200}
+        };
+    }
+
+    @Test(dataProvider = "dataForListWithGetInteger")
+    public void testListWithGetInteger(String filter, Integer startIndexInt,
+                        Integer countInt, String sortBy, String sortOrder, String domainName,
+                        String attributes, String excludeAttributes, int expectedScimResponseStatus) {
+
+        SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
+                countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+    }
 
     private User getNewUser() throws BadRequestException, CharonException, InternalErrorException {
 
@@ -82,129 +187,5 @@ public class UserResourceManagerTest extends PowerMockTestCase {
         User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
         return user;
-    }
-
-    @DataProvider(name = "dataForGetSuccess")
-    public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
-
-        User user = getNewUser();
-        String id = user.getId();
-        UserManager userManager = mock(UserManager.class);
-
-        return new Object[][]{
-
-                {id, userManager, "userName", null, 200, user}
-        };
-    }
-
-    @Test(dataProvider = "dataForGetSuccess")
-    public void testGetSuccess(String id, Object objectUserManager, String attributes,
-                               String excludeAttributes, int expectedScimResponseStatus, Object objectUser)
-                               throws BadRequestException, NotFoundException, CharonException {
-
-        UserManager userManager = (UserManager) objectUserManager;
-        User user = (User) objectUser;
-
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
-        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
-        when(userManager.getUser(id, requiredAttributes)).thenReturn(user);
-
-        SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
-        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
-
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
-        Assert.assertEquals(obj.getString("id"), id);
-    }
-
-    @DataProvider(name = "dataForGetThrowingExceptions")
-    public Object[][] dataToGetThrowingExceptions() {
-
-        UserManager userManager = mock(UserManager.class);
-
-        return new Object[][]{
-
-                {"1234", userManager, "userName", null}
-        };
-    }
-
-    @Test(dataProvider = "dataForGetThrowingExceptions")
-    public void testGetThrowingExceptions(String id, Object objectUserManager, String attributes,
-                     String excludeAttributes) throws CharonException, BadRequestException, NotFoundException {
-
-        UserManager userManager = (UserManager) objectUserManager;
-
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema)
-                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
-        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
-        when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
-
-        SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
-
-        Assert.assertNull(outputScimResponse);
-    }
-
-    @DataProvider(name = "dataForListWithGetInt")
-    public Object[][] dataToGetListInt() throws CharonException, BadRequestException, InternalErrorException {
-
-        getNewUser();
-        UserManager userManager = mock(UserManager.class);
-
-        return new Object[][]{
-
-                {userManager, null, 1, 2, null, null, "PRIMARY", "emails", null, 200}
-        };
-    }
-
-    @Test(dataProvider = "dataForListWithGetInt")
-    public void testListWithGetInt(Object objectUserManager, String filter, int startIndexInt, int countInt,
-                                   String sortBy, String sortOrder, String domainName, String attributes,
-                                   String excludeAttributes, int expectedScimResponseStatus) {
-
-        UserManager userManager = (UserManager) objectUserManager;
-
-        SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
-                countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
-
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
-    }
-
-    @DataProvider(name = "dataForListWithGetInteger")
-    public Object[][] dataToGetListInteger() throws CharonException, BadRequestException, InternalErrorException {
-
-        getNewUser();
-        UserManager userManager = mock(UserManager.class);
-
-        return new Object[][]{
-
-                {userManager, null, 1, 2, null, null, "PRIMARY", "emails", null, 200},
-                {userManager, "userName sw Rash", 1, 2, null, null, "PRIMARY", "userName,name.familyName",
-                        "emails", 200}
-        };
-    }
-
-    @Test(dataProvider = "dataForListWithGetInteger")
-    public void testListWithGetInteger(Object objectUserManager, String filter, Integer startIndexInt,
-                        Integer countInt, String sortBy, String sortOrder, String domainName,
-                        String attributes, String excludeAttributes, int expectedScimResponseStatus) {
-
-        UserManager userManager = (UserManager) objectUserManager;
-
-        SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
-                countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 }
