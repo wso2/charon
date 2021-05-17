@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * This builds the custom user schema.
  */
@@ -36,6 +35,10 @@ public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
             new SCIMCustomSchemaExtensionBuilder();
     private Map<String, AttributeSchema> attributeSchemaConfig;
     private String rootAttributeURI;
+
+    private SCIMCustomSchemaExtensionBuilder() {
+
+    }
 
     public static SCIMCustomSchemaExtensionBuilder getInstance() {
 

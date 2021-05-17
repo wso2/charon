@@ -408,6 +408,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
 
     public String getUserName(String scimObjectString) throws CharonException {
+
         try {
             //obtain the json encoder
             JSONDecoder decoder = getDecoder();
@@ -418,13 +419,13 @@ public class MeResourceManager extends AbstractResourceManager {
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
             return user.getUserName();
-
         } catch (BadRequestException | InternalErrorException | CharonException e) {
             throw new CharonException("Error in getting the username from the anonymous request");
         }
     }
 
     public String getUserName(UserManager userManager, String scimObjectString) throws CharonException {
+
         try {
             //obtain the json encoder
             JSONDecoder decoder = getDecoder();
@@ -433,9 +434,7 @@ public class MeResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = getSchema(userManager);
             //decode the SCIM User object, encoded in the submitted payload.
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
-
             return user.getUserName();
-
         } catch (BadRequestException | InternalErrorException | CharonException | NotImplementedException e) {
             throw new CharonException("Error in getting the username from the anonymous request");
         }

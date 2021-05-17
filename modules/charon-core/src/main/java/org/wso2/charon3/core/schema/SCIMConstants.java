@@ -51,7 +51,6 @@ public class SCIMConstants {
     public static final String ROLE = "Role";
     public static final String ENTERPRISE_USER = "EnterpriseUser";
     public static final String CUSTOM_USER = "CustomUser";
-
     public static final String RESOURCE_TYPE = "ResourceType";
 
     /*Resource endpoints relative to the base SCIM URL*/
@@ -714,7 +713,6 @@ public class SCIMConstants {
         public static final String DESCRIPTION = "description";
         public static final String CUSTOM_USER_DESC = "Custom User";
     }
-
 
     /**
      * Constants found in operations.

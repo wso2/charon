@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.wso2.charon3.core.config;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,8 +50,7 @@ public abstract class ExtensionBuilder {
      * @param subAttributeName SubAttributeName.
      * @return Subattribute URI
      */
-    protected String getSubAttributeURI(ExtensionAttributeSchemaConfig config,
-                                        String subAttributeName) {
+    protected String getSubAttributeURI(ExtensionAttributeSchemaConfig config, String subAttributeName) {
 
         if (isRootConfig(config)) {
             return config.getURI() + ":" + subAttributeName;
@@ -75,15 +75,15 @@ public abstract class ExtensionBuilder {
      *
      * @param config
      */
-    protected void buildComplexAttributeSchema(ExtensionAttributeSchemaConfig config, Map<String, AttributeSchema>
-            attributeSchemas, Map<String, ExtensionAttributeSchemaConfig> customConfig)
-            throws InternalErrorException {
+    protected void buildComplexAttributeSchema(ExtensionAttributeSchemaConfig config,
+                                               Map<String, AttributeSchema> attributeSchemas, Map<String,
+            ExtensionAttributeSchemaConfig> customConfig) throws InternalErrorException {
 
         if (!attributeSchemas.containsKey(config.getURI())) {
             String[] subAttributes = config.getSubAttributes();
             for (String subAttribute : subAttributes) {
-                ExtensionAttributeSchemaConfig subAttribConfig =
-                        customConfig.get(getSubAttributeURI(config, subAttribute));
+                ExtensionAttributeSchemaConfig subAttribConfig = customConfig.get(getSubAttributeURI(config,
+                        subAttribute));
                 if (subAttribConfig == null) {
                     String error = String.format("Error adding subattribute %s to attribute %s. Error in SCIM2 " +
                             "extension schema config format.", subAttribute, config.getURI());
@@ -117,8 +117,8 @@ public abstract class ExtensionBuilder {
      *
      * @param config
      */
-    protected void buildComplexSchema(ExtensionAttributeSchemaConfig config, Map<String, AttributeSchema>
-            attributeSchemas) {
+    protected void buildComplexSchema(ExtensionAttributeSchemaConfig config,
+                                      Map<String, AttributeSchema> attributeSchemas) {
 
         String[] subAttributeNames = config.getSubAttributes();
         ArrayList<AttributeSchema> subAttributes = new ArrayList<AttributeSchema>();
@@ -134,8 +134,8 @@ public abstract class ExtensionBuilder {
      *
      * @param config
      */
-    protected void buildSimpleAttributeSchema(ExtensionAttributeSchemaConfig config, Map<String, AttributeSchema>
-            attributeSchemas) {
+    protected void buildSimpleAttributeSchema(ExtensionAttributeSchemaConfig config,
+                                              Map<String, AttributeSchema> attributeSchemas) {
 
         ArrayList<AttributeSchema> subAttributeList = new ArrayList<AttributeSchema>();
         if (!attributeSchemas.containsKey(config.getURI())) {
@@ -150,9 +150,8 @@ public abstract class ExtensionBuilder {
      * @param subAttributeList
      * @return
      */
-    public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig
-                                                                 attribute, ArrayList<AttributeSchema>
-            subAttributeList) {
+    public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
+                                                         ArrayList<AttributeSchema> subAttributeList) {
 
         return SCIMAttributeSchema.createSCIMAttributeSchema(attribute.getURI(), attribute.getName(),
                 attribute.getType(), attribute.getMultiValued(), attribute.getDescription(), attribute.getRequired(),
@@ -299,11 +298,13 @@ public abstract class ExtensionBuilder {
         }
 
         public ArrayList<String> getCanonicalValues() {
+
             return canonicalValues;
         }
 
 
         public ArrayList<SCIMDefinitions.ReferenceType> getReferenceTypes() {
+
             return referenceTypes;
         }
 
@@ -347,15 +348,13 @@ public abstract class ExtensionBuilder {
                 if (!"null".equalsIgnoreCase(subAttributesString)) {
                     subAttributes = subAttributesString.split(" ");
                 }
-                canonicalValues = setCanonicalValues(
-                        attributeConfigJSON.getJSONArray(SCIMConfigConstants.CANONICAL_VALUES));
-                referenceTypes = setReferenceTypes(
-                        attributeConfigJSON.getJSONArray(SCIMConfigConstants.REFERENCE_TYPES));
-
+                canonicalValues =
+                        setCanonicalValues(attributeConfigJSON.getJSONArray(SCIMConfigConstants.CANONICAL_VALUES));
+                referenceTypes =
+                        setReferenceTypes(attributeConfigJSON.getJSONArray(SCIMConfigConstants.REFERENCE_TYPES));
             } catch (JSONException e) {
                 throw new CharonException("Error while parsing extension configuration", e);
             }
-
         }
 
         /*
@@ -458,6 +457,7 @@ public abstract class ExtensionBuilder {
          * @return
          */
         protected ArrayList<String> setCanonicalValues(JSONArray input) throws JSONException {
+
             ArrayList<String> canonicalValues = new ArrayList<String>();
             JSONArray canonicalValuesList = input;
             for (int index = 0; index < canonicalValuesList.length(); ++index) {
@@ -472,6 +472,7 @@ public abstract class ExtensionBuilder {
          * @return
          */
         protected ArrayList<SCIMDefinitions.ReferenceType> setReferenceTypes(JSONArray input) throws JSONException {
+
             ArrayList<SCIMDefinitions.ReferenceType> referenceTypes = new ArrayList<SCIMDefinitions.ReferenceType>();
             JSONArray referenceTypesList = input;
 

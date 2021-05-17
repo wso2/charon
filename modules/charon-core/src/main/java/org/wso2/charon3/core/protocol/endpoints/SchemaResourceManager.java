@@ -82,6 +82,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
             String customUserSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
 
             Map<String, List<Attribute>> schemas = new HashMap<>();
+            // Below code blocks handles the /Schemas/ api requests.
             if (StringUtils.isBlank(id)) {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
@@ -91,6 +92,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
                 return buildSchemasResponse(schemas);
             }
 
+            // Below code blocks handles the /Schemas/{id} api requests.
             if (USER_CORE_SCHEMA_URI.equalsIgnoreCase(id)) {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
             } else if (ENTERPRISE_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
@@ -182,12 +184,11 @@ public class SchemaResourceManager extends AbstractResourceManager {
 
         try {
             JSONEncoder encoder = getEncoder();
-
             JSONObject customUserSchemaObject = new JSONObject();
             customUserSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, customSchemaURI);
             customUserSchemaObject.put(SCIMConstants.CustomUserSchemaConstants.NAME, CUSTOM_USER);
             customUserSchemaObject.put(SCIMConstants.CustomUserSchemaConstants.DESCRIPTION, CUSTOM_USER_DESC);
-
+            // Builds attribute array object.
             JSONArray customUserAttributeArray = buildSchemaAttributeArray(customUserSchemaList, encoder);
             customUserSchemaObject.put(ATTRIBUTES, customUserAttributeArray);
             return customUserSchemaObject;

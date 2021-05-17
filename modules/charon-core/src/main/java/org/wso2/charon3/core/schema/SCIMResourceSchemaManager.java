@@ -89,7 +89,6 @@ public class SCIMResourceSchemaManager {
     public SCIMResourceTypeSchema getUserResourceSchema(UserManager userManager)
             throws BadRequestException, NotImplementedException, CharonException {
 
-
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
         if (enterpriseSchemaExtension != null) {

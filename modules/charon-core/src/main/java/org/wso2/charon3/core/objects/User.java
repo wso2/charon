@@ -928,13 +928,12 @@ public class User extends AbstractSCIMObject {
     }
 
     /**
-     * set the schemas of the user
+     * Set the schemas of the user
      */
     public void setSchemas(UserManager userManager) throws BadRequestException,
             NotImplementedException, CharonException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager);
-
         java.util.List<String> schemasList = schema.getSchemasList();
         for (String scheme : schemasList) {
             setSchema(scheme);
