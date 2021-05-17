@@ -19,6 +19,7 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.json.JSONObject;
+import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.Assert;
@@ -41,7 +42,6 @@ import org.wso2.charon3.core.utils.ResourceManagerUtil;
 
 import java.util.Map;
 
-import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -51,8 +51,10 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({AbstractResourceManager.class})
 public class UserResourceManagerTest extends PowerMockTestCase {
 
-    UserResourceManager userResourceManager = new UserResourceManager();
-    UserManager userManager = mock(UserManager.class);
+    private UserResourceManager userResourceManager = new UserResourceManager();
+
+    @Mock
+    private UserManager userManager;
 
     @DataProvider(name = "dataForGetSuccess")
     public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
