@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.3.43</version>
+    <version>3.3.44-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -36,7 +36,7 @@
         <connection>scm:git:https://github.com/wso2/charon</connection>
         <developerConnection>scm:git:https://github.com/wso2/charon</developerConnection>
         <url>https://github.com/wso2/charon</url>
-        <tag>v3.3.43</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
