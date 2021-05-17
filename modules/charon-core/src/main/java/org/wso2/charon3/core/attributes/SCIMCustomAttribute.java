@@ -23,18 +23,7 @@ import java.util.Map;
  */
 public class SCIMCustomAttribute {
 
-    private int tenantId;
     private Map<String, String> properties;
-
-    public void setTenantId(int tenantId) {
-
-        this.tenantId = tenantId;
-    }
-
-    public int getTenantId() {
-
-        return tenantId;
-    }
 
     public void setProperties(Map<String, String> properties) {
 
