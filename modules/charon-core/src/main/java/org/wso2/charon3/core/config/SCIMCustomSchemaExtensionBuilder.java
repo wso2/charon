@@ -42,6 +42,11 @@ public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
         return customSchemaExtensionBuilder;
     }
 
+    /**
+     * Set the rootAttribute URI of the customschema.
+     *
+     * @param schemaUri RootAttribute.
+     */
     public void setURI(String schemaUri) {
 
         this.rootAttributeURI = schemaUri;
@@ -53,6 +58,14 @@ public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
         return rootAttributeURI;
     }
 
+    /**
+     * Builds Custom Attribute Schema and returns it.
+     *
+     * @param attributes List of SCIMCustomAttributes.
+     * @return Attribute Schema of the custom schema URI.
+     * @throws CharonException
+     * @throws InternalErrorException
+     */
     public AttributeSchema buildUserCustomSchemaExtension(List<SCIMCustomAttribute> attributes) throws CharonException,
             InternalErrorException {
 

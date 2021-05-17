@@ -35,9 +35,20 @@ import java.util.Map;
  */
 public abstract class ExtensionBuilder {
 
-
+    /**
+     * Get rootURI of the schema.
+     *
+     * @return
+     */
     public abstract String getURI();
 
+    /**
+     * Returns subattribute URI.
+     *
+     * @param config           ExtensionAttributeSchemaConfig.
+     * @param subAttributeName SubAttributeName.
+     * @return Subattribute URI
+     */
     protected String getSubAttributeURI(ExtensionAttributeSchemaConfig config,
                                         String subAttributeName) {
 
@@ -48,6 +59,12 @@ public abstract class ExtensionBuilder {
         }
     }
 
+    /**
+     * Returns true if it is the rootconfig. Else returns false.
+     *
+     * @param config ExtensionAttributeSchemaConfig
+     * @return Returns true if it is the rootconfig. Else returns false.
+     */
     protected boolean isRootConfig(ExtensionAttributeSchemaConfig config) {
 
         return getURI().equals(config.getURI());
