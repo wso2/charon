@@ -62,8 +62,8 @@ public class PatchOperationUtilTest {
     public Object[][] dataToPatchRemoveSuccess() throws InstantiationException, IllegalAccessException,
             CharonException {
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
 
         patchOperation1.setOperation(remove);
         patchOperation1.setPath("nickName");
@@ -97,9 +97,9 @@ public class PatchOperationUtilTest {
     public Object[][] dataToPatchRemoveExceptions() throws InstantiationException, IllegalAccessException,
             CharonException {
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation3 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
+        PatchOperation patchOperation3 = new PatchOperation();
 
         patchOperation1.setOperation(remove);
 
@@ -133,8 +133,8 @@ public class PatchOperationUtilTest {
     @DataProvider(name = "dataForPatchAddSuccess")
     public Object[][] dataToPatchAddSuccess() throws InstantiationException, IllegalAccessException, CharonException {
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
 
         patchOperation1.setOperation(add);
         patchOperation1.setPath("country");
@@ -171,8 +171,8 @@ public class PatchOperationUtilTest {
     public Object[][] dataToPatchAddExceptions() throws InstantiationException, IllegalAccessException,
             CharonException {
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
 
         patchOperation1.setOperation(add);
 
@@ -209,8 +209,8 @@ public class PatchOperationUtilTest {
         operationValueName.put("givenName", "John");
         operationValueName.put("familyName", "Anderson");
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
 
         patchOperation1.setOperation(replace);
         patchOperation1.setPath("manager.displayName");
@@ -251,8 +251,8 @@ public class PatchOperationUtilTest {
         operationValueName.put("givenName", "John");
         operationValueName.put("familyName", "Anderson");
 
-        PatchOperation patchOperation1 = PatchOperation.class.newInstance();
-        PatchOperation patchOperation2 = PatchOperation.class.newInstance();
+        PatchOperation patchOperation1 = new PatchOperation();
+        PatchOperation patchOperation2 = new PatchOperation();
 
         patchOperation1.setOperation(replace);
         patchOperation1.setValues("Rash");
@@ -354,7 +354,7 @@ public class PatchOperationUtilTest {
 
     private User getUser() throws InstantiationException, IllegalAccessException {
 
-        User user = User.class.newInstance();
+        User user = new User();
         user.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
         user.setSchema("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
 
