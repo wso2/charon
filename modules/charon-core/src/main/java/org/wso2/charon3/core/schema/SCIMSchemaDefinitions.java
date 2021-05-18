@@ -1506,10 +1506,10 @@ public class SCIMSchemaDefinitions {
                     SCIMResourceTypeSchemaDefinition.DESCRIPTION,
                     SCIMResourceTypeSchemaDefinition.SCHEMA,
                     SCIMResourceTypeSchemaDefinition.SCHEMA_EXTENSIONS);
-
-    /*
-    In the spec it is mentioned to use JSONArray for SchemaExtennsions. Inorder to keep the
-    backward compatibility, this is added.
+    
+    /**
+     * In the spec it is mentioned to use JSONArray for SchemaExtensions. Inorder to keep the
+     *  backward compatibility, this is added.
      */
     public static final SCIMResourceTypeSchema SCIM_RESOURCE_TYPE_SCHEMA_WITHOUT_MULTIVALUED_SCHEMA_EXTENSIONS =
             SCIMResourceTypeSchema.createSCIMResourceSchema(

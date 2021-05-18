@@ -98,9 +98,7 @@ public class SCIMResourceSchemaManager {
             if (customSchemaExtension != null) {
                 schemas.add(customSchemaExtension.getURI());
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not find Custom schema.");
-                }
+                log.warn("Could not find Custom schema.");
             }
             return SCIMResourceTypeSchema.createSCIMResourceSchema(
                     schemas,

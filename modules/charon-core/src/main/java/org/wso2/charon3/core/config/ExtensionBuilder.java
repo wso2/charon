@@ -32,14 +32,14 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Abstract class for extension builder.
+ * Abstract class for extension builds which builds SCIM schema attributes.
  */
 public abstract class ExtensionBuilder {
 
     /**
      * Get rootURI of the schema.
      *
-     * @return
+     * @return RootURI.
      */
     public abstract String getURI();
 
@@ -48,7 +48,7 @@ public abstract class ExtensionBuilder {
      *
      * @param config           ExtensionAttributeSchemaConfig.
      * @param subAttributeName SubAttributeName.
-     * @return Subattribute URI
+     * @return Subattribute URI.
      */
     protected String getSubAttributeURI(ExtensionAttributeSchemaConfig config, String subAttributeName) {
 
@@ -70,19 +70,22 @@ public abstract class ExtensionBuilder {
         return getURI().equals(config.getURI());
     }
 
-    /*
-     * Knows how to build a complex attribute
+    /**
+     * Builds complex attributes.
      *
-     * @param config
+     * @param config           ExtensionAttributeSchemaConfig that needs to be built.
+     * @param attributeSchemas Map of all attributeSchemas.
+     * @param extensionConfig  Map of all ExtensionAttributeSchemaConfig.
+     * @throws InternalErrorException
      */
     protected void buildComplexAttributeSchema(ExtensionAttributeSchemaConfig config,
                                                Map<String, AttributeSchema> attributeSchemas, Map<String,
-            ExtensionAttributeSchemaConfig> customConfig) throws InternalErrorException {
+            ExtensionAttributeSchemaConfig> extensionConfig) throws InternalErrorException {
 
         if (!attributeSchemas.containsKey(config.getURI())) {
             String[] subAttributes = config.getSubAttributes();
             for (String subAttribute : subAttributes) {
-                ExtensionAttributeSchemaConfig subAttribConfig = customConfig.get(getSubAttributeURI(config,
+                ExtensionAttributeSchemaConfig subAttribConfig = extensionConfig.get(getSubAttributeURI(config,
                         subAttribute));
                 if (subAttribConfig == null) {
                     String error = String.format("Error adding subattribute %s to attribute %s. Error in SCIM2 " +
@@ -102,20 +105,21 @@ public abstract class ExtensionBuilder {
                         String error = "A attribute of complex type should have sub attributes";
                         throw new InternalErrorException(error);
                     } else {
-                        // need to build child schemas first
-                        buildComplexAttributeSchema(subAttribConfig, attributeSchemas, customConfig);
+                        // Need to build child schemas first.
+                        buildComplexAttributeSchema(subAttribConfig, attributeSchemas, extensionConfig);
                     }
                 }
             }
-            // now all sub attributes must be already built
+            // Now all sub attributes must be already built.
             buildComplexSchema(config, attributeSchemas);
         }
     }
 
-    /*
-     * Has the logic to iterate through child attributes
+    /**
+     * Has the logic to iterate through child attributes.
      *
-     * @param config
+     * @param config           ExtensionAttributeSchemaConfig.
+     * @param attributeSchemas Map of all attributeSchemas.
      */
     protected void buildComplexSchema(ExtensionAttributeSchemaConfig config,
                                       Map<String, AttributeSchema> attributeSchemas) {
@@ -129,10 +133,11 @@ public abstract class ExtensionBuilder {
         attributeSchemas.put(config.getURI(), complexAttribute);
     }
 
-    /*
-     * Builds simple attribute schema
+    /**
+     * Builds simple attribute schema.
      *
-     * @param config
+     * @param config           ExtensionAttributeSchemaConfig
+     * @param attributeSchemas Map of all attributeschemas.
      */
     protected void buildSimpleAttributeSchema(ExtensionAttributeSchemaConfig config,
                                               Map<String, AttributeSchema> attributeSchemas) {
@@ -144,11 +149,12 @@ public abstract class ExtensionBuilder {
         }
     }
 
-    /*
-     * create SCIM Attribute Schema
-     * @param attribute
-     * @param subAttributeList
-     * @return
+    /**
+     * Create SCIM Attribute Schema.
+     *
+     * @param attribute        ExtensionAttributeSchemaConfig attribute.
+     * @param subAttributeList List of subattributes.
+     * @return SCIMAttributeSchema
      */
     public SCIMAttributeSchema createSCIMAttributeSchema(ExtensionAttributeSchemaConfig attribute,
                                                          ArrayList<AttributeSchema> subAttributeList) {
@@ -164,32 +170,32 @@ public abstract class ExtensionBuilder {
      */
     protected static class ExtensionAttributeSchemaConfig {
 
-        //unique identifier for the attribute
+        // Unique identifier for the attribute.
         protected String uri;
-        //name of the attribute
+        // Name of the attribute
         protected String name;
-        //data type of the attribute
+        // Data type of the attribute.
         protected SCIMDefinitions.DataType type;
-        //Boolean value indicating the attribute's plurality.
+        // Boolean value indicating the attribute's plurality.
         protected Boolean multiValued;
-        //The attribute's human readable description
+        // The attribute's human readable description.
         protected String description;
-        //A Boolean value that specifies if the attribute is required
+        // A Boolean value that specifies if the attribute is required.
         protected Boolean required;
-        //A Boolean value that specifies if the String attribute is case sensitive
+        // A Boolean value that specifies if the String attribute is case sensitive.
         protected Boolean caseExact;
-        //A SCIM defined value that specifies if the attribute's mutability.
+        // A SCIM defined value that specifies if the attribute's mutability.
         protected SCIMDefinitions.Mutability mutability;
-        //A SCIM defined value that specifies when the attribute's value need to be returned.
+        // A SCIM defined value that specifies when the attribute's value need to be returned.
         protected SCIMDefinitions.Returned returned;
-        //A SCIM defined value that specifies the uniqueness level of an attribute.
+        // A SCIM defined value that specifies the uniqueness level of an attribute.
         protected SCIMDefinitions.Uniqueness uniqueness;
-        //A list specifying the contained attributes. OPTIONAL.
+        // A list specifying the contained attributes. OPTIONAL.
         protected String[] subAttributes;
-        //A collection of suggested canonical values that MAY be used -OPTIONAL
+        // A collection of suggested canonical values that MAY be used -OPTIONAL
         protected ArrayList<String> canonicalValues;
-        //A multi-valued array of JSON strings that indicate the SCIM resource types that may be referenced
-        //only applicable for attributes that are of type "reference"
+        // A multi-valued array of JSON strings that indicate the SCIM resource types that may be referenced
+        // only applicable for attributes that are of type "reference".
         protected ArrayList<SCIMDefinitions.ReferenceType> referenceTypes;
 
         public String[] getSubAttributes() {
@@ -357,10 +363,11 @@ public abstract class ExtensionBuilder {
             }
         }
 
-        /*
-         * this builds the relevant data types according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant data types according to what has configured and returns it.
+         *
+         * @param input Input value.
+         * @return SCIM defined data type.
          */
         protected SCIMDefinitions.DataType getDefinedDataType(String input) {
 
@@ -387,10 +394,11 @@ public abstract class ExtensionBuilder {
             return type;
         }
 
-        /*
-         * this builds the relevant mutability according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant mutability according to what has configured.
+         *
+         * @param input Input value.
+         * @return SCIM defined mutability value.
          */
         protected SCIMDefinitions.Mutability getDefinedMutability(String input) {
 
@@ -409,10 +417,11 @@ public abstract class ExtensionBuilder {
             return type;
         }
 
-        /*
-         * this builds the relevant returned type according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant returned type according to what has configured.
+         *
+         * @param input Input value.
+         * @return SCIM defined Return value
          */
         protected SCIMDefinitions.Returned getDefinedReturned(String input) {
 
@@ -431,10 +440,11 @@ public abstract class ExtensionBuilder {
             return type;
         }
 
-        /*
-         * this builds the relevant uniqueness according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant uniqueness based on the input.
+         *
+         * @param input Input value
+         * @return SCIM defined Uniqueness value.
          */
         protected SCIMDefinitions.Uniqueness getDefinedUniqueness(String input) {
 
@@ -451,10 +461,12 @@ public abstract class ExtensionBuilder {
             return type;
         }
 
-        /*
-         * this builds the relevant canonical values according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant canonical values based on the input.
+         *
+         * @param input JSON array input.
+         * @return ArrayList of canonical values.
+         * @throws JSONException
          */
         protected ArrayList<String> setCanonicalValues(JSONArray input) throws JSONException {
 
@@ -466,10 +478,12 @@ public abstract class ExtensionBuilder {
             return canonicalValues;
         }
 
-        /*
-         * this builds the relevant reference types according to what has configured in config file
-         * @param input
-         * @return
+        /**
+         * This builds the relevant reference types according to the input.
+         *
+         * @param input JSONArray of input.
+         * @return Array:ist of SCIM defined reference types.
+         * @throws JSONException
          */
         protected ArrayList<SCIMDefinitions.ReferenceType> setReferenceTypes(JSONArray input) throws JSONException {
 
