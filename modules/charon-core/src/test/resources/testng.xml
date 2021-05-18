@@ -24,6 +24,7 @@
         <classes>
             <class name="org.wso2.charon3.core.utils.AttributeUtilTest"/>
             <class name="org.wso2.charon3.core.schema.ServerSideValidatorTest"/>
+            <class name="org.wso2.charon3.core.protocol.endpoints.MeResourceManagerTest"/>
         </classes>
     </test>
 </suite>
