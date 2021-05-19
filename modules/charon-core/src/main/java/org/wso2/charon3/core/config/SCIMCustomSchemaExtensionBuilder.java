@@ -30,10 +30,8 @@ import java.util.Map;
  */
 public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
 
-    private Map<String, ExtensionAttributeSchemaConfig> customConfig;
     private static SCIMCustomSchemaExtensionBuilder customSchemaExtensionBuilder =
             new SCIMCustomSchemaExtensionBuilder();
-    private Map<String, AttributeSchema> attributeSchemaConfig;
     private String rootAttributeURI;
 
     private SCIMCustomSchemaExtensionBuilder() {
@@ -62,7 +60,8 @@ public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
     }
 
     /**
-     * Builds Custom Attribute Schema and returns it.
+     * Builds Custom Attribute Schema and returns it. It takes list of SCIMCustAttributes and reads the properties
+     * and converts it to Custom AttributeSchema.
      *
      * @param attributes List of SCIMCustomAttributes.
      * @return Attribute Schema of the custom schema URI.
@@ -72,30 +71,40 @@ public class SCIMCustomSchemaExtensionBuilder extends ExtensionBuilder {
     public AttributeSchema buildUserCustomSchemaExtension(List<SCIMCustomAttribute> attributes) throws CharonException,
             InternalErrorException {
 
-        attributeSchemaConfig = new HashMap<>();
-        readConfiguration(attributes);
+        // Variable attributeSchema is a scim spec defined object format that includes subattributes, etc.
+        Map<String, AttributeSchema> attributeSchemas = new HashMap<>();
+        Map<String, ExtensionAttributeSchemaConfig> attributeConfigs = new HashMap<>();
+
+        readConfiguration(attributes, attributeConfigs);
         for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig :
-                customConfig.entrySet()) {
-            // if there are no children its a simple attribute, build it
+                attributeConfigs.entrySet()) {
+            // If there are no children its a simple attribute, build it.
             if (!attributeSchemaConfig.getValue().hasChildren()) {
-                buildSimpleAttributeSchema(attributeSchemaConfig.getValue(), this.attributeSchemaConfig);
+                buildSimpleAttributeSchema(attributeSchemaConfig.getValue(), attributeSchemas);
             } else {
-                // need to build child schemas first
-                buildComplexAttributeSchema(attributeSchemaConfig.getValue(), this.attributeSchemaConfig, customConfig);
+                // Need to build child schemas first.
+                buildComplexAttributeSchema(attributeSchemaConfig.getValue(), attributeSchemas, attributeConfigs);
             }
         }
         // Now get the extension schema.
-        return  attributeSchemaConfig.get(rootAttributeURI);
+        return  attributeSchemas.get(rootAttributeURI);
     }
 
-    private void readConfiguration(List<SCIMCustomAttribute> schemaConfigurations) throws CharonException {
+    /**
+     * This method reads the list of custom schema configurations along with properties and converts it to a
+     * ExtensionAttributeSchemaConfig data model which is a intermediate data model.
+     *
+     * @param schemaConfigurations List of custom schema attributes.
+     * @param attributeConfigs     Map of ExtensionAttributeSchemaConfigs.
+     */
+    private void readConfiguration(List<SCIMCustomAttribute> schemaConfigurations, Map<String,
+            ExtensionAttributeSchemaConfig> attributeConfigs) {
 
-        customConfig = new HashMap<>();
         for (SCIMCustomAttribute schemaConfiguration : schemaConfigurations) {
             ExtensionAttributeSchemaConfig schemaAttributeConfig =
                     new ExtensionAttributeSchemaConfig
                             (schemaConfiguration.getProperties());
-            customConfig.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
+            attributeConfigs.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
         }
     }
 }
