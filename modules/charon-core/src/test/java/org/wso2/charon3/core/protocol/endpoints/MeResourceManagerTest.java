@@ -1469,8 +1469,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE,
                         "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
