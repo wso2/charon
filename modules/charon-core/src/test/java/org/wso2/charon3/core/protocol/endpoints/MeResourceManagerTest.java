@@ -62,7 +62,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PrepareForTest({AbstractResourceManager.class})
 public class MeResourceManagerTest extends PowerMockTestCase {
 
-    private static final String NEWUSERSCIMOBJECTSTRING = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\n" +
@@ -90,7 +90,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSERSCIMOBJECTSTRINGUPDATE = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING_UPDATE = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\n" +
@@ -118,7 +118,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSERSCIMOBJECTSTRINGPATCH = "{\n" +
+    private static final String NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
@@ -155,7 +155,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSERSCIMOBJECTSTRINGPATCHUPDATE = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
@@ -192,7 +192,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSERSCIMOBJECTSTRINGFORPATCHWITHREPLACE = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
@@ -229,7 +229,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSERSCIMOBJECTSTRINGFORPATCHWITHREPLACEUPDATED = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
@@ -296,7 +296,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        return decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        return decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
     }
 
     @DataProvider(name = "dataForGetSuccess")
@@ -463,7 +463,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User user = getNewUser();
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, user, ResponseCodeConstants.CODE_CREATED}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, user, ResponseCodeConstants.CODE_CREATED}
         };
     }
 
@@ -503,7 +503,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User user = getNewUser();
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, user, ResponseCodeConstants.CODE_INTERNAL_ERROR}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, user, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
@@ -536,7 +536,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public Object[][] dataToTestCreateNewlyCreatedUserResourceIsNull() {
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
@@ -567,7 +567,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public Object[][] dataToTestCreatBadRequestException() {
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
         };
     }
 
@@ -597,7 +597,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public Object[][] dataToTestCreatConflictException() {
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, ResponseCodeConstants.CODE_CONFLICT}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_CONFLICT}
         };
     }
 
@@ -627,7 +627,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public Object[][] dataToTestCreateNotFoundException() {
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
         };
     }
 
@@ -657,7 +657,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public Object[][] dataToTestCreateCharonException() {
 
         return new Object[][]{
-                {NEWUSERSCIMOBJECTSTRING, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
@@ -839,13 +839,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null, userNew, userOld, ResponseCodeConstants.CODE_OK}
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
+                        userNew, userOld, ResponseCodeConstants.CODE_OK}
         };
     }
 
@@ -893,13 +894,13 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null, userNew,
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, userNew,
                         userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
@@ -944,13 +945,13 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null,
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
                         userNew, userOld, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
         };
     }
@@ -995,11 +996,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null,
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
                         userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
@@ -1041,11 +1042,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null, ResponseCodeConstants.CODE_NOT_IMPLEMENTED}
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, ResponseCodeConstants.CODE_NOT_IMPLEMENTED}
         };
     }
 
@@ -1082,11 +1083,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRING, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String name = userOld.getUserName();
 
         return new Object[][]{
-                {name, NEWUSERSCIMOBJECTSTRINGUPDATE, "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
+                {name, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
         };
     }
 
@@ -1122,13 +1123,13 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName", null, userNew,
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null, userNew,
                         userOld, ResponseCodeConstants.CODE_OK}
         };
     }
@@ -1177,13 +1178,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGFORPATCHWITHREPLACE, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGFORPATCHWITHREPLACEUPDATED, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED,
+                schema, new User());
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGFORPATCHWITHREPLACEUPDATED, "userName",
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED, "userName",
                         null, userNew, userOld, ResponseCodeConstants.CODE_OK}
         };
     }
@@ -1227,13 +1229,13 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName", null,
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null,
                         userNew, userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
@@ -1279,13 +1281,13 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName",
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, userNew, userOld, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
         };
     }
@@ -1332,11 +1334,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName",
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
@@ -1379,11 +1381,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName",
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, ResponseCodeConstants.CODE_BAD_REQUEST}
         };
     }
@@ -1422,11 +1424,11 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName", null,
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null,
                         ResponseCodeConstants.CODE_NOT_IMPLEMENTED}
         };
     }
@@ -1464,13 +1466,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
-        User userNew = decoder.decodeResource(NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, schema, new User());
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
 
         return new Object[][]{
-                {id, NEWUSERSCIMOBJECTSTRINGPATCHUPDATE, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE,
+                        "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
@@ -1509,7 +1512,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User user = getNewUser();
 
         return new Object[][]{
-                {user, NEWUSERSCIMOBJECTSTRING}
+                {user, NEW_USER_SCIM_OBJECT_STRING}
         };
     }
 
