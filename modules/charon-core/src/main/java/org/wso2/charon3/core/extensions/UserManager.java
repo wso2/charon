@@ -249,7 +249,7 @@ public interface UserManager {
     default AttributeSchema getCustomUserSchemaExtension() throws CharonException, NotImplementedException,
             BadRequestException {
 
-        throw new NotImplementedException();
+        return null;
     }
 
     /**
@@ -263,6 +263,6 @@ public interface UserManager {
     default List<Attribute> getCustomUserSchemaAttributes() throws CharonException, NotImplementedException,
             BadRequestException {
 
-        throw new NotImplementedException();
+        return null;
     }
  }
