@@ -1447,8 +1447,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     @Test(dataProvider = "dataForUpdateWithPATCHInternalErrorException")
     public void testUpdateWithPATCHInternalErrorException(String existingId, String scimObjectString,
                                                           String attributes, String excludeAttributes,
-                                                          int expectedScimResponseStatus
-    )
+                                                          int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
