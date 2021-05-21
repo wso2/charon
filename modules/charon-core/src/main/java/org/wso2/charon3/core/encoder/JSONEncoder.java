@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -483,16 +484,28 @@ public class JSONEncoder {
                 SCIMConstants.ResourceTypeSchemaConstants.SCHEMA, SCIMConstants.USER_CORE_SCHEMA_URI);
 
         if (SCIMResourceSchemaManager.getInstance().isExtensionSet()) {
+            JSONArray schemaExtensions = new JSONArray();
             JSONObject extensionSchemaObject = new JSONObject();
-
             extensionSchemaObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
                     SCIMResourceSchemaManager.getInstance().getExtensionURI());
             extensionSchemaObject.put(
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
                     SCIMResourceSchemaManager.getInstance().getExtensionRequired());
+            schemaExtensions.put(extensionSchemaObject);
+
+            // Add custom user schema as a schema extension.
+            if (StringUtils.isNotBlank(SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI())) {
+                JSONObject customSchemaObject = new JSONObject();
+                customSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+                        SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI());
+                customSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED, false);
+                schemaExtensions.put(customSchemaObject);
+            }
+
             userResourceTypeObject.put(
-                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, extensionSchemaObject);
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS, schemaExtensions);
+            
         }
 
         return userResourceTypeObject.toString();

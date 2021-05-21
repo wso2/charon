@@ -59,7 +59,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
             //get the URIs of required attributes which must be given a value
 
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -90,7 +90,7 @@ public class MeResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (CharonException e) {
             return encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (BadRequestException | NotImplementedException e) {
             return encodeSCIMException(e);
         }
     }
@@ -108,7 +108,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
             //obtain the schema corresponding to user
             // unless configured returns core-user schema or else returns extended user schema)
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                     (SCIMResourceTypeSchema)
@@ -162,6 +162,8 @@ public class MeResourceManager extends AbstractResourceManager {
         } catch (InternalErrorException e) {
             return encodeSCIMException(e);
         } catch (NotFoundException e) {
+            return encodeSCIMException(e);
+        } catch (NotImplementedException e) {
             return encodeSCIMException(e);
         }
     }
@@ -220,7 +222,7 @@ public class MeResourceManager extends AbstractResourceManager {
             //obtain the json decoder.
             decoder = getDecoder();
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
 
             //get the URIs of required attributes which must be given a value
             Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -304,7 +306,7 @@ public class MeResourceManager extends AbstractResourceManager {
             //decode the SCIM User object, encoded in the submitted payload.
             List<PatchOperation> opList = decoder.decodeRequest(scimObjectString);
 
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+            SCIMResourceTypeSchema schema = getSchema(userManager);
             //get the user from the user core
             User oldUser = userManager.getMe(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
             if (oldUser == null) {
@@ -406,6 +408,7 @@ public class MeResourceManager extends AbstractResourceManager {
 
 
     public String getUserName(String scimObjectString) throws CharonException {
+
         try {
             //obtain the json encoder
             JSONDecoder decoder = getDecoder();
@@ -416,9 +419,39 @@ public class MeResourceManager extends AbstractResourceManager {
             User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
 
             return user.getUserName();
-
         } catch (BadRequestException | InternalErrorException | CharonException e) {
             throw new CharonException("Error in getting the username from the anonymous request");
         }
+    }
+
+    public String getUserName(UserManager userManager, String scimObjectString) throws CharonException {
+
+        try {
+            //obtain the json encoder
+            JSONDecoder decoder = getDecoder();
+            //obtain the schema corresponding to user
+            // unless configured returns core-user schema or else returns extended user schema)
+            SCIMResourceTypeSchema schema = getSchema(userManager);
+            //decode the SCIM User object, encoded in the submitted payload.
+            User user = (User) decoder.decodeResource(scimObjectString, schema, new User());
+            return user.getUserName();
+        } catch (BadRequestException | InternalErrorException | CharonException | NotImplementedException e) {
+            throw new CharonException("Error in getting the username from the anonymous request");
+        }
+    }
+
+    private SCIMResourceTypeSchema getSchema(UserManager userManager) throws BadRequestException,
+            NotImplementedException, CharonException {
+
+        SCIMResourceTypeSchema schema = null;
+        if (userManager != null) {
+            // Unless configured returns core-user schema or else returns extended user schema.
+            schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema(userManager);
+        }
+        if (schema == null) {
+            // Unless configured returns core-user schema or else returns extended user schema.
+            schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        }
+        return schema;
     }
 }
