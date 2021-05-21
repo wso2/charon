@@ -118,7 +118,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH = "{\n" +
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH = "{\n" +
             "  \"schemas\": \n" +
             "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
             "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
@@ -266,7 +266,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             "  ]\n" +
             "}";
 
-    private static final String ENDPOINT_ME = "https://localhost:9443/scim2/Me";
+    private static final String SCIM2_ME_ENDPOINT = "https://localhost:9443/scim2/Me";
 
     private MeResourceManager meResourceManager;
     private UserManager userManager;
@@ -299,24 +299,24 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         return decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
     }
 
-    @DataProvider(name = "dataForGetSuccess")
-    public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
+    @DataProvider(name = "dataForGetUserSuccess")
+    public Object[][] dataToGetUserSuccess() throws CharonException, InternalErrorException, BadRequestException {
 
         User user = getNewUser();
         String id = user.getId();
         String name = user.getUserName();
 
         return new Object[][]{
-                {id, name, null, null, ResponseCodeConstants.CODE_OK, user},
-                {id, name, null, "emails", ResponseCodeConstants.CODE_OK, user},
-                {id, name, "username,meta", null, ResponseCodeConstants.CODE_OK, user},
-                {id, name, "username", "emails", ResponseCodeConstants.CODE_OK, user}
+                {id, name, null, null, user},
+                {id, name, null, "emails", user},
+                {id, name, "username,meta", null, user},
+                {id, name, "username", "emails", user}
         };
     }
 
-    @Test(dataProvider = "dataForGetSuccess")
-    public void testGetSuccess(String id, String name, String attributes,
-                               String excludeAttributes, int expectedScimResponseStatus, Object objectUser)
+    @Test(dataProvider = "dataForGetUserSuccess")
+    public void testGetUserSuccess(String id, String name, String attributes,
+                                   String excludeAttributes, Object objectUser)
             throws BadRequestException, NotFoundException, CharonException {
 
         User user = (User) objectUser;
@@ -328,24 +328,21 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(userManager.getMe(name, requiredAttributes)).thenReturn(user);
 
-        SCIMResponse outputScimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
-        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
+        SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
+        JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
 
-        //Assertions
-
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
         Assert.assertEquals(obj.getString("userName"), name);
         Assert.assertEquals(obj.getString("id"), id);
 
-        String returnedURI = outputScimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
-        String expectedURI = ENDPOINT_ME + "/" + obj.getString("id");
+        String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
+        String expectedURI = SCIM2_ME_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
-
         if (attributes == null & excludeAttributes == null) {
 
             Assert.assertTrue(obj.has("emails"));
@@ -358,37 +355,36 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
     }
 
-    @DataProvider(name = "dataForGetNotFoundException")
-    public Object[][] dataToGetNotFoundException() {
+    @DataProvider(name = "dataForGetUserNotFoundException")
+    public Object[][] dataToGetUserNotFoundException() {
 
         return new Object[][]{
-                {"David", "userName", null, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
+                {"David", "userName", null},
+                {"David", "userName", "emails"}
         };
     }
 
-    @Test(dataProvider = "dataForGetNotFoundException")
-    public void testGetUserNotFoundException(String name, String attributes, String excludeAttributes,
-                                             int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForGetUserNotFoundException")
+    public void testGetUserNotFoundException(String name, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema)
-                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
         when(userManager.getMe(name, requiredAttributes)).thenReturn(null);
 
-        SCIMResponse outputScimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
+        SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
 
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
     }
 
     @DataProvider(name = "dataForGetCharonException")
@@ -406,21 +402,20 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema)
-                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
         when(userManager.getMe(name, requiredAttributes)).thenThrow(CharonException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -439,63 +434,58 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema)
-                        CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         when(userManager.getMe(name, requiredAttributes)).thenThrow(BadRequestException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    @DataProvider(name = "dataForTestCreateSuccess")
-    public Object[][] dataToTestCreateSuccess() throws BadRequestException, CharonException, InternalErrorException {
-
-        User user = getNewUser();
+    @DataProvider(name = "dataForTestCreateUserSuccess")
+    public Object[][] dataToTestCreateUserSuccess() {
 
         return new Object[][]{
-                {NEW_USER_SCIM_OBJECT_STRING, "userName", null, user, ResponseCodeConstants.CODE_CREATED}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", null},
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", "emails"}
         };
     }
 
-    @Test(dataProvider = "dataForTestCreateSuccess")
-    public void testCreateSuccess(String scimObjectString, String attributes, String excludeAttributes,
-                                  Object objectUser, int expectedScimResponseStatus)
-            throws BadRequestException, NotFoundException, CharonException, ConflictException {
+    @Test(dataProvider = "dataForTestCreateUserSuccess")
+    public void testCreateUserSuccess(String scimObjectString, String attributes, String excludeAttributes)
+            throws BadRequestException, NotFoundException, CharonException, ConflictException, InternalErrorException {
 
-        User user = (User) objectUser;
+        User user = getNewUser();
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
 
         when(userManager.createMe(anyObject(), anyObject())).thenReturn(user);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
-        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
+        JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
 
-        //Assertions
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_CREATED);
 
-        String returnedURI = outputScimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
-        String expectedURI = ENDPOINT_ME + "/" + obj.getString("id");
+        String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
+        String expectedURI = SCIM2_ME_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
 
     }
 
-    //InternalErrorException
     @DataProvider(name = "dataForTestCreateProvidedUserManagerHandlerIsNull")
     public Object[][] dataToTestCreateProvidedUserManagerHandlerIsNull()
             throws BadRequestException, CharonException, InternalErrorException {
@@ -507,7 +497,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //InternalErrorException
     @Test(dataProvider = "dataForTestCreateProvidedUserManagerHandlerIsNull")
     public void testCreateProvidedUserManagerHandlerIsNull(String scimObjectString, String attributes,
                                                            String excludeAttributes, Object objectUser,
@@ -518,48 +507,45 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         when(userManager.createMe(anyObject(), anyObject())).thenReturn(user);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 null, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    //InternalErrorException
-    @DataProvider(name = "dataForTestCreateNewlyCreatedUserResourceIsNull")
-    public Object[][] dataToTestCreateNewlyCreatedUserResourceIsNull() {
+    @DataProvider(name = "dataForTestCreatedUserResourceIsNull")
+    public Object[][] dataToTestCreatedUserResourceIsNull() {
 
         return new Object[][]{
                 {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
-    //InternalErrorException
-    @Test(dataProvider = "dataForTestCreateNewlyCreatedUserResourceIsNull")
-    public void testCreateNewlyCreatedUserResourceIsNull(String scimObjectString, String attributes,
-                                                         String excludeAttributes,
-                                                         int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestCreatedUserResourceIsNull")
+    public void testCreatedUserResourceIsNull(String scimObjectString, String attributes,
+                                              String excludeAttributes, int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException, ConflictException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         when(userManager.createMe(anyObject(), anyObject())).thenReturn(null);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -573,83 +559,80 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestCreateBadRequestException")
     public void testCreateBadRequestException(String scimObjectString, String attributes,
-                                              String excludeAttributes,
-                                              int expectedScimResponseStatus)
+                                              String excludeAttributes, int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException, ConflictException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         when(userManager.createMe(anyObject(), anyObject())).thenThrow(BadRequestException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    @DataProvider(name = "dataForTestCreateConflictException")
-    public Object[][] dataToTestCreatConflictException() {
+    @DataProvider(name = "dataForTestCreateUserConflictException")
+    public Object[][] dataToTestCreatUserConflictException() {
 
         return new Object[][]{
                 {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_CONFLICT}
         };
     }
 
-    @Test(dataProvider = "dataForTestCreateConflictException")
-    public void testCreateConflictException(String scimObjectString, String attributes,
-                                            String excludeAttributes,
-                                            int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestCreateUserConflictException")
+    public void testCreateUserConflictException(String scimObjectString, String attributes,
+                                                String excludeAttributes, int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException, ConflictException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
         when(userManager.createMe(anyObject(), anyObject())).thenThrow(ConflictException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    @DataProvider(name = "dataForTestCreateNotFoundException")
-    public Object[][] dataToTestCreateNotFoundException() {
+    @DataProvider(name = "dataForTestCreateUserNotFoundException")
+    public Object[][] dataToTestCreateUserNotFoundException() {
 
         return new Object[][]{
                 {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
         };
     }
 
-    @Test(dataProvider = "dataForTestCreateNotFoundException")
-    public void testCreateNotFoundException(String scimObjectString, String attributes,
-                                            String excludeAttributes,
-                                            int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestCreateUserNotFoundException")
+    public void testCreateUserNotFoundException(String scimObjectString, String attributes,
+                                                String excludeAttributes, int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException, ConflictException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
         when(userManager.createMe(anyObject(), anyObject())).thenThrow(NotFoundException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -663,28 +646,27 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestCreateCharonException")
     public void testCreateCharonException(String scimObjectString, String attributes,
-                                          String excludeAttributes,
-                                          int expectedScimResponseStatus)
+                                          String excludeAttributes, int expectedScimResponseStatus)
             throws BadRequestException, NotFoundException, CharonException, ConflictException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
         when(userManager.createMe(anyObject(), anyObject())).thenThrow(CharonException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.create(scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    @DataProvider(name = "dataForTestDeleteSuccess")
-    public Object[][] dataToTestDeleteSuccess()
+    @DataProvider(name = "dataForTestDeleteUserSuccess")
+    public Object[][] dataToTestDeleteUserSuccess()
             throws BadRequestException, CharonException, InternalErrorException {
 
         User user = getNewUser();
@@ -694,24 +676,23 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    @Test(dataProvider = "dataForTestDeleteSuccess")
-    public void testDeleteSuccess(String userName, int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestDeleteUserSuccess")
+    public void testDeleteUserSuccess(String userName, int expectedScimResponseStatus)
             throws NotFoundException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
 
-        SCIMResponse outputScimResponse = meResourceManager.delete(userName, userManager);
+        SCIMResponse scimResponse = meResourceManager.delete(userName, userManager);
 
-        //Assertions
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
-    @DataProvider(name = "dataForTestDeleteFails")
-    public Object[][] dataToTestDeleteFails()
+    @DataProvider(name = "dataForTestDeleteUserFails")
+    public Object[][] dataToTestDeleteUserFails()
             throws BadRequestException, CharonException, InternalErrorException {
 
         User user = getNewUser();
@@ -724,22 +705,21 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    @Test(dataProvider = "dataForTestDeleteFails")
-    public void testDeleteFails(String userName, int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestDeleteUserFails")
+    public void testDeleteUserFails(String userName, int expectedScimResponseStatus)
             throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
-
+                .thenReturn(SCIM2_ME_ENDPOINT);
         if (expectedScimResponseStatus == ResponseCodeConstants.CODE_INTERNAL_ERROR) {
 
             when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-            SCIMResponse outputScimResponse = meResourceManager.delete(userName, null);
-            Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+            SCIMResponse scimResponse = meResourceManager.delete(userName, null);
+            Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
         } else if (expectedScimResponseStatus == ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND) {
 
@@ -748,8 +728,8 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
-            SCIMResponse outputScimResponse = meResourceManager.delete(userName, userManager);
-            Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+            SCIMResponse scimResponse = meResourceManager.delete(userName, userManager);
+            Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
         } else if (expectedScimResponseStatus == ResponseCodeConstants.CODE_NOT_IMPLEMENTED) {
 
@@ -758,8 +738,8 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new NotImplementedException()));
 
-            SCIMResponse outputScimResponse = meResourceManager.delete(userName, userManager);
-            Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+            SCIMResponse scimResponse = meResourceManager.delete(userName, userManager);
+            Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
         } else if (expectedScimResponseStatus == ResponseCodeConstants.CODE_BAD_REQUEST) {
 
@@ -768,14 +748,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             when(AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
-            SCIMResponse outputScimResponse = meResourceManager.delete(userName, userManager);
-            Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+            SCIMResponse scimResponse = meResourceManager.delete(userName, userManager);
+            Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
         }
 
     }
 
-    @DataProvider(name = "dataForTestDeleteFailsINCharonExceptionOnly")
-    public Object[][] dataToTestDeleteCharonExceptionOnly()
+    @DataProvider(name = "dataForTestDeleteUserFailsINCharonExceptionOnly")
+    public Object[][] dataToTestDeleteUserCharonExceptionOnly()
             throws BadRequestException, CharonException, InternalErrorException {
 
         User user = getNewUser();
@@ -785,22 +765,22 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    @Test(dataProvider = "dataForTestDeleteFailsINCharonExceptionOnly")
-    public void testDeleteCharonExceptionOnly(String userName, int expectedScimResponseStatus)
+    @Test(dataProvider = "dataForTestDeleteUserFailsINCharonExceptionOnly")
+    public void testDeleteUserCharonExceptionOnly(String userName, int expectedScimResponseStatus)
             throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
 
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
 
         doThrow(new CharonException()).when(userManager).deleteMe(userName);
 
         when(AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
-        SCIMResponse outputScimResponse = meResourceManager.delete(userName, userManager);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        SCIMResponse scimResponse = meResourceManager.delete(userName, userManager);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -819,17 +799,17 @@ public class MeResourceManagerTest extends PowerMockTestCase {
                                 String sortBy, String sortOrder, String domainName, String attributes,
                                 String excludeAttributes) {
 
-        SCIMResponse outputScimResponse = meResourceManager.listWithGET(userManager, filter, startIndexInt,
+        SCIMResponse scimResponse = meResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
 
-        Assert.assertNull(outputScimResponse);
+        Assert.assertNull(scimResponse);
     }
 
     @Test
     public void testListWithPOST() {
 
-        SCIMResponse outputScimResponse = meResourceManager.listWithPOST(null, userManager);
-        Assert.assertNull(outputScimResponse);
+        SCIMResponse scimResponse = meResourceManager.listWithPOST(null, userManager);
+        Assert.assertNull(scimResponse);
     }
 
     @DataProvider(name = "dataForTestUpdateWithPUTSuccess")
@@ -864,7 +844,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
 
@@ -874,15 +854,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
-        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
+        JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
 
-        //Assertions
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
-        String returnedURI = outputScimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
-        String expectedURI = ENDPOINT_ME + "/" + obj.getString("id");
+        String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
+        String expectedURI = SCIM2_ME_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
 
     }
@@ -905,7 +884,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //InternalErrorException
     @Test(dataProvider = "dataForTestUpdateWithPUTProvidedUserManagerHandlerIsNull")
     public void testUpdateWithPUTProvidedUserManagerHandlerIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser, Object objectOLDUser,
@@ -920,7 +898,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
@@ -932,9 +910,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, null,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, null,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -956,7 +934,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //NotFoundException
     @Test(dataProvider = "dataForTestUpdateWithPUTNotFoundException")
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
@@ -971,7 +948,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
@@ -983,9 +960,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1005,7 +982,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    // CharonException
     @Test(dataProvider = "dataForTestUpdateWithPUTCharonException")
     public void testUpdateWithPUTUpdatedUserResourceIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectOLDUser, int expectedScimResponseStatus)
@@ -1018,7 +994,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
@@ -1029,9 +1005,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(null);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1050,7 +1026,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //NotImplementedException
     @Test(dataProvider = "dataForTestUpdateWithPUTNotImplementedException")
     public void testUpdateWithPUTNotImplementedException(String userName, String scimObjectString, String
             attributes, String excludeAttributes, int expectedScimResponseStatus)
@@ -1061,7 +1036,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotImplementedException.class)))
@@ -1070,9 +1045,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(NotImplementedException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1091,7 +1066,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    // BadRequestException
     @Test(dataProvider = "dataForTestUpdateWithPUTBadRequestException")
     public void testUpdateWithPUTBadRequestException(String userName, String scimObjectString, String
             attributes, String excludeAttributes, int expectedScimResponseStatus)
@@ -1102,7 +1076,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
@@ -1111,9 +1085,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1123,7 +1097,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
@@ -1148,7 +1122,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
 
@@ -1158,15 +1132,14 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
+        JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
 
-        //Assertions
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
-        String returnedURI = outputScimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
-        String expectedURI = ENDPOINT_ME + "/" + obj.getString("id");
+        String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
+        String expectedURI = SCIM2_ME_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
 
     }
@@ -1204,7 +1177,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
 
@@ -1214,11 +1187,10 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
 
-        //Assertions
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1229,7 +1201,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
@@ -1240,7 +1212,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //InternalErrorException
     @Test(dataProvider = "dataForUpdateWithPATCHProvidedUserManagerHandlerIsNull")
     public void testUpdateWithPATCHProvidedUserManagerHandlerIsNull(String existingId, String scimObjectString,
                                                                     String attributes, String excludeAttributes,
@@ -1257,7 +1228,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
@@ -1269,9 +1240,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 null, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 
     @DataProvider(name = "dataForUpdateWithPATCHNotFoundException")
@@ -1281,7 +1252,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
@@ -1292,7 +1263,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //NotFoundException
     @Test(dataProvider = "dataForUpdateWithPATCHNotFoundException")
     public void testUpdateWithPATCHNoAssociatedUserExitsInTheUserStore(String existingId, String scimObjectString,
                                                                        String attributes, String excludeAttributes,
@@ -1309,7 +1279,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
@@ -1321,9 +1291,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(validatedUser);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1334,7 +1304,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
@@ -1343,7 +1313,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //CharonException
     @Test(dataProvider = "dataForUpdateWithPATCHCharonException")
     public void testUpdateWithPATCHUpdatedUserResourceIsNull(String existingId, String scimObjectString,
                                                              String attributes, String excludeAttributes,
@@ -1357,7 +1326,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
@@ -1368,9 +1337,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
         when(userManager.updateMe(anyObject(), anyObject())).thenReturn(null);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1381,7 +1350,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
@@ -1390,7 +1359,6 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    //BadRequestException
     @Test(dataProvider = "dataForUpdateWithPATCHBadRequestException")
     public void testUpdateWithPATCHBadRequestException(String existingId, String scimObjectString,
                                                        String attributes, String excludeAttributes,
@@ -1402,7 +1370,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
@@ -1411,9 +1379,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1424,7 +1392,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
@@ -1445,7 +1413,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(NotImplementedException.class)))
@@ -1453,9 +1421,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
 
         when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(NotImplementedException.class);
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1466,7 +1434,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
 
-        User userOld = decoder.decodeResource(NEWUSER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
 
         return new Object[][]{
@@ -1488,7 +1456,7 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         mockStatic(AbstractResourceManager.class);
 
         when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(ENDPOINT_ME);
+                .thenReturn(SCIM2_ME_ENDPOINT);
         when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
         when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
         when(AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
@@ -1497,9 +1465,9 @@ public class MeResourceManagerTest extends PowerMockTestCase {
         when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(InternalErrorException.class);
 
-        SCIMResponse outputScimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
     }
 
@@ -1519,8 +1487,8 @@ public class MeResourceManagerTest extends PowerMockTestCase {
             throws CharonException {
 
         User user = (User) objectUser;
-        String response = meResourceManager.getUserName(scimObjectString);
-        Assert.assertEquals(user.getUserName(), response);
+        String scimResponse = meResourceManager.getUserName(scimObjectString);
+        Assert.assertEquals(user.getUserName(), scimResponse);
     }
 
     @DataProvider(name = "dataForTestGetNameErrorInGettingTheUsernameFromTheAnonymousRequest")
@@ -1538,9 +1506,8 @@ public class MeResourceManagerTest extends PowerMockTestCase {
     public void testGetUserNameErrorInGettingTheUsernameFromTheAnonymousRequest(String scimObjectString)
             throws CharonException {
 
-        String outputScimResponse = meResourceManager.getUserName(scimObjectString);
-        //Assertions
-        Assert.assertNull(outputScimResponse);
+        String scimResponse = meResourceManager.getUserName(scimObjectString);
+        Assert.assertNull(scimResponse);
     }
 
 }
