@@ -29,6 +29,7 @@
             <class name="org.wso2.charon3.core.schema.ServerSideValidatorTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.UserResourceManagerTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.MeResourceManagerTest"/>
+            <class name="org.wso2.charon3.core.protocol.endpoints.GroupResourceManagerTest"/>
         </classes>
     </test>
 </suite>
