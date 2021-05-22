@@ -170,20 +170,13 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         when(userManager.getGroup(id, requiredAttributes)).thenReturn(group);
         SCIMResponse scimResponse = groupResourceManager.get(id, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
-        if (attributes != null && excludeAttributes != null) {
-            Assert.assertFalse(obj.has("meta"));
-            Assert.assertFalse(obj.has("members"));
-        } else if (attributes != null && excludeAttributes == null) {
-            Assert.assertFalse(obj.has("meta"));
-        } else if (attributes == null && excludeAttributes != null) {
-            Assert.assertTrue(obj.has("meta"));
-            Assert.assertFalse(obj.has("members"));
-        } else {
-            Assert.assertTrue(obj.has("meta"));
-            Assert.assertTrue(obj.has("members"));
+        if (attributes != null) {
+            Assert.assertTrue(obj.has(attributes));
+        }
+        if (excludeAttributes != null) {
+            Assert.assertFalse(obj.has(excludeAttributes));
         }
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
-        Assert.assertTrue(obj.has("displayName"));
     }
 
     @DataProvider(name = "dataForGetGroupNotExceptions")
