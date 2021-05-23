@@ -181,7 +181,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
 
-    @DataProvider(name = "dataForGetGroupNotFoundExceptions")
+    @DataProvider(name = "dataForGetGroupExceptions")
     public Object[][] dataToGetGroupExceptions() {
 
         return new Object[][]{
@@ -190,7 +190,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    @Test(dataProvider = "dataForGetGroupNotFoundExceptions")
+    @Test(dataProvider = "dataForGetGroupExceptions")
     public void testGetGroupNotFoundException(String id, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
@@ -212,7 +212,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
     }
 
-    @Test(dataProvider = "dataForGetGroupNotExceptions")
+    @Test(dataProvider = "dataForGetGroupExceptions")
     public void testGetUserCharonException(String id, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
@@ -234,7 +234,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_INTERNAL_ERROR);
     }
 
-    @Test(dataProvider = "dataForGetGroupNotExceptions")
+    @Test(dataProvider = "dataForGetGroupExceptions")
     public void testGetGroupBadRequestException(String id, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
@@ -256,7 +256,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_BAD_REQUEST);
     }
 
-    @Test(dataProvider = "dataForGetGroupNotExceptions")
+    @Test(dataProvider = "dataForGetGroupExceptions")
     public void testGetGroupNotImplementedException(String id, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
