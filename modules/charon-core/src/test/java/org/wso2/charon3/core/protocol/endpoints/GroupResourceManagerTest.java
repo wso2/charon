@@ -69,7 +69,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
             "  \"schemas\": [\n" +
             "    \"urn:ietf:params:scim:api:messages:2.0:ListResponse\"\n" +
             "  ],\n" +
-            "  \"displayName\": \"manager\",\n" +
+            "  \"displayName\": \"PRIMARY/manager\",\n" +
             "      \"meta\": {\n" +
             "       \"created\": \"2019-08-26T14:27:36\",\n" +
             "        \"location\": \"https://localhost:9443/scim2/Groups/7bac6a86-1f21-4937-9fb1-5be4a93ef469\",\n" +
@@ -91,7 +91,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
             "  \"schemas\": [\n" +
             "    \"urn:ietf:params:scim:api:messages:2.0:ListResponse,\"\n" +
             "  ],\n" +
-            "  \"displayName\": \"manager_sales\",\n" +
+            "  \"displayName\": \"PRIMARY/manager_sales\",\n" +
             "      \"meta\": {\n" +
             "       \"created\": \"2019-08-26T14:27:36\",\n" +
             "        \"location\": \"https://localhost:9443/scim2/Groups/7bac6a86-1f21-4937-9fb1-5be4a93ef469\",\n" +
@@ -150,7 +150,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
                 {id, null, null, group},
                 {id, null, "members", group},
                 {id, "displayName", null, group},
-                {id, "displayName", "members", group}
+                {id, "displayName", "members", group},
         };
     }
 
@@ -181,7 +181,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
 
-    @DataProvider(name = "dataForGetGroupNotExceptions")
+    @DataProvider(name = "dataForGetGroupNotFoundExceptions")
     public Object[][] dataToGetGroupExceptions() {
 
         return new Object[][]{
@@ -190,7 +190,7 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         };
     }
 
-    @Test(dataProvider = "dataForGetGroupNotExceptions")
+    @Test(dataProvider = "dataForGetGroupNotFoundExceptions")
     public void testGetGroupNotFoundException(String id, String attributes, String excludeAttributes)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
@@ -596,11 +596,11 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTSuccess")
     public void testUpdateGroupWithPUTSuccess(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectNEWGroup, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupNew = (Group) objectNEWGroup;
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupNew = (Group) scimNewGroupObject;
+        Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
         mockStatic(AbstractResourceManager.class);
@@ -644,11 +644,11 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTProvidedUserManagerHandlerIsNull")
     public void testUpdateGroupWithPUTProvidedUserManagerHandlerIsNull(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectNEWGroup, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupNew = (Group) objectNEWGroup;
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupNew = (Group) scimNewGroupObject;
+        Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
         mockStatic(AbstractResourceManager.class);
@@ -688,10 +688,10 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTUpdatedGroupResourceIsNull")
     public void testUpdateGroupWithPUTUpdatedGroupResourceIsNull(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
         mockStatic(AbstractResourceManager.class);
@@ -732,11 +732,11 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTNotFoundException")
     public void testUpdateGroupWithPUTNoUserExistsWithTheGivenUserName(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectNEWGroup, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupNew = (Group) objectNEWGroup;
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupNew = (Group) scimNewGroupObject;
+        Group groupOld = (Group) scimOldGroupObject;
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
@@ -774,11 +774,11 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
     }
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTCharonException")
-    public void testUpdateWithPUTUCharonException(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectOLDGroup)
+    public void testUpdateWithPUTharonException(String id, String scimObjectString, String
+            attributes, String excludeAttributes, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
         mockStatic(AbstractResourceManager.class);
@@ -817,10 +817,10 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTBadRequestException")
     public void testUpdateGroupWithPUTBadRequestException(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
         mockStatic(AbstractResourceManager.class);
@@ -856,10 +856,10 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTNotImplementedException")
     public void testUpdateGroupWithPUTNotImplementedException(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectOLDGroup)
+            attributes, String excludeAttributes, Object scimOldGroupObject)
             throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
 
-        Group groupOld = (Group) objectOLDGroup;
+        Group groupOld = (Group) scimOldGroupObject;
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
