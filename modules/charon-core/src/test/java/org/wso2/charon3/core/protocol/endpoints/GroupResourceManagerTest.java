@@ -181,6 +181,32 @@ public class GroupResourceManagerTest extends PowerMockTestCase {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
 
+    @Test
+    public void testGetGroupSuccessSpecial()
+            throws BadRequestException, NotFoundException, CharonException,
+            NotImplementedException, InternalErrorException {
+
+        Group group = getNewGroup();
+        String id = group.getId();
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), "", "");
+
+        mockStatic(AbstractResourceManager.class);
+
+        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_GROUP_ENDPOINT);
+        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
+        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
+        when(userManager.getGroup(id, requiredAttributes)).thenReturn(group);
+        SCIMResponse scimResponse = groupResourceManager.get(id, userManager, "", "");
+        JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
+        Assert.assertFalse(obj.has("displayNames"));
+        Assert.assertFalse(obj.has("meta"));
+        Assert.assertFalse(obj.has("members"));
+        Assert.assertTrue(obj.has("id"));
+    }
+
     @DataProvider(name = "dataForGetGroupExceptions")
     public Object[][] dataToGetGroupExceptions() {
 
