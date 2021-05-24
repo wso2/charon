@@ -17,10 +17,18 @@ package org.wso2.charon3.core.schema;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
+import org.wso2.charon3.core.exceptions.BadRequestException;
+import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.NotImplementedException;
+import org.wso2.charon3.core.extensions.UserManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
 * This is to check for extension schema for the user and buildTree a custom user schema with it.
@@ -29,6 +37,7 @@ import java.util.Arrays;
 public class SCIMResourceSchemaManager {
 
     private static SCIMResourceSchemaManager manager = new SCIMResourceSchemaManager();
+    private static final Logger log = LoggerFactory.getLogger(SCIMResourceSchemaManager.class);
 
     public static SCIMResourceSchemaManager getInstance() {
         return manager;
@@ -40,7 +49,6 @@ public class SCIMResourceSchemaManager {
      * @return SCIMResourceTypeSchema
      */
     public SCIMResourceTypeSchema getUserResourceSchema() {
-
 
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension != null) {
@@ -74,6 +82,54 @@ public class SCIMResourceSchemaManager {
     }
 
     /*
+     * Return the SCIM User Resource Schema
+     *
+     * @return SCIMResourceTypeSchema
+     */
+    public SCIMResourceTypeSchema getUserResourceSchema(UserManager userManager)
+            throws BadRequestException, NotImplementedException, CharonException {
+
+        AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
+        if (enterpriseSchemaExtension != null) {
+            List<String> schemas = new ArrayList<>();
+            schemas.add(SCIMConstants.USER_CORE_SCHEMA_URI);
+            schemas.add(enterpriseSchemaExtension.getURI());
+            if (customSchemaExtension != null) {
+                schemas.add(customSchemaExtension.getURI());
+            } else {
+                log.warn("Could not find Custom schema.");
+            }
+            return SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    schemas,
+                    SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES,
+                    enterpriseSchemaExtension, customSchemaExtension);
+        }
+        return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
+    }
+
+    /*
      * check whether the extension is enabled
      *
      * @return
@@ -98,6 +154,16 @@ public class SCIMResourceSchemaManager {
             return null;
         }
         return schemaExtension.getName();
+    }
+
+    /*
+     * return the extension name
+     *
+     * @return
+     */
+    public String getCustomSchemaExtensionURI() {
+
+        return SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
     }
 
     /*
@@ -152,6 +218,11 @@ public class SCIMResourceSchemaManager {
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
 
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
+    }
+
+    public SCIMResourceTypeSchema getResourceTypeResourceSchemaWithoutMultiValuedSchemaExtensions() {
+
+        return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA_WITHOUT_MULTIVALUED_SCHEMA_EXTENSIONS;
     }
 
 }
