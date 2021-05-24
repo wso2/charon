@@ -274,6 +274,9 @@ public class MeResourceManagerTest {
         meResourceManager = new MeResourceManager();
         abstractResourceManager = Mockito.mockStatic(AbstractResourceManager.class);
         userManager = mock(UserManager.class);
+
+        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
+        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
     }
 
     @AfterMethod
@@ -328,8 +331,6 @@ public class MeResourceManagerTest {
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> userManager.getMe(name, requiredAttributes)).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
@@ -404,8 +405,6 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
         abstractResourceManager.when(() -> userManager.getMe(name, requiredAttributes))
@@ -435,8 +434,6 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         abstractResourceManager.when(()
@@ -462,9 +459,6 @@ public class MeResourceManagerTest {
         User user = getNewUser();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
-
         abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class))).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
@@ -498,8 +492,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
@@ -524,8 +516,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
@@ -551,8 +541,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         abstractResourceManager.when(()
@@ -577,8 +565,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
         abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class)))
@@ -738,8 +724,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
 
         abstractResourceManager.when(() -> userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
@@ -790,8 +774,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager
                 .encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
@@ -839,8 +821,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
@@ -882,8 +862,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
@@ -920,8 +898,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
@@ -965,8 +941,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
 
         abstractResourceManager.when(() -> userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
@@ -1018,8 +992,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
 
         abstractResourceManager.when(() -> userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
@@ -1067,8 +1039,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
@@ -1118,8 +1088,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
@@ -1163,8 +1131,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
@@ -1203,8 +1169,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
@@ -1241,8 +1205,6 @@ public class MeResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
@@ -1254,4 +1216,44 @@ public class MeResourceManagerTest {
                 null, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
+
+    @DataProvider(name = "dataForTestGetName")
+    public Object[][] dataToTestGetUsername()
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        User user = getNewUser();
+
+        return new Object[][]{
+                {user, NEW_USER_SCIM_OBJECT_STRING}
+        };
+    }
+
+    @Test(dataProvider = "dataForTestGetName")
+    public void testGetUserName(Object objectUser, String scimObjectString)
+            throws CharonException {
+
+        User user = (User) objectUser;
+        String scimResponse = meResourceManager.getUserName(scimObjectString);
+        Assert.assertEquals(user.getUserName(), scimResponse);
+    }
+
+    @DataProvider(name = "dataForTestGetNameErrorInGettingTheUsernameFromTheAnonymousRequest")
+    public Object[][] dataToTestGetUsernameErrorInGettingTheUsernameFromTheAnonymousRequest() {
+
+        String scimObjectString = "{\n" +
+                "UserName: John,\n" +
+                "}";
+        return new Object[][]{
+                {scimObjectString}
+        };
+    }
+
+    @Test(dataProvider = "dataForTestGetNameErrorInGettingTheUsernameFromTheAnonymousRequest")
+    public void testGetUserNameErrorInGettingTheUsernameFromTheAnonymousRequest(String scimObjectString)
+            throws CharonException {
+
+        String scimResponse = meResourceManager.getUserName(scimObjectString);
+        Assert.assertNull(scimResponse);
+    }
+
 }
