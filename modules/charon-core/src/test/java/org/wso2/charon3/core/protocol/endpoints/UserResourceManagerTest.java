@@ -19,10 +19,11 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.json.JSONObject;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.encoder.JSONDecoder;
@@ -30,7 +31,6 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
-import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -42,19 +42,35 @@ import org.wso2.charon3.core.utils.ResourceManagerUtil;
 
 import java.util.Map;
 
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test class of UserResourceManager.
  */
-@PrepareForTest({AbstractResourceManager.class})
-public class UserResourceManagerTest extends PowerMockTestCase {
+public class UserResourceManagerTest {
 
-    private UserResourceManager userResourceManager = new UserResourceManager();
+    private static final String SCIM2_ME_ENDPOINT = "https://localhost:9443/scim2/Me";
 
-    @Mock
+    private UserResourceManager userResourceManager;
     private UserManager userManager;
+    private MockedStatic<AbstractResourceManager> abstractResourceManager;
+
+    @BeforeMethod
+    public void setUp() {
+
+        userResourceManager = new UserResourceManager();
+        abstractResourceManager = Mockito.mockStatic(AbstractResourceManager.class);
+        userManager = mock(UserManager.class);
+
+        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
+        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
+    }
+
+    @AfterMethod
+    public void tearDown() {
+
+        abstractResourceManager.close();
+    }
 
     @DataProvider(name = "dataForGetSuccess")
     public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
@@ -70,7 +86,7 @@ public class UserResourceManagerTest extends PowerMockTestCase {
     @Test(dataProvider = "dataForGetSuccess")
     public void testGetSuccess(String id, String attributes,
                                String excludeAttributes, int expectedScimResponseStatus, Object objectUser)
-                               throws BadRequestException, NotFoundException, CharonException {
+                               throws CharonException {
 
         User user = (User) objectUser;
 
@@ -78,12 +94,10 @@ public class UserResourceManagerTest extends PowerMockTestCase {
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
-        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
-        when(userManager.getUser(id, requiredAttributes)).thenReturn(user);
+        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_ME_ENDPOINT);
+
+        abstractResourceManager.when(() -> userManager.getUser(id, requiredAttributes)).thenReturn(user);
 
         SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(outputScimResponse.getResponseMessage());
@@ -102,18 +116,15 @@ public class UserResourceManagerTest extends PowerMockTestCase {
 
     @Test(dataProvider = "dataForGetThrowingExceptions")
     public void testGetThrowingExceptions(String id, String attributes,
-                     String excludeAttributes) throws CharonException, BadRequestException, NotFoundException {
+                     String excludeAttributes) throws CharonException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
 
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getEncoder()).thenReturn(new JSONEncoder());
-        when(AbstractResourceManager.getDecoder()).thenReturn(new JSONDecoder());
-        when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
+        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_ME_ENDPOINT);
+        abstractResourceManager.when(() -> userManager.getUser(id, requiredAttributes)).thenReturn(null);
 
         SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
 
@@ -121,7 +132,7 @@ public class UserResourceManagerTest extends PowerMockTestCase {
     }
 
     @DataProvider(name = "dataForListWithGetInt")
-    public Object[][] dataToGetListInt() throws CharonException, BadRequestException, InternalErrorException {
+    public Object[][] dataToGetListInt() {
 
         return new Object[][]{
                 {null, 1, 2, null, null, "PRIMARY", "emails", null, 200}
@@ -140,7 +151,7 @@ public class UserResourceManagerTest extends PowerMockTestCase {
     }
 
     @DataProvider(name = "dataForListWithGetInteger")
-    public Object[][] dataToGetListInteger() throws CharonException, BadRequestException, InternalErrorException {
+    public Object[][] dataToGetListInteger() {
 
         return new Object[][]{
                 {null, 1, 2, null, null, "PRIMARY", "emails", null, 200},
@@ -153,6 +164,7 @@ public class UserResourceManagerTest extends PowerMockTestCase {
     public void testListWithGetInteger(String filter, Integer startIndexInt,
                         Integer countInt, String sortBy, String sortOrder, String domainName,
                         String attributes, String excludeAttributes, int expectedScimResponseStatus) {
+
 
         SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
@@ -187,4 +199,5 @@ public class UserResourceManagerTest extends PowerMockTestCase {
         JSONDecoder decoder = new JSONDecoder();
         return decoder.decodeResource(scimObjectString, schema, new User());
     }
+
 }

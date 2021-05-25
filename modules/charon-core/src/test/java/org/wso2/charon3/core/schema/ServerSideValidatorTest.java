@@ -18,9 +18,11 @@
 
 package org.wso2.charon3.core.schema;
 
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.attributes.Attribute;
@@ -42,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.COMPLEX;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.REFERENCE;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.STRING;
@@ -58,8 +58,20 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.SERVER;
 /**
  * Test class of ServerSideValidator.
  */
-@PrepareForTest({AbstractResourceManager.class})
-public class ServerSideValidatorTest extends PowerMockTestCase {
+public class ServerSideValidatorTest  {
+
+    private MockedStatic<AbstractResourceManager> abstractResourceManager;
+
+    @BeforeMethod
+    public void setUp() {
+        abstractResourceManager = Mockito.mockStatic(AbstractResourceManager.class);
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        abstractResourceManager.close();
+    }
+
 
     @DataProvider(name = "dataForValidateCreatedSCIMObjectSuccess")
     public Object[][] dataToValidateCreatedSCIMObjectSuccess() throws InstantiationException, IllegalAccessException {
@@ -79,12 +91,14 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
 
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Roles");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
@@ -110,19 +124,22 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
         AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
         SCIMResourceTypeSchema resourceSchema = (SCIMResourceTypeSchema) objectResourceSchema;
 
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+        abstractResourceManager.when(() ->
+                AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Users");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
+        abstractResourceManager.when(() ->
+                AbstractResourceManager.getResourceEndpointURL(SCIMConstants.GROUP_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Groups");
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
+        abstractResourceManager.when(() ->
+                AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Roles");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
     }
 
     @DataProvider(name = "dataForValidateRetrievedSCIMObjectInList")
-    public Object[][] dataToValidateRetrievedSCIMObjectInList() throws InstantiationException, IllegalAccessException {
+    public Object[][] dataToValidateRetrievedSCIMObjectInList() throws
+    InstantiationException, IllegalAccessException {
 
         return new Object[][]{
 
@@ -317,8 +334,8 @@ public class ServerSideValidatorTest extends PowerMockTestCase {
 
         AbstractSCIMObject scimObject = (AbstractSCIMObject) objectScimObject;
 
-        mockStatic(AbstractResourceManager.class);
-        when(AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT))
+        abstractResourceManager.when(() ->
+                AbstractResourceManager.getResourceEndpointURL(SCIMConstants.RESOURCE_TYPE_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/ResourceTypes");
 
         AbstractSCIMObject outputScimObject = ServerSideValidator.validateResourceTypeSCIMObject(scimObject);
