@@ -91,8 +91,7 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
     private void readConfiguration(String configFilePath) throws CharonException {
 
         File provisioningConfig = new File(configFilePath);
-        try {
-            InputStream inputStream = new FileInputStream(provisioningConfig);
+        try (InputStream inputStream = new FileInputStream(provisioningConfig)) {
             //Scanner scanner = new Scanner(new FileInputStream(provisioningConfig));
             Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
             String jsonString = scanner.hasNext() ? scanner.next() : "";
@@ -113,7 +112,6 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
                     extensionRootAttributeName = schemaAttributeConfig.getName();
                 }
             }
-            inputStream.close();
         } catch (FileNotFoundException e) {
             throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
                     e);
