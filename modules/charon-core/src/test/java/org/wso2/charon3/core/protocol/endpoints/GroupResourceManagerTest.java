@@ -211,7 +211,7 @@ public class GroupResourceManagerTest {
 
     @Test(dataProvider = "dataForGetGroupExceptions")
     public void testGetGroupNotFoundException(String id, String attributes, String excludeAttributes)
-            throws CharonException{
+            throws CharonException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -240,7 +240,8 @@ public class GroupResourceManagerTest {
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-        abstractResourceManager.when(() -> userManager.getGroup(id, requiredAttributes)).thenThrow(CharonException.class);
+        abstractResourceManager.when(()
+                -> userManager.getGroup(id, requiredAttributes)).thenThrow(CharonException.class);
         SCIMResponse scimResponse = groupResourceManager.get(id, userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_INTERNAL_ERROR);
     }
@@ -291,7 +292,8 @@ public class GroupResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
-        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         abstractResourceManager.when(() -> userManager.createGroup(any(Group.class), any(Map.class))).thenReturn(null);
         SCIMResponse scimResponse = groupResourceManager.create(scimObjectString,
@@ -331,7 +333,7 @@ public class GroupResourceManagerTest {
     }
 
     @Test(dataProvider = "dataForTestCreateGroupConflictException")
-    public void testCreateGroupConflictException(String scimObjectString, String attributes, String excludeAttributes){
+    public void testCreateGroupConflictException(String scimObjectString, String attributes, String excludeAttributes) {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
@@ -541,9 +543,11 @@ public class GroupResourceManagerTest {
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
-        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/" + GROUP_ID);
-        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
         abstractResourceManager.when(() -> userManager.getGroup(id,
@@ -581,15 +585,18 @@ public class GroupResourceManagerTest {
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
 
-        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/" + GROUP_ID);
-        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
         abstractResourceManager.when(() -> userManager.getGroup(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
 
-        abstractResourceManager.when(() -> userManager.updateGroup(any(Group.class), any(Group.class), any(Map.class))).thenReturn(null);
+        abstractResourceManager.when(()
+                -> userManager.updateGroup(any(Group.class), any(Group.class), any(Map.class))).thenReturn(null);
 
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -632,7 +639,8 @@ public class GroupResourceManagerTest {
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
         Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(groupOld, groupNew, schema);
         abstractResourceManager
-        .when(() -> userManager.updateGroup(any(Group.class), any(Group.class), any(Map.class))).thenReturn(validatedGroup);
+        .when(() -> userManager.updateGroup(any(Group.class), any(Group.class),
+                any(Map.class))).thenReturn(validatedGroup);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
@@ -736,7 +744,8 @@ public class GroupResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/" + GROUP_ID);
-        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotImplementedException.class)))
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.encodeSCIMException(any(NotImplementedException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotImplementedException()));
         abstractResourceManager.when(() -> userManager.getGroup(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
