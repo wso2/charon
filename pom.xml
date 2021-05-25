@@ -27,7 +27,7 @@
     <groupId>org.wso2.charon</groupId>
     <artifactId>charon-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.4.4-SNAPSHOT</version>
+    <version>3.4.7-SNAPSHOT</version>
     <name>WSO2 Charon - Parent</name>
     <description>WSO2 Charon - SCIM Implementation</description>
     <url>http://wso2.com</url>
@@ -334,6 +334,11 @@
         <testng.version>6.9.10</testng.version>
         <jacoco.version>0.8.6</jacoco.version>
         <mockito.version>3.10.0</mockito.version>
+
+        <sonar.projectKey>wso2_charon</sonar.projectKey>
+        <sonar.moduleKey>${artifactId}</sonar.moduleKey>
+        <sonar.organization>wso2</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
 </project>
