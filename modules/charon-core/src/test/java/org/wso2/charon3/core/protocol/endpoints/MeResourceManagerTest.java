@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -318,7 +319,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForGetUserSuccess")
     public void testGetUserSuccess(String id, String name, String attributes,
-                                   String excludeAttributes, Object objectUser) throws CharonException {
+                                   String excludeAttributes, Object objectUser)
+            throws CharonException, BadRequestException, NotFoundException {
 
         User user = (User) objectUser;
 
@@ -331,7 +333,7 @@ public class MeResourceManagerTest {
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        abstractResourceManager.when(() -> userManager.getMe(name, requiredAttributes)).thenReturn(user);
+        Mockito.when(userManager.getMe(name, requiredAttributes)).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
@@ -365,7 +367,7 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForGetUserNotFoundException")
     public void testGetUserNotFoundException(String name, String attributes, String excludeAttributes)
-            throws CharonException {
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -374,11 +376,9 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() ->
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
-        abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-        abstractResourceManager.when(() -> userManager.getMe(name, requiredAttributes)).thenReturn(null);
+        Mockito.when(userManager.getMe(name, requiredAttributes)).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
 
@@ -396,7 +396,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForGetCharonException")
     public void testGetUserCharonException(String name, String attributes, String excludeAttributes,
                                            int expectedScimResponseStatus)
-            throws CharonException {
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -407,7 +407,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-        abstractResourceManager.when(() -> userManager.getMe(name, requiredAttributes))
+        Mockito.when(userManager.getMe(name, requiredAttributes))
                 .thenThrow(CharonException.class);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
@@ -425,7 +425,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForGetBadRequestException")
     public void testGetUserBadRequestException(String name, String attributes, String excludeAttributes,
                                                int expectedScimResponseStatus)
-            throws CharonException {
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -436,8 +436,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        abstractResourceManager.when(()
-                -> userManager.getMe(name, requiredAttributes)).thenThrow(BadRequestException.class);
+        Mockito.when(userManager.getMe(name, requiredAttributes)).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -454,12 +453,12 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateUserSuccess")
     public void testCreateUserSuccess(String scimObjectString, String attributes, String excludeAttributes)
-            throws BadRequestException, CharonException, InternalErrorException {
+            throws BadRequestException, CharonException, InternalErrorException, ConflictException {
 
         User user = getNewUser();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class))).thenReturn(user);
+        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -486,7 +485,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateProvidedUserManagerHandlerIsNull")
     public void testCreateProvidedUserManagerHandlerIsNull(String scimObjectString, String attributes,
                                                            String excludeAttributes, Object objectUser,
-                                                           int expectedScimResponseStatus) {
+                                                           int expectedScimResponseStatus)
+            throws ConflictException, BadRequestException, CharonException {
 
         User user = (User) objectUser;
 
@@ -495,7 +495,7 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class))).thenReturn(user);
+        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 null, attributes, excludeAttributes);
@@ -512,14 +512,15 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreatedUserResourceIsNull")
     public void testCreatedUserResourceIsNull(String scimObjectString, String attributes,
-                                              String excludeAttributes, int expectedScimResponseStatus) {
+                                              String excludeAttributes, int expectedScimResponseStatus)
+            throws ConflictException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class))).thenReturn(null);
+        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -537,14 +538,14 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateBadRequestException")
     public void testCreateBadRequestException(String scimObjectString, String attributes,
-                                              String excludeAttributes, int expectedScimResponseStatus) {
+                                              String excludeAttributes, int expectedScimResponseStatus)
+            throws ConflictException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        abstractResourceManager.when(()
-                -> userManager.createMe(any(User.class), any(Map.class))).thenThrow(BadRequestException.class);
+        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -561,13 +562,14 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateUserConflictException")
     public void testCreateUserConflictException(String scimObjectString, String attributes,
-                                                String excludeAttributes, int expectedScimResponseStatus) {
+                                                String excludeAttributes, int expectedScimResponseStatus)
+            throws ConflictException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
-        abstractResourceManager.when(() -> userManager.createMe(any(User.class), any(Map.class)))
+        Mockito.when(userManager.createMe(any(User.class), anyMap()))
                 .thenThrow(ConflictException.class);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
@@ -725,12 +727,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        abstractResourceManager.when(() -> userManager.getMe(userName,
+        Mockito.when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -765,7 +766,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTProvidedUserManagerHandlerIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser, Object objectOLDUser,
                                                                   int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -778,12 +779,11 @@ public class MeResourceManagerTest {
                 .encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(userName,
+        Mockito.when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, null,
                 attributes, excludeAttributes);
@@ -812,7 +812,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
                                                                   Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -824,12 +824,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(userName,
+        Mockito.when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -854,7 +853,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestUpdateWithPUTCharonException")
     public void testUpdateWithPUTUpdatedUserResourceIsNull(String userName, String scimObjectString, String
-            attributes, String excludeAttributes, Object objectOLDUser, int expectedScimResponseStatus) {
+            attributes, String excludeAttributes, Object objectOLDUser, int expectedScimResponseStatus)
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         User userOld = (User) objectOLDUser;
 
@@ -865,10 +865,10 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(userName,
+        Mockito.when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
-        abstractResourceManager.when(() -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(null);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -892,7 +892,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestUpdateWithPUTBadRequestException")
     public void testUpdateWithPUTBadRequestException(String userName, String scimObjectString, String
-            attributes, String excludeAttributes, int expectedScimResponseStatus) {
+            attributes, String excludeAttributes, int expectedScimResponseStatus)
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -902,7 +903,7 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(userName,
+        Mockito.when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
@@ -932,7 +933,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCH(String existingId, String scimObjectString,
                                     String attributes, String excludeAttributes, Object objectNEWUser,
                                     Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -942,12 +943,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -983,7 +983,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHReplace(String existingId, String scimObjectString,
                                            String attributes, String excludeAttributes, Object objectNEWUser,
                                            Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -993,12 +993,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1030,7 +1029,7 @@ public class MeResourceManagerTest {
                                                                     Object objectNEWUser,
                                                                     Object objectOLDUser,
                                                                     int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1043,12 +1042,11 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 null, attributes, excludeAttributes);
@@ -1079,7 +1077,7 @@ public class MeResourceManagerTest {
                                                                        Object objectNEWUser,
                                                                        Object objectOLDUser,
                                                                        int expectedScimResponseStatus)
-            throws BadRequestException, CharonException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1092,12 +1090,11 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        abstractResourceManager.when(()
-                -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(validatedUser);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1123,7 +1120,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHCharonException")
     public void testUpdateWithPATCHUpdatedUserResourceIsNull(String existingId, String scimObjectString,
                                                              String attributes, String excludeAttributes,
-                                                             Object objectOLDUser, int expectedScimResponseStatus) {
+                                                             Object objectOLDUser, int expectedScimResponseStatus)
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         User userOld = (User) objectOLDUser;
 
@@ -1134,10 +1132,10 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
-        abstractResourceManager.when(() -> userManager.updateMe(any(User.class), any(Map.class))).thenReturn(null);
+        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1163,7 +1161,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHBadRequestException")
     public void testUpdateWithPATCHBadRequestException(String existingId, String scimObjectString,
                                                        String attributes, String excludeAttributes,
-                                                       int expectedScimResponseStatus) {
+                                                       int expectedScimResponseStatus)
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -1172,7 +1171,7 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1199,7 +1198,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHInternalErrorException")
     public void testUpdateWithPATCHInternalErrorException(String existingId, String scimObjectString,
                                                           String attributes, String excludeAttributes,
-                                                          int expectedScimResponseStatus) {
+                                                          int expectedScimResponseStatus)
+            throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -1209,7 +1209,7 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        abstractResourceManager.when(() -> userManager.getMe(existingId,
+        Mockito.when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
