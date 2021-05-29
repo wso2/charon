@@ -132,7 +132,7 @@ public class CharonConfiguration implements Configuration {
      * @return
      */
     public HashMap<String, Object> getConfig() {
-        HashMap<String, Object> configMap = new HashMap<String, Object>();
+        HashMap<String, Object> configMap = new HashMap<>();
         configMap.put(SCIMConfigConstants.DOCUMENTATION_URL, documentationURL);
         configMap.put(SCIMConfigConstants.BULK, bulkSupport);
         configMap.put(SCIMConfigConstants.SORT, sortSupport);
