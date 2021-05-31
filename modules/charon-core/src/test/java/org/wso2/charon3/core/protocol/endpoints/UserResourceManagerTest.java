@@ -299,7 +299,6 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         return decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
     }
 
@@ -309,7 +308,6 @@ public class UserResourceManagerTest {
         userResourceManager = new UserResourceManager();
         abstractResourceManager = Mockito.mockStatic(AbstractResourceManager.class);
         userManager = mock(UserManager.class);
-
         abstractResourceManager.when(AbstractResourceManager::getEncoder).thenReturn(new JSONEncoder());
         abstractResourceManager.when(AbstractResourceManager::getDecoder).thenReturn(new JSONDecoder());
     }
@@ -330,32 +328,28 @@ public class UserResourceManagerTest {
                 {id, null, null, user},
                 {id, null, "emails", user},
                 {id, "userName,meta", null, user},
-                {id, "userName", "emails", user}
+                {id, "userName", "emails", user},
+                {id, "userName", "emails,meta", user},
+                {id, "userName", "", user},
+                {id, "", "emails", user}
         };
     }
 
     @Test(dataProvider = "dataForGetSuccess")
-    public void testGetSuccess(String id, String attributes,
-                               String excludeAttributes, Object objectUser)
+    public void testGetSuccess(String id, String attributes, String excludeAttributes, Object objectUser)
             throws CharonException, BadRequestException, NotFoundException {
 
         User user = (User) objectUser;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
-
         Mockito.when(userManager.getUser(id, requiredAttributes)).thenReturn(user);
-
         SCIMResponse scimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
-
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
         Assert.assertEquals(obj.getString("id"), id);
-
         String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
         String expectedURI = SCIM2_USER_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
@@ -376,13 +370,10 @@ public class UserResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         Mockito.when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
-
         SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
-
         Assert.assertNull(outputScimResponse);
 
     }
@@ -403,16 +394,13 @@ public class UserResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
         abstractResourceManager.when(() ->
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
         Mockito.when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
-
         SCIMResponse scimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
-
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
     }
 
@@ -432,21 +420,18 @@ public class UserResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
         abstractResourceManager.when(()
                 -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-        Mockito.when(userManager.getUser(id, requiredAttributes))
-                .thenThrow(CharonException.class);
-
+        Mockito.when(userManager.getUser(id, requiredAttributes)).thenThrow(CharonException.class);
         SCIMResponse scimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 
     @DataProvider(name = "dataForGetBadRequestException")
-    public Object[][] dataToGetCharonBadRequestException() {
+    public Object[][] dataToGetBadRequestException() {
 
         return new Object[][]{
                 {"1234", "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
@@ -461,14 +446,12 @@ public class UserResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
                 (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-
         abstractResourceManager.when(()
                 -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         Mockito.when(userManager.getUser(id, requiredAttributes)).thenThrow(BadRequestException.class);
-
         SCIMResponse scimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
@@ -477,39 +460,38 @@ public class UserResourceManagerTest {
     public Object[][] dataToGetListInt() {
 
         return new Object[][]{
-                {null, 1, 2, null, null, "PRIMARY", "emails", null, 200}
+                {null, 1, 2, null, null, "PRIMARY", "emails", null}
         };
     }
 
     @Test(dataProvider = "dataForListWithGetInt")
     public void testListWithGetInt(String filter, int startIndexInt, int countInt,
                                    String sortBy, String sortOrder, String domainName, String attributes,
-                                   String excludeAttributes, int expectedScimResponseStatus) {
+                                   String excludeAttributes) {
 
         SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
-
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
 
     @DataProvider(name = "dataForListWithGetInteger")
     public Object[][] dataToGetListInteger() {
 
         return new Object[][]{
-                {null, 1, 2, null, null, "PRIMARY", "emails", null, 200},
+                {null, 1, 2, null, null, "PRIMARY", "emails", null},
                 {"userName sw Rash", 1, 2, null, null, "PRIMARY", "userName,name.familyName",
-                        "emails", 200}
+                        "emails"}
         };
     }
 
     @Test(dataProvider = "dataForListWithGetInteger")
     public void testListWithGetInteger(String filter, Integer startIndexInt,
                                        Integer countInt, String sortBy, String sortOrder, String domainName,
-                                       String attributes, String excludeAttributes, int expectedScimResponseStatus) {
+                                       String attributes, String excludeAttributes) {
 
         SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
-        Assert.assertEquals(outputScimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
 
     @DataProvider(name = "dataForTestCreateUserSuccess")
@@ -517,7 +499,9 @@ public class UserResourceManagerTest {
 
         return new Object[][]{
                 {NEW_USER_SCIM_OBJECT_STRING, "userName", null},
-                {NEW_USER_SCIM_OBJECT_STRING, "userName", "emails"}
+                {NEW_USER_SCIM_OBJECT_STRING, "userName", "emails"},
+                {NEW_USER_SCIM_OBJECT_STRING, null, "emails"},
+                {NEW_USER_SCIM_OBJECT_STRING, null, null}
         };
     }
 
@@ -529,13 +513,10 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         Mockito.when(userManager.createUser(any(User.class), anyMap())).thenReturn(user);
-
         SCIMResponse scimResponse = userResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
-
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_CREATED);
-
         String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
         String expectedURI = SCIM2_USER_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
@@ -566,7 +547,6 @@ public class UserResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         Mockito.when(userManager.createUser(any(User.class), anyMap())).thenReturn(user);
-
         SCIMResponse scimResponse = userResourceManager.create(scimObjectString,
                 null, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -591,7 +571,6 @@ public class UserResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         Mockito.when(userManager.createUser(any(User.class), anyMap())).thenReturn(null);
-
         SCIMResponse scimResponse = userResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -616,14 +595,13 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
         Mockito.when(userManager.createUser(any(User.class), anyMap())).thenThrow(BadRequestException.class);
-
         SCIMResponse scimResponse = userResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 
     @DataProvider(name = "dataForTestCreateUserConflictException")
-    public Object[][] dataToTestCreatUserConflictException() {
+    public Object[][] dataToTestCreateUserConflictException() {
 
         return new Object[][]{
                 {NEW_USER_SCIM_OBJECT_STRING, "userName", null, ResponseCodeConstants.CODE_CONFLICT}
@@ -641,7 +619,6 @@ public class UserResourceManagerTest {
                 .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
         Mockito.when(userManager.createUser(any(User.class), anyMap()))
                 .thenThrow(ConflictException.class);
-
         SCIMResponse scimResponse = userResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -663,10 +640,10 @@ public class UserResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
-
         SCIMResponse scimResponse = userResourceManager.delete(id, userManager);
-
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
+        Assert.assertNull(scimResponse.getResponseMessage());
+        Assert.assertNull(scimResponse.getHeaderParamMap());
     }
 
     @DataProvider(name = "dataForTestDeleteUserFails")
@@ -737,10 +714,8 @@ public class UserResourceManagerTest {
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
 
         doThrow(new CharonException()).when(userManager).deleteUser(id);
-
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-
         SCIMResponse scimResponse = userResourceManager.delete(id, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
@@ -751,15 +726,18 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String id = userOld.getId();
-
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
-                        userNew, userOld, ResponseCodeConstants.CODE_OK}
+                        userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", "emails",
+                        userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, null, "emails",
+                        userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, null, null,
+                        userNew, userOld, ResponseCodeConstants.CODE_OK},
         };
     }
 
@@ -773,22 +751,16 @@ public class UserResourceManagerTest {
         User userOld = (User) scimOldUserObject;
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
-
         Mockito.when(userManager.getUser(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
-
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
-
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
-
         String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
         String expectedURI = SCIM2_USER_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
@@ -800,12 +772,9 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String id = userOld.getId();
-
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, userNew,
                         userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
@@ -820,21 +789,16 @@ public class UserResourceManagerTest {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager
                 .encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-
         Mockito.when(userManager.getUser(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
-
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, null,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -846,12 +810,9 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String id = userOld.getId();
-
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
                         userNew, userOld, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
@@ -867,20 +828,15 @@ public class UserResourceManagerTest {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-
         Mockito.when(userManager.getUser(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
-
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -892,10 +848,8 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String id = userOld.getId();
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null,
                         userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
@@ -908,19 +862,14 @@ public class UserResourceManagerTest {
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         User userOld = (User) scimOldUserObject;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-
         Mockito.when(userManager.getUser(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
-
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(null);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -932,10 +881,8 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
         String id = userOld.getId();
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
         };
@@ -951,10 +898,8 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-
         abstractResourceManager.when(() -> userManager.getUser(id,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -966,7 +911,6 @@ public class UserResourceManagerTest {
         List<Object> tempList = new ArrayList<>();
         tempList.add(1);
         tempList.add(getNewUser());
-
         return new Object[][]{
                 {RESOURCE_STRING, tempList}
         };
@@ -1062,7 +1006,6 @@ public class UserResourceManagerTest {
                 userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
-
         String returnedURI = scimResponse.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
         String expectedURI = SCIM2_USER_ENDPOINT + "/" + obj.getString("id");
         Assert.assertEquals(returnedURI, expectedURI);
@@ -1077,7 +1020,6 @@ public class UserResourceManagerTest {
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null,
                         userNew, userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
@@ -1094,7 +1036,6 @@ public class UserResourceManagerTest {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -1105,7 +1046,6 @@ public class UserResourceManagerTest {
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
-
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
                 null, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -1120,7 +1060,6 @@ public class UserResourceManagerTest {
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, userNew, userOld, ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND}
@@ -1137,15 +1076,12 @@ public class UserResourceManagerTest {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-
         Mockito.when(userManager.getUser(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
@@ -1161,10 +1097,8 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
@@ -1178,7 +1112,6 @@ public class UserResourceManagerTest {
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         User userOld = (User) objectOLDUser;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -1198,10 +1131,8 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
         String id = userOld.getId();
-
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName",
                         null, ResponseCodeConstants.CODE_BAD_REQUEST}
@@ -1215,7 +1146,6 @@ public class UserResourceManagerTest {
             throws CharonException, BadRequestException, NotFoundException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
@@ -1266,10 +1196,8 @@ public class UserResourceManagerTest {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         JSONDecoder decoder = new JSONDecoder();
-
         User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE, schema, new User());
         String id = userOld.getId();
-
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED,
                 schema, new User());
         return new Object[][]{
