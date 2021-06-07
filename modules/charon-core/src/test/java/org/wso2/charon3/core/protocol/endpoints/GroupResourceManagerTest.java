@@ -485,24 +485,19 @@ public class GroupResourceManagerTest {
         if (expectedScimResponseStatus == ResponseCodeConstants.CODE_INTERNAL_ERROR) {
 
             abstractResourceManager
-                    .when(() ->
-                            AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
+                    .when(() -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-
             SCIMResponse scimResponse = groupResourceManager.delete(id, null);
             Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
 
         } else {
 
             doThrow(new NotFoundException()).when(userManager).deleteGroup(id);
-
             abstractResourceManager.when(() ->
                     AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                     .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-
             SCIMResponse scimResponse = groupResourceManager.delete(id, userManager);
             Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
-
         }
     }
 
@@ -590,11 +585,9 @@ public class GroupResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        Mockito.when(userManager.getGroup(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
+        Mockito.when(userManager.getGroup(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
         Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(groupOld, groupNew, schema);
-        Mockito.when(userManager.updateGroup(any(Group.class),
-                any(Group.class), anyMap())).thenReturn(validatedGroup);
+        Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class), anyMap())).thenReturn(validatedGroup);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, null,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_INTERNAL_ERROR);
@@ -628,8 +621,7 @@ public class GroupResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        Mockito.when(userManager.getGroup(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
+        Mockito.when(userManager.getGroup(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
         Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class), anyMap())).thenReturn(null);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -663,11 +655,9 @@ public class GroupResourceManagerTest {
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/" + GROUP_ID);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-        Mockito.when(userManager.getGroup(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
+        Mockito.when(userManager.getGroup(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
         Group validatedGroup = (Group) ServerSideValidator.validateUpdatedSCIMObject(groupOld, groupNew, schema);
-        Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class),
-                anyMap())).thenReturn(validatedGroup);
+        Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class), anyMap())).thenReturn(validatedGroup);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
@@ -729,8 +719,7 @@ public class GroupResourceManagerTest {
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/" + GROUP_ID);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        Mockito.when(userManager.getGroup(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
+        Mockito.when(userManager.getGroup(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
         Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class), anyMap()))
                 .thenThrow(BadRequestException.class);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
@@ -763,8 +752,7 @@ public class GroupResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(NotImplementedException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotImplementedException()));
-        Mockito.when(userManager.getGroup(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
+        Mockito.when(userManager.getGroup(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(groupOld);
         Mockito.when(userManager.updateGroup(any(Group.class), any(Group.class), anyMap()))
                 .thenThrow(NotImplementedException.class);
         SCIMResponse scimResponse = groupResourceManager.updateWithPUT(id, scimObjectString, userManager,
@@ -781,14 +769,16 @@ public class GroupResourceManagerTest {
         String id = groupOld.getId();
         Group groupNew = decoder.decodeResource(NEW_GROUP_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new Group());
         return new Object[][]{
-                {id, SCIM2_PATCH_REQUEST_STRING, "userName", null, groupNew, groupNew}
+                {id, SCIM2_PATCH_REQUEST_STRING, "userName", "emails", groupNew, groupNew},
+                {id, SCIM2_PATCH_REQUEST_STRING, "userName", null, groupNew, groupNew},
+                {id, SCIM2_PATCH_REQUEST_STRING, null, "emails", groupNew, groupNew},
+                {id, SCIM2_PATCH_REQUEST_STRING, null, null, groupNew, groupNew}
         };
     }
 
     @Test(dataProvider = "dataForUpdateWithPATCH")
-    public void testUpdateWithPATCH(String existingId, String patchRequest,
-                                    String attributes, String excludeAttributes, Object scimNewGroupObject,
-                                    Object scimOldGroupObject)
+    public void testUpdateWithPATCH(String existingId, String patchRequest, String attributes,
+                                    String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
             throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
 
         Group groupNew = (Group) scimNewGroupObject;
@@ -801,7 +791,6 @@ public class GroupResourceManagerTest {
         SCIMResponse scimResponse = groupResourceManager.updateWithPATCH(existingId, patchRequest,
                 userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
-
     }
 
     @DataProvider(name = "dataForUpdateWithPATCHOverride")
@@ -831,8 +820,7 @@ public class GroupResourceManagerTest {
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
         Mockito.when(userManager.getGroup(anyString(), anyMap())).thenReturn(groupOld);
         Mockito.when(userManager.patchGroup(anyString(), anyString(), anyMap(), anyMap())).thenReturn(groupNew);
-        SCIMResponse scimResponse = groupResourceManager.updateWithPATCH(existingId, patchRequest,
-                userManager);
+        SCIMResponse scimResponse = groupResourceManager.updateWithPATCH(existingId, patchRequest, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_NO_CONTENT);
     }
 
@@ -841,8 +829,10 @@ public class GroupResourceManagerTest {
 
         return new Object[][]{
                 {null, 1, 2, null, null, "PRIMARY", "members", null},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "members",
-                        null}
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", null},
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, "members"},
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, null}
         };
     }
 
@@ -854,7 +844,6 @@ public class GroupResourceManagerTest {
         SCIMResponse scimResponse = groupResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
-
     }
 
     @Test(dataProvider = "dataForListWithGET")
@@ -868,7 +857,6 @@ public class GroupResourceManagerTest {
         SCIMResponse scimResponse = groupResourceManager.listWithGET(null, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_INTERNAL_ERROR);
-
     }
 
     @DataProvider(name = "dataForListWithPOST")
@@ -878,7 +866,6 @@ public class GroupResourceManagerTest {
         tempList.add(1);
         tempList.add(getNewGroup());
         return new Object[][]{
-
                 {RESOURCE_STRING, tempList}
         };
     }
@@ -938,5 +925,4 @@ public class GroupResourceManagerTest {
         SCIMResponse scimResponse = groupResourceManager.listWithPOST(RESOURCE_STRING, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_BAD_REQUEST);
     }
-
 }
