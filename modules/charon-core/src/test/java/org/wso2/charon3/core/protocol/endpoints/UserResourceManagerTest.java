@@ -269,6 +269,82 @@ public class UserResourceManagerTest {
             " \"name\": {\n" +
             "    \"givenName\": \"Kim\",\n" +
             "    \"familyName\": \"Berry\",\n" +
+            "    \"formatted\": \"Kim Berry\",\n" +
+            "     \"nickName\": \"shaggy\"\n" +
+            "  },\n" +
+            "  \"userName\": \"kimjohn  \",\n" +
+            "  \"password\": \"kim123\",\n" +
+            "  \"id\": \"123\",\n" +
+            "  \"emails\": [\n" +
+            "      {\n" +
+            "        \"type\": \"home\",\n" +
+            "        \"value\": \"johnnew@gmail.com\",\n" +
+            "         \"primary\": true\n" +
+            "      }\n" +
+            "  ]\n" +
+            "}";
+
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE = "{\n" +
+            "  \"schemas\": \n" +
+            "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
+            "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
+            "    \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\n" +
+            "    ],\n" +
+            "\"meta\": {\n" +
+            "    \"created\": \"2018-08-17T10:34:29Z\",\n" +
+            "    \"location\": \"ENDPOINT/008bba85-451d-414b-87de-c03b5a1f4217\",\n" +
+            "    \"lastModified\": \"2018-08-17T10:34:29Z\",\n" +
+            "    \"resourceType\": \"User\"\n" +
+            "},\n" +
+            "  \"Operations\": [\n" +
+            "    {\n" +
+            "      \"op\": \"replace\",\n" +
+            "      \"value\": {\n" +
+            "        \"nickName\": \"shaggy\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ],   \n" +
+            " \"name\": {\n" +
+            "    \"givenName\": \"Kim\",\n" +
+            "    \"familyName\": \"Berry\",\n" +
+            "    \"formatted\": \"Kim Berry\",\n" +
+            "    \"nickName\": \"shaggy\"\n" +
+            "  },\n" +
+            "  \"userName\": \"kimjohn  \",\n" +
+            "  \"password\": \"kim123\",\n" +
+            "  \"id\": \"123\",\n" +
+            "  \"emails\": [\n" +
+            "      {\n" +
+            "        \"type\": \"home\",\n" +
+            "        \"value\": \"john@gmail.com\",\n" +
+            "         \"primary\": true\n" +
+            "      }\n" +
+            "  ]\n" +
+            "}";
+
+    private static final String NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED = "{\n" +
+            "  \"schemas\": \n" +
+            "    [\"urn:ietf:params:scim:schemas:core:2.0:User\",\n" +
+            "    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\",\n" +
+            "    \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\n" +
+            "    ],\n" +
+            "\"meta\": {\n" +
+            "    \"created\": \"2018-08-17T10:34:29Z\",\n" +
+            "    \"location\": \"ENDPOINT/008bba85-451d-414b-87de-c03b5a1f4217\",\n" +
+            "    \"lastModified\": \"2018-08-17T10:34:29Z\",\n" +
+            "    \"resourceType\": \"User\"\n" +
+            "},\n" +
+            "  \"Operations\": [\n" +
+            "    {\n" +
+            "      \"op\": \"replace\",\n" + //REMOVE Operation
+            "      \"value\": {\n" +
+            "        \"nickName\": \"shaggy\"\n" +
+            "      }\n" +
+            "    }\n" +
+            "  ],   \n" +
+            " \"name\": {\n" +
+            "    \"givenName\": \"Kim\",\n" +
+            "    \"familyName\": \"Berry\",\n" +
             "    \"formatted\": \"Kim Berry\"\n" +
             "  },\n" +
             "  \"userName\": \"kimjohn  \",\n" +
@@ -282,6 +358,7 @@ public class UserResourceManagerTest {
             "      }\n" +
             "  ]\n" +
             "}";
+
     private static final String SCIM2_USER_ENDPOINT = "https://localhost:9443/scim2/User";
     private UserResourceManager userResourceManager;
     private UserManager userManager;
@@ -355,35 +432,14 @@ public class UserResourceManagerTest {
         Assert.assertEquals(returnedURI, expectedURI);
     }
 
-    @DataProvider(name = "dataForGetThrowingExceptions")
-    public Object[][] dataToGetThrowingExceptions() {
-
-        return new Object[][]{
-                {"1234", "userName", null}
-        };
-    }
-
-    @Test(dataProvider = "dataForGetThrowingExceptions")
-    public void testGetThrowingExceptions(String id, String attributes, String excludeAttributes)
-            throws CharonException, BadRequestException, NotFoundException {
-
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
-        Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
-                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
-        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
-                .thenReturn(SCIM2_USER_ENDPOINT);
-        Mockito.when(userManager.getUser(id, requiredAttributes)).thenReturn(null);
-        SCIMResponse outputScimResponse = userResourceManager.get(id, userManager, attributes, excludeAttributes);
-        Assert.assertNull(outputScimResponse);
-
-    }
-
     @DataProvider(name = "dataForGetUserNotFoundException")
     public Object[][] dataToGetUserNotFoundException() {
 
         return new Object[][]{
+                {"1234", "userName", "emails"},
                 {"1234", "userName", null},
-                {"1234", "userName", "emails"}
+                {"1234", null, "emails"},
+                {"1234", null, null},
         };
     }
 
@@ -408,7 +464,10 @@ public class UserResourceManagerTest {
     public Object[][] dataToGetCharonException() {
 
         return new Object[][]{
-                {"1234", "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
+                {"1234", "userName", "emails", ResponseCodeConstants.CODE_INTERNAL_ERROR},
+                {"1234", "userName", null, ResponseCodeConstants.CODE_INTERNAL_ERROR},
+                {"1234", null, "emails", ResponseCodeConstants.CODE_INTERNAL_ERROR},
+                {"1234", null, null, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
@@ -434,7 +493,10 @@ public class UserResourceManagerTest {
     public Object[][] dataToGetBadRequestException() {
 
         return new Object[][]{
-                {"1234", "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST}
+                {"1234", "userName", "emails", ResponseCodeConstants.CODE_BAD_REQUEST},
+                {"1234", "userName", null, ResponseCodeConstants.CODE_BAD_REQUEST},
+                {"1234", null, "emails", ResponseCodeConstants.CODE_BAD_REQUEST},
+                {"1234", null, null, ResponseCodeConstants.CODE_BAD_REQUEST}
         };
     }
 
@@ -650,8 +712,7 @@ public class UserResourceManagerTest {
     public Object[][] dataToTestDeleteUserFails()
             throws BadRequestException, CharonException, InternalErrorException {
 
-        User user = getNewUser();
-        String id = user.getId();
+        String id = getNewUser().getId();
         return new Object[][]{
                 {id, ResponseCodeConstants.CODE_INTERNAL_ERROR},
                 {id, ResponseCodeConstants.CODE_BAD_REQUEST},
@@ -695,18 +756,17 @@ public class UserResourceManagerTest {
         }
     }
 
-    @DataProvider(name = "dataForTestDeleteUserFailsINCharonExceptionOnly")
+    @DataProvider(name = "dataForTestDeleteUserFailsWithCharonException")
     public Object[][] dataToTestDeleteUserCharonExceptionOnly()
             throws BadRequestException, CharonException, InternalErrorException {
 
-        User user = getNewUser();
-        String id = user.getId();
+        String id = getNewUser().getId();
         return new Object[][]{
                 {id, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
 
-    @Test(dataProvider = "dataForTestDeleteUserFailsINCharonExceptionOnly")
+    @Test(dataProvider = "dataForTestDeleteUserFailsWithCharonException")
     public void testDeleteUserCharonExceptionOnly(String id, int expectedScimResponseStatus)
             throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
 
@@ -776,7 +836,13 @@ public class UserResourceManagerTest {
         String id = userOld.getId();
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_UPDATE, schema, new User());
         return new Object[][]{
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", "emails", userNew,
+                        userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR},
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, userNew,
+                        userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, null, "emails", userNew,
+                        userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, null, null, userNew,
                         userOld, ResponseCodeConstants.CODE_INTERNAL_ERROR}
         };
     }
@@ -795,8 +861,7 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager
                 .encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        Mockito.when(userManager.getUser(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        Mockito.when(userManager.getUser(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, null,
@@ -821,8 +886,7 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestUpdateWithPUTNotFoundException")
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String id, String scimObjectString, String
-            attributes, String excludeAttributes, Object scimNewUserObject,
-                                                                  Object scimOldUserObject,
+            attributes, String excludeAttributes, Object scimNewUserObject, Object scimOldUserObject,
                                                                   int expectedScimResponseStatus)
             throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
@@ -833,8 +897,7 @@ public class UserResourceManagerTest {
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-        Mockito.when(userManager.getUser(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
+        Mockito.when(userManager.getUser(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
@@ -867,8 +930,7 @@ public class UserResourceManagerTest {
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-        Mockito.when(userManager.getUser(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        Mockito.when(userManager.getUser(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(null);
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -928,8 +990,7 @@ public class UserResourceManagerTest {
     }
 
     @Test
-    public void testListWithPOSTCharonException()
-            throws NotImplementedException, BadRequestException, CharonException {
+    public void testListWithPOSTCharonException() throws NotImplementedException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
@@ -981,23 +1042,24 @@ public class UserResourceManagerTest {
         String id = userOld.getId();
         User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, schema, new User());
         return new Object[][]{
-                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null, userNew, userOld}
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", "emails", userNew, userOld},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null, userNew, userOld},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, null, "emails", userNew, userOld},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, null, null, userNew, userOld}
         };
     }
 
     @Test(dataProvider = "dataForUpdateWithPATCH")
     public void testUpdateWithPATCH(String existingId, String scimObjectString,
-                                    String attributes, String excludeAttributes, Object scimNewUserObject,
-                                    Object scimOldUserObject)
+                                    String attributes, String excludeAttributes,
+                                    Object scimNewUserObject, Object scimOldUserObject)
             throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
-
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
-
         abstractResourceManager.when(() -> userManager.getUser(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
@@ -1029,13 +1091,13 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHProvidedUserManagerHandlerIsNull")
     public void testUpdateWithPATCHProvidedUserManagerHandlerIsNull(String existingId, String scimObjectString,
                                                                     String attributes, String excludeAttributes,
-                                                                    Object objectNEWUser,
-                                                                    Object objectOLDUser,
+                                                                    Object objectNewUser,
+                                                                    Object objectOldUser,
                                                                     int expectedScimResponseStatus)
             throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
-        User userNew = (User) objectNEWUser;
-        User userOld = (User) objectOLDUser;
+        User userNew = (User) objectNewUser;
+        User userOld = (User) objectOldUser;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -1069,13 +1131,13 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHNotFoundException")
     public void testUpdateWithPATCHNoAssociatedUserExitsInTheUserStore(String existingId, String scimObjectString,
                                                                        String attributes, String excludeAttributes,
-                                                                       Object objectNEWUser,
-                                                                       Object objectOLDUser,
+                                                                       Object objectNewUser,
+                                                                       Object objectOldUser,
                                                                        int expectedScimResponseStatus)
             throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
 
-        User userNew = (User) objectNEWUser;
-        User userOld = (User) objectOLDUser;
+        User userNew = (User) objectNewUser;
+        User userOld = (User) objectOldUser;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -1108,10 +1170,10 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHCharonException")
     public void testUpdateWithPATCHUpdatedUserResourceIsNull(String existingId, String scimObjectString,
                                                              String attributes, String excludeAttributes,
-                                                             Object objectOLDUser, int expectedScimResponseStatus)
+                                                             Object objectOldUser, int expectedScimResponseStatus)
             throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
-        User userOld = (User) objectOLDUser;
+        User userOld = (User) objectOldUser;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -1202,18 +1264,66 @@ public class UserResourceManagerTest {
                 schema, new User());
         return new Object[][]{
                 {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED, "userName",
+                        "emails", userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED, "userName",
+                        null, userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED, null,
+                        "emails", userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REPLACE_AND_UPDATED, null,
                         null, userNew, userOld, ResponseCodeConstants.CODE_OK}
         };
     }
 
     @Test(dataProvider = "dataForUpdateWithPATCHReplace")
     public void testUpdateWithPATCHReplace(String existingId, String scimObjectString,
-                                           String attributes, String excludeAttributes, Object objectNEWUser,
-                                           Object objectOLDUser, int expectedScimResponseStatus)
+                                           String attributes, String excludeAttributes, Object objectNewUser,
+                                           Object objectOldUser, int expectedScimResponseStatus)
             throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
 
-        User userNew = (User) objectNEWUser;
-        User userOld = (User) objectOLDUser;
+        User userNew = (User) objectNewUser;
+        User userOld = (User) objectOldUser;
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_USER_ENDPOINT);
+        Mockito.when(userManager.getUser(existingId,
+                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
+        Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
+        SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
+                userManager, attributes, excludeAttributes);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
+    }
+
+    @DataProvider(name = "dataForUpdateWithPATCHRemove")
+    public Object[][] dataToUpdateWithPATCHRemove()
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        JSONDecoder decoder = new JSONDecoder();
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE, schema, new User());
+        String id = userOld.getId();
+        User userNew = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED,
+                schema, new User());
+        return new Object[][]{
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED, "userName",
+                        "emails", userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED, "userName",
+                        null, userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED, null,
+                        "emails", userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_WITH_REMOVE_AND_UPDATED, "userName",
+                        "emails", userNew, userOld, ResponseCodeConstants.CODE_OK}
+        };
+    }
+
+    @Test(dataProvider = "dataForUpdateWithPATCHRemove")
+    public void testUpdateWithPATCHRemove(String existingId, String scimObjectString,
+                                          String attributes, String excludeAttributes, Object objectNewUser,
+                                          Object objectOldUser, int expectedScimResponseStatus)
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+
+        User userNew = (User) objectNewUser;
+        User userOld = (User) objectOldUser;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
