@@ -298,7 +298,7 @@ public class UserResourceManagerTest {
             "},\n" +
             "  \"Operations\": [\n" +
             "    {\n" +
-            "      \"op\": \"replace\",\n" +
+            "      \"op\": \"remove\",\n" +
             "      \"value\": {\n" +
             "        \"nickName\": \"shaggy\"\n" +
             "      }\n" +
@@ -336,7 +336,7 @@ public class UserResourceManagerTest {
             "},\n" +
             "  \"Operations\": [\n" +
             "    {\n" +
-            "      \"op\": \"replace\",\n" + //REMOVE Operation
+            "      \"op\": \"replace\",\n" +
             "      \"value\": {\n" +
             "        \"nickName\": \"shaggy\"\n" +
             "      }\n" +
