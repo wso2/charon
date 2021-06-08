@@ -159,7 +159,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             String encodedGroup;
             Map<String, String> httpHeaders = new HashMap<String, String>();
             if (createdGroup != null) {
-
+                ServerSideValidator.validateReturnedAttributes(createdGroup, attributes, excludeAttributes);
                 encodedGroup = encoder.encodeSCIMObject(createdGroup);
                 //add location header
                 httpHeaders.put(SCIMConstants.LOCATION_HEADER, getResourceEndpointURL(
