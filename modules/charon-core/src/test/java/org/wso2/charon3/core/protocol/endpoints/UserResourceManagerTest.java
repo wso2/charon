@@ -798,6 +798,8 @@ public class UserResourceManagerTest {
                         userNew, userOld, ResponseCodeConstants.CODE_OK},
                 {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, null, null,
                         userNew, userOld, ResponseCodeConstants.CODE_OK},
+                {id, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "", "",
+                        userNew, userOld, ResponseCodeConstants.CODE_OK},
         };
     }
 
@@ -813,8 +815,7 @@ public class UserResourceManagerTest {
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
-        Mockito.when(userManager.getUser(id,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        Mockito.when(userManager.getUser(id, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPUT(id, scimObjectString, userManager,
@@ -1050,9 +1051,8 @@ public class UserResourceManagerTest {
     }
 
     @Test(dataProvider = "dataForUpdateWithPATCH")
-    public void testUpdateWithPATCH(String existingId, String scimObjectString,
-                                    String attributes, String excludeAttributes,
-                                    Object scimNewUserObject, Object scimOldUserObject)
+    public void testUpdateWithPATCH(String existingId, String scimObjectString, String attributes,
+                                    String excludeAttributes, Object scimNewUserObject, Object scimOldUserObject)
             throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
 
         User userNew = (User) scimNewUserObject;
