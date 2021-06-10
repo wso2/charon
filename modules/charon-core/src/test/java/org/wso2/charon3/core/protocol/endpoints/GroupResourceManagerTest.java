@@ -832,7 +832,8 @@ public class GroupResourceManagerTest {
                 {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
                 {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", null},
                 {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, "members"},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, null}
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, null},
+                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "", ""}
         };
     }
 
