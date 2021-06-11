@@ -829,11 +829,26 @@ public class GroupResourceManagerTest {
 
         return new Object[][]{
                 {null, 1, 2, null, null, "PRIMARY", "members", null},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", null},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, "members"},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, null},
-                {"displayName sw PRIMARY/manager", 1, 2, null, null, "PRIMARY", "", ""}
+                {"displayName eq PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
+                {"displayName eq PRIMARY/manager", 1, 2, null, null, "PRIMARY", "displayName", null},
+                {"displayName eq PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, "members"},
+                {"displayName eq PRIMARY/manager", 1, 2, null, null, "PRIMARY", null, null},
+                {"displayName eq PRIMARY/manager", 1, 2, null, null, "PRIMARY", "", ""},
+                {"displayName co manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
+                {"displayName co manager", 1, 2, null, null, "PRIMARY", "displayName", null},
+                {"displayName co manager", 1, 2, null, null, "PRIMA Y", null, "members"},
+                {"displayName co manager", 1, 2, null, null, "PRIMARY", null, null},
+                {"displayName co manager", 1, 2, null, null, "PRIMARY", "", ""},
+                {"displayName sw PRIMARY", 1, 2, null, null, "PRIMARY", "displayName", "members"},
+                {"displayName sw PRIMARY", 1, 2, null, null, "PRIMARY", "displayName", null},
+                {"displayName sw PRIMARY", 1, 2, null, null, "PRIMARY", null, "members"},
+                {"displayName sw PRIMARY", 1, 2, null, null, "PRIMARY", null, null},
+                {"displayName sw PRIMARY", 1, 2, null, null, "PRIMARY", "", ""},
+                {"displayName ew manager", 1, 2, null, null, "PRIMARY", "displayName", "members"},
+                {"displayName ew manager", 1, 2, null, null, "PRIMARY", "displayName", null},
+                {"displayName ew manager", 1, 2, null, null, "PRIMARY", null, "members"},
+                {"displayName ew manager", 1, 2, null, null, "PRIMARY", null, null},
+                {"displayName ew manager", 1, 2, null, null, "PRIMARY", "", ""}
         };
     }
 
