@@ -170,12 +170,7 @@
                 <updatePolicy>daily</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
-        </repository>
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <url>https://repo1.maven.org/maven2</url>
-        </repository>
+        </repository>      
         <!--<repository>
             <id>wso2.snapshots</id>
             <name>WSO2 Snapshot Repository</name>
