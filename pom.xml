@@ -308,7 +308,7 @@
         <target.java.version>1.8</target.java.version>
 
         <msf4j.version>2.7.3</msf4j.version>
-        <fasterxml.jackson.core.version>2.9.8</fasterxml.jackson.core.version>
+        <fasterxml.jackson.core.version>2.10.5.1</fasterxml.jackson.core.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons-lang.wso2.osgi.version.range>[2.6.0, 3.0.0)</commons-lang.wso2.osgi.version.range>
 
