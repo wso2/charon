@@ -21,6 +21,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -164,6 +165,8 @@ public class MeResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return encodeSCIMException(e);
         } catch (NotImplementedException e) {
+            return encodeSCIMException(e);
+        } catch (ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }

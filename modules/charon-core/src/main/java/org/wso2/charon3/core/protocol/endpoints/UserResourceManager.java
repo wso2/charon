@@ -26,6 +26,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -205,6 +206,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (ForbiddenException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }

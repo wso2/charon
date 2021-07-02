@@ -19,6 +19,7 @@ import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
@@ -41,7 +42,7 @@ public interface UserManager {
         /***************User Manipulation operations.*******************/
 
     public User createUser(User user, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, BadRequestException;
+            throws CharonException, ConflictException, BadRequestException, ForbiddenException;
 
     public User getUser(String id, Map<String, Boolean> requiredAttributes)
             throws CharonException, BadRequestException, NotFoundException;
@@ -127,7 +128,7 @@ public interface UserManager {
             throws CharonException, BadRequestException, NotFoundException;
 
     public User createMe(User user, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, BadRequestException;
+            throws CharonException, ConflictException, BadRequestException, ForbiddenException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
