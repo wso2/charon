@@ -31,4 +31,9 @@ public class ForbiddenException extends AbstractCharonException {
         detail = exception;
     }
 
+    public ForbiddenException(String exception, String scimType) {
+
+        super(ResponseCodeConstants.CODE_FORBIDDEN, exception, scimType);
+    }
+
 }

@@ -32,6 +32,7 @@ import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -569,7 +570,8 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateUserSuccess")
     public void testCreateUserSuccess(String scimObjectString, String attributes, String excludeAttributes)
-            throws BadRequestException, CharonException, InternalErrorException, ConflictException {
+            throws BadRequestException, CharonException, InternalErrorException, ConflictException,
+            ForbiddenException {
 
         User user = getNewUser();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
@@ -599,7 +601,7 @@ public class UserResourceManagerTest {
     public void testCreateProvidedUserManagerHandlerIsNull(String scimObjectString, String attributes,
                                                            String excludeAttributes, Object objectUser,
                                                            int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
 
         User user = (User) objectUser;
 
@@ -625,7 +627,7 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForTestCreatedUserResourceIsNull")
     public void testCreatedUserResourceIsNull(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -650,7 +652,7 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateBadRequestException")
     public void testCreateBadRequestException(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
@@ -673,7 +675,7 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateUserConflictException")
     public void testCreateUserConflictException(String scimObjectString, String attributes,
                                                 String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
