@@ -488,7 +488,8 @@ public class MeResourceManagerTest {
     public void testCreateProvidedUserManagerHandlerIsNull(String scimObjectString, String attributes,
                                                            String excludeAttributes, Object objectUser,
                                                            int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException, NotImplementedException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         User user = (User) objectUser;
 
@@ -515,7 +516,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreatedUserResourceIsNull")
     public void testCreatedUserResourceIsNull(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException, NotImplementedException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -541,7 +543,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateBadRequestException")
     public void testCreateBadRequestException(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException, NotImplementedException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -565,7 +568,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateUserConflictException")
     public void testCreateUserConflictException(String scimObjectString, String attributes,
                                                 String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException, NotImplementedException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
