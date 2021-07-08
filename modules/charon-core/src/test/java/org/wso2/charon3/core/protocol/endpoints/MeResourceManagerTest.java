@@ -321,7 +321,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForGetUserSuccess")
     public void testGetUserSuccess(String id, String name, String attributes,
                                    String excludeAttributes, Object objectUser)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         User user = (User) objectUser;
 
@@ -368,7 +368,7 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForGetUserNotFoundException")
     public void testGetUserNotFoundException(String name, String attributes, String excludeAttributes)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -397,7 +397,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForGetCharonException")
     public void testGetUserCharonException(String name, String attributes, String excludeAttributes,
                                            int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -426,7 +426,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForGetBadRequestException")
     public void testGetUserBadRequestException(String name, String attributes, String excludeAttributes,
                                                int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
         Map<String, Boolean> requiredAttributes = ResourceManagerUtil.getOnlyRequiredAttributesURIs(
@@ -455,7 +455,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateUserSuccess")
     public void testCreateUserSuccess(String scimObjectString, String attributes, String excludeAttributes)
             throws BadRequestException, CharonException, InternalErrorException, ConflictException,
-            ForbiddenException {
+            ForbiddenException, NotImplementedException {
 
         User user = getNewUser();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
@@ -488,7 +488,8 @@ public class MeResourceManagerTest {
     public void testCreateProvidedUserManagerHandlerIsNull(String scimObjectString, String attributes,
                                                            String excludeAttributes, Object objectUser,
                                                            int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         User user = (User) objectUser;
 
@@ -515,7 +516,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreatedUserResourceIsNull")
     public void testCreatedUserResourceIsNull(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -541,7 +543,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateBadRequestException")
     public void testCreateBadRequestException(String scimObjectString, String attributes,
                                               String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -565,7 +568,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateUserConflictException")
     public void testCreateUserConflictException(String scimObjectString, String attributes,
                                                 String excludeAttributes, int expectedScimResponseStatus)
-            throws ConflictException, BadRequestException, CharonException, ForbiddenException {
+            throws ConflictException, BadRequestException, CharonException, ForbiddenException,
+            NotImplementedException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -895,7 +899,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateWithPUTBadRequestException")
     public void testUpdateWithPUTBadRequestException(String userName, String scimObjectString, String
             attributes, String excludeAttributes, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -1164,7 +1168,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHBadRequestException(String existingId, String scimObjectString,
                                                        String attributes, String excludeAttributes,
                                                        int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
@@ -1201,7 +1205,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHInternalErrorException(String existingId, String scimObjectString,
                                                           String attributes, String excludeAttributes,
                                                           int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
 
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
 
