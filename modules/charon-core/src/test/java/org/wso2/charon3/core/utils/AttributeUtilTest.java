@@ -166,6 +166,10 @@ public class AttributeUtilTest {
         Assert.assertEquals(booleanValue, expectedBooleanValue);
     }
 
+    /*
+     * Contains data to test exceptions thrown in 'parseBoolean' method of 'AttributeUtil' class.
+     * Format {object which cannot be converted to a boolean value}
+     */
     @DataProvider(name = "dataForParseBooleanExceptions")
     public Object[][] dataToParseBooleanExceptions() {
 

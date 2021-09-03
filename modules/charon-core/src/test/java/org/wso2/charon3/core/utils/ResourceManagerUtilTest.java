@@ -46,6 +46,7 @@ import static org.wso2.charon3.core.schema.SCIMDefinitions.Uniqueness.NONE;
 public class ResourceManagerUtilTest {
 
     private SCIMResourceTypeSchema getResourceSchema() {
+
         List<String> schemasList = new ArrayList<>();
         schemasList.add("urn:ietf:params:scim:schemas:core:2.0:User");
         schemasList.add("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User");
