@@ -16,6 +16,7 @@
 package org.wso2.charon3.core.schema;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.AbstractAttribute;
@@ -102,6 +103,15 @@ public abstract class AbstractValidator {
                                 String error = "Required sub attribute: " + subAttributeSchema.getName()
                                         + " is missing in the SCIM Attribute: " + attribute.getName();
                                 throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                            } else if (attribute.getSubAttribute(
+                                    subAttributeSchema.getName()) instanceof SimpleAttribute) {
+                                // If the attributes updated with "", that check is happening here.
+                                if (StringUtils.isEmpty(((SimpleAttribute) attribute.getSubAttribute(
+                                        subAttributeSchema.getName())).getValue().toString())) {
+                                    String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                            + " is missing in the SCIM Attribute: " + attribute.getName();
+                                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                                }
                             }
                         } else if (attribute instanceof MultiValuedAttribute) {
                             List<Attribute> values =

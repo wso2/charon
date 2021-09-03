@@ -45,7 +45,6 @@ import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
-import org.wso2.charon3.core.schema.ServerSideValidator;
 import org.wso2.charon3.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
@@ -115,11 +114,8 @@ public class PatchOperationUtil {
 
             doPatchRemoveWithoutFilters(parts, oldResource);
         }
-        //validate the updated object
-        AbstractSCIMObject validatedResource =  ServerSideValidator.validateUpdatedSCIMObject
-                (copyOfOldResource, oldResource, schema);
-
-        return validatedResource;
+        // All changes have been applied to old resource.
+        return oldResource;
 
     }
 
@@ -745,10 +741,8 @@ public class PatchOperationUtil {
         } else {
             doPatchAddOnResource(operation, decoder, oldResource, copyOfOldResource, schema);
         }
-        // Validate the updated object.
-        AbstractSCIMObject validatedResource = ServerSideValidator
-                .validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema);
-        return validatedResource;
+        // All changes have been applied to old resource.
+        return oldResource;
     }
 
     /**
@@ -1729,10 +1723,8 @@ public class PatchOperationUtil {
                         }
                     }
                 }
-                AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
-                        (copyOfOldResource, oldResource, schema);
-
-                return validatedResource;
+                // All changes have been applied to old resource.
+                return oldResource;
             } else  {
                 throw new CharonException("Error in getting the old resource.");
             }
@@ -1780,10 +1772,8 @@ public class PatchOperationUtil {
         } else {
             doPatchReplaceOnResource(oldResource, copyOfOldResource, schema, decoder, operation);
         }
-        //validate the updated object
-        AbstractSCIMObject validatedResource =  ServerSideValidator.validateUpdatedSCIMObject
-                (copyOfOldResource, oldResource, schema);
-        return validatedResource;
+        // All changes have been applied to old resource.
+        return oldResource;
     }
 
     /*
@@ -3602,15 +3592,13 @@ public class PatchOperationUtil {
                         oldResource.setAttribute(attributeHoldingSCIMObject.getAttributeList().get(attributeName));
                     }
                 }
-                AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
-                        (copyOfOldResource, oldResource, schema);
-
-                return validatedResource;
+                // All changes have been applied to old resource.
+                return oldResource;
             } else  {
                 throw new CharonException("Error in getting the old resource.");
             }
         } catch (BadRequestException | CharonException e) {
-            throw new CharonException("Error in performing the add operation", e);
+            throw new CharonException("Error in performing the replace operation", e);
         }
     }
 }
