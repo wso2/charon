@@ -65,6 +65,7 @@ import static org.mockito.Mockito.mock;
 public class UserResourceManagerTest {
 
     private static final String USER_ID = "123";
+    private static final String DOMAIN_NAME = "PRIMARY";
 
     private static final String NEW_USER_SCIM_OBJECT_STRING = "{\n" +
             "  \"schemas\": \n" +
@@ -396,6 +397,10 @@ public class UserResourceManagerTest {
         abstractResourceManager.close();
     }
 
+    /*
+     * Contains data to test success path of 'get' method in 'UserResourceManager' class.
+     * Format {resource id, attributes, excluded attributes, SCIM response status, user object}
+     */
     @DataProvider(name = "dataForGetSuccess")
     public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
 
@@ -433,6 +438,10 @@ public class UserResourceManagerTest {
         Assert.assertEquals(returnedURI, expectedURI);
     }
 
+    /*
+     * Contains data to test NotFoundException thrown in 'get' method of 'UserResourceManager' class.
+     * Format {resource id, attributes, excluded attributes}
+     */
     @DataProvider(name = "dataForGetUserNotFoundException")
     public Object[][] dataToGetUserNotFoundException() {
 
@@ -461,6 +470,10 @@ public class UserResourceManagerTest {
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND);
     }
 
+    /*
+     * Contains data to test CharonException thrown in 'get' method of 'UserResourceManager' class.
+     * Format {resource id, attributes, excluded attributes}
+     */
     @DataProvider(name = "dataForGetCharonException")
     public Object[][] dataToGetCharonException() {
 
@@ -490,6 +503,10 @@ public class UserResourceManagerTest {
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 
+    /*
+     * Contains data to test BadRequestException thrown in 'get' method of 'UserResourceManager' class.
+     * Format {resource id, attributes, excluded attributes}
+     */
     @DataProvider(name = "dataForGetBadRequestException")
     public Object[][] dataToGetBadRequestException() {
 
@@ -523,7 +540,7 @@ public class UserResourceManagerTest {
     public Object[][] dataToGetListInt() {
 
         return new Object[][]{
-                {null, 1, 2, null, null, "PRIMARY", "emails", null}
+                {null, 1, 2, null, null, DOMAIN_NAME, "emails", null}
         };
     }
 
@@ -541,8 +558,8 @@ public class UserResourceManagerTest {
     public Object[][] dataToGetListInteger() {
 
         return new Object[][]{
-                {null, 1, 2, null, null, "PRIMARY", "emails", null},
-                {"userName sw Rash", 1, 2, null, null, "PRIMARY", "userName,name.familyName",
+                {null, 1, 2, null, null, DOMAIN_NAME, "emails", null},
+                {"userName sw Rash", 1, 2, null, null, DOMAIN_NAME, "userName,name.familyName",
                         "emails"}
         };
     }
