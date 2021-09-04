@@ -16,6 +16,7 @@
 package org.wso2.charon3.core.schema;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.AbstractAttribute;
@@ -76,6 +77,49 @@ public abstract class AbstractValidator {
         }
     }
 
+    /**
+     * Validate whether scim object updates due to one patch operation, violate the required attributes conditions.
+     *
+     * @param oldObject      Scim object before update.
+     * @param newObject      Scim object after update.
+     * @param resourceSchema Schema for the scim resource.
+     * @throws BadRequestException When error occurred due to client issue.
+     * @throws CharonException     When error occurred due to validation failure.
+     */
+    public static void validatePatchOperationEffectForRequiredAttributes(AbstractSCIMObject oldObject,
+                                                                         AbstractSCIMObject newObject,
+                                                                         ResourceTypeSchema resourceSchema)
+            throws BadRequestException, CharonException {
+
+        // Get attributes from schema.
+        List<AttributeSchema> attributeSchemaList = resourceSchema.getAttributesList();
+        // Get attribute list from old scim object.
+        Map<String, Attribute> oldAttributeList = oldObject.getAttributeList();
+        // Get attribute list from new scim object.
+        Map<String, Attribute> newAttributeList = newObject.getAttributeList();
+        for (AttributeSchema attributeSchema : attributeSchemaList) {
+            // Check for required attributes.
+            if (attributeSchema.getRequired()) {
+                /*
+                If the attribute is not present in the updated object but included in the old object,
+                it means the operation has removed the required attribute.
+                 */
+                if (!newAttributeList.containsKey(attributeSchema.getName()) &&
+                        oldAttributeList.containsKey(attributeSchema.getName())) {
+                    String error = "Required attribute " + attributeSchema.getName() + " is missing in the SCIM " +
+                            "Object.";
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                }
+            }
+
+            // Check for required sub attributes.
+            AbstractAttribute newAttribute = (AbstractAttribute) newAttributeList.get(attributeSchema.getName());
+            AbstractAttribute oldAttribute = (AbstractAttribute) oldAttributeList.get(attributeSchema.getName());
+            validatePatchOperationEffectForRequiredSubAttributes(oldAttribute, newAttribute, attributeSchema,
+                    newObject);
+        }
+    }
+
     /*
      * Validate SCIMObject for required sub attributes given the object and the corresponding schema.
      *
@@ -89,6 +133,7 @@ public abstract class AbstractValidator {
                                                                    AttributeSchema attributeSchema,
                                                                    AbstractSCIMObject scimObject) throws
             CharonException, BadRequestException {
+
         if (attribute != null) {
             List<AttributeSchema> subAttributesSchemaList =
                     ((AttributeSchema) attributeSchema).getSubAttributeSchemas();
@@ -102,6 +147,15 @@ public abstract class AbstractValidator {
                                 String error = "Required sub attribute: " + subAttributeSchema.getName()
                                         + " is missing in the SCIM Attribute: " + attribute.getName();
                                 throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                            } else if (attribute.getSubAttribute(
+                                    subAttributeSchema.getName()) instanceof SimpleAttribute) {
+                                // If the attributes updated with "", that check is happening here.
+                                if (StringUtils.isEmpty(((SimpleAttribute) attribute.getSubAttribute(
+                                        subAttributeSchema.getName())).getValue().toString())) {
+                                    String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                            + " is missing in the SCIM Attribute: " + attribute.getName();
+                                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                                }
                             }
                         } else if (attribute instanceof MultiValuedAttribute) {
                             List<Attribute> values =
@@ -139,6 +193,92 @@ public abstract class AbstractValidator {
                         validateSCIMObjectForRequiredSubAttributes(subAttribute, subAttributeSchema, scimObject);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Validation the patch operation effect on sub attributes of a scim attribute.
+     *
+     * @param oldAttribute    Old scim attribute.
+     * @param newAttribute    Updated scim attribute.
+     * @param attributeSchema Attribute schema of the attribute.
+     * @param scimObject      Scim object.
+     * @throws CharonException     When error occurred during the validation.
+     * @throws BadRequestException When error occurred due to the client issues.
+     */
+    private static void validatePatchOperationEffectForRequiredSubAttributes(AbstractAttribute oldAttribute,
+                                                                             AbstractAttribute newAttribute,
+                                                                             AttributeSchema attributeSchema,
+                                                                             AbstractSCIMObject scimObject)
+            throws CharonException, BadRequestException {
+
+        if (newAttribute == null || attributeSchema == null || oldAttribute == null) {
+            return;
+        }
+        List<AttributeSchema> subAttributesSchemaList = attributeSchema.getSubAttributeSchemas();
+        if (subAttributesSchemaList == null) {
+            return;
+        }
+        for (AttributeSchema subAttributeSchema : subAttributesSchemaList) {
+            // Nothing to validate id the attribute schema has required=false.
+            if (!subAttributeSchema.getRequired()) {
+                continue;
+            }
+            if (newAttribute instanceof ComplexAttribute) {
+                // If the sub attribute contained in the old attribute but not in the new attribute.
+                if (newAttribute.getSubAttribute(subAttributeSchema.getName()) == null
+                        && oldAttribute.getSubAttribute(subAttributeSchema.getName()) != null) {
+                    String error = "Required sub attribute: " + subAttributeSchema.getName()
+                            + " is missing in the SCIM Attribute: " + newAttribute.getName();
+                    throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                } else if (newAttribute.getSubAttribute(
+                        subAttributeSchema.getName()) instanceof SimpleAttribute) {
+                    // If the attributes updated with "", that check is happening here.
+                    if (StringUtils.isEmpty(((SimpleAttribute) newAttribute.getSubAttribute(
+                            subAttributeSchema.getName())).getValue().toString())) {
+                        String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                + " is missing in the SCIM Attribute: " + newAttribute.getName();
+                        throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                    }
+                }
+            } else if (newAttribute instanceof MultiValuedAttribute) {
+                List<Attribute> newValues =
+                        ((MultiValuedAttribute) newAttribute).getAttributeValues();
+                for (Attribute value : newValues) {
+                    if (value instanceof ComplexAttribute) {
+                        if (value.getSubAttribute(subAttributeSchema.getName()) == null) {
+                            String error = "Required sub attribute: " + subAttributeSchema.getName()
+                                    + ", is missing in the SCIM Attribute: " + newAttribute.getName();
+                            throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                        }
+                    }
+                }
+            }
+            // Check for canonical attributes in groups.
+            validateCanonicalAttributesInScimObject(newAttribute, subAttributeSchema, scimObject);
+            /*
+            Following is only applicable for extension schema validation.
+            Extension schema also considered as complex Attribute.
+            Therefore, The Complex Attributes inside the extension will validate here.
+             */
+            AbstractAttribute newSubAttribute = null;
+            AbstractAttribute oldSubAttribute = null;
+            if (newAttribute instanceof ComplexAttribute) {
+                newSubAttribute = (AbstractAttribute) (newAttribute).getSubAttribute(subAttributeSchema.getName());
+                oldSubAttribute = (AbstractAttribute) (oldAttribute).getSubAttribute(subAttributeSchema.getName());
+            } else if (newAttribute instanceof MultiValuedAttribute) {
+                List<Attribute> subAttributeList = ((MultiValuedAttribute) newAttribute).getAttributeValues();
+                for (Attribute subAttrbte : subAttributeList) {
+                    if (subAttrbte.getName().equals(subAttributeSchema.getName())) {
+                        newSubAttribute = (AbstractAttribute) subAttrbte;
+                    }
+                }
+            }
+            List<AttributeSchema> subSubAttributesSchemaList = subAttributeSchema.getSubAttributeSchemas();
+            if (subSubAttributesSchemaList != null) {
+                validatePatchOperationEffectForRequiredSubAttributes(oldSubAttribute, newSubAttribute,
+                        subAttributeSchema, scimObject);
             }
         }
     }

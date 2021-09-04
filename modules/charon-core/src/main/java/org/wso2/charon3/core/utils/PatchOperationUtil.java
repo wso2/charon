@@ -116,8 +116,8 @@ public class PatchOperationUtil {
             doPatchRemoveWithoutFilters(parts, oldResource);
         }
         //validate the updated object
-        AbstractSCIMObject validatedResource =  ServerSideValidator.validateUpdatedSCIMObject
-                (copyOfOldResource, oldResource, schema);
+        AbstractSCIMObject validatedResource =
+                ServerSideValidator.validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema, true);
 
         return validatedResource;
 
@@ -746,8 +746,8 @@ public class PatchOperationUtil {
             doPatchAddOnResource(operation, decoder, oldResource, copyOfOldResource, schema);
         }
         // Validate the updated object.
-        AbstractSCIMObject validatedResource = ServerSideValidator
-                .validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema);
+        AbstractSCIMObject validatedResource =
+                ServerSideValidator.validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema, true);
         return validatedResource;
     }
 
@@ -1729,8 +1729,8 @@ public class PatchOperationUtil {
                         }
                     }
                 }
-                AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
-                        (copyOfOldResource, oldResource, schema);
+                AbstractSCIMObject validatedResource =
+                        ServerSideValidator.validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema, true);
 
                 return validatedResource;
             } else  {
@@ -1774,15 +1774,15 @@ public class PatchOperationUtil {
                 }
 
             } else {
-                    doPatchReplaceOnPathWithoutFilters(oldResource, schema, decoder, operation, parts);
+                doPatchReplaceOnPathWithoutFilters(oldResource, schema, decoder, operation, parts);
             }
 
         } else {
             doPatchReplaceOnResource(oldResource, copyOfOldResource, schema, decoder, operation);
         }
         //validate the updated object
-        AbstractSCIMObject validatedResource =  ServerSideValidator.validateUpdatedSCIMObject
-                (copyOfOldResource, oldResource, schema);
+        AbstractSCIMObject validatedResource =
+                ServerSideValidator.validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema, true);
         return validatedResource;
     }
 
@@ -3602,15 +3602,15 @@ public class PatchOperationUtil {
                         oldResource.setAttribute(attributeHoldingSCIMObject.getAttributeList().get(attributeName));
                     }
                 }
-                AbstractSCIMObject validatedResource = ServerSideValidator.validateUpdatedSCIMObject
-                        (copyOfOldResource, oldResource, schema);
+                AbstractSCIMObject validatedResource =
+                        ServerSideValidator.validateUpdatedSCIMObject(copyOfOldResource, oldResource, schema, true);
 
                 return validatedResource;
             } else  {
                 throw new CharonException("Error in getting the old resource.");
             }
         } catch (BadRequestException | CharonException e) {
-            throw new CharonException("Error in performing the add operation", e);
+            throw new CharonException("Error in performing the replace operation", e);
         }
     }
 }
