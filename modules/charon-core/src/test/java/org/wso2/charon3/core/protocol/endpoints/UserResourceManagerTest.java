@@ -399,7 +399,7 @@ public class UserResourceManagerTest {
 
     /*
      * Contains data to test success path of 'get' method in 'UserResourceManager' class.
-     * Format {resource id, attributes, excluded attributes, SCIM response status, user object}
+     * Format {resource id, attributes, excluded attributes, user object}
      */
     @DataProvider(name = "dataForGetSuccess")
     public Object[][] dataToGetSuccess() throws CharonException, InternalErrorException, BadRequestException {
@@ -472,7 +472,7 @@ public class UserResourceManagerTest {
 
     /*
      * Contains data to test CharonException thrown in 'get' method of 'UserResourceManager' class.
-     * Format {resource id, attributes, excluded attributes}
+     * Format {resource id, attributes, excluded attributes, SCIM response status}
      */
     @DataProvider(name = "dataForGetCharonException")
     public Object[][] dataToGetCharonException() {
@@ -505,7 +505,7 @@ public class UserResourceManagerTest {
 
     /*
      * Contains data to test BadRequestException thrown in 'get' method of 'UserResourceManager' class.
-     * Format {resource id, attributes, excluded attributes}
+     * Format {resource id, attributes, excluded attributes, SCIM response status}
      */
     @DataProvider(name = "dataForGetBadRequestException")
     public Object[][] dataToGetBadRequestException() {
