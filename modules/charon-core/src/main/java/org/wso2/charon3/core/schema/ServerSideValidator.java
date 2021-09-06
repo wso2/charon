@@ -161,39 +161,65 @@ public class ServerSideValidator extends AbstractValidator {
         }
     }
 
-
-    /*
-     * Perform validation on SCIM Object update on service provider side
+    /**
+     * Perform validation on SCIM Object update on service provider side.
      *
-     * @param oldObject
-     * @param newObject
-     * @param resourceSchema
-     * @return
-     * @throws CharonException
+     * @param oldObject      Old scim object.
+     * @param newObject      New scim object.
+     * @param resourceSchema Schema of the scim resource.
+     * @return Validated object.
+     * @throws CharonException     When error occurred while validating the scim object.
+     * @throws BadRequestException When error in the user's input.
      */
     public static AbstractSCIMObject validateUpdatedSCIMObject(AbstractSCIMObject oldObject,
                                                                AbstractSCIMObject newObject,
                                                                SCIMResourceTypeSchema resourceSchema)
             throws CharonException, BadRequestException {
 
-        AbstractSCIMObject validatedObject = null;
+        AbstractSCIMObject validatedObject = validateUpdatedSCIMObject(oldObject, newObject, resourceSchema, false);
+        return validatedObject;
+    }
+
+    /**
+     * Perform validation on SCIM Object update on service provider side.
+     *
+     * @param oldObject                 Old scim object used for comparison.
+     * @param newObject                 Updated scim object.
+     * @param resourceSchema            Schema for the scim resource.
+     * @param validatePerPatchOperation Whether this validation is done per patch operation.
+     * @return Validated scim object.
+     * @throws CharonException     When error occurred while validating the scim object.
+     * @throws BadRequestException When error in the user's input.
+     */
+    public static AbstractSCIMObject validateUpdatedSCIMObject(AbstractSCIMObject oldObject,
+                                                               AbstractSCIMObject newObject,
+                                                               SCIMResourceTypeSchema resourceSchema,
+                                                               boolean validatePerPatchOperation)
+            throws CharonException, BadRequestException {
+
         if (newObject instanceof User) {
-            //set display names for complex multivalued attributes
+            // Set display names for complex multivalued attributes.
             setDisplayNameInComplexMultiValuedAttributes(newObject, resourceSchema);
         }
-        //check for read only and immutable attributes
-        validatedObject = checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
-        //copy meta attribute from old to new
+        // Check for read only and immutable attributes.
+        AbstractSCIMObject validatedObject =
+                checkIfReadOnlyAndImmutableAttributesModified(oldObject, newObject, resourceSchema);
+        // Copy meta attribute from old to new.
         validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.META));
-        //copy id attribute to new group object
+        // Copy id attribute to new group object.
         validatedObject.setAttribute(oldObject.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
-        //edit last modified date
+        // Edit last modified date.
         validatedObject.setLastModifiedInstant(Instant.now());
-        //check for required attributes.
-        validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
-        //check for schema list
+        // If this check done per scim patch operation, Only validate the update cause for required attribute removal.
+        if (validatePerPatchOperation) {
+            // Check for required attributes.
+            validatePatchOperationEffectForRequiredAttributes(oldObject, newObject, resourceSchema);
+        } else {
+            // Check for required attributes.
+            validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
+        }
+        // Check for schema list.
         validateSchemaList(validatedObject, resourceSchema);
-
         return validatedObject;
     }
 
