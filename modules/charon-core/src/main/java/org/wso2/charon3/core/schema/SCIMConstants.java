@@ -46,6 +46,7 @@ public class SCIMConstants {
     public static final String DATE_TIME_FORMAT2 = "yyyy-MM-dd'T'HH:mm:ss";
 
     /*Resource names as defined in SCIM Schema spec*/
+    public static final String CORE = "Core";
     public static final String USER = "User";
     public static final String GROUP = "Group";
     public static final String ROLE = "Role";

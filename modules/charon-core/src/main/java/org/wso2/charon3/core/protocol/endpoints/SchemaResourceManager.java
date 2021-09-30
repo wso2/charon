@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.wso2.charon3.core.schema.SCIMConstants.CORE;
+import static org.wso2.charon3.core.schema.SCIMConstants.CORE_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.CUSTOM_USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.CustomUserSchemaConstants.CUSTOM_USER_DESC;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER;
@@ -76,6 +78,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
     public SCIMResponse get(String id, UserManager userManager, String attributes, String excludeAttributes) {
 
         try {
+            List<Attribute> coreSchemaAttributes = userManager.getCoreSchema();
             List<Attribute> userSchemaAttributes = userManager.getUserSchema();
             List<Attribute> userEnterpriseSchemaAttributes = userManager.getEnterpriseUserSchema();
             List<Attribute> userCustomSchemaAttributes = userManager.getCustomUserSchemaAttributes();
@@ -84,6 +87,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
             Map<String, List<Attribute>> schemas = new HashMap<>();
             // Below code blocks handles the /Schemas/ api requests.
             if (StringUtils.isBlank(id)) {
+                schemas.put(CORE_SCHEMA_URI, coreSchemaAttributes);
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
                 if (StringUtils.isNotBlank(customUserSchemaURI)) {
@@ -93,7 +97,9 @@ public class SchemaResourceManager extends AbstractResourceManager {
             }
 
             // Below code blocks handles the /Schemas/{id} api requests.
-            if (USER_CORE_SCHEMA_URI.equalsIgnoreCase(id)) {
+            if (CORE_SCHEMA_URI.equalsIgnoreCase(id)) {
+                schemas.put(CORE_SCHEMA_URI, coreSchemaAttributes);
+            } else if (USER_CORE_SCHEMA_URI.equalsIgnoreCase(id)) {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
             } else if (ENTERPRISE_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
@@ -137,6 +143,10 @@ public class SchemaResourceManager extends AbstractResourceManager {
     private JSONArray buildSchemasResponseBody(Map<String, List<Attribute>> schemas) throws CharonException {
 
         JSONArray rootObject = new JSONArray();
+        if (schemas.get(CORE_SCHEMA_URI) != null) {
+            JSONObject coreSchemaObject = buildCoreSchema(schemas.get(CORE_SCHEMA_URI));
+            rootObject.put(coreSchemaObject);
+        }
         if (schemas.get(USER_CORE_SCHEMA_URI) != null) {
             JSONObject userSchemaObject = buildUserSchema(schemas.get(USER_CORE_SCHEMA_URI));
             rootObject.put(userSchemaObject);
@@ -212,6 +222,24 @@ public class SchemaResourceManager extends AbstractResourceManager {
             return userSchemaObject;
         } catch (JSONException e) {
             throw new CharonException("Error while encoding user schema", e);
+        }
+    }
+
+    private JSONObject buildCoreSchema(List<Attribute> coreSchemaAttributeList) throws CharonException {
+
+        try {
+            JSONEncoder encoder = getEncoder();
+
+            JSONObject coreSchemaObject = new JSONObject();
+            coreSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, CORE_SCHEMA_URI);
+            coreSchemaObject.put(SCIMConstants.UserSchemaConstants.NAME, CORE);
+            coreSchemaObject.put(SCIMConstants.ResourceTypeSchemaConstants.DESCRIPTION, CORE);
+
+            JSONArray coreSchemaAttributeArray = buildSchemaAttributeArray(coreSchemaAttributeList, encoder);
+            coreSchemaObject.put(ATTRIBUTES, coreSchemaAttributeArray);
+            return coreSchemaObject;
+        } catch (JSONException e) {
+            throw new CharonException("Error while encoding core schema.", e);
         }
     }
 
