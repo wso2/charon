@@ -125,6 +125,23 @@ public class FilterTreeManager {
         if (!(concatenatedString.equals(""))) {
             tokenList.add(concatenatedString);
         }
+
+        String updatedString = "";
+
+        for (int token = 0; token < tokenList.size(); token++) {
+            String[] splitedToken = tokenList.get(token).split("\\s+");
+            if (splitedToken.length == 2 && !splitedToken[1].equalsIgnoreCase(SCIMConstants.OperationalConstants.PR)) {
+                updatedString += tokenList.get(token);
+                if (tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.AND) ||
+                        tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
+                        tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT)) {
+                    updatedString += " " + tokenList.get(token + 1);
+                    tokenList.set(token, updatedString);
+                    tokenList.remove(token + 1);
+                }
+                updatedString = "";
+            }
+        }
     }
 
     /*
