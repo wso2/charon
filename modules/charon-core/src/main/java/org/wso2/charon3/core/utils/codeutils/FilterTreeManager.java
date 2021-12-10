@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public class FilterTreeManager {
 
     private StreamTokenizer input;
-    protected List<String> TokenList = null;
+    protected List<String> tokenList = null;
     private String symbol;
     private Node root;
     private SCIMResourceTypeSchema schema;
@@ -126,7 +126,7 @@ public class FilterTreeManager {
             tempTokenList.add(concatenatedString);
         }
 
-        TokenList = new ArrayList<String>();
+        tokenList = new ArrayList<String>();
         Boolean stringsConcatenated = false;
 
         for (int token = 0; token < tempTokenList.size(); token++) {
@@ -145,7 +145,7 @@ public class FilterTreeManager {
                     stringsConcatenated = true;
                 }
             }
-            TokenList.add(updatedString);
+            tokenList.add(updatedString);
         }
     }
 
@@ -341,12 +341,12 @@ public class FilterTreeManager {
      */
     public String nextSymbol() {
 
-        if (TokenList.size() == 0) {
+        if (tokenList.size() == 0) {
             //no tokens are present in the list anymore/at all
             return String.valueOf(-1);
         } else {
-            String value = TokenList.get(0);
-            TokenList.remove(0);
+            String value = tokenList.get(0);
+            tokenList.remove(0);
             return value;
         }
     }
