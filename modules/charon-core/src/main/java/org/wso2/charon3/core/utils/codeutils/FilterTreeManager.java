@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public class FilterTreeManager {
 
     private StreamTokenizer input;
-    protected List<String> tokenList = null;
+    protected List<String> newTokenList = null;
     private String symbol;
     private Node root;
     private SCIMResourceTypeSchema schema;
@@ -77,7 +77,7 @@ public class FilterTreeManager {
         input.wordChars('/', '/');
         input.wordChars('%', '%');
 
-        tokenList = new ArrayList<String>();
+        List<String> tokenList = new ArrayList<String>();
         String concatenatedString = "";
         String decodedValue;
 
@@ -126,21 +126,26 @@ public class FilterTreeManager {
             tokenList.add(concatenatedString);
         }
 
-        String updatedString = "";
+        newTokenList = new ArrayList<String>();
+        Boolean stringsConcatenated = false;
 
         for (int token = 0; token < tokenList.size(); token++) {
-            String[] splitedToken = tokenList.get(token).split("\\s+");
-            if (splitedToken.length == 2 && !splitedToken[1].equalsIgnoreCase(SCIMConstants.OperationalConstants.PR)) {
-                updatedString += tokenList.get(token);
+            String updatedString = tokenList.get(token).trim();
+            String[] splitedToken = updatedString.split("\\s+");
+            if (stringsConcatenated) {
+                stringsConcatenated = false;
+                continue;
+            }
+            if (splitedToken.length == 2 && !splitedToken[1].equalsIgnoreCase(SCIMConstants.OperationalConstants.PR) &&
+                    (token + 1) < tokenList.size()) {
                 if (tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.AND) ||
                         tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
                         tokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT)) {
                     updatedString += " " + tokenList.get(token + 1);
-                    tokenList.set(token, updatedString);
-                    tokenList.remove(token + 1);
+                    stringsConcatenated = true;
                 }
-                updatedString = "";
             }
+            newTokenList.add(updatedString);
         }
     }
 
@@ -336,12 +341,12 @@ public class FilterTreeManager {
      */
     public String nextSymbol() {
 
-        if (tokenList.size() == 0) {
+        if (newTokenList.size() == 0) {
             //no tokens are present in the list anymore/at all
             return String.valueOf(-1);
         } else {
-            String value = tokenList.get(0);
-            tokenList.remove(0);
+            String value = newTokenList.get(0);
+            newTokenList.remove(0);
             return value;
         }
     }
