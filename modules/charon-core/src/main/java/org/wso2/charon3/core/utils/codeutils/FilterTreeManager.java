@@ -77,7 +77,7 @@ public class FilterTreeManager {
         input.wordChars('/', '/');
         input.wordChars('%', '%');
 
-        tokenList = new ArrayList<String>();
+        List<String> tempTokenList = new ArrayList<String>();
         String concatenatedString = "";
         String decodedValue;
 
@@ -89,7 +89,7 @@ public class FilterTreeManager {
                         decodedValue.equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT))) {
 
                     if (decodedValue.startsWith("(")) {
-                        tokenList.add("(");
+                        tempTokenList.add("(");
                         decodedValue = decodedValue.substring(1);
                     }
                     if (decodedValue.endsWith(")")) {
@@ -100,9 +100,9 @@ public class FilterTreeManager {
                         concatenatedString += " " + decodedValue;
 
                         concatenatedString = concatenatedString.trim();
-                        tokenList.add(concatenatedString);
+                        tempTokenList.add(concatenatedString);
                         concatenatedString = StringUtils.EMPTY;
-                        tokenList.add(")");
+                        tempTokenList.add(")");
                     } else {
                         // Remove quotes if there are starting and ending quotes.
                         decodedValue = removeStartingAndEndingQuotes(decodedValue);
@@ -112,10 +112,10 @@ public class FilterTreeManager {
                 } else {
                     concatenatedString = concatenatedString.trim();
                     if (!concatenatedString.equals("")) {
-                        tokenList.add(concatenatedString);
+                        tempTokenList.add(concatenatedString);
                         concatenatedString = "";
                     }
-                    tokenList.add(decodedValue);
+                    tempTokenList.add(decodedValue);
                 }
             } else if (input.ttype == '\"' || input.ttype == '\'') {
                 concatenatedString += " " + input.sval;
@@ -123,7 +123,29 @@ public class FilterTreeManager {
         }
         //Add to the list, if the filter is a simple filter
         if (!(concatenatedString.equals(""))) {
-            tokenList.add(concatenatedString);
+            tempTokenList.add(concatenatedString);
+        }
+
+        tokenList = new ArrayList<String>();
+        Boolean stringsConcatenated = false;
+
+        for (int token = 0; token < tempTokenList.size(); token++) {
+            String updatedString = tempTokenList.get(token).trim();
+            String[] splitedToken = updatedString.split("\\s+");
+            if (stringsConcatenated) {
+                stringsConcatenated = false;
+                continue;
+            }
+            if (splitedToken.length == 2 && !splitedToken[1].equalsIgnoreCase(SCIMConstants.OperationalConstants.PR) &&
+                    (token + 1) < tempTokenList.size()) {
+                if (tempTokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.AND) ||
+                        tempTokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.OR) ||
+                        tempTokenList.get(token + 1).equalsIgnoreCase(SCIMConstants.OperationalConstants.NOT)) {
+                    updatedString += " " + tempTokenList.get(token + 1);
+                    stringsConcatenated = true;
+                }
+            }
+            tokenList.add(updatedString);
         }
     }
 
