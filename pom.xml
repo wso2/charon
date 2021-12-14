@@ -319,7 +319,7 @@
         <!-- Pax Logging Version -->
         <pax.logging.api.version>1.10.1</pax.logging.api.version>
 
-        <log4j.api.version>2.12.0</log4j.api.version>
+        <log4j.api.version>2.15.0</log4j.api.version>
         <testng.version>6.9.10</testng.version>
         <jacoco.version>0.8.6</jacoco.version>
         <mockito.version>3.10.0</mockito.version>
