@@ -2310,7 +2310,8 @@ public class PatchOperationUtil {
 
                     } else {
                         SimpleAttribute simpleAttribute = new SimpleAttribute(subAttributeSchema.getName(),
-                                operation.getValues());
+                                AttributeUtil.getAttributeValueFromString(operation.getValues(),
+                                        subAttributeSchema.getType()));
                         DefaultAttributeFactory.createAttribute(subAttributeSchema, simpleAttribute);
                         complexAttribute.setSubAttribute(simpleAttribute);
 

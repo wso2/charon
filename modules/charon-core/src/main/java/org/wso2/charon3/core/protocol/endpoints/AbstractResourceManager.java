@@ -22,6 +22,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
+import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
@@ -99,7 +100,12 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @return SCIMResponse
      */
     public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
-        logger.debug(exception.getDetail(), exception);
+
+        if (exception.getStatus() == ResponseCodeConstants.CODE_INTERNAL_ERROR) {
+            logger.error(exception.getDetail(), exception);
+        } else {
+            logger.debug(exception.getDetail(), exception);
+        }
         Map<String, String> responseHeaders = new HashMap<>();
         responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
         return new SCIMResponse(exception.getStatus(), encoder.encodeSCIMException(exception), responseHeaders);

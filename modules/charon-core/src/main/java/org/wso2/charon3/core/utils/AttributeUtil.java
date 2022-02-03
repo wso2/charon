@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -35,6 +36,8 @@ import java.util.List;
  * This class acts as an utility class for attributes.
  */
 public class AttributeUtil {
+
+    private static final String ATTRIBUTE_EXTENSION_SCHEMA_PREFIX = "urn:ietf:params:scim:schemas:extension";
 
     /*
      * Convert the raw string to SCIM defined data type accordingly
@@ -174,6 +177,13 @@ public class AttributeUtil {
     public static String getAttributeURI(String attributeName, SCIMResourceTypeSchema schema) throws
             BadRequestException {
 
+        boolean isSCIM2ExtensionSchemaAttribute = false;
+        /* Validates whether the attribute is from scim2 extension schema by checking the
+        ATTRIBUTE_EXTENSION_SCHEMA_PREFIX. */
+        if (StringUtils.startsWith(attributeName, ATTRIBUTE_EXTENSION_SCHEMA_PREFIX)) {
+            isSCIM2ExtensionSchemaAttribute = true;
+        }
+
         Iterator<AttributeSchema> attributeSchemas = schema.getAttributesList().iterator();
         while (attributeSchemas.hasNext()) {
             AttributeSchema attributeSchema = attributeSchemas.next();
@@ -190,11 +200,16 @@ public class AttributeUtil {
                 return subAttributeURI;
             }
 
-            if (attributeName.contains(attributeSchema.getName()) && attributeSchema.getMultiValued()) {
+            /* If the attribute is requested from extension schema check the attribute name contains the URI of the
+            attribute schema, else check the attribute name contains name of the attribute schema for the core
+            attributes. */
+            if ((((isSCIM2ExtensionSchemaAttribute && attributeName.contains(attributeSchema.getURI()))) ||
+                    (!isSCIM2ExtensionSchemaAttribute && attributeName.contains(attributeSchema.getName()))) &&
+                    attributeSchema.getMultiValued()) {
 
                 String subAttribute = null;
                 if (attributeName.contains(".")) {
-                    String[] splittedString = attributeName.split("\\.", 2);
+                    String[] splittedString = attributeName.split(attributeSchema.getName() + ".", 2);
                     subAttribute = splittedString[1];
                 }
                 subAttributeURI = attributeSchema.getURI();
@@ -235,7 +250,7 @@ public class AttributeUtil {
                             AttributeSchema subSubAttributeSchema = subSubsIterator.next();
                             if ((attributeSchema.getName() + "." + subAttributeSchema.getName() + "." +
                                     subSubAttributeSchema.getName()).equalsIgnoreCase(attributeName) ||
-                                    subAttributeSchema.getURI().equals(attributeName)) {
+                                    subSubAttributeSchema.getURI().equals(attributeName)) {
                                 return subSubAttributeSchema.getURI();
                             }
                         }
