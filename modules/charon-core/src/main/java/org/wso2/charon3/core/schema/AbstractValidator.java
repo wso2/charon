@@ -375,7 +375,9 @@ public abstract class AbstractValidator {
                 for (AttributeSchema subAttributeSchema : subAttributesSchemaList) {
                     if (subAttributeSchema.getMutability() == SCIMDefinitions.Mutability.READ_ONLY) {
                         if (attribute instanceof ComplexAttribute) {
-                            if (attribute.getSubAttribute(subAttributeSchema.getName()) != null) {
+                            if ((attribute.getSubAttribute(subAttributeSchema.getName()) != null) &&
+                                    StringUtils.equals(attribute.getSubAttribute(subAttributeSchema.getName()).getURI(),
+                                            subAttributeSchema.getURI())) {
                                 String error = "Readonly sub attribute: " + subAttributeSchema.getName()
                                         + " is set in the SCIM Attribute: " + attribute.getName() +
                                         ". Removing it.";
