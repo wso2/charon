@@ -16,15 +16,21 @@
 
 package org.wso2.charon3.core.utils;
 
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
 import org.wso2.charon3.core.schema.AttributeSchema;
+import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -459,6 +465,46 @@ public class ResourceManagerUtil {
         } else {
             // Any value lesser than 1 is interpreted as 1.
             return 1;
+        }
+    }
+
+    /**
+     * Process the cursor value.
+     *
+     * @param cursor     Cursor value for pagination.
+     * @return String as the cursor.
+     */
+    public static Cursor processCursor(String cursor) {
+
+        //When using cursor pagination and the cursor is "", it means it is the first request. Therefore, cursor = "".
+        if (StringUtils.isEmpty(cursor)) {
+            return new Cursor(StringUtils.EMPTY, SCIMConstants.NEXT);
+        } else {
+            //Decode the base 64 encoded string and create a JSON object containing the cursor and the direction.
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] cursorBytes = decoder.decode(cursor.getBytes(StandardCharsets.UTF_8));
+            String cursorString = new String(cursorBytes, StandardCharsets.UTF_8);
+            JSONObject jsonCursor = new JSONObject(cursorString);
+            return new Cursor(jsonCursor.getString(SCIMConstants.VALUE), jsonCursor.getString(SCIMConstants.DIRECTION));
+        }
+    }
+
+    /**
+     * Identify the type of pagination being used.
+     *
+     * @param startIndex Starting index in the request.
+     * @param cursor     Cursor value used for cursor pagination.
+     * @return String of the type of pagination.
+     */
+    public static String processPagination(Integer startIndex, String cursor)
+            throws CharonException {
+
+        if (startIndex != null && cursor != null) {
+            throw new CharonException("Select One Type of Pagination (Offset or Cursor). Not both.");
+        } else if (cursor != null) {
+            return SCIMConstants.CURSOR;
+        } else {
+            return SCIMConstants.OFFSET;
         }
     }
 
