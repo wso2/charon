@@ -1216,6 +1216,15 @@ public class SCIMSchemaDefinitions {
                                 .EXTERNAL)),
                         null);
 
+        public static final SCIMAttributeSchema CURSOR_PAGINATION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
         public static final SCIMAttributeSchema TYPE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.ServiceProviderConfigSchemaConstants
                                 .TYPE_URL,
@@ -1319,7 +1328,15 @@ public class SCIMSchemaDefinitions {
                         new ArrayList<AttributeSchema>(Arrays.asList(NAME, DESCRIPTION,
                                 SPEC_URI, AUTHENTICATION_SCHEMES_DOCUMENTATION_URI, TYPE, PRIMARY)));
 
-
+        public static final SCIMAttributeSchema PAGINATION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PAGINATION_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PAGINATION,
+                        SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.PAGINATION_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<AttributeSchema>(Arrays.asList(CURSOR_PAGINATION)));
     }
 
     /**
@@ -1490,6 +1507,7 @@ public class SCIMSchemaDefinitions {
                     SCIMServiceProviderConfigSchemaDefinition.SORT,
                     SCIMServiceProviderConfigSchemaDefinition.FILTER,
                     SCIMServiceProviderConfigSchemaDefinition.CHANGE_PASSWORD,
+                    SCIMServiceProviderConfigSchemaDefinition.PAGINATION,
                     SCIMServiceProviderConfigSchemaDefinition.ETAG,
                     SCIMServiceProviderConfigSchemaDefinition.AUTHENTICATION_SCHEMES);
 

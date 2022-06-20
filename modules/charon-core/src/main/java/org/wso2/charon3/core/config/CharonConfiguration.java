@@ -39,6 +39,7 @@ public class CharonConfiguration implements Configuration {
 
     //default count value for pagination
     private int count;
+    private boolean cursorSupport;
 
     /*
      * set documentationURL
@@ -76,6 +77,15 @@ public class CharonConfiguration implements Configuration {
     public void setFilterSupport(boolean supported, int maxResults) {
         this.filterSupport = supported;
         this.maxResults = maxResults;
+    }
+
+    /*
+     * Set pagination support
+     * @param supportedCursor
+     */
+    public void setPaginationSupport(boolean supported) {
+
+        this.cursorSupport = supported;
     }
 
     /*
@@ -145,6 +155,7 @@ public class CharonConfiguration implements Configuration {
         configMap.put(SCIMConfigConstants.PATCH, patchSupport);
         configMap.put(SCIMConfigConstants.AUTHENTICATION_SCHEMES, authenticationSchemes);
         configMap.put(SCIMConfigConstants.PAGINATION_DEFAULT_COUNT, count);
+        configMap.put(SCIMConfigConstants.CURSOR, cursorSupport);
         return  configMap;
     }
 
