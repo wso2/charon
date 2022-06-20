@@ -24,6 +24,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
@@ -65,8 +66,8 @@ public interface UserManager {
      * @throws NotImplementedException Operation note implemented
      * @throws BadRequestException     Bad request
      */
-    default List<Object> listUsersWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder,
-            String domainName, Map<String, Boolean> requiredAttributes)
+    default UsersGetResponse listUsersWithGET(Node node, Integer startIndex, Integer count, String sortBy,
+                        String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
         return null;
@@ -83,7 +84,7 @@ public interface UserManager {
      * String, Map) } method.
      */
     @Deprecated
-    default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
+    default UsersGetResponse listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
             String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
@@ -91,14 +92,14 @@ public interface UserManager {
     }
 
     @Deprecated
-    default List<Object> listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
+    default UsersGetResponse listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
                                          Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
         return listUsersWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
     }
 
-    public List<Object> listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
+    public UsersGetResponse listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
