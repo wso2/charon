@@ -102,7 +102,7 @@ public class InMemoryUserManager implements UserManager {
         for (Map.Entry<String, User> entry : inMemoryUserList.entrySet()) {
             userList.add(entry.getValue());
         }
-        return (UsersGetResponse) CopyUtil.deepCopy(new UsersGetResponse(userList.size(), userList));
+        return new UsersGetResponse(userList.size(), userList);
     }
 
     @Override

@@ -435,8 +435,8 @@ public class UserResourceManager extends AbstractResourceManager {
      * @throws CharonException
      * @throws BadRequestException
      */
-    private SCIMResponse processUserList(UsersGetResponse usersGetResponse, JSONEncoder encoder, SCIMResourceTypeSchema schema,
-            String attributes, String excludeAttributes, int startIndex)
+    private SCIMResponse processUserList(UsersGetResponse usersGetResponse, JSONEncoder encoder,
+            SCIMResourceTypeSchema schema, String attributes, String excludeAttributes, int startIndex)
             throws NotFoundException, CharonException, BadRequestException {
 
         if (usersGetResponse.getUsers() == null) {

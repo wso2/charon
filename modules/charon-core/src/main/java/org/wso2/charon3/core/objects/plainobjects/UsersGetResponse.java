@@ -21,7 +21,10 @@ package org.wso2.charon3.core.objects.plainobjects;
 import org.wso2.charon3.core.objects.User;
 import java.util.List;
 
-
+/**
+ * This class representation can be used to create a UsersGetResponse type object which carries the total number of
+ * users identified from the filter and the list of users returned for this request.
+ */
 public class UsersGetResponse {
 
     private int totalUsers;
@@ -47,10 +50,12 @@ public class UsersGetResponse {
     }
 
     public List<User> getUsers() {
+
         return users;
     }
 
     public void setUsers(List<User> filteredUsers) {
+
         this.users = filteredUsers;
     }
 }
