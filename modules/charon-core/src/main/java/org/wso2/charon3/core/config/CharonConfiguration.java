@@ -79,11 +79,11 @@ public class CharonConfiguration implements Configuration {
         this.maxResults = maxResults;
     }
 
-    /*
+    /**
      * Set pagination support
-     * @param supportedCursor
+     * @param supported
      */
-    public void setPaginationSupport(boolean supported) {
+    public void setCursorPaginationSupport(boolean supported) {
 
         this.cursorSupport = supported;
     }
