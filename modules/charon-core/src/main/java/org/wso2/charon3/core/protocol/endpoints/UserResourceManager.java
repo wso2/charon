@@ -439,6 +439,9 @@ public class UserResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema, String attributes, String excludeAttributes, int startIndex)
             throws NotFoundException, CharonException, BadRequestException {
 
+        if (usersGetResponse == null) {
+            usersGetResponse = new UsersGetResponse(0, Collections.emptyList());
+        }
         if (usersGetResponse.getUsers() == null) {
             usersGetResponse.setUsers(Collections.emptyList());
         }

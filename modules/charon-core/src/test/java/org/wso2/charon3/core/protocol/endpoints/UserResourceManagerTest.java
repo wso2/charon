@@ -991,8 +991,7 @@ public class UserResourceManagerTest {
     @DataProvider(name = "dataForListWithPOST")
     public Object[][] dataToListWithPOST() throws BadRequestException, CharonException, InternalErrorException {
 
-        List<Object> tempList = new ArrayList<>();
-        tempList.add(1);
+        List<User> tempList = new ArrayList<>();
         tempList.add(getNewUser());
         return new Object[][]{
                 {RESOURCE_STRING, tempList}
@@ -1005,8 +1004,8 @@ public class UserResourceManagerTest {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
-        Mockito.when(userManager.listUsersWithPost(any(SearchRequest.class), anyMap())).
-                thenReturn(new UsersGetResponse(0, tempList));
+        Mockito.when(userManager.listUsersWithPost(any(SearchRequest.class), anyMap()))
+                .thenReturn(new UsersGetResponse(1, tempList));
         SCIMResponse scimResponse = userResourceManager.listWithPOST(resourceString, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
