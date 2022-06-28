@@ -83,7 +83,7 @@ public class InMemoryUserManager implements UserManager {
 
     @Override
     public UsersGetResponse listUsersWithGET(Node rootNode, int startIndex, int count, String sortBy,
-                                             String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
+                                         String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
