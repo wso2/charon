@@ -424,7 +424,7 @@ public class UserResourceManager extends AbstractResourceManager {
     /**
      * Method to process a user list and return a SCIM response.
      *
-     * @param usersGetResponse  Filtered user list and limit.
+     * @param usersGetResponse  Filtered user list and total user count.
      * @param encoder           Json encoder
      * @param schema            Schema
      * @param attributes        Required attributes
