@@ -30,6 +30,7 @@ import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.utils.CopyUtil;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
@@ -195,8 +196,8 @@ public class InMemoryUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
-                                          String domainName, Map<String, Boolean> requiredAttributes)
+    public GroupsGetResponse listGroupsWithGET(Node rootNode, int startIndex, int count, String sortBy, String sortOrder,
+                                               String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         if (sortBy != null || sortOrder != null) {
             throw new NotImplementedException("Sorting is not supported");
@@ -209,20 +210,12 @@ public class InMemoryUserManager implements UserManager {
         }
     }
 
-    private List<Object> listGroups(Map<String, Boolean> requiredAttributes) {
-        List<Object> groupList = new ArrayList<>();
-        groupList.add(0, 0);
+    private GroupsGetResponse listGroups(Map<String, Boolean> requiredAttributes) {
+        List<Group> groupList = new ArrayList<>();
         for (Group group : inMemoryGroupList.values()) {
             groupList.add(group);
         }
-        groupList.set(0, groupList.size() - 1);
-        try {
-            return (List<Object>) CopyUtil.deepCopy(groupList);
-        } catch (CharonException e) {
-            logger.error("Error in listing groups");
-            return  null;
-        }
-
+        return new GroupsGetResponse(groupList.size(), groupList);
     }
 
     @Override
@@ -237,7 +230,7 @@ public class InMemoryUserManager implements UserManager {
     }
 
     @Override
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
+    public GroupsGetResponse listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException {
 
         return listGroupsWithGET(searchRequest.getFilter(), searchRequest.getStartIndex(),

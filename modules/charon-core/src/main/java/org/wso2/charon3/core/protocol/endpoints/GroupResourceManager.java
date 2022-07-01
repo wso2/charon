@@ -35,6 +35,7 @@ import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.ListedResource;
+import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -269,9 +270,9 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex,
+                GroupsGetResponse groupsResponse = userManager.listGroupsWithGET(rootNode, startIndex,
                         count, sortBy, sortOrder, domainName, requiredAttributes);
-                return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
+                return processGroupList(groupsResponse, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
                 if (logger.isDebugEnabled()) {
@@ -379,9 +380,9 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             // API group should pass a user manager to GroupResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listGroupsWithGET(rootNode, startIndex, count,
+                GroupsGetResponse groupsResponse = userManager.listGroupsWithGET(rootNode, startIndex, count,
                         sortBy, sortOrder, domainName, requiredAttributes);
-                return processGroupList(tempList, encoder, attributes, excludeAttributes, startIndex);
+                return processGroupList(groupsResponse, encoder, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
                 if (logger.isDebugEnabled()) {
@@ -402,7 +403,7 @@ public class GroupResourceManager extends AbstractResourceManager {
     /**
      * Method to process a list and return a SCIM response.
      *
-     * @param tempList          Filtered user list
+     * @param groupsResponse    Response made of a list of groups and the total number of groups.
      * @param encoder           Json encoder
      * @param attributes        Required attributes
      * @param excludeAttributes Exclude attributes
@@ -412,36 +413,22 @@ public class GroupResourceManager extends AbstractResourceManager {
      * @throws CharonException
      * @throws BadRequestException
      */
-    private SCIMResponse processGroupList(List<Object> tempList, JSONEncoder encoder, String attributes,
+    private SCIMResponse processGroupList(GroupsGetResponse groupsResponse, JSONEncoder encoder, String attributes,
             String excludeAttributes, int startIndex) throws NotFoundException, CharonException, BadRequestException {
 
-        int totalResults = 0;
-        List<Object> returnedGroups;
-        if (tempList == null) {
-            tempList = Collections.emptyList();
-        } else {
-            if (tempList.size() >= 1) {
-                if (tempList.get(0) instanceof Integer) {
-                    totalResults = (int) tempList.get(0);
-                    tempList.remove(0);
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "First element in the list is not an int. Setting result count as: " + tempList.size());
-                    }
-                    totalResults = tempList.size();
-                }
-            }
+        if (groupsResponse == null) {
+            groupsResponse = new GroupsGetResponse(0, Collections.emptyList());
         }
-        returnedGroups = tempList;
-        for (Object group : returnedGroups) {
+        if (groupsResponse.getGroups() == null) {
+            groupsResponse.setGroups(Collections.emptyList());
+        }
+        for (Group group : groupsResponse.getGroups()) {
             // Perform service provider side validation.
-            ServerSideValidator
-                    .validateRetrievedSCIMObjectInList((Group) group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
+            ServerSideValidator.validateRetrievedSCIMObjectInList(group, SCIMSchemaDefinitions.SCIM_GROUP_SCHEMA,
                             attributes, excludeAttributes);
         }
         // Create a listed resource object out of the returned groups list.
-        ListedResource listedResource = createListedResource(returnedGroups, startIndex, totalResults);
+        ListedResource listedResource = createListedResource(groupsResponse, startIndex);
         // Convert the listed resource into specific format.
         String encodedListedResource = encoder.encodeSCIMObject(listedResource);
         // If there are any http headers to be added in the response header.
@@ -505,21 +492,15 @@ public class GroupResourceManager extends AbstractResourceManager {
             int totalResults = 0;
             //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listGroupsWithPost(searchRequest, requiredAttributes);
+                GroupsGetResponse groupsResponse = userManager.listGroupsWithPost(searchRequest, requiredAttributes);
 
-                totalResults = (int) tempList.get(0);
-                tempList.remove(0);
-
-                returnedGroups = tempList;
-
-                for (Object group : returnedGroups) {
+                for (Group group : groupsResponse.getGroups()) {
                     //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList((Group) group, schema,
+                    ServerSideValidator.validateRetrievedSCIMObjectInList(group, schema,
                             searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
                 }
                 //create a listed resource object out of the returned users list.
-                ListedResource listedResource = createListedResource(
-                        returnedGroups, searchRequest.getStartIndex(), totalResults);
+                ListedResource listedResource = createListedResource(groupsResponse, searchRequest.getStartIndex());
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
@@ -1052,21 +1033,22 @@ public class GroupResourceManager extends AbstractResourceManager {
         return (Group) ServerSideValidator.validateUpdatedSCIMObject(originalGroup, patchedGroup, groupSchema);
     }
 
-    /*
+    /**
      * Creates the Listed Resource.
      *
-     * @param groups
+     * @param groupsResponses   Response made of a list of groups and the total number of groups.
+     * @param startIndex        Starting index value.
      * @return
      */
-    public ListedResource createListedResource(List<Object> groups, int startIndex, int totalResults)
+    public ListedResource createListedResource(GroupsGetResponse groupsResponses, int startIndex)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(totalResults);
+        listedResource.setTotalResults(groupsResponses.getTotalGroups());
         listedResource.setStartIndex(startIndex);
-        listedResource.setItemsPerPage(groups.size());
-        for (Object group : groups) {
-            Map<String, Attribute> userAttributes = ((Group) group).getAttributeList();
+        listedResource.setItemsPerPage(groupsResponses.getGroups().size());
+        for (Group group : groupsResponses.getGroups()) {
+            Map<String, Attribute> userAttributes = group.getAttributeList();
             listedResource.setResources(userAttributes);
         }
         return listedResource;
