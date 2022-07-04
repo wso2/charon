@@ -32,7 +32,7 @@ public class RolesGetResponse {
     private List<Role> roles;
 
     /**
-     * Constructor used to build a response object when not using cursor pagination.
+     * Constructor used to build a response object.
      */
     public RolesGetResponse(int totalRoles, List<Role> roles) {
 

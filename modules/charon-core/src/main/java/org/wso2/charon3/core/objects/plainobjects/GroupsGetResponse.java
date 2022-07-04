@@ -32,7 +32,7 @@ public class GroupsGetResponse {
     private List<Group> groups;
 
     /**
-     * Constructor used to build a response object when not using cursor pagination.
+     * Constructor used to build a response object.
      */
     public GroupsGetResponse(int totalGroups, List<Group> groups) {
 
