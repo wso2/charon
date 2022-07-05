@@ -238,7 +238,7 @@ public class JSONDecoder {
         try {
             value = jsonObject.getString(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", name);
+            logger.debug("could not get '{}' value from scim resource", e);
         }
         return value;
     }
@@ -256,7 +256,7 @@ public class JSONDecoder {
         try {
             totalResults = jsonObject.getInt(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", name);
+            logger.debug("could not get '{}' value from scim resource", e);
             throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
         }
         return totalResults;
@@ -365,7 +365,7 @@ public class JSONDecoder {
             }
             return scimObject;
         } catch (JSONException e) {
-            logger.debug("json error in decoding the resource");
+            logger.debug("json error in decoding the resource", e);
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
@@ -921,9 +921,9 @@ public class JSONDecoder {
             bulkRequestDataObject.setGroupOperationRequests(groupsEndpointOperationList);
             bulkRequestDataObject.setRoleOperationRequests(rolesEndpointOperationList);
 
-        } catch (JSONException e1) {
+        } catch (JSONException e) {
             String error = "JSON string could not be decoded properly.";
-            logger.debug(error);
+            logger.debug(error, e);
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
         return bulkRequestDataObject;
