@@ -238,7 +238,7 @@ public class JSONDecoder {
         try {
             value = jsonObject.getString(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", e);
+            logger.debug("could not get '{}' value from scim resource", name, e);
         }
         return value;
     }
@@ -256,7 +256,7 @@ public class JSONDecoder {
         try {
             totalResults = jsonObject.getInt(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", e);
+            logger.debug("could not get '{}' value from scim resource", name, e);
             throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
         }
         return totalResults;
