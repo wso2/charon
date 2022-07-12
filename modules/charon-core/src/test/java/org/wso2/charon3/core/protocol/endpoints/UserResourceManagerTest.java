@@ -38,6 +38,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -990,8 +991,7 @@ public class UserResourceManagerTest {
     @DataProvider(name = "dataForListWithPOST")
     public Object[][] dataToListWithPOST() throws BadRequestException, CharonException, InternalErrorException {
 
-        List<Object> tempList = new ArrayList<>();
-        tempList.add(1);
+        List<User> tempList = new ArrayList<>();
         tempList.add(getNewUser());
         return new Object[][]{
                 {RESOURCE_STRING, tempList}
@@ -999,12 +999,13 @@ public class UserResourceManagerTest {
     }
 
     @Test(dataProvider = "dataForListWithPOST")
-    public void testListWithPOST(String resourceString, List<Object> tempList)
+    public void testListWithPOST(String resourceString, List<User> tempList)
             throws NotImplementedException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
-        Mockito.when(userManager.listUsersWithPost(any(SearchRequest.class), anyMap())).thenReturn(tempList);
+        Mockito.when(userManager.listUsersWithPost(any(SearchRequest.class), anyMap()))
+                .thenReturn(new UsersGetResponse(1, tempList));
         SCIMResponse scimResponse = userResourceManager.listWithPOST(resourceString, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
