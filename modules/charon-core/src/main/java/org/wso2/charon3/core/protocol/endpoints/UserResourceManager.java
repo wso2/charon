@@ -33,6 +33,7 @@ import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -292,11 +293,11 @@ public class UserResourceManager extends AbstractResourceManager {
 
             // API user should pass a user manager to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
+                UsersGetResponse usersGetResponse = userManager
                         .listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
                                 requiredAttributes);
 
-                return processUserList(tempList, encoder, schema, attributes, excludeAttributes, startIndex);
+                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
                 // Log the error as well.
@@ -357,10 +358,10 @@ public class UserResourceManager extends AbstractResourceManager {
 
             // API user should pass a user manager to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager
+                UsersGetResponse usersGetResponse = userManager
                         .listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
                                 requiredAttributes);
-                return processUserList(tempList, encoder, schema, attributes, excludeAttributes, startIndex);
+                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex);
             } else {
                 String error = "Provided user manager handler is null.";
                 // Log the error as well.
@@ -423,7 +424,7 @@ public class UserResourceManager extends AbstractResourceManager {
     /**
      * Method to process a user list and return a SCIM response.
      *
-     * @param tempList          Filtered user list
+     * @param usersGetResponse  Filtered user list and total user count.
      * @param encoder           Json encoder
      * @param schema            Schema
      * @param attributes        Required attributes
@@ -434,35 +435,22 @@ public class UserResourceManager extends AbstractResourceManager {
      * @throws CharonException
      * @throws BadRequestException
      */
-    private SCIMResponse processUserList(List<Object> tempList, JSONEncoder encoder, SCIMResourceTypeSchema schema,
-            String attributes, String excludeAttributes, int startIndex)
+    private SCIMResponse processUserList(UsersGetResponse usersGetResponse, JSONEncoder encoder,
+            SCIMResourceTypeSchema schema, String attributes, String excludeAttributes, int startIndex)
             throws NotFoundException, CharonException, BadRequestException {
 
-        int totalResults = 0;
-        List<Object> returnedUsers;
-        if (tempList == null) {
-            tempList = Collections.emptyList();
+        if (usersGetResponse == null) {
+            usersGetResponse = new UsersGetResponse(0, Collections.emptyList());
         }
-        try {
-            totalResults = (int) tempList.get(0);
-            tempList.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Group result list is empty.");
-            }
-            totalResults = tempList.size();
-        } catch (ClassCastException ex) {
-            logger.debug("Parse error while getting the user result count. Setting result count as: " + tempList.size(),
-                    ex);
-            totalResults = tempList.size();
+        if (usersGetResponse.getUsers() == null) {
+            usersGetResponse.setUsers(Collections.emptyList());
         }
-        returnedUsers = tempList;
-        for (Object user : returnedUsers) {
+        for (User user : usersGetResponse.getUsers()) {
             // Perform service provider side validation.
-            ServerSideValidator.validateRetrievedSCIMObjectInList((User) user, schema, attributes, excludeAttributes);
+            ServerSideValidator.validateRetrievedSCIMObjectInList(user, schema, attributes, excludeAttributes);
         }
         // Create a listed resource object out of the returned users list.
-        ListedResource listedResource = createListedResource(returnedUsers, startIndex, totalResults);
+        ListedResource listedResource = createListedResource(usersGetResponse, startIndex);
         // Convert the listed resource into specific format.
         String encodedListedResource = encoder.encodeSCIMObject(listedResource);
         // If there are any http headers to be added in the response header.
@@ -516,25 +504,17 @@ public class UserResourceManager extends AbstractResourceManager {
                             CopyUtil.deepCopy(schema), searchRequest.getAttributesAsString(),
                     searchRequest.getExcludedAttributesAsString());
 
-            List<Object> returnedUsers;
-            int totalResults = 0;
             //API user should pass a usermanager usermanager to UserResourceEndpoint.
             if (userManager != null) {
-                List<Object> tempList = userManager.listUsersWithPost(searchRequest, requiredAttributes);
-
-                totalResults = (int) tempList.get(0);
-                tempList.remove(0);
-
-                returnedUsers = tempList;
-
-                for (Object user : returnedUsers) {
+                UsersGetResponse usersGetResponse = userManager.listUsersWithPost(searchRequest, requiredAttributes);
+                for (User user : usersGetResponse.getUsers()) {
                     //perform service provider side validation.
-                    ServerSideValidator.validateRetrievedSCIMObjectInList((User) user, schema,
+                    ServerSideValidator.validateRetrievedSCIMObjectInList(user, schema,
                             searchRequest.getAttributesAsString(), searchRequest.getExcludedAttributesAsString());
                 }
                 //create a listed resource object out of the returned users list.
                 ListedResource listedResource = createListedResource(
-                        returnedUsers, searchRequest.getStartIndex(), totalResults);
+                        usersGetResponse, searchRequest.getStartIndex());
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
@@ -773,22 +753,21 @@ public class UserResourceManager extends AbstractResourceManager {
     /*
      * Creates the Listed Resource.
      *
-     * @param users
+     * @param usersGetResponse
      * @param startIndex
-     * @param totalResults
      * @return
      * @throws CharonException
      * @throws NotFoundException
      */
-    protected ListedResource createListedResource(List<Object> users, int startIndex, int totalResults)
+    protected ListedResource createListedResource(UsersGetResponse usersGetResponse, int startIndex)
             throws CharonException, NotFoundException {
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(totalResults);
+        listedResource.setTotalResults(usersGetResponse.getTotalUsers());
         listedResource.setStartIndex(startIndex);
-        listedResource.setItemsPerPage(users.size());
-        for (Object user : users) {
-            Map<String, Attribute> userAttributes = ((User) user).getAttributeList();
+        listedResource.setItemsPerPage(usersGetResponse.getUsers().size());
+        for (User user : usersGetResponse.getUsers()) {
+            Map<String, Attribute> userAttributes = user.getAttributeList();
             listedResource.setResources(userAttributes);
         }
         return listedResource;
