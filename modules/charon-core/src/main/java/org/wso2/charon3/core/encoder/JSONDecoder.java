@@ -842,7 +842,7 @@ public class JSONDecoder {
             return searchRequest;
 
         } catch (JSONException | IOException e) {
-            logger.debug("Error while decoding the resource string");
+            logger.debug("Error while decoding the resource string", e);
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
