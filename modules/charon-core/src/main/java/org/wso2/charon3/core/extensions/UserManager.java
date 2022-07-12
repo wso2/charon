@@ -125,10 +125,10 @@ public interface UserManager {
     }
 
     public User getMe(String userName, Map<String, Boolean> requiredAttributes)
-            throws CharonException, BadRequestException, NotFoundException;
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException;
 
     public User createMe(User user, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, BadRequestException, ForbiddenException;
+            throws CharonException, ConflictException, BadRequestException, ForbiddenException, NotImplementedException;
 
     public void deleteMe(String userName)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
