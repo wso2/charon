@@ -37,6 +37,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.Group;
+import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -878,8 +879,7 @@ public class GroupResourceManagerTest {
     @DataProvider(name = "dataForListWithPOST")
     public Object[][] dataToListWithPOST() throws BadRequestException, CharonException, InternalErrorException {
 
-        List<Object> tempList = new ArrayList<>();
-        tempList.add(1);
+        List<Group> tempList = new ArrayList<>();
         tempList.add(getNewGroup());
         return new Object[][]{
                 {RESOURCE_STRING, tempList}
@@ -887,12 +887,13 @@ public class GroupResourceManagerTest {
     }
 
     @Test(dataProvider = "dataForListWithPOST")
-    public void testListWithPOST(String resourceString, List<Object> tempList)
+    public void testListWithPOST(String resourceString, List<Group> tempList)
             throws NotImplementedException, BadRequestException, CharonException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT + "/.search");
-        Mockito.when(userManager.listGroupsWithPost(any(SearchRequest.class), anyMap())).thenReturn(tempList);
+        Mockito.when(userManager.listGroupsWithPost(any(SearchRequest.class), anyMap()))
+                .thenReturn(new GroupsGetResponse(1, tempList));
         SCIMResponse scimResponse = groupResourceManager.listWithPOST(resourceString, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }

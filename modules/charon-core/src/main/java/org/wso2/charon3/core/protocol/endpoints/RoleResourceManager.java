@@ -31,6 +31,7 @@ import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.Role;
+import org.wso2.charon3.core.objects.plainobjects.RolesGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
@@ -162,8 +163,9 @@ public class RoleResourceManager extends AbstractResourceManager {
             Node rootNode = buildNode(filter, schema);
             JSONEncoder encoder = getEncoder();
 
-            List<Object> rolesList = roleManager.listRolesWithGET(rootNode, startIndex, count, sortBy, sortOrder);
-            return processRoleList(rolesList, encoder, startIndex);
+            RolesGetResponse rolesResponse = roleManager.listRolesWithGET(rootNode, startIndex, count, sortBy,
+                    sortOrder);
+            return processRoleList(rolesResponse, encoder, startIndex);
 
         } catch (CharonException | InternalErrorException | BadRequestException | NotImplementedException e) {
             return encodeSCIMException(e);
@@ -222,39 +224,27 @@ public class RoleResourceManager extends AbstractResourceManager {
     /**
      * Method to process a list and return a SCIM response.
      *
-     * @param roleList   Filtered role list.
-     * @param encoder    Json encoder.
-     * @param startIndex Starting index.
+     * @param rolesResponse     Response made of the filtered role list and total number of users.
+     * @param encoder           Json encoder.
+     * @param startIndex        Starting index.
      * @return SCIM response.
      * @throws CharonException     CharonException.
      * @throws BadRequestException BadRequestException.
      */
-    private SCIMResponse processRoleList(List<Object> roleList, JSONEncoder encoder, int startIndex)
+    private SCIMResponse processRoleList(RolesGetResponse rolesResponse, JSONEncoder encoder, int startIndex)
             throws CharonException, BadRequestException {
 
-        int totalResults = 0;
-        if (roleList == null) {
-            roleList = Collections.emptyList();
-        } else {
-            if (roleList.size() >= 1) {
-                if (roleList.get(0) instanceof Integer) {
-                    totalResults = (int) roleList.get(0);
-                    roleList.remove(0);
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "First element in the list is not an int. Setting result count as: " + roleList.size());
-                    }
-                    totalResults = roleList.size();
-                }
-            }
+        if (rolesResponse == null) {
+            rolesResponse = new RolesGetResponse(0, Collections.emptyList());
         }
-        for (Object role : roleList) {
-            ServerSideValidator
-                    .validateSCIMObjectForRequiredAttributes((Role) role, SCIMSchemaDefinitions.SCIM_ROLE_SCHEMA);
+        if (rolesResponse.getRoles() == null) {
+            rolesResponse.setRoles(Collections.emptyList());
+        }
+        for (Role role : rolesResponse.getRoles()) {
+            ServerSideValidator.validateSCIMObjectForRequiredAttributes(role, SCIMSchemaDefinitions.SCIM_ROLE_SCHEMA);
         }
         // Create a listed resource object out of the returned groups list.
-        ListedResource listedResource = createListedResource(roleList, startIndex, totalResults);
+        ListedResource listedResource = createListedResource(rolesResponse, startIndex);
         // Convert the listed resource into specific format.
         String encodedListedResource = encoder.encodeSCIMObject(listedResource);
 
@@ -263,15 +253,15 @@ public class RoleResourceManager extends AbstractResourceManager {
         return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedListedResource, responseHeaders);
     }
 
-    protected ListedResource createListedResource(List<Object> roles, int startIndex, int totalResults) {
+    protected ListedResource createListedResource(RolesGetResponse rolesResponse, int startIndex) {
 
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(totalResults);
+        listedResource.setTotalResults(rolesResponse.getTotalRoles());
         listedResource.setStartIndex(startIndex);
-        listedResource.setItemsPerPage(roles.size());
-        for (Object role : roles) {
-            Map<String, Attribute> userAttributes = ((Role) role).getAttributeList();
+        listedResource.setItemsPerPage(rolesResponse.getRoles().size());
+        for (Role role : rolesResponse.getRoles()) {
+            Map<String, Attribute> userAttributes = role.getAttributeList();
             listedResource.setResources(userAttributes);
         }
         return listedResource;
@@ -316,19 +306,15 @@ public class RoleResourceManager extends AbstractResourceManager {
                 searchRequestObject.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
             }
 
-            List<Object> rolesList = roleManager.listRolesWithPost(searchRequestObject);
-            int totalResults = (int) rolesList.get(0);
-            rolesList.remove(0);
-            List<Object> returnedRoles = rolesList;
+            RolesGetResponse rolesResponse = roleManager.listRolesWithPost(searchRequestObject);
 
-            for (Object role : returnedRoles) {
-                ServerSideValidator.validateRetrievedSCIMObjectInList((Role) role, schema,
+            for (Role role : rolesResponse.getRoles()) {
+                ServerSideValidator.validateRetrievedSCIMObjectInList(role, schema,
                         searchRequestObject.getAttributesAsString(),
                         searchRequestObject.getExcludedAttributesAsString());
             }
             // Create a listed resource object out of the returned users list.
-            ListedResource listedResource = createListedResource(returnedRoles, searchRequestObject.getStartIndex(),
-                    totalResults);
+            ListedResource listedResource = createListedResource(rolesResponse, searchRequestObject.getStartIndex());
             String encodedListedResource = encoder.encodeSCIMObject(listedResource);
             Map<String, String> responseHeaders = new HashMap<>();
             responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);

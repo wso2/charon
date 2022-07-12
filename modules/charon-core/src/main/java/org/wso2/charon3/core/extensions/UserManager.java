@@ -24,6 +24,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.utils.codeutils.Node;
@@ -149,8 +150,8 @@ public interface UserManager {
     public void deleteGroup(String id)
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
-    default List<Object> listGroupsWithGET(Node node, Integer startIndex, Integer count, String sortBy,
-            String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
+    default GroupsGetResponse listGroupsWithGET(Node node, Integer startIndex, Integer count, String sortBy,
+                               String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
@@ -165,14 +166,14 @@ public interface UserManager {
      * String, Map)} method.
      */
     @Deprecated
-    default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
+    default GroupsGetResponse listGroupsWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
             String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         return null;
     }
 
     @Deprecated
-    default List<Object> listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
+    default GroupsGetResponse listGroupsWithGET(Node node, int startIndex, int count, String sortBy,
                                           String sortOrder, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
         return listGroupsWithGET(node, startIndex, count, sortBy, sortOrder, null, requiredAttributes);
@@ -219,7 +220,7 @@ public interface UserManager {
         throw new NotImplementedException();
     }
 
-    public List<Object> listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
+    public GroupsGetResponse listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     default List<Attribute> getCoreSchema() throws CharonException, NotImplementedException, BadRequestException {

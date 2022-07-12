@@ -24,10 +24,10 @@ import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Role;
+import org.wso2.charon3.core.objects.plainobjects.RolesGetResponse;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,7 +85,7 @@ public interface RoleManager {
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    List<Object> listRolesWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder)
+    RolesGetResponse listRolesWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder)
             throws CharonException, NotImplementedException, BadRequestException;
 
     /**
@@ -112,6 +112,6 @@ public interface RoleManager {
      * @throws BadRequestException     BadRequestException.
      * @throws CharonException         CharonException.
      */
-    List<Object> listRolesWithPost(SearchRequest searchRequest)
+    RolesGetResponse listRolesWithPost(SearchRequest searchRequest)
             throws NotImplementedException, BadRequestException, CharonException;
 }
