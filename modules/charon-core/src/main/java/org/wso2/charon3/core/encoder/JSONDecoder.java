@@ -100,7 +100,9 @@ public class JSONDecoder {
         try {
             decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
         } catch (JSONException e) {
-            logger.debug("json error in decoding the resource", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("json error in decoding the resource", e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
 
@@ -121,8 +123,10 @@ public class JSONDecoder {
         try {
             resources = decodedJsonObj.getJSONArray(SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
         } catch (JSONException e) {
-          logger.debug("could not get '{}' from json structure, result is empty",
-                       SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            if (logger.isDebugEnabled()) {
+                logger.debug("could not get '{}' from json structure, result is empty",
+                        SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+            }
           return listedResource;
         }
 
@@ -131,8 +135,10 @@ public class JSONDecoder {
             try {
                 resource = resources.getJSONObject(i);
             } catch (JSONException e) {
-                logger.debug("could not get '{}' from json structure",
-                             SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("could not get '{}' from json structure",
+                            SCIMConstants.ListedResourceSchemaConstants.RESOURCES);
+                }
                 throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
             }
             try {
@@ -159,7 +165,9 @@ public class JSONDecoder {
         try {
             decodedJsonObj = new JSONObject(new JSONTokener(scimErrorString));
         } catch (JSONException e) {
-            logger.debug("json error in decoding the resource", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("json error in decoding the resource", e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
 
@@ -214,7 +222,9 @@ public class JSONDecoder {
             JSONArray schemas = jsonObject.getJSONArray(ResponseCodeConstants.SCHEMAS);
             value = schemas.getString(0);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource as an array", ResponseCodeConstants.SCHEMAS);
+            if (logger.isDebugEnabled()) {
+                logger.debug("could not get '{}' value from scim resource as an array", ResponseCodeConstants.SCHEMAS);
+            }
             // if the value could not be extracted as JSONArray we will give it another chance to extract it as
             // simple string
             value = getStringValueFromJson(jsonObject, ResponseCodeConstants.SCHEMAS);
@@ -238,7 +248,9 @@ public class JSONDecoder {
         try {
             value = jsonObject.getString(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", name, e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("could not get '{}' value from scim resource", name, e);
+            }
         }
         return value;
     }
@@ -256,7 +268,9 @@ public class JSONDecoder {
         try {
             totalResults = jsonObject.getInt(name);
         } catch (JSONException e) {
-            logger.debug("could not get '{}' value from scim resource", name, e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("could not get '{}' value from scim resource", name, e);
+            }
             throw new CharonException(ResponseCodeConstants.INVALID_SYNTAX, e);
         }
         return totalResults;
@@ -365,7 +379,9 @@ public class JSONDecoder {
             }
             return scimObject;
         } catch (JSONException e) {
-            logger.debug("json error in decoding the resource", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("json error in decoding the resource", e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
@@ -757,7 +773,9 @@ public class JSONDecoder {
                 operationList.add(patchOperation);
             }
         } catch (JSONException e) {
-            logger.debug("json error in decoding the request", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("json error in decoding the request", e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
         return  operationList;
@@ -842,7 +860,9 @@ public class JSONDecoder {
             return searchRequest;
 
         } catch (JSONException | IOException e) {
-            logger.debug("Error while decoding the resource string", e);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Error while decoding the resource string", e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
     }
@@ -922,8 +942,10 @@ public class JSONDecoder {
             bulkRequestDataObject.setRoleOperationRequests(rolesEndpointOperationList);
 
         } catch (JSONException e) {
-            String error = "JSON string could not be decoded properly.";
-            logger.debug(error, e);
+            if (logger.isDebugEnabled()) {
+                String error = "JSON string could not be decoded properly.";
+                logger.debug(error, e);
+            }
             throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
         }
         return bulkRequestDataObject;
