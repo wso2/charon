@@ -3452,7 +3452,7 @@ public class PatchOperationUtil {
      */
     private static AbstractSCIMObject doPatchReplaceOnResource(AbstractSCIMObject oldResource, AbstractSCIMObject
             copyOfOldResource, SCIMResourceTypeSchema schema, JSONDecoder decoder, PatchOperation operation)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         try {
             AbstractSCIMObject attributeHoldingSCIMObject = decoder.decode(operation.getValues().toString(), schema);
@@ -3609,7 +3609,7 @@ public class PatchOperationUtil {
             } else  {
                 throw new CharonException("Error in getting the old resource.");
             }
-        } catch (BadRequestException | CharonException e) {
+        } catch (CharonException e) {
             throw new CharonException("Error in performing the replace operation", e);
         }
     }
