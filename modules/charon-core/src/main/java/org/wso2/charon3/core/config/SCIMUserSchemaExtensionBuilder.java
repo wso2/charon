@@ -56,13 +56,30 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
         return extensionSchema;
     }
 
+    public void buildUserSchemaExtension(String configFilePath) throws CharonException, InternalErrorException {
+
+        File provisioningConfig = new File(configFilePath);
+
+        try (InputStream inputStream = new FileInputStream(provisioningConfig)) {
+
+            buildUserSchemaExtension(inputStream);
+
+        } catch (FileNotFoundException e) {
+            throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
+                    e);
+        } catch (IOException e) {
+            throw new CharonException("Error while closing " +
+                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
+        }
+    }
+
     /*
      * Logic goes here
      * @throws CharonException
      */
-    public void buildUserSchemaExtension(String configFilePath) throws CharonException, InternalErrorException {
+    public void buildUserSchemaExtension(InputStream inputStream) throws CharonException, InternalErrorException {
 
-        readConfiguration(configFilePath);
+        readConfiguration(inputStream);
 
         for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig : extensionConfig.entrySet()) {
             // if there are no children its a simple attribute, build it
@@ -88,11 +105,9 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
      * @param configFilePath
      * @throws CharonException
      */
-    private void readConfiguration(String configFilePath) throws CharonException {
+    private void readConfiguration(InputStream inputStream) throws CharonException {
 
-        File provisioningConfig = new File(configFilePath);
-        try (InputStream inputStream = new FileInputStream(provisioningConfig)) {
-            //Scanner scanner = new Scanner(new FileInputStream(provisioningConfig));
+        try {
             Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
             String jsonString = scanner.hasNext() ? scanner.next() : "";
 
@@ -112,14 +127,8 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
                     extensionRootAttributeName = schemaAttributeConfig.getName();
                 }
             }
-        } catch (FileNotFoundException e) {
-            throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
-                    e);
         } catch (JSONException e) {
             throw new CharonException("Error while parsing " +
-                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
-        } catch (IOException e) {
-            throw new CharonException("Error while closing " +
                     SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
         }
     }
