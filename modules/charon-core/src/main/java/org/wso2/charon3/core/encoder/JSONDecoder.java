@@ -304,10 +304,9 @@ public class JSONDecoder {
                     attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
                 }
                 if (attributeValObj == null) {
-                    String attributeSchemaName = attributeSchema.getName().toLowerCase();
                     for (Iterator it = decodedJsonObj.keys(); it.hasNext(); ) {
                         String key = (String) it.next();
-                        if (key.toLowerCase().equals(attributeSchemaName)) {
+                        if (key.equalsIgnoreCase(attributeSchema.getName())) {
                             attributeValObj = decodedJsonObj.get(key);
                         }
                     }
