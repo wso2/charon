@@ -44,6 +44,9 @@ public class SCIMConstants {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     @Deprecated
     public static final String DATE_TIME_FORMAT2 = "yyyy-MM-dd'T'HH:mm:ss";
+    /* Added to fix breaking change of removing dateTimeFormat variable */
+    @Deprecated
+    public static final String dateTimeFormat = DATE_TIME_FORMAT2;
 
     /*Resource names as defined in SCIM Schema spec*/
     public static final String CORE = "Core";
