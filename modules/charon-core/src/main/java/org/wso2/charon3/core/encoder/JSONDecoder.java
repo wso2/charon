@@ -51,10 +51,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -305,6 +302,15 @@ public class JSONDecoder {
                 if (attributeValObj == null) {
                     //user may define the attribute by its fully qualified uri
                     attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
+                }
+                if (attributeValObj == null) {
+                    String attributeSchemaName = attributeSchema.getName().toLowerCase();
+                    for (Iterator it = decodedJsonObj.keys(); it.hasNext(); ) {
+                        String key = (String) it.next();
+                        if (key.toLowerCase().equals(attributeSchemaName)) {
+                            attributeValObj = decodedJsonObj.get(key);
+                        }
+                    }
                 }
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
