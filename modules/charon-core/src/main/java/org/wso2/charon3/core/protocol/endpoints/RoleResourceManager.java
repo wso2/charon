@@ -584,6 +584,9 @@ public class RoleResourceManager extends AbstractResourceManager {
                                                    JSONEncoder encoder) {
 
         try {
+            if (opList == null || opList.isEmpty()) {
+                throw new BadRequestException("Patch operation is not provided");
+            }
             Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
             patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
             patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
@@ -642,59 +645,64 @@ public class RoleResourceManager extends AbstractResourceManager {
         }
 
         for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.REMOVE)) {
+            processRemovePatchOperation(patchOperation);
+        }
+    }
 
-            if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
-                throw new NotImplementedException("Removing permissions not permitted.");
+    private static void processRemovePatchOperation(PatchOperation patchOperation)
+            throws NotImplementedException, BadRequestException {
+
+        if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
+            throw new NotImplementedException("Removing permissions not permitted.");
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.DISPLAY_NAME.equalsIgnoreCase(patchOperation.getPath())) {
+            throw new BadRequestException("Can not remove a required attribute");
+        }
+
+        if (patchOperation.getPath() == null) {
+            throw new BadRequestException("No path value specified for remove operation",
+                    ResponseCodeConstants.NO_TARGET);
+        }
+
+        String path = patchOperation.getPath();
+        // Split the path to extract the filter if present.
+        String[] parts = path.split("[\\[\\]]");
+
+        if (!(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
+                SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]))) {
+            throw new BadRequestException(parts[0] + " is not a valid attribute.",
+                    ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0])) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.USERS);
+        } else {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.GROUPS);
+        }
+
+        if (parts.length != 1) {
+            Map<String, String> patchObject = new HashMap<>();
+            patchObject.put(SCIMConstants.RoleSchemaConstants.DISPLAY, null);
+            patchObject.put(SCIMConstants.CommonSchemaConstants.VALUE, null);
+
+            // Currently we only support simple filters here.
+            String[] filterParts = parts[1].split(" ");
+
+            if (filterParts.length != 3 || !patchObject.containsKey(filterParts[0])) {
+                throw new BadRequestException("Invalid filter", ResponseCodeConstants.INVALID_SYNTAX);
             }
 
-            if (SCIMConstants.RoleSchemaConstants.DISPLAY_NAME.equalsIgnoreCase(patchOperation.getPath())) {
-                throw new BadRequestException("Can not remove a required attribute");
+            if (!filterParts[1].equalsIgnoreCase((SCIMConstants.OperationalConstants.EQ).trim())) {
+                throw new NotImplementedException("Only Eq filter is supported");
             }
-
-            if (patchOperation.getPath() == null) {
-                throw new BadRequestException("No path value specified for remove operation",
-                        ResponseCodeConstants.NO_TARGET);
-            }
-
-            String path = patchOperation.getPath();
-            // Split the path to extract the filter if present.
-            String[] parts = path.split("[\\[\\]]");
-
-            if (!(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
-                    SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]))) {
-                throw new BadRequestException(parts[0] + " is not a valid attribute.",
-                        ResponseCodeConstants.INVALID_SYNTAX);
-            }
-
-            if (SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0])) {
-                patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.USERS);
-            } else {
-                patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.GROUPS);
-            }
-
-            if (parts.length != 1) {
-                Map<String, String> patchObject = new HashMap<>();
-                patchObject.put(SCIMConstants.RoleSchemaConstants.DISPLAY, null);
-                patchObject.put(SCIMConstants.CommonSchemaConstants.VALUE, null);
-
-                // Currently we only support simple filters here.
-                String[] filterParts = parts[1].split(" ");
-
-                if (filterParts.length != 3 || !patchObject.containsKey(filterParts[0])) {
-                    throw new BadRequestException("Invalid filter", ResponseCodeConstants.INVALID_SYNTAX);
-                }
-
-                if (!filterParts[1].equalsIgnoreCase((SCIMConstants.OperationalConstants.EQ).trim())) {
-                    throw new NotImplementedException("Only Eq filter is supported");
-                }
-                /*
-                According to the specification filter attribute value specified with quotation mark, so we need to
-                remove it if exists.
-                */
-                filterParts[2] = filterParts[2].replaceAll("^\"|\"$", "");
-                patchObject.put(filterParts[0], filterParts[2]);
-                patchOperation.setValues(patchObject);
-            }
+            /*
+            According to the specification filter attribute value specified with quotation mark, so we need to
+            remove it if exists.
+            */
+            filterParts[2] = filterParts[2].replaceAll("^\"|\"$", "");
+            patchObject.put(filterParts[0], filterParts[2]);
+            patchOperation.setValues(patchObject);
         }
     }
 
@@ -717,27 +725,15 @@ public class RoleResourceManager extends AbstractResourceManager {
                     break;
                 }
                 case SCIMConstants.RoleSchemaConstants.USERS: {
-                    JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
-                    JSONObject attributePrefixedJson = new JSONObject();
-
-                    attributePrefixedJson.put(SCIMConstants.RoleSchemaConstants.USERS, valuesPropertyJson);
-                    patchOperation.setValues(attributePrefixedJson);
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.USERS);
                     break;
                 }
                 case SCIMConstants.RoleSchemaConstants.GROUPS: {
-                    JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
-                    JSONObject attributePrefixedJson = new JSONObject();
-
-                    attributePrefixedJson.put(SCIMConstants.RoleSchemaConstants.GROUPS, valuesPropertyJson);
-                    patchOperation.setValues(attributePrefixedJson);
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.GROUPS);
                     break;
                 }
                 case SCIMConstants.RoleSchemaConstants.PERMISSIONS: {
-                    JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
-                    JSONObject attributePrefixedJson = new JSONObject();
-
-                    attributePrefixedJson.put(SCIMConstants.RoleSchemaConstants.PERMISSIONS, valuesPropertyJson);
-                    patchOperation.setValues(attributePrefixedJson);
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.PERMISSIONS);
                     break;
                 }
                 default:
@@ -746,6 +742,14 @@ public class RoleResourceManager extends AbstractResourceManager {
             patchOperation.setPath(null);
         }
         processValueAttributeOfOperation(schema, patchOperation);
+    }
+
+    private static void setPatchOperationValue(PatchOperation patchOperation, String permissions) {
+
+        JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
+        JSONObject attributePrefixedJson = new JSONObject();
+        attributePrefixedJson.put(permissions, valuesPropertyJson);
+        patchOperation.setValues(attributePrefixedJson);
     }
 
     private void processValueAttributeOfOperation(SCIMResourceTypeSchema schema, PatchOperation patchOperation)
