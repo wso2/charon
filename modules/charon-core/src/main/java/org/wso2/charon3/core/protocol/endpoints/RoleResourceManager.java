@@ -379,6 +379,7 @@ public class RoleResourceManager extends AbstractResourceManager {
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
 
             List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
             if (!isUpdateAllUsersOperationFound(opList)) {
                 return updateWithPatchOperations(id, opList, roleManager, schema, encoder);
             }
@@ -557,11 +558,11 @@ public class RoleResourceManager extends AbstractResourceManager {
             if (StringUtils.isBlank(path)) {
                 valuesJson = (JSONObject) patchOperation.getValues();
             }
-            if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
+            if (SCIMConstants.OperationalConstants.REPLACE.equals(operation) &&
                     (SCIMConstants.RoleSchemaConstants.USERS.equals(path) ||
                             (valuesJson != null && valuesJson.has(SCIMConstants.RoleSchemaConstants.USERS)))) {
                 return true;
-            } else if (operation.equals(SCIMConstants.OperationalConstants.REMOVE) &&
+            } else if (SCIMConstants.OperationalConstants.REMOVE.equals(operation) &&
                     (SCIMConstants.RoleSchemaConstants.USERS).equals(path)) {
                 return true;
             }
@@ -584,9 +585,6 @@ public class RoleResourceManager extends AbstractResourceManager {
                                                    JSONEncoder encoder) {
 
         try {
-            if (opList == null || opList.isEmpty()) {
-                throw new BadRequestException("Patch operation is not provided");
-            }
             Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
             patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
             patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
