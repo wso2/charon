@@ -16,6 +16,7 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -667,7 +668,7 @@ public class RoleResourceManager extends AbstractResourceManager {
         // Split the path to extract the filter if present.
         String[] parts = path.split("[\\[\\]]");
 
-        if (!(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
+        if (ArrayUtils.isEmpty(parts) || !(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
                 SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]))) {
             throw new BadRequestException(parts[0] + " is not a valid attribute.",
                     ResponseCodeConstants.INVALID_SYNTAX);
