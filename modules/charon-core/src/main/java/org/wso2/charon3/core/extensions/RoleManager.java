@@ -26,8 +26,10 @@ import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.plainobjects.RolesGetResponse;
 import org.wso2.charon3.core.utils.codeutils.Node;
+import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -114,4 +116,21 @@ public interface RoleManager {
      */
     RolesGetResponse listRolesWithPost(SearchRequest searchRequest)
             throws NotImplementedException, BadRequestException, CharonException;
+
+    /**
+     * Updates the role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated group.
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default Role patchRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("patchRole method is not implemented");
+    }
 }

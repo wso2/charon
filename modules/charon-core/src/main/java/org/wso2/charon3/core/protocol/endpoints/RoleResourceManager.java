@@ -16,9 +16,17 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
+import org.wso2.charon3.core.attributes.ComplexAttribute;
+import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -29,6 +37,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.plainobjects.RolesGetResponse;
@@ -48,6 +57,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -369,6 +379,12 @@ public class RoleResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceSchema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
 
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isUpdateAllUsersOperationFound(opList)) {
+                return updateWithPatchOperations(id, opList, roleManager, schema, encoder);
+            }
+
             Role oldRole = roleManager.getRole(id, requestAttributes);
             if (oldRole == null) {
                 throw new NotFoundException("No role with the id : " + id + " exists in the system.");
@@ -525,5 +541,268 @@ public class RoleResourceManager extends AbstractResourceManager {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());
+    }
+
+    /**
+     * Check whether it is required to update all users with the patch operation.
+     *
+     * @param patchOperations Patch operation.
+     * @return Whether it is required to update all users or not with the patch operation.
+     * @throws JSONException JSONException
+     */
+    private boolean isUpdateAllUsersOperationFound(List<PatchOperation> patchOperations) throws JSONException {
+
+        for (PatchOperation patchOperation : patchOperations) {
+            String operation = patchOperation.getOperation();
+            String path = patchOperation.getPath();
+            JSONObject valuesJson = null;
+            if (StringUtils.isBlank(path)) {
+                valuesJson = (JSONObject) patchOperation.getValues();
+            }
+            if (SCIMConstants.OperationalConstants.REPLACE.equals(operation) &&
+                    (SCIMConstants.RoleSchemaConstants.USERS.equals(path) ||
+                            (valuesJson != null && valuesJson.has(SCIMConstants.RoleSchemaConstants.USERS)))) {
+                return true;
+            } else if (SCIMConstants.OperationalConstants.REMOVE.equals(operation) &&
+                    (SCIMConstants.RoleSchemaConstants.USERS).equals(path)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Updates the role based on the operations defined in the patch request. The updated role information is sent
+     * back in the response.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @return SCIM Response.
+     */
+    private SCIMResponse updateWithPatchOperations(String existingRoleId, List<PatchOperation> opList,
+                                                   RoleManager roleManager, SCIMResourceTypeSchema schema,
+                                                   JSONEncoder encoder) {
+
+        try {
+            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
+            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
+            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
+            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
+
+            for (PatchOperation patchOperation : opList) {
+                switch (patchOperation.getOperation()) {
+                    case SCIMConstants.OperationalConstants.ADD:
+                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
+                        break;
+                    case SCIMConstants.OperationalConstants.REMOVE:
+                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
+                        break;
+                    case SCIMConstants.OperationalConstants.REPLACE:
+                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
+                        break;
+                    default:
+                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
+                                ResponseCodeConstants.INVALID_SYNTAX);
+                }
+            }
+
+            // Process the Role patch operation and update the patch operation object with required values.
+            processRolePatchOperations(patchOperations, schema);
+            Role updatedRole = roleManager.patchRole(existingRoleId, patchOperations);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
+                 CharonException | InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
+    /**
+     * Process the Role patch operation and update the patch operation object with required values.
+     *
+     * @param patchOperations Patch operation.
+     * @param schema          SCIM Resource Type Schema.
+     * @throws CharonException         CharonException.
+     * @throws BadRequestException     BadRequestException.
+     * @throws NotImplementedException NotImplementedException.
+     * @throws JSONException           JSONException.
+     */
+    private void processRolePatchOperations(Map<String, List<PatchOperation>> patchOperations,
+                                            SCIMResourceTypeSchema schema)
+            throws CharonException, BadRequestException, NotImplementedException, JSONException {
+
+        for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.REPLACE)) {
+            processPatchOperation(schema, patchOperation);
+        }
+
+        for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.ADD)) {
+            if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
+                throw new NotImplementedException("Adding permissions not permitted.");
+            }
+            processPatchOperation(schema, patchOperation);
+        }
+
+        for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.REMOVE)) {
+            processRemovePatchOperation(patchOperation);
+        }
+    }
+
+    private static void processRemovePatchOperation(PatchOperation patchOperation)
+            throws NotImplementedException, BadRequestException {
+
+        if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
+            throw new NotImplementedException("Removing permissions not permitted.");
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.DISPLAY_NAME.equalsIgnoreCase(patchOperation.getPath())) {
+            throw new BadRequestException("Can not remove a required attribute");
+        }
+
+        if (patchOperation.getPath() == null) {
+            throw new BadRequestException("No path value specified for remove operation",
+                    ResponseCodeConstants.NO_TARGET);
+        }
+
+        String path = patchOperation.getPath();
+        // Split the path to extract the filter if present.
+        String[] parts = path.split("[\\[\\]]");
+
+        if (ArrayUtils.isEmpty(parts) || !(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
+                SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]))) {
+            throw new BadRequestException(parts[0] + " is not a valid attribute.",
+                    ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        if (SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0])) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.USERS);
+        } else {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.GROUPS);
+        }
+
+        if (parts.length != 1) {
+            Map<String, String> patchObject = new HashMap<>();
+            patchObject.put(SCIMConstants.RoleSchemaConstants.DISPLAY, null);
+            patchObject.put(SCIMConstants.CommonSchemaConstants.VALUE, null);
+
+            // Currently we only support simple filters here.
+            String[] filterParts = parts[1].split(" ");
+
+            if (filterParts.length != 3 || !patchObject.containsKey(filterParts[0])) {
+                throw new BadRequestException("Invalid filter", ResponseCodeConstants.INVALID_SYNTAX);
+            }
+
+            if (!filterParts[1].equalsIgnoreCase((SCIMConstants.OperationalConstants.EQ).trim())) {
+                throw new NotImplementedException("Only Eq filter is supported");
+            }
+            /*
+            According to the specification filter attribute value specified with quotation mark, so we need to
+            remove it if exists.
+            */
+            filterParts[2] = filterParts[2].replaceAll("^\"|\"$", "");
+            patchObject.put(filterParts[0], filterParts[2]);
+            patchOperation.setValues(patchObject);
+        }
+    }
+
+    private void processPatchOperation(SCIMResourceTypeSchema schema, PatchOperation patchOperation)
+            throws BadRequestException, CharonException {
+
+        if (patchOperation.getValues() == null) {
+            throw new BadRequestException("The value is not provided to perform patch " +
+                    patchOperation.getOperation() + " operation.", ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        if (patchOperation.getPath() != null) {
+            switch (patchOperation.getPath()) {
+                case SCIMConstants.RoleSchemaConstants.DISPLAY_NAME: {
+                    String valuesProperty = (String) patchOperation.getValues();
+                    JSONObject attributePrefixedJson = new JSONObject();
+
+                    attributePrefixedJson.put(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME, valuesProperty);
+                    patchOperation.setValues(attributePrefixedJson);
+                    break;
+                }
+                case SCIMConstants.RoleSchemaConstants.USERS: {
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.USERS);
+                    break;
+                }
+                case SCIMConstants.RoleSchemaConstants.GROUPS: {
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.GROUPS);
+                    break;
+                }
+                case SCIMConstants.RoleSchemaConstants.PERMISSIONS: {
+                    setPatchOperationValue(patchOperation, SCIMConstants.RoleSchemaConstants.PERMISSIONS);
+                    break;
+                }
+                default:
+                    throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+            }
+            patchOperation.setPath(null);
+        }
+        processValueAttributeOfOperation(schema, patchOperation);
+    }
+
+    private static void setPatchOperationValue(PatchOperation patchOperation, String permissions) {
+
+        JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
+        JSONObject attributePrefixedJson = new JSONObject();
+        attributePrefixedJson.put(permissions, valuesPropertyJson);
+        patchOperation.setValues(attributePrefixedJson);
+    }
+
+    private void processValueAttributeOfOperation(SCIMResourceTypeSchema schema, PatchOperation patchOperation)
+            throws CharonException, BadRequestException {
+
+        AbstractSCIMObject attributeHoldingSCIMObject = getDecoder().decode(patchOperation.getValues().toString(),
+                schema);
+        if (attributeHoldingSCIMObject == null) {
+            throw new BadRequestException("Not a valid attribute.", ResponseCodeConstants.INVALID_SYNTAX);
+        }
+
+        Map<String, Attribute> attributeList = attributeHoldingSCIMObject.getAttributeList();
+
+        if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME)) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME);
+            patchOperation.setValues(
+                    ((SimpleAttribute) attributeList.get(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME))
+                            .getStringValue());
+        } else if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.USERS)) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.USERS);
+            patchOperation.setValues(transformAttributeToMap((MultiValuedAttribute) attributeList
+                    .get(SCIMConstants.RoleSchemaConstants.USERS)));
+        } else if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.GROUPS)) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.GROUPS);
+            patchOperation.setValues(transformAttributeToMap((MultiValuedAttribute) attributeList
+                    .get(SCIMConstants.RoleSchemaConstants.GROUPS)));
+        } else if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.PERMISSIONS)) {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.PERMISSIONS);
+            patchOperation.setValues(((MultiValuedAttribute) attributeList.
+                    get(SCIMConstants.RoleSchemaConstants.PERMISSIONS)).getAttributePrimitiveValues());
+        }
+    }
+
+    private List<Map<String, String>> transformAttributeToMap(MultiValuedAttribute multiValuedAttribute)
+            throws CharonException {
+
+        List<Map<String, String>> memberList = new ArrayList<>();
+        List<Attribute> subValuesList = multiValuedAttribute.getAttributeValues();
+        for (Attribute subValue : subValuesList) {
+            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
+            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+
+            Map<String, String> member = new HashMap<>();
+            if (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE) != null) {
+                member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
+                        (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue());
+            }
+
+            if (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY) != null) {
+                member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
+                        (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
+            }
+            memberList.add(member);
+        }
+        return memberList;
     }
 }
