@@ -838,7 +838,7 @@ public abstract class AbstractValidator {
                         }
                     }
                     //this case is only valid for extension schema
-                    if (subAttribute.getType().equals(SCIMDefinitions.DataType.COMPLEX)) {
+                    if (SCIMDefinitions.DataType.COMPLEX.equals(subAttribute.getType())) {
                         boolean isSubSubAttributeExists = isSubSubAttributeExistsInList(requestedAttributes,
                                 attribute, subAttribute);
                         if (isSubSubAttributeExists) {
