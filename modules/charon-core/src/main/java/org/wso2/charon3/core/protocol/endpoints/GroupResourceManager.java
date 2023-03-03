@@ -777,7 +777,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         if (group != null) {
             return group.getDisplayName();
         } else {
-            throw new CharonException("Group not found for ID: " + groupId);
+            throw new NotFoundException("Group not found for ID: " + groupId);
         }
     }
 
