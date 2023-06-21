@@ -220,6 +220,24 @@ public interface UserManager {
         throw new NotImplementedException();
     }
 
+    /**
+     * Updates the group via PATCH.
+     *
+     * @param  groupId                 ID of the group.
+     * @param  currentGroupName        Current name of the group.
+     * @param  patchOperations         A map of patch operations.
+     *
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default void patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        throw new NotImplementedException();
+    }
+
     public GroupsGetResponse listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
