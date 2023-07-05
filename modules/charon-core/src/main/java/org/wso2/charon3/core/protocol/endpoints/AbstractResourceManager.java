@@ -21,6 +21,7 @@ import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -100,6 +101,21 @@ public abstract class AbstractResourceManager implements ResourceManager {
      * @return SCIMResponse
      */
     public static SCIMResponse encodeSCIMException(AbstractCharonException exception) {
+
+        if (exception.getDetail().contains(String.format("%d--", ResponseCodeConstants.CODE_FORBIDDEN))) {
+            ForbiddenException forbiddenException;
+            if (exception.getDetail().split("--").length > 1) {
+                forbiddenException = new ForbiddenException(exception.getDetail().split("--")[1]);
+            } else {
+                forbiddenException = new ForbiddenException(exception.getDetail());
+            }
+
+            logger.debug(forbiddenException.getDetail(), forbiddenException);
+            Map<String, String> responseHeaders = new HashMap<>();
+            responseHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(forbiddenException.getStatus(), encoder.encodeSCIMException(forbiddenException),
+                    responseHeaders);
+        }
 
         if (exception.getStatus() == ResponseCodeConstants.CODE_INTERNAL_ERROR) {
             logger.error(exception.getDetail(), exception);

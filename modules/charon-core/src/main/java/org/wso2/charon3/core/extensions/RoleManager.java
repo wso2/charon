@@ -21,7 +21,6 @@ package org.wso2.charon3.core.extensions;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
-import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Role;
@@ -130,8 +129,7 @@ public interface RoleManager {
      * @throws NotImplementedException Functionality no implemented exception.
      */
     default Role patchRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
-            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
-            ForbiddenException {
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
 
         throw new NotImplementedException("patchRole method is not implemented");
     }
