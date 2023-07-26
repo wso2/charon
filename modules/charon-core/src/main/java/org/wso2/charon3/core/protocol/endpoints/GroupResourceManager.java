@@ -932,13 +932,29 @@ public class GroupResourceManager extends AbstractResourceManager {
     }
 
     private List<Map<String, String>> transformMembersAttributeToMap(MultiValuedAttribute multiValuedMembersAttribute)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         List<Map<String, String>> memberList = new ArrayList<>();
         List<Attribute> subValuesList = multiValuedMembersAttribute.getAttributeValues();
         for (Attribute subValue : subValuesList) {
             ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+
+            // Check if `value` (member id) attribute is present and not empty.
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
+                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
+                        ResponseCodeConstants.INVALID_SYNTAX);
+            } else if (((SimpleAttribute)
+                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue().isEmpty()) {
+                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
+                        ResponseCodeConstants.INVALID_VALUE);
+            }
+
+            // Check if `display` value is present.
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
+                        ResponseCodeConstants.INVALID_SYNTAX);
+            }
 
             Map<String, String> member = new HashMap<>();
             member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
