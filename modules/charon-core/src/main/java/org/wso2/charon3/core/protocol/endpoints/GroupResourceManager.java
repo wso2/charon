@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -941,13 +942,17 @@ public class GroupResourceManager extends AbstractResourceManager {
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
 
             // Check if `value` (member id) attribute is present and not empty.
+            // Check if `value` (member id) attribute is present and not empty.
             if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
                 throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
                         ResponseCodeConstants.INVALID_SYNTAX);
-            } else if (((SimpleAttribute)
-                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue().isEmpty()) {
-                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
-                        ResponseCodeConstants.INVALID_VALUE);
+            } else {
+                SimpleAttribute valueAttribute = (SimpleAttribute)
+                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE);
+                if (StringUtils.isEmpty(valueAttribute.getStringValue())) {
+                    throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
+                            ResponseCodeConstants.INVALID_VALUE);
+                }
             }
 
             // Check if `display` value is present.
