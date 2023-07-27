@@ -947,9 +947,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                 throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
                         ResponseCodeConstants.INVALID_SYNTAX);
             } else {
-                SimpleAttribute valueAttribute = (SimpleAttribute)
-                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE);
-                if (StringUtils.isEmpty(valueAttribute.getStringValue())) {
+                if (StringUtils.isEmpty(((SimpleAttribute)
+                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
                     throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
                             ResponseCodeConstants.INVALID_VALUE);
                 }
