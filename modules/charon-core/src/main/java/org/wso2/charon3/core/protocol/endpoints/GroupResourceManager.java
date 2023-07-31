@@ -941,21 +941,14 @@ public class GroupResourceManager extends AbstractResourceManager {
             ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
 
-            // Check if `value` (member id) attribute is present and not empty.
-            // Check if `value` (member id) attribute is present and not empty.
-            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) ||
+                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
                 throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
                         ResponseCodeConstants.INVALID_SYNTAX);
             } else if (StringUtils.isEmpty(((SimpleAttribute)
                         subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
                 throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
                         ResponseCodeConstants.INVALID_VALUE);
-            }
-
-            // Check if `display` value is present.
-            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
-                        ResponseCodeConstants.INVALID_SYNTAX);
             }
 
             Map<String, String> member = new HashMap<>();
