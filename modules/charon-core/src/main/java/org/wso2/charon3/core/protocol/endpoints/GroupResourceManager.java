@@ -943,12 +943,11 @@ public class GroupResourceManager extends AbstractResourceManager {
 
             if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) ||
                     !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
-                        ResponseCodeConstants.INVALID_SYNTAX);
-            } else if (StringUtils.isEmpty(((SimpleAttribute)
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            }
+            else if (StringUtils.isEmpty(((SimpleAttribute)
                         subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
-                throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST,
-                        ResponseCodeConstants.INVALID_VALUE);
+                throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
             }
 
             Map<String, String> member = new HashMap<>();
