@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -932,13 +933,21 @@ public class GroupResourceManager extends AbstractResourceManager {
     }
 
     private List<Map<String, String>> transformMembersAttributeToMap(MultiValuedAttribute multiValuedMembersAttribute)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         List<Map<String, String>> memberList = new ArrayList<>();
         List<Attribute> subValuesList = multiValuedMembersAttribute.getAttributeValues();
         for (Attribute subValue : subValuesList) {
             ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) ||
+                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            } else if (StringUtils.isEmpty(((SimpleAttribute)
+                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
+                throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
+            }
 
             Map<String, String> member = new HashMap<>();
             member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
