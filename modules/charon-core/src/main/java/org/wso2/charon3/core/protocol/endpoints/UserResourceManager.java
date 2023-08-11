@@ -649,7 +649,8 @@ public class UserResourceManager extends AbstractResourceManager {
             List<String> allSimpleMultiValuedAttributes = ResourceManagerUtil.getAllSimpleMultiValuedAttributes(schema);
 
             //get the user from the user core
-            User oldUser = userManager.getUser(existingId, ResourceManagerUtil.getAllAttributeURIs(schema));
+            User oldUser = userManager.getUser(existingId, ResourceManagerUtil.getOnlyRequiredAttributesURIs(schema,
+                    SCIMConstants.UserSchemaConstants.USER_NAME, null));
             if (oldUser == null) {
                 throw new NotFoundException("No user with the id : " + existingId + " in the user store.");
             }
