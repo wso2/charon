@@ -950,10 +950,18 @@ public class GroupResourceManager extends AbstractResourceManager {
             }
 
             Map<String, String> member = new HashMap<>();
-            member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
-                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue());
-            member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
-                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) &&
+                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                throw new CharonException("Either value or display attribute is required for members attribute");
+            }
+            if (subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
+                        (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
+            }
+            if (subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
+                member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
+                        (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue());
+            }
             memberList.add(member);
         }
         return memberList;
