@@ -941,19 +941,24 @@ public class GroupResourceManager extends AbstractResourceManager {
             ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
 
-            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) ||
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) &&
                     !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
                 throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            } else if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
+                throw new BadRequestException("Value attribute is required for the members attribute.",
+                        ResponseCodeConstants.INVALID_SYNTAX);
             } else if (StringUtils.isEmpty(((SimpleAttribute)
-                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
+                    subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
                 throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
             }
 
             Map<String, String> member = new HashMap<>();
+            if (subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
+                        (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
+            }
             member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
                     (subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE))).getStringValue());
-            member.put(SCIMConstants.CommonSchemaConstants.DISPLAY, ((SimpleAttribute)
-                    (subAttributesList.get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getStringValue());
             memberList.add(member);
         }
         return memberList;
