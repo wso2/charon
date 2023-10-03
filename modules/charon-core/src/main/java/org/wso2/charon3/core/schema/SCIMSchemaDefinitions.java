@@ -1042,6 +1042,64 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        // Identifier of the permission of this Role.
+        public static final SCIMAttributeSchema PERMISSION_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_VALUE_URI,
+                        SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_VALUE_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A human-readable name of the permission of this Role.
+        public static final SCIMAttributeSchema PERMISSION_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_DISPLAY_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Identifier of the associated application of this Role.
+        public static final SCIMAttributeSchema ASC_APPLICATION_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATION_VALUE_URI,
+                        SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_VALUE_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A human-readable name of the associated application of this Role.
+        public static final SCIMAttributeSchema ASC_APPLICATION_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATION_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_DISPLAY_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Identifier of the role's audience.
+        public static final SCIMAttributeSchema AUDIENCE_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_VALUE_URI,
+                        SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE_VALUE_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A human-readable name of role's audience.
+        public static final SCIMAttributeSchema AUDIENCE_DISPLAY =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE_DISPLAY_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // Type of the role's audience (eg: application, organization).
+        public static final SCIMAttributeSchema AUDIENCE_TYPE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_TYPE_URI,
+                        SCIMConstants.RoleSchemaConstants.TYPE, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE_TYPE_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
         // Attribute schemas of the attributes defined in role schema.
 
         // A human-readable name for the Role. REQUIRED.
@@ -1052,6 +1110,15 @@ public class SCIMSchemaDefinitions {
                         true, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // The audience of the role.
+        public static final SCIMAttributeSchema AUDIENCE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_URI,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE, SCIMDefinitions.DataType.COMPLEX, false,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(AUDIENCE_VALUE, AUDIENCE_DISPLAY, AUDIENCE_TYPE)));
 
         // A list of users of the Role.
         public static final SCIMAttributeSchema USERS =
@@ -1081,6 +1148,24 @@ public class SCIMSchemaDefinitions {
                         false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // A list of permissions of the Role.
+        public static final SCIMAttributeSchema ROLE_V2_PERMISSIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_URI,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(PERMISSION_VALUE, PERMISSION_DISPLAY)));
+
+        // A list of associated applications of the Role.
+        public static final SCIMAttributeSchema ASSOCIATED_APPLICATIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_URI,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(ASC_APPLICATION_VALUE, ASC_APPLICATION_DISPLAY)));
     }
 
     /**
@@ -1475,6 +1560,20 @@ public class SCIMSchemaDefinitions {
                     SCIMRoleSchemaDefinition.USERS,
                     SCIMRoleSchemaDefinition.GROUPS,
                     SCIMRoleSchemaDefinition.PERMISSIONS);
+
+    /**
+     * RoleV2 Resource Schema.
+     */
+    public static final SCIMResourceTypeSchema SCIM_ROLE_V2_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<>(Collections.singletonList(SCIMConstants.ROLE_SCHEMA_URI)),
+                    ID,
+                    SCIMRoleSchemaDefinition.DISPLAY_NAME,
+                    SCIMRoleSchemaDefinition.AUDIENCE,
+                    SCIMRoleSchemaDefinition.USERS,
+                    SCIMRoleSchemaDefinition.GROUPS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS,
+                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS);
 
     /*
      * **********SCIM defined Service Provider Config Resource Schema.****************************

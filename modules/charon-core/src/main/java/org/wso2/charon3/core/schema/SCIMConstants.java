@@ -524,7 +524,13 @@ public class SCIMConstants {
         public static final String GROUPS_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups";
         public static final String PERMISSIONS = "permissions";
         public static final String PERMISSIONS_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions";
+        public static final String ASC_APPLICATIONS = "associatedApplications";
+        public static final String ASC_APPLICATIONS_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications";
+        public static final String AUDIENCE = "audience";
+        public static final String AUDIENCE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:audience";
         public static final String DISPLAY = "display";
+        public static final String VALUE = "value";
         public static final String TYPE = "type";
 
         // Attributes descriptions of the attributes found in Role Schema.
@@ -532,16 +538,26 @@ public class SCIMConstants {
         public static final String USERS_DESC = "A list of users of the role.";
         public static final String GROUPS_DESC = "A list of groups of the role.";
         public static final String PERMISSIONS_DESC = "A list of permissions of the role.";
+        public static final String ASC_APPLICATIONS_DESC = "A list of associated applications of the role.";
+        public static final String AUDIENCE_DESC = "The role usable scope.";
         public static final String USERS_VALUE_DESC = "Identifier of the user of this role.";
         public static final String GROUPS_VALUE_DESC = "Identifier of the group of this role.";
-        public static final String PERMISSIONS_VALUE_DESC = "List of the permissions of this role.";
+        public static final String PERMISSIONS_VALUE_DESC = "Identifier of the permissions of this role.";
+        public static final String ASC_APPLICATIONS_VALUE_DESC =
+                "Identifier of the associated applications of this role.";
+        public static final String AUDIENCE_VALUE_DESC = "Identifier of the role's usable audience.";
         public static final String USERS_REF_DESC =
                 "The uri corresponding to a SCIM resource that is a user of this Role.";
         public static final String GROUPS_REF_DESC =
                 "The uri corresponding to a SCIM resource that is a group of this Role.";
         public static final String USERS_DISPLAY_DESC = "A human-readable name for the user.";
         public static final String GROUPS_DISPLAY_DESC = "A human-readable name for the group.";
+        public static final String PERMISSIONS_DISPLAY_DESC = "A human-readable name for the permission.";
+        public static final String ASC_APPLICATIONS_DISPLAY_DESC = "A human-readable name for the application.";
+        public static final String AUDIENCE_DISPLAY_DESC = "A human-readable name of the role's usable audience.";
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
+        public static final String AUDIENCE_TYPE_DESC =
+                "A label indicating the resource type of the role's usable audience.";
 
         // URIs of sub and multivalued attributes.
         public static final String USERS_VALUE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:users.value";
@@ -554,6 +570,19 @@ public class SCIMConstants {
         public static final String GROUPS_DISPLAY_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups"
                 + ".display";
         public static final String GROUPS_TYPE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups.type";
+        public static final String PERMISSIONS_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.value";
+        public static final String PERMISSIONS_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.display";
+        public static final String ASC_APPLICATION_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.value";
+        public static final String ASC_APPLICATION_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.display";
+        public static final String AUDIENCE_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.value";
+        public static final String AUDIENCE_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.display";
+        public static final String AUDIENCE_TYPE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.type";
     }
 
     /**

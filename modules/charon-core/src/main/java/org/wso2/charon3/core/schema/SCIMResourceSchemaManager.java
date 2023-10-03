@@ -215,6 +215,10 @@ public class SCIMResourceSchemaManager {
         return SCIMSchemaDefinitions.SCIM_ROLE_SCHEMA;
     }
 
+    public SCIMResourceTypeSchema getRoleResourceV2Schema() {
+
+        return SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA;
+    }
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
 
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
