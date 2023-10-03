@@ -45,7 +45,7 @@ import static org.wso2.charon3.core.utils.LambdaExceptionUtils.rethrowFunction;
  */
 public class RoleV2 extends AbstractSCIMObject {
 
-    private static final long SERIAL_VERSION_UID = 6106269076155338045L;
+    private static final long serialVersionUID = 6106269076155338045L;
 
     /**
      * Get the display name of the role.

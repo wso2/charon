@@ -32,7 +32,6 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.RoleV2Manager;
 import org.wso2.charon3.core.extensions.UserManager;
-import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -129,8 +128,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     }
 
     @Override
-    public SCIMResponse listWithGETRole(RoleV2Manager roleManager, String filter, Integer startIndexInt, Integer countInt,
-                                        String sortBy, String sortOrder) {
+    public SCIMResponse listWithGETRole(RoleV2Manager roleManager, String filter, Integer startIndexInt,
+                                        Integer countInt, String sortBy, String sortOrder) {
 
         return null;
     }
