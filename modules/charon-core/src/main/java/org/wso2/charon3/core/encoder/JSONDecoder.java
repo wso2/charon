@@ -53,6 +53,7 @@ import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -305,6 +306,14 @@ public class JSONDecoder {
                 if (attributeValObj == null) {
                     //user may define the attribute by its fully qualified uri
                     attributeValObj = decodedJsonObj.opt(attributeSchema.getURI());
+                }
+                if (attributeValObj == null) {
+                    for (Iterator it = decodedJsonObj.keys(); it.hasNext(); ) {
+                        String key = (String) it.next();
+                        if (key.equalsIgnoreCase(attributeSchema.getName())) {
+                            attributeValObj = decodedJsonObj.get(key);
+                        }
+                    }
                 }
                 SCIMDefinitions.DataType attributeSchemaDataType = attributeSchema.getType();
 
