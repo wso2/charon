@@ -1098,7 +1098,9 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.RoleSchemaConstants.TYPE, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE_TYPE_DESC, false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+                        SCIMDefinitions.Uniqueness.NONE, new ArrayList<>(
+                                Arrays.asList(SCIMConstants.RoleSchemaConstants.APPLICATION,
+                                        SCIMConstants.RoleSchemaConstants.ORGANIZATION)), null, null);
 
         // Attribute schemas of the attributes defined in role schema.
 
@@ -1115,7 +1117,7 @@ public class SCIMSchemaDefinitions {
         public static final SCIMAttributeSchema AUDIENCE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_URI,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE, SCIMDefinitions.DataType.COMPLEX, false,
-                        SCIMConstants.RoleSchemaConstants.AUDIENCE_DESC, true, false,
+                        SCIMConstants.RoleSchemaConstants.AUDIENCE_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
                         new ArrayList<>(Arrays.asList(AUDIENCE_VALUE, AUDIENCE_DISPLAY, AUDIENCE_TYPE)));
