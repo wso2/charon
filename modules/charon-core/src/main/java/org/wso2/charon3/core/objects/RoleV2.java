@@ -523,6 +523,18 @@ public class RoleV2 extends AbstractSCIMObject {
     }
 
     /**
+     * Get the audience display name of the role.
+     */
+    public String getAudienceDisplayName() {
+
+        SCIMAttributeSchema audienceDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE;
+        SCIMAttributeSchema audienceDisplayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_DISPLAY;
+        return getComplexAttribute(audienceDefinition).map(aud -> getSimpleAttribute(audienceDisplayDefinition, aud)
+                .map(rethrowFunction(SimpleAttribute::getStringValue))
+                .orElse(null)).orElse(null);
+    }
+
+    /**
      * Get the audience type of the role.
      */
     public String getAudienceType() {

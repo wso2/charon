@@ -570,9 +570,6 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
 
         for (PatchOperation patchOperation : patchOperations.get(SCIMConstants.OperationalConstants.ADD)) {
-            if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
-                throw new NotImplementedException("Adding permissions not permitted.");
-            }
             processPatchOperation(schema, patchOperation);
         }
 
@@ -673,10 +670,6 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     private static void processRemovePatchOperation(PatchOperation patchOperation)
             throws NotImplementedException, BadRequestException {
 
-        if (SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(patchOperation.getPath())) {
-            throw new NotImplementedException("Removing permissions not permitted.");
-        }
-
         if (SCIMConstants.RoleSchemaConstants.DISPLAY_NAME.equalsIgnoreCase(patchOperation.getPath())) {
             throw new BadRequestException("Can not remove a required attribute");
         }
@@ -691,15 +684,18 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         String[] parts = path.split("[\\[\\]]");
 
         if (ArrayUtils.isEmpty(parts) || !(SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0]) ||
-                SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]))) {
+                SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0]) ||
+                SCIMConstants.RoleSchemaConstants.PERMISSIONS.equalsIgnoreCase(parts[0]))) {
             throw new BadRequestException(parts[0] + " is not a valid attribute.",
                     ResponseCodeConstants.INVALID_SYNTAX);
         }
 
         if (SCIMConstants.RoleSchemaConstants.USERS.equalsIgnoreCase(parts[0])) {
             patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.USERS);
-        } else {
+        } else if (SCIMConstants.RoleSchemaConstants.GROUPS.equalsIgnoreCase(parts[0])) {
             patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.GROUPS);
+        } else {
+            patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.PERMISSIONS);
         }
 
         if (parts.length != 1) {
@@ -761,8 +757,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                     .get(SCIMConstants.RoleSchemaConstants.GROUPS)));
         } else if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.PERMISSIONS)) {
             patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.PERMISSIONS);
-            patchOperation.setValues(((MultiValuedAttribute) attributeList.
-                    get(SCIMConstants.RoleSchemaConstants.PERMISSIONS)).getAttributePrimitiveValues());
+            patchOperation.setValues((transformAttributeToMap((MultiValuedAttribute) attributeList.
+                    get(SCIMConstants.RoleSchemaConstants.PERMISSIONS))));
         }
     }
 
