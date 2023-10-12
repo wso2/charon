@@ -17,6 +17,7 @@
 */
 package org.wso2.charon3.core.protocol;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -310,7 +311,7 @@ public class BulkRequestProcessor {
                     if (userValue.startsWith(bulkIdPrefix)) {
                         String userBulkId = userValue.substring(bulkIdPrefix.length());
                         String userId = userIDMappings.get(userBulkId);
-                        if (userId != null) {
+                        if (StringUtils.isNotBlank(userId)) {
                             user.put(SCIMConstants.OperationalConstants.VALUE, userId);
                         }
                     }
@@ -332,12 +333,12 @@ public class BulkRequestProcessor {
 
     /**
      * This method is used to get the user array from the data JSON object.
-     * @param dataJson          SCIM data JSON object
-     * @param method            HTTP method
-     * @param usersOrMembersKey Users or members key
      *
+     * @param dataJson          SCIM data JSON object.
+     * @param method            HTTP method.
+     * @param usersOrMembersKey Users or members key.
      * @return User array
-     * @throws JSONException    JSON exception
+     * @throws JSONException    JSON exception.
      */
     private JSONArray getUserArray(JSONObject dataJson, String method, String usersOrMembersKey)
             throws JSONException {
@@ -385,8 +386,8 @@ public class BulkRequestProcessor {
 
     /**
      * This method is used to get user id bulk id mapping from the bulk user operation response.
-     * @param bulkUserOperationResponse Bulk user operation response.
      *
+     * @param bulkUserOperationResponse Bulk user operation response.
      * @return Bulk id user id mapping.
      */
     private static Map<String, String> getUserIdBulkIdMapping(List<BulkResponseContent> bulkUserOperationResponse) {
