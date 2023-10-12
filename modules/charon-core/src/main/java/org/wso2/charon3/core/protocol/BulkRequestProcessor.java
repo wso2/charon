@@ -169,20 +169,19 @@ public class BulkRequestProcessor {
         return bulkResponseData;
     }
 
-    private BulkResponseContent getBulkResponseContent
-            (BulkRequestContent bulkRequestContent, ResourceManager resourceManager)
-            throws BadRequestException {
+    private BulkResponseContent getBulkResponseContent(BulkRequestContent bulkRequestContent,
+                                                       ResourceManager resourceManager) throws BadRequestException {
+
         return getBulkResponseContent(bulkRequestContent, null, resourceManager);
     }
 
-   private BulkResponseContent getBulkResponseContent
-           (BulkRequestContent bulkRequestContent, Map<String, String> userIdMappings,
-            ResourceManager resourceManager)
+   private BulkResponseContent getBulkResponseContent(BulkRequestContent bulkRequestContent,
+                                                      Map<String, String> userIdMappings,
+                                                      ResourceManager resourceManager)
            throws BadRequestException {
 
        BulkResponseContent bulkResponseContent = null;
        SCIMResponse response;
-
        processBulkRequestContent(bulkRequestContent, userIdMappings, bulkRequestContent.getMethod());
 
        switch (bulkRequestContent.getMethod()) {
@@ -194,24 +193,23 @@ public class BulkRequestProcessor {
                            null, null);
                }
 
-               bulkResponseContent = createBulkResponseContent
-                       (response, SCIMConstants.OperationalConstants.POST, bulkRequestContent);
+               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
+                       bulkRequestContent);
                errorsCheck(response);
                break;
 
            case SCIMConstants.OperationalConstants.PUT: {
                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.updateWithPUTRole(resourceId,
-                           bulkRequestContent.getData(), roleManager);
+                   response = resourceManager.updateWithPUTRole(resourceId, bulkRequestContent.getData(),
+                           roleManager);
                } else {
-                   response = resourceManager
-                           .updateWithPUT(resourceId, bulkRequestContent.getData(), userManager,
+                   response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), userManager,
                                    null, null);
                }
 
-               bulkResponseContent = createBulkResponseContent
-                       (response, SCIMConstants.OperationalConstants.PUT, bulkRequestContent);
+               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
+                       bulkRequestContent);
                errorsCheck(response);
                break;
            }
@@ -219,16 +217,15 @@ public class BulkRequestProcessor {
            case SCIMConstants.OperationalConstants.PATCH: {
                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.updateWithPATCHRole(resourceId,
-                           bulkRequestContent.getData(), roleManager);
+                   response = resourceManager.updateWithPATCHRole(resourceId, bulkRequestContent.getData(),
+                           roleManager);
                } else {
-                   response = resourceManager
-                           .updateWithPATCH(resourceId, bulkRequestContent.getData(), userManager,
+                   response = resourceManager.updateWithPATCH(resourceId, bulkRequestContent.getData(), userManager,
                                    null, null);
                }
 
-               bulkResponseContent = createBulkResponseContent
-                       (response, SCIMConstants.OperationalConstants.PATCH, bulkRequestContent);
+               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
+                       bulkRequestContent);
                errorsCheck(response);
                break;
            }
@@ -241,8 +238,8 @@ public class BulkRequestProcessor {
                    response = resourceManager.delete(resourceId, userManager);
                }
 
-               bulkResponseContent = createBulkResponseContent
-                       (response, SCIMConstants.OperationalConstants.DELETE, bulkRequestContent);
+               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
+                       bulkRequestContent);
                errorsCheck(response);
                break;
            }
@@ -251,6 +248,7 @@ public class BulkRequestProcessor {
    }
 
     private String extractIDFromPath(String path) throws BadRequestException {
+
         String [] parts = path.split("[/]");
         if (parts[2] != null) {
             return parts[2];
@@ -262,8 +260,8 @@ public class BulkRequestProcessor {
 
     private BulkResponseContent createBulkResponseContent(SCIMResponse response, String method,
                                                           BulkRequestContent requestContent) {
-        BulkResponseContent bulkResponseContent = new BulkResponseContent();
 
+        BulkResponseContent bulkResponseContent = new BulkResponseContent();
         bulkResponseContent.setScimResponse(response);
         bulkResponseContent.setMethod(method);
         if (response.getHeaderParamMap() != null) {
@@ -273,7 +271,6 @@ public class BulkRequestProcessor {
         bulkResponseContent.setVersion(requestContent.getVersion());
 
         return bulkResponseContent;
-
     }
 
     private void errorsCheck(SCIMResponse response) {
@@ -287,17 +284,16 @@ public class BulkRequestProcessor {
      * This method is used to process the bulk request content.
      * This method will replace the bulk id with the created user id.
      *
-     * @param bulkRequestContent Bulk request content
-     * @param userIDMappings User id bulk id mapping
-     * @param method HTTP method
-     * @throws BadRequestException Bad request exception
+     * @param bulkRequestContent   Bulk request content.
+     * @param userIDMappings       User id bulk id mapping.
+     * @param method               HTTP method.
+     * @throws BadRequestException Bad request exception.
      */
-    private void processBulkRequestContent(BulkRequestContent bulkRequestContent,
-                                           Map<String, String> userIDMappings, String method)
-            throws BadRequestException {
+    private void processBulkRequestContent(BulkRequestContent bulkRequestContent, Map<String, String> userIDMappings,
+                                           String method) throws BadRequestException {
+
         try {
-            if (userIDMappings == null
-                    || userIDMappings.isEmpty()
+            if (userIDMappings == null || userIDMappings.isEmpty()
                     || method.equals(SCIMConstants.OperationalConstants.DELETE)) {
                 return;
             }
@@ -308,7 +304,6 @@ public class BulkRequestProcessor {
 
             if (usersArray != null) {
                 String bulkIdPrefix = SCIMConstants.OperationalConstants.BULK_ID + ":";
-
                 for (int i = 0; i < usersArray.length(); i++) {
                     JSONObject user = usersArray.getJSONObject(i);
                     String userValue = user.getString(SCIMConstants.OperationalConstants.VALUE);
@@ -330,21 +325,23 @@ public class BulkRequestProcessor {
     }
 
     private String getUsersOrMembersKey(String path) {
+
         return path.contains(SCIMConstants.ROLE_ENDPOINT) ? SCIMConstants.RoleSchemaConstants.USERS :
                 SCIMConstants.GroupSchemaConstants.MEMBERS;
     }
 
     /**
      * This method is used to get the user array from the data JSON object.
-     * @param dataJson SCIM data JSON object
-     * @param method HTTP method
+     * @param dataJson          SCIM data JSON object
+     * @param method            HTTP method
      * @param usersOrMembersKey Users or members key
      *
      * @return User array
-     * @throws JSONException JSON exception
+     * @throws JSONException    JSON exception
      */
     private JSONArray getUserArray(JSONObject dataJson, String method, String usersOrMembersKey)
             throws JSONException {
+
         switch (method) {
             case SCIMConstants.OperationalConstants.POST:
             case SCIMConstants.OperationalConstants.PUT:
@@ -357,8 +354,8 @@ public class BulkRequestProcessor {
     }
 
     private JSONArray getUserArrayForPatch(JSONObject dataJson, String usersOrMembersKey) throws JSONException {
-        JSONArray operations = dataJson.optJSONArray(SCIMConstants.OperationalConstants.OPERATIONS);
 
+        JSONArray operations = dataJson.optJSONArray(SCIMConstants.OperationalConstants.OPERATIONS);
         if (operations != null) {
             for (int i = 0; i < operations.length(); i++) {
                 JSONObject operation = operations.getJSONObject(i);
@@ -378,6 +375,7 @@ public class BulkRequestProcessor {
     }
 
     private boolean isAddOperation(JSONObject operation, String path) throws JSONException {
+
         String operationType = operation.optString(SCIMConstants.OperationalConstants.OP);
         String operationPath = operation.optString(SCIMConstants.OperationalConstants.PATH, "");
 
@@ -387,13 +385,13 @@ public class BulkRequestProcessor {
 
     /**
      * This method is used to get user id bulk id mapping from the bulk user operation response.
-     * @param bulkUserOperationResponse Bulk user operation response
+     * @param bulkUserOperationResponse Bulk user operation response.
      *
-     * @return Bulk id user id mapping
+     * @return Bulk id user id mapping.
      */
     private static Map<String, String> getUserIdBulkIdMapping(List<BulkResponseContent> bulkUserOperationResponse) {
-        Map<String, String> userIdMappings = new HashMap<>();
 
+        Map<String, String> userIdMappings = new HashMap<>();
         for (BulkResponseContent bulkResponse : bulkUserOperationResponse) {
             String bulkId = bulkResponse.getBulkID();
 
