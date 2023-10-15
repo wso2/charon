@@ -926,7 +926,6 @@ public class JSONDecoder {
                     if (StringUtils.isNotEmpty(bulkId)) {
                         if (encounteredBulkIds.contains(bulkId)) {
                             String error = "Duplicate bulkId found: " + bulkId;
-                            logger.error(error);
                             throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
                         }
                         encounteredBulkIds.add(bulkId);

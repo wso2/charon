@@ -318,7 +318,6 @@ public class BulkRequestProcessor {
                 }
             }
             bulkRequestContent.setData(dataJson.toString());
-
         } catch (JSONException e) {
             throw new BadRequestException("Error while parsing the data field of the bulk request content",
                     ResponseCodeConstants.INVALID_SYNTAX);
