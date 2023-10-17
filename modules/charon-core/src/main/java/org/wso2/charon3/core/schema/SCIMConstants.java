@@ -775,6 +775,8 @@ public class SCIMConstants {
         public static final String PUT = "PUT";
         public static final String PATCH = "PATCH";
 
+        public static final String COLON = ":";
+        public static final String URL_SEPARATOR = "/";
 
     }
 }

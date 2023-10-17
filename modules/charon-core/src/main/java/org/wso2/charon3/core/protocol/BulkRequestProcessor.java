@@ -51,7 +51,6 @@ public class BulkRequestProcessor {
     private UserManager userManager;
     private RoleManager roleManager;
 
-
     public UserResourceManager getUserResourceManager() {
         return userResourceManager;
     }
@@ -129,12 +128,10 @@ public class BulkRequestProcessor {
 
         for (BulkRequestContent bulkRequestContent : bulkRequestData.getUserOperationRequests()) {
             if (failOnError == 0) {
-                bulkResponseData.addUserOperation
-                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+                bulkResponseData.addUserOperation(getBulkResponseContent(bulkRequestContent, userResourceManager));
             } else {
                 if (errors < failOnError) {
-                    bulkResponseData.addUserOperation
-                            (getBulkResponseContent(bulkRequestContent, userResourceManager));
+                    bulkResponseData.addUserOperation(getBulkResponseContent(bulkRequestContent, userResourceManager));
                 }
             }
 
@@ -143,14 +140,12 @@ public class BulkRequestProcessor {
 
         for (BulkRequestContent bulkRequestContent : bulkRequestData.getGroupOperationRequests()) {
             if (failOnError == 0) {
-                bulkResponseData.addGroupOperation
-                            (getBulkResponseContent(bulkRequestContent,
-                                    userIdMappings, groupResourceManager));
+                bulkResponseData.addGroupOperation(
+                        getBulkResponseContent(bulkRequestContent, userIdMappings, groupResourceManager));
             } else  {
                 if (errors < failOnError) {
-                    bulkResponseData.addGroupOperation
-                            (getBulkResponseContent(bulkRequestContent,
-                                    userIdMappings, groupResourceManager));
+                    bulkResponseData.addGroupOperation(
+                            getBulkResponseContent(bulkRequestContent, userIdMappings, groupResourceManager));
                 }
             }
 
@@ -176,77 +171,77 @@ public class BulkRequestProcessor {
         return getBulkResponseContent(bulkRequestContent, null, resourceManager);
     }
 
-   private BulkResponseContent getBulkResponseContent(BulkRequestContent bulkRequestContent,
-                                                      Map<String, String> userIdMappings,
-                                                      ResourceManager resourceManager)
-           throws BadRequestException {
+    private BulkResponseContent getBulkResponseContent(BulkRequestContent bulkRequestContent,
+                                                       Map<String, String> userIdMappings,
+                                                       ResourceManager resourceManager)
+            throws BadRequestException {
 
-       BulkResponseContent bulkResponseContent = null;
-       SCIMResponse response;
-       processBulkRequestContent(bulkRequestContent, userIdMappings, bulkRequestContent.getMethod());
+        BulkResponseContent bulkResponseContent = null;
+        SCIMResponse response;
+        processBulkRequestContent(bulkRequestContent, userIdMappings, bulkRequestContent.getMethod());
 
-       switch (bulkRequestContent.getMethod()) {
-           case SCIMConstants.OperationalConstants.POST:
-               if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.createRole(bulkRequestContent.getData(), roleManager);
-               } else {
-                   response = resourceManager.create(bulkRequestContent.getData(), userManager,
-                           null, null);
-               }
+        switch (bulkRequestContent.getMethod()) {
+            case SCIMConstants.OperationalConstants.POST:
+                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+                    response = resourceManager.createRole(bulkRequestContent.getData(), roleManager);
+                } else {
+                    response = resourceManager.create(bulkRequestContent.getData(), userManager,
+                            null, null);
+                }
 
-               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
-                       bulkRequestContent);
-               errorsCheck(response);
-               break;
+                bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.POST,
+                        bulkRequestContent);
+                errorsCheck(response);
+                break;
 
-           case SCIMConstants.OperationalConstants.PUT: {
-               String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-               if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.updateWithPUTRole(resourceId, bulkRequestContent.getData(),
-                           roleManager);
-               } else {
-                   response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), userManager,
-                                   null, null);
-               }
+            case SCIMConstants.OperationalConstants.PUT: {
+                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+                    response = resourceManager.updateWithPUTRole(resourceId, bulkRequestContent.getData(),
+                            roleManager);
+                } else {
+                    response = resourceManager.updateWithPUT(resourceId, bulkRequestContent.getData(), userManager,
+                            null, null);
+                }
 
-               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
-                       bulkRequestContent);
-               errorsCheck(response);
-               break;
-           }
+                bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PUT,
+                        bulkRequestContent);
+                errorsCheck(response);
+                break;
+            }
 
-           case SCIMConstants.OperationalConstants.PATCH: {
-               String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-               if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.updateWithPATCHRole(resourceId, bulkRequestContent.getData(),
-                           roleManager);
-               } else {
-                   response = resourceManager.updateWithPATCH(resourceId, bulkRequestContent.getData(), userManager,
-                                   null, null);
-               }
+            case SCIMConstants.OperationalConstants.PATCH: {
+                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+                    response = resourceManager.updateWithPATCHRole(resourceId, bulkRequestContent.getData(),
+                            roleManager);
+                } else {
+                    response = resourceManager.updateWithPATCH(resourceId, bulkRequestContent.getData(), userManager,
+                            null, null);
+                }
 
-               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
-                       bulkRequestContent);
-               errorsCheck(response);
-               break;
-           }
+                bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.PATCH,
+                        bulkRequestContent);
+                errorsCheck(response);
+                break;
+            }
 
-           case SCIMConstants.OperationalConstants.DELETE: {
-               String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-               if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
-                   response = resourceManager.deleteRole(resourceId, roleManager);
-               } else {
-                   response = resourceManager.delete(resourceId, userManager);
-               }
+            case SCIMConstants.OperationalConstants.DELETE: {
+                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+                    response = resourceManager.deleteRole(resourceId, roleManager);
+                } else {
+                    response = resourceManager.delete(resourceId, userManager);
+                }
 
-               bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
-                       bulkRequestContent);
-               errorsCheck(response);
-               break;
-           }
-       }
-       return bulkResponseContent;
-   }
+                bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.DELETE,
+                        bulkRequestContent);
+                errorsCheck(response);
+                break;
+            }
+        }
+        return bulkResponseContent;
+    }
 
     private String extractIDFromPath(String path) throws BadRequestException {
 
@@ -294,17 +289,18 @@ public class BulkRequestProcessor {
                                            String method) throws BadRequestException {
 
         try {
-            if (userIDMappings == null || userIDMappings.isEmpty()
-                    || method.equals(SCIMConstants.OperationalConstants.DELETE)) {
+            if (userIDMappings == null || userIDMappings.isEmpty() ||
+                    method.equals(SCIMConstants.OperationalConstants.DELETE)) {
                 return;
             }
-            // Parse the data field to a JSON object.
+
             JSONObject dataJson = new JSONObject(bulkRequestContent.getData());
             String usersOrMembersKey = getUsersOrMembersKey(bulkRequestContent.getPath());
             JSONArray usersArray = getUserArray(dataJson, method, usersOrMembersKey);
 
             if (usersArray != null) {
-                String bulkIdPrefix = SCIMConstants.OperationalConstants.BULK_ID + ":";
+                String bulkIdPrefix =
+                        SCIMConstants.OperationalConstants.BULK_ID + SCIMConstants.OperationalConstants.COLON;
                 for (int i = 0; i < usersArray.length(); i++) {
                     JSONObject user = usersArray.getJSONObject(i);
                     String userValue = user.getString(SCIMConstants.OperationalConstants.VALUE);
@@ -336,37 +332,32 @@ public class BulkRequestProcessor {
      * @param dataJson          SCIM data JSON object.
      * @param method            HTTP method.
      * @param usersOrMembersKey Users or members key.
-     * @return User array
+     * @return User array.
      * @throws JSONException    JSON exception.
      */
-    private JSONArray getUserArray(JSONObject dataJson, String method, String usersOrMembersKey)
-            throws JSONException {
+    private JSONArray getUserArray(JSONObject dataJson, String method, String usersOrMembersKey) throws JSONException {
 
-        switch (method) {
-            case SCIMConstants.OperationalConstants.POST:
-            case SCIMConstants.OperationalConstants.PUT:
-                return dataJson.optJSONArray(usersOrMembersKey);
-            case SCIMConstants.OperationalConstants.PATCH:
-                return getUserArrayForPatch(dataJson, usersOrMembersKey);
-            default:
-                return null;
+        if (SCIMConstants.OperationalConstants.PATCH.equals(method)) {
+            return getUserArrayForPatch(dataJson, usersOrMembersKey);
         }
+        return dataJson.optJSONArray(usersOrMembersKey);
     }
 
     private JSONArray getUserArrayForPatch(JSONObject dataJson, String usersOrMembersKey) throws JSONException {
 
         JSONArray operations = dataJson.optJSONArray(SCIMConstants.OperationalConstants.OPERATIONS);
-        if (operations != null) {
-            for (int i = 0; i < operations.length(); i++) {
-                JSONObject operation = operations.getJSONObject(i);
-                if (isAddOperation(operation, usersOrMembersKey)) {
-                    if (operation.has(SCIMConstants.OperationalConstants.PATH)) {
-                        return operation.optJSONArray(SCIMConstants.OperationalConstants.VALUE);
-                    } else {
-                        JSONObject valueObject = operation.optJSONObject(SCIMConstants.OperationalConstants.VALUE);
-                        if (valueObject != null) {
-                            return valueObject.optJSONArray(usersOrMembersKey);
-                        }
+        if (operations == null) {
+            return null;
+        }
+        for (int i = 0; i < operations.length(); i++) {
+            JSONObject operation = operations.getJSONObject(i);
+            if (isValidOperation(operation, usersOrMembersKey)) {
+                if (operation.has(SCIMConstants.OperationalConstants.PATH)) {
+                    return operation.optJSONArray(SCIMConstants.OperationalConstants.VALUE);
+                } else {
+                    JSONObject valueObject = operation.optJSONObject(SCIMConstants.OperationalConstants.VALUE);
+                    if (valueObject != null) {
+                        return valueObject.optJSONArray(usersOrMembersKey);
                     }
                 }
             }
@@ -374,12 +365,13 @@ public class BulkRequestProcessor {
         return null;
     }
 
-    private boolean isAddOperation(JSONObject operation, String path) throws JSONException {
+    private boolean isValidOperation(JSONObject operation, String path) throws JSONException {
 
         String operationType = operation.optString(SCIMConstants.OperationalConstants.OP);
-        String operationPath = operation.optString(SCIMConstants.OperationalConstants.PATH, "");
+        String operationPath = operation.optString(SCIMConstants.OperationalConstants.PATH, StringUtils.EMPTY);
 
-        return SCIMConstants.OperationalConstants.ADD.equalsIgnoreCase(operationType) &&
+        return (SCIMConstants.OperationalConstants.ADD.equalsIgnoreCase(operationType) ||
+                SCIMConstants.OperationalConstants.REPLACE.equalsIgnoreCase(operationType)) &&
                 (operationPath.equals(path) || operationPath.isEmpty());
     }
 
@@ -400,7 +392,8 @@ public class BulkRequestProcessor {
                 String locationHeader = response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER);
 
                 if (locationHeader != null) {
-                    String[] locationHeaderParts = locationHeader.split("/");
+                    String[] locationHeaderParts =
+                            locationHeader.split(SCIMConstants.OperationalConstants.URL_SEPARATOR);
                     String userId = locationHeaderParts[locationHeaderParts.length - 1];
                     userIdMappings.put(bulkId, userId);
                 }
