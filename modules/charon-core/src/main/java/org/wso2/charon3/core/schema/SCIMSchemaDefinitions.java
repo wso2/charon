@@ -513,6 +513,26 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
                                 (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
                                         .ROLE)), null);
+        public static final SCIMAttributeSchema ROLES_AUDIENCE_VALUE = SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_VALUE_URI,
+                SCIMConstants.CommonSchemaConstants.AUDIENCE_VALUE, SCIMDefinitions.DataType.STRING, false,
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_VALUE_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT, SCIMDefinitions.Uniqueness.NONE,
+                null, null, null);
+
+        public static final SCIMAttributeSchema ROLES_AUDIENCE_DISPLAY = SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_DISPLAY_URI,
+                SCIMConstants.CommonSchemaConstants.AUDIENCE_DISPLAY, SCIMDefinitions.DataType.STRING, false,
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_DISPLAY_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT, SCIMDefinitions.Uniqueness.NONE,
+                null, null, null);
+
+        public static final SCIMAttributeSchema ROLES_AUDIENCE_TYPE = SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_TYPE_URI,
+                SCIMConstants.CommonSchemaConstants.AUDIENCE_TYPE, SCIMDefinitions.DataType.STRING, false,
+                SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_TYPE_DESC, false, false,
+                SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT, SCIMDefinitions.Uniqueness.NONE,
+                null, null, null);
 
         //sub attributes of x509certificates attribute
 
@@ -807,7 +827,8 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.UserSchemaConstants.ROLES_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<>(Arrays.asList(ROLES_VALUE, ROLES_REF, ROLES_DISPLAY)));
+                        new ArrayList<>(Arrays.asList(ROLES_VALUE, ROLES_REF, ROLES_DISPLAY, ROLES_AUDIENCE_VALUE,
+                                ROLES_AUDIENCE_DISPLAY, ROLES_AUDIENCE_TYPE)));
 
         //A list of entitlements for the User that represent a thing the User has.
         public static final SCIMAttributeSchema ENTITLEMENTS =

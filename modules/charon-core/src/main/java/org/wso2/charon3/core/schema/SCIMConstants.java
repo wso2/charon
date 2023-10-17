@@ -103,6 +103,11 @@ public class SCIMConstants {
         public static final String REF = "$ref";
         public static final String VALUE = "value";
 
+        public static final String AUDIENCE_VALUE = "audienceValue";
+        public static final String AUDIENCE_DISPLAY = "audienceDisplay";
+        public static final String AUDIENCE_TYPE = "audienceType";
+
+
         /*******Attributes descriptions of the attributes found in Common Schema.***************/
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
@@ -281,6 +286,12 @@ public class SCIMConstants {
         public static final String ROLES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.type";
         public static final String ROLES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.primary";
         public static final String ROLES_REF_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.$ref";
+        public static final String ROLES_AUDIENCE_VALUE_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceValue";
+        public static final String ROLES_AUDIENCE_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceDisplay";
+        public static final String ROLES_AUDIENCE_TYPE_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceType";
 
         public static final String ENTITLEMENTS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements" +
                 ".value";
@@ -458,7 +469,10 @@ public class SCIMConstants {
                 "once.";
         public static final String ROLES_REF_DESC = "The uri of the corresponding 'Role' resource to which the user" +
                 " belongs.";
-
+        public static final String ROLES_AUDIENCE_VALUE_DESC = "The value of the role's usable audience.";
+        public static final String ROLES_AUDIENCE_DISPLAY_DESC = "A human-readable name of the role's usable audience.";
+        public static final String ROLES_AUDIENCE_TYPE_DESC =
+                "A label indicating the resource type of the role's usable audience.";
         public static final String X509CERTIFICATES_DESC = "A list of certificates issued to the User.";
         public static final String X509CERTIFICATES_VALUE_DESC = "The value of an X.509 certificate.";
         public static final String X509CERTIFICATES_DISPLAY_DESC = "A human-readable name, primarily used for display" +
