@@ -928,7 +928,6 @@ public class User extends AbstractSCIMObject {
 
         SimpleAttribute valueSimpleAttribute = null;
         SimpleAttribute displaySimpleAttribute;
-        SimpleAttribute referenceSimpleAttribute;
         SimpleAttribute audienceValueSimpleAttribute;
         SimpleAttribute audienceDisplaySimpleAttribute;
         SimpleAttribute audienceTypeSimpleAttribute;
@@ -941,52 +940,34 @@ public class User extends AbstractSCIMObject {
         ComplexAttribute complexAttribute = new ComplexAttribute();
 
         if (StringUtils.isNotBlank(value)) {
-            valueSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value);
-            valueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_VALUE, valueSimpleAttribute);
+            valueSimpleAttribute = getSimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_VALUE);
             complexAttribute.setSubAttribute(valueSimpleAttribute);
         }
 
         if (StringUtils.isNotBlank(reference)) {
-            referenceSimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference);
-            DefaultAttributeFactory.createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_REF,
-                    referenceSimpleAttribute);
-            complexAttribute.setSubAttribute(referenceSimpleAttribute);
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_REF));
         }
 
         if (StringUtils.isNotBlank(display)) {
-            displaySimpleAttribute = new SimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display);
-            displaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_DISPLAY,
-                            displaySimpleAttribute);
-            complexAttribute.setSubAttribute(displaySimpleAttribute);
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display,
+                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_DISPLAY));
         }
 
         if (StringUtils.isNotBlank(audienceValue)) {
-            audienceValueSimpleAttribute =
-                    new SimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_VALUE, audienceValue);
-            audienceValueSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_VALUE,
-                            audienceValueSimpleAttribute);
-            complexAttribute.setSubAttribute(audienceValueSimpleAttribute);
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_VALUE,
+                    audienceValue, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_VALUE));
         }
 
         if (StringUtils.isNotBlank(audienceDisplay)) {
-            audienceDisplaySimpleAttribute =
-                    new SimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_DISPLAY, audienceDisplay);
-            audienceDisplaySimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_DISPLAY,
-                            audienceDisplaySimpleAttribute);
-            complexAttribute.setSubAttribute(audienceDisplaySimpleAttribute);
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_DISPLAY,
+                    audienceDisplay, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_DISPLAY));
         }
 
         if (StringUtils.isNotBlank(audienceType)) {
-            audienceTypeSimpleAttribute =
-                    new SimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_TYPE, audienceType);
-            audienceTypeSimpleAttribute = (SimpleAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_TYPE,
-                            audienceTypeSimpleAttribute);
-            complexAttribute.setSubAttribute(audienceTypeSimpleAttribute);
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_TYPE,
+                    audienceType, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_TYPE));
         }
 
         if (!complexAttribute.getSubAttributesList().isEmpty()) {
@@ -1001,6 +982,14 @@ public class User extends AbstractSCIMObject {
                     .createAttribute(SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_SCHEMA, complexAttribute);
             setRoleV2(complexAttribute);
         }
+    }
+
+    private SimpleAttribute getSimpleAttribute(String attributeName, String attributeValue,
+                                                      SCIMAttributeSchema attributeSchema)
+            throws CharonException, BadRequestException {
+
+        return (SimpleAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
+                new SimpleAttribute(attributeName, attributeValue));
     }
 
     private void setRoleV2(ComplexAttribute rolePropertiesAttribute) throws CharonException, BadRequestException {
