@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,8 +54,10 @@ import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -881,6 +884,7 @@ public class JSONDecoder {
         List<BulkRequestContent> rolesEndpointOperationList = new ArrayList<>();
         int failOnErrorsAttribute;
         List<String> schemas = new ArrayList<>();
+        Set<String> encounteredBulkIds = new HashSet<>();
 
         JSONObject decodedObject;
         try {
@@ -917,9 +921,14 @@ public class JSONDecoder {
 
                 if (requestMethod.equals(SCIMConstants.OperationalConstants.POST)) {
 
-                    if (!member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals("") &&
-                            member.optString(SCIMConstants.OperationalConstants.BULK_ID) != null) {
+                    String bulkId = member.optString(SCIMConstants.OperationalConstants.BULK_ID);
 
+                    if (StringUtils.isNotEmpty(bulkId)) {
+                        if (encounteredBulkIds.contains(bulkId)) {
+                            String error = "Duplicate bulkId found: " + bulkId;
+                            throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                        }
+                        encounteredBulkIds.add(bulkId);
                         setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
                                 groupsEndpointOperationList, rolesEndpointOperationList);
                     } else {
