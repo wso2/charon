@@ -290,7 +290,7 @@ public class BulkRequestProcessor {
 
         try {
             if (userIDMappings == null || userIDMappings.isEmpty() ||
-                    method.equals(SCIMConstants.OperationalConstants.DELETE)) {
+                    SCIMConstants.OperationalConstants.DELETE.equals(method)) {
                 return;
             }
 
@@ -354,11 +354,10 @@ public class BulkRequestProcessor {
             if (isValidOperation(operation, usersOrMembersKey)) {
                 if (operation.has(SCIMConstants.OperationalConstants.PATH)) {
                     return operation.optJSONArray(SCIMConstants.OperationalConstants.VALUE);
-                } else {
-                    JSONObject valueObject = operation.optJSONObject(SCIMConstants.OperationalConstants.VALUE);
-                    if (valueObject != null) {
-                        return valueObject.optJSONArray(usersOrMembersKey);
-                    }
+                }
+                JSONObject valueObject = operation.optJSONObject(SCIMConstants.OperationalConstants.VALUE);
+                if (valueObject != null) {
+                    return valueObject.optJSONArray(usersOrMembersKey);
                 }
             }
         }
