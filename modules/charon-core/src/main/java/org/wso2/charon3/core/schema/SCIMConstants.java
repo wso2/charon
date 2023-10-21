@@ -571,6 +571,9 @@ public class SCIMConstants {
                 "The uri corresponding to a SCIM resource that is a user of this Role.";
         public static final String GROUPS_REF_DESC =
                 "The uri corresponding to a SCIM resource that is a group of this Role.";
+        public static final String PERMISSIONS_REF_DESC = "The uri corresponding to permission resource of this Role.";
+        public static final String ASC_APPLICATIONS_REF_DESC =
+                "The uri corresponding to associated application resource of this Role.";
         public static final String USERS_DISPLAY_DESC = "A human-readable name for the user.";
         public static final String GROUPS_DISPLAY_DESC = "A human-readable name for the group.";
         public static final String PERMISSIONS_DISPLAY_DESC = "A human-readable name for the permission.";
@@ -595,10 +598,14 @@ public class SCIMConstants {
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.value";
         public static final String PERMISSIONS_DISPLAY_URI =
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.display";
-        public static final String ASC_APPLICATION_VALUE_URI =
+        public static final String PERMISSIONS_REF_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.$ref";
+        public static final String ASC_APPLICATIONS_VALUE_URI =
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.value";
-        public static final String ASC_APPLICATION_DISPLAY_URI =
+        public static final String ASC_APPLICATIONS_DISPLAY_URI =
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.display";
+        public static final String ASC_APPLICATIONS_REF_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.$ref";
         public static final String AUDIENCE_VALUE_URI =
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.value";
         public static final String AUDIENCE_DISPLAY_URI =

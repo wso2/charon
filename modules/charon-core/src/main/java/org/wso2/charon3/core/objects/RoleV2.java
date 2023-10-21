@@ -426,10 +426,11 @@ public class RoleV2 extends AbstractSCIMObject {
     public List<MultiValuedComplexType> getPermissions() {
 
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS;
-        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSION_VALUE;
-        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSION_DISPLAY;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_DISPLAY;
+        SCIMAttributeSchema refDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_REF;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, null, null,
-                null).orElse(Collections.emptyList());
+                refDefinition).orElse(Collections.emptyList());
     }
 
     /**
@@ -438,10 +439,11 @@ public class RoleV2 extends AbstractSCIMObject {
     public void setPermissions(List<MultiValuedComplexType> permissionsList) {
 
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS;
-        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSION_VALUE;
-        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSION_DISPLAY;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_DISPLAY;
+        SCIMAttributeSchema refDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.PERMISSIONS_REF;
         addMultivaluedComplexAtribute(permissionsList, complexDefinition, valueDefinition, displayDefinition,
-                null, null, null);
+                null, null, refDefinition);
     }
 
     /**
@@ -506,10 +508,11 @@ public class RoleV2 extends AbstractSCIMObject {
     public List<MultiValuedComplexType> getAssociatedApplications() {
 
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS;
-        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATION_VALUE;
-        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATION_DISPLAY;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_DISPLAY;
+        SCIMAttributeSchema refDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_REF;
         return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, null, null,
-                null).orElse(Collections.emptyList());
+                refDefinition).orElse(Collections.emptyList());
     }
 
     /**
@@ -518,10 +521,11 @@ public class RoleV2 extends AbstractSCIMObject {
     public void setAssociatedApplications(List<MultiValuedComplexType> associatedApplicationsList) {
 
         SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS;
-        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATION_VALUE;
-        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATION_DISPLAY;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_DISPLAY;
+        SCIMAttributeSchema refDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ASC_APPLICATIONS_REF;
         addMultivaluedComplexAtribute(associatedApplicationsList, complexDefinition, valueDefinition,
-                displayDefinition, null, null, null);
+                displayDefinition, null, null, refDefinition);
     }
 
     /**

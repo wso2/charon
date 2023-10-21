@@ -1065,7 +1065,7 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         // Identifier of the permission of this Role.
-        public static final SCIMAttributeSchema PERMISSION_VALUE =
+        public static final SCIMAttributeSchema PERMISSIONS_VALUE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_VALUE_URI,
                         SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.PERMISSIONS_VALUE_DESC, false, false,
@@ -1073,30 +1073,47 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         // A human-readable name of the permission of this Role.
-        public static final SCIMAttributeSchema PERMISSION_DISPLAY =
+        public static final SCIMAttributeSchema PERMISSIONS_DISPLAY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_DISPLAY_URI,
                         SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.PERMISSIONS_DISPLAY_DESC, false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        // The uri corresponding to permission of a Role.
+        public static final SCIMAttributeSchema PERMISSIONS_REF =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_REF_URI,
+                        SCIMConstants.CommonSchemaConstants.REF, SCIMDefinitions.DataType.REFERENCE, false,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_REF_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null,
+                        new ArrayList<>(Arrays.asList(SCIMDefinitions.ReferenceType.URI)), null);
+
         // Identifier of the associated application of this Role.
-        public static final SCIMAttributeSchema ASC_APPLICATION_VALUE =
+        public static final SCIMAttributeSchema ASC_APPLICATIONS_VALUE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATION_VALUE_URI,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_VALUE_URI,
                         SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_VALUE_DESC, false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         // A human-readable name of the associated application of this Role.
-        public static final SCIMAttributeSchema ASC_APPLICATION_DISPLAY =
+        public static final SCIMAttributeSchema ASC_APPLICATIONS_DISPLAY =
                 SCIMAttributeSchema.createSCIMAttributeSchema(
-                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATION_DISPLAY_URI,
+                        SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_DISPLAY_URI,
                         SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_DISPLAY_DESC, false, false,
                         SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        // The uri corresponding to an associated application of this Role.
+        public static final SCIMAttributeSchema ASC_APPLICATIONS_REF = SCIMAttributeSchema.createSCIMAttributeSchema(
+                SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_REF_URI, SCIMConstants.CommonSchemaConstants.REF,
+                SCIMDefinitions.DataType.REFERENCE, false, SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_REF_DESC,
+                false, false, SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, null,
+                new ArrayList<>(Arrays.asList(SCIMDefinitions.ReferenceType.URI)), null);
 
         // Identifier of the role's audience.
         public static final SCIMAttributeSchema AUDIENCE_VALUE =
@@ -1180,7 +1197,7 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.RoleSchemaConstants.PERMISSIONS_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<>(Arrays.asList(PERMISSION_VALUE, PERMISSION_DISPLAY)));
+                        new ArrayList<>(Arrays.asList(PERMISSIONS_VALUE, PERMISSIONS_DISPLAY, PERMISSIONS_REF)));
 
         // A list of associated applications of the Role.
         public static final SCIMAttributeSchema ASSOCIATED_APPLICATIONS =
@@ -1188,8 +1205,8 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS, SCIMDefinitions.DataType.COMPLEX, true,
                         SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_DESC, false, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
-                        SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<>(Arrays.asList(ASC_APPLICATION_VALUE, ASC_APPLICATION_DISPLAY)));
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(
+                                Arrays.asList(ASC_APPLICATIONS_VALUE, ASC_APPLICATIONS_DISPLAY, ASC_APPLICATIONS_REF)));
     }
 
     /**
