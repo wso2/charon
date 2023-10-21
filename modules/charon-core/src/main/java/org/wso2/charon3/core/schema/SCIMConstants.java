@@ -560,7 +560,7 @@ public class SCIMConstants {
         public static final String GROUPS_DESC = "A list of groups of the role.";
         public static final String PERMISSIONS_DESC = "A list of permissions of the role.";
         public static final String ASC_APPLICATIONS_DESC = "A list of associated applications of the role.";
-        public static final String AUDIENCE_DESC = "The role usable scope.";
+        public static final String AUDIENCE_DESC = "The role usable audience.";
         public static final String USERS_VALUE_DESC = "Identifier of the user of this role.";
         public static final String GROUPS_VALUE_DESC = "Identifier of the group of this role.";
         public static final String PERMISSIONS_VALUE_DESC = "Identifier of the permissions of this role.";

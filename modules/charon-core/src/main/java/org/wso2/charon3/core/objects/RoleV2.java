@@ -385,7 +385,6 @@ public class RoleV2 extends AbstractSCIMObject {
             }
             permissionValuesList.add((String) ((SimpleAttribute) (subAttributesList
                     .get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
-
         }
         return permissionValuesList;
     }
@@ -406,7 +405,6 @@ public class RoleV2 extends AbstractSCIMObject {
         List<String> permissionDisplayNames = new ArrayList<>();
         if (values == null) {
             return Collections.emptyList();
-
         }
         List<Attribute> subValuesList = permissions.getAttributeValues();
         for (Attribute subValue : subValuesList) {
@@ -614,7 +612,6 @@ public class RoleV2 extends AbstractSCIMObject {
         return attributeList.containsKey(SCIMConstants.RoleSchemaConstants.AUDIENCE);
     }
 
-    // TODO: having this kind of custom property in meta is a spec violation. Check whether we need to fix.
 
     /**
      * Set the systemRole attribute of the meta attribute.

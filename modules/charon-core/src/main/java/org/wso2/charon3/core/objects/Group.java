@@ -490,18 +490,18 @@ public class Group extends AbstractSCIMObject {
                 new SimpleAttribute(attributeName, attributeValue));
     }
 
-    private void setRoleV2(ComplexAttribute groupPropertiesAttribute) throws CharonException, BadRequestException {
+    private void setRoleV2(ComplexAttribute rolePropertiesAttribute) throws CharonException, BadRequestException {
 
-        MultiValuedAttribute groupsAttribute;
+        MultiValuedAttribute rolesAttribute;
         if (this.attributeList.containsKey(SCIMConstants.GroupSchemaConstants.ROLES)) {
-            groupsAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.ROLES);
-            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
+            rolesAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.ROLES);
+            rolesAttribute.setAttributeValue(rolePropertiesAttribute);
         } else {
-            groupsAttribute = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.ROLES);
-            groupsAttribute.setAttributeValue(groupPropertiesAttribute);
-            groupsAttribute = (MultiValuedAttribute) DefaultAttributeFactory
-                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, groupsAttribute);
-            this.attributeList.put(SCIMConstants.GroupSchemaConstants.ROLES, groupsAttribute);
+            rolesAttribute = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.ROLES);
+            rolesAttribute.setAttributeValue(rolePropertiesAttribute);
+            rolesAttribute = (MultiValuedAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, rolesAttribute);
+            this.attributeList.put(SCIMConstants.GroupSchemaConstants.ROLES, rolesAttribute);
         }
     }
 }

@@ -513,6 +513,7 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, new ArrayList<>
                                 (Arrays.asList(SCIMDefinitions.ReferenceType.USER, SCIMDefinitions.ReferenceType
                                         .ROLE)), null);
+
         public static final SCIMAttributeSchema ROLES_AUDIENCE_VALUE = SCIMAttributeSchema.createSCIMAttributeSchema(
                 SCIMConstants.UserSchemaConstants.ROLES_AUDIENCE_VALUE_URI,
                 SCIMConstants.CommonSchemaConstants.AUDIENCE_VALUE, SCIMDefinitions.DataType.STRING, false,

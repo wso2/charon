@@ -18,8 +18,6 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
-// TODO check the comment. possible to move this out from charon, since it's an extended resource
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
@@ -95,8 +93,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                 throw new NotFoundException(message);
             }
             ServerSideValidator.validateRetrievedSCIMObject(role, schema, attributes, excludeAttributes);
-            // TODO
-//            ServerSideValidator.validateRetrievedSCIMRoleObject(role, attributes, excludeAttributes);
+            ServerSideValidator.validateRetrievedSCIMRoleV2Object(role, attributes, excludeAttributes);
             String encodedRole = encoder.encodeSCIMObject(role);
             Map<String, String> httpHeaders = new HashMap<>();
             httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
@@ -261,13 +258,12 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
             // Retrieve the old object.
             RoleV2 oldRole = roleManager.getRole(id, requestAttributes);
-            if (oldRole != null) {
-                RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
-                updatedRole = roleManager.updateRole(oldRole, newRole);
-            } else {
+            if (oldRole == null) {
                 String error = "No role exists with the given id: " + id;
                 throw new NotFoundException(error);
             }
+            RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
+            updatedRole = roleManager.updateRole(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
                  | NotImplementedException e) {
