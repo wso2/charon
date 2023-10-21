@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016-2023, WSO2 LLC. (http://www.wso2.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.wso2.charon3.core.schema;
 
@@ -58,6 +60,7 @@ public class SCIMConstants {
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String ROLE_ENDPOINT = "/Roles";
+    public static final String ROLE_V2_ENDPOINT = "/v2/Roles";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
     public static final String RESOURCE_TYPE_ENDPOINT = "/ResourceTypes";
     public static final String SCHEMAS_ENDPOINT = "/Schemas";
@@ -101,6 +104,10 @@ public class SCIMConstants {
         public static final String DISPLAY = "display";
         public static final String REF = "$ref";
         public static final String VALUE = "value";
+
+        public static final String AUDIENCE_VALUE = "audienceValue";
+        public static final String AUDIENCE_DISPLAY = "audienceDisplay";
+        public static final String AUDIENCE_TYPE = "audienceType";
 
         /*******Attributes descriptions of the attributes found in Common Schema.***************/
 
@@ -280,6 +287,12 @@ public class SCIMConstants {
         public static final String ROLES_TYPE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.type";
         public static final String ROLES_PRIMARY_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.primary";
         public static final String ROLES_REF_URI = "urn:ietf:params:scim:schemas:core:2.0:User:roles.$ref";
+        public static final String ROLES_AUDIENCE_VALUE_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceValue";
+        public static final String ROLES_AUDIENCE_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceDisplay";
+        public static final String ROLES_AUDIENCE_TYPE_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:User:roles.audienceType";
 
         public static final String ENTITLEMENTS_VALUE_URI = "urn:ietf:params:scim:schemas:core:2.0:User:entitlements" +
                 ".value";
@@ -457,7 +470,10 @@ public class SCIMConstants {
                 "once.";
         public static final String ROLES_REF_DESC = "The uri of the corresponding 'Role' resource to which the user" +
                 " belongs.";
-
+        public static final String ROLES_AUDIENCE_VALUE_DESC = "The value of the role's usable audience.";
+        public static final String ROLES_AUDIENCE_DISPLAY_DESC = "A human-readable name of the role's usable audience.";
+        public static final String ROLES_AUDIENCE_TYPE_DESC =
+                "A label indicating the resource type of the role's usable audience.";
         public static final String X509CERTIFICATES_DESC = "A list of certificates issued to the User.";
         public static final String X509CERTIFICATES_VALUE_DESC = "The value of an X.509 certificate.";
         public static final String X509CERTIFICATES_DISPLAY_DESC = "A human-readable name, primarily used for display" +
@@ -524,24 +540,47 @@ public class SCIMConstants {
         public static final String GROUPS_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups";
         public static final String PERMISSIONS = "permissions";
         public static final String PERMISSIONS_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions";
+        public static final String ASC_APPLICATIONS = "associatedApplications";
+        public static final String ASC_APPLICATIONS_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications";
+        public static final String AUDIENCE = "audience";
+        public static final String AUDIENCE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:audience";
         public static final String DISPLAY = "display";
+        public static final String VALUE = "value";
         public static final String TYPE = "type";
+
+        // Possible canonical values for audience type attribute.
+        public static final String APPLICATION = "application";
+        public static final String ORGANIZATION = "organization";
 
         // Attributes descriptions of the attributes found in Role Schema.
         public static final String DISPLAY_NAME_DESC = "A human-readable name for the Role. REQUIRED.";
         public static final String USERS_DESC = "A list of users of the role.";
         public static final String GROUPS_DESC = "A list of groups of the role.";
         public static final String PERMISSIONS_DESC = "A list of permissions of the role.";
+        public static final String ASC_APPLICATIONS_DESC = "A list of associated applications of the role.";
+        public static final String AUDIENCE_DESC = "The role usable audience.";
         public static final String USERS_VALUE_DESC = "Identifier of the user of this role.";
         public static final String GROUPS_VALUE_DESC = "Identifier of the group of this role.";
-        public static final String PERMISSIONS_VALUE_DESC = "List of the permissions of this role.";
+        public static final String PERMISSIONS_VALUE_DESC = "Identifier of the permissions of this role.";
+        public static final String ASC_APPLICATIONS_VALUE_DESC =
+                "Identifier of the associated applications of this role.";
+        public static final String AUDIENCE_VALUE_DESC = "Identifier of the role's usable audience.";
         public static final String USERS_REF_DESC =
                 "The uri corresponding to a SCIM resource that is a user of this Role.";
         public static final String GROUPS_REF_DESC =
                 "The uri corresponding to a SCIM resource that is a group of this Role.";
+        public static final String PERMISSIONS_REF_DESC = "The uri corresponding to permission resource of this Role.";
+        public static final String ASC_APPLICATIONS_REF_DESC =
+                "The uri corresponding to associated application resource of this Role.";
         public static final String USERS_DISPLAY_DESC = "A human-readable name for the user.";
         public static final String GROUPS_DISPLAY_DESC = "A human-readable name for the group.";
+        public static final String PERMISSIONS_DISPLAY_DESC = "A human-readable name for the permission.";
+        public static final String ASC_APPLICATIONS_DISPLAY_DESC = "A human-readable name for the application.";
+        public static final String AUDIENCE_DISPLAY_DESC = "A human-readable name of the role's usable audience.";
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
+        public static final String AUDIENCE_TYPE_DESC =
+                "A label indicating the resource type of the role's usable audience.";
 
         // URIs of sub and multivalued attributes.
         public static final String USERS_VALUE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:users.value";
@@ -554,6 +593,23 @@ public class SCIMConstants {
         public static final String GROUPS_DISPLAY_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups"
                 + ".display";
         public static final String GROUPS_TYPE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:groups.type";
+        public static final String PERMISSIONS_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.value";
+        public static final String PERMISSIONS_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.display";
+        public static final String PERMISSIONS_REF_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:permissions.$ref";
+        public static final String ASC_APPLICATIONS_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.value";
+        public static final String ASC_APPLICATIONS_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.display";
+        public static final String ASC_APPLICATIONS_REF_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:associatedApplications.$ref";
+        public static final String AUDIENCE_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.value";
+        public static final String AUDIENCE_DISPLAY_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.display";
+        public static final String AUDIENCE_TYPE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.type";
     }
 
     /**

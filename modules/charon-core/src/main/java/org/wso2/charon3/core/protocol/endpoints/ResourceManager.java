@@ -1,21 +1,24 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016-2023, WSO2 LLC. (http://www.wso2.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.extensions.RoleManager;
+import org.wso2.charon3.core.extensions.RoleV2Manager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -241,6 +244,108 @@ public interface ResourceManager {
      * @return SCIMResponse.
      */
     default SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleManager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    // RoleV2 resource management operations.
+
+    /**
+     * GET method to retrieve a specific role in roleV2 model.
+     *
+     * @param id                Resource id.
+     * @param roleManager       RoleV2 manager.
+     * @param attributes        Attributes in the response.
+     * @param excludeAttributes Exclude attributes in the response.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse getRole(String id, RoleV2Manager roleManager, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to create a new role in roleV2 model.
+     *
+     * @param postRequest Post request.
+     * @param roleManager RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse createRole(String postRequest, RoleV2Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * DELETE method to delete a specific role in roleV2 model.
+     *
+     * @param id          Resource id.
+     * @param roleManager RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse deleteRole(String id, RoleV2Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * GET method to list roles in roleV2 model.
+     *
+     * @param roleManager RoleV2 manager.
+     * @param filter      Filter to be executed.
+     * @param startIndex  Starting index value of the filter.
+     * @param count       Number of required results.
+     * @param sortBy      SortBy.
+     * @param sortOrder   Sorting order.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithGETRole(RoleV2Manager roleManager, String filter, Integer startIndex, Integer count,
+                                         String sortBy, String sortOrder) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to search roles in roleV2 model.
+     *
+     * @param searchRequest Search request.
+     * @param roleManager   RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithPOSTRole(String searchRequest, RoleV2Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PUT method To update a role by giving entire attributes set.
+     *
+     * @param id          Resource id.
+     * @param putRequest  Put request.
+     * @param roleManager RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PATCH method to partially updates a role.
+     *
+     * @param id           Resource id.
+     * @param patchRequest Patch request.
+     * @param roleManager  RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());

@@ -1,17 +1,19 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016-2023, WSO2 LLC. (http://www.wso2.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * WSO2 LLC. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.wso2.charon3.core.objects;
 
@@ -23,6 +25,7 @@ import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -45,6 +48,7 @@ public class Group extends AbstractSCIMObject {
     private static final long serialVersionUID = 6106269076155338045L;
     /**
      * get the display name of the group
+     *
      * @return
      * @throws CharonException
      */
@@ -59,6 +63,7 @@ public class Group extends AbstractSCIMObject {
 
     /**
      * set the display name of the group
+     *
      * @param displayName
      * @throws CharonException
      * @throws BadRequestException
@@ -85,6 +90,7 @@ public class Group extends AbstractSCIMObject {
 
     /**
      * get the members of the group
+     *
      * @return
      */
     public List<Object> getMembers() {
@@ -108,6 +114,7 @@ public class Group extends AbstractSCIMObject {
 
     /**
      * get the members of the group with their display names
+     *
      * @return
      */
     public List<String> getMembersWithDisplayName() {
@@ -169,6 +176,7 @@ public class Group extends AbstractSCIMObject {
 
     /**
      * set member to the group
+     *
      * @param userId
      * @param userName
      * @return
@@ -411,4 +419,89 @@ public class Group extends AbstractSCIMObject {
         }
     }
 
+    /**
+     * Set the assigned V2 roles of the group.
+     *
+     * @param role RoleV2 object.
+     * @throws CharonException     CharonException.
+     * @throws BadRequestException BadRequestException.
+     */
+    public void setRoleV2(RoleV2 role) throws CharonException, BadRequestException {
+
+        SimpleAttribute valueSimpleAttribute = null;
+        String reference = role.getLocation();
+        String value = role.getId();
+        String display = role.getDisplayName();
+        String audienceValue = role.getAudienceValue();
+        String audienceDisplay = role.getAudienceDisplayName();
+        String audienceType = role.getAudienceType();
+        ComplexAttribute complexAttribute = new ComplexAttribute();
+
+        if (StringUtils.isNotBlank(value)) {
+            valueSimpleAttribute = getSimpleAttribute(SCIMConstants.CommonSchemaConstants.VALUE, value,
+                    SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_VALUE);
+            complexAttribute.setSubAttribute(valueSimpleAttribute);
+        }
+
+        if (StringUtils.isNotBlank(reference)) {
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.REF, reference,
+                    SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_REF));
+        }
+
+        if (StringUtils.isNotBlank(display)) {
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.DISPLAY, display,
+                    SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_DISPLAY));
+        }
+
+        if (StringUtils.isNotBlank(audienceValue)) {
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_VALUE,
+                    audienceValue, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_VALUE));
+        }
+
+        if (StringUtils.isNotBlank(audienceDisplay)) {
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_DISPLAY,
+                    audienceDisplay, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_DISPLAY));
+        }
+
+        if (StringUtils.isNotBlank(audienceType)) {
+            complexAttribute.setSubAttribute(getSimpleAttribute(SCIMConstants.CommonSchemaConstants.AUDIENCE_TYPE,
+                    audienceType, SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES_AUDIENCE_TYPE));
+        }
+
+        if (!complexAttribute.getSubAttributesList().isEmpty()) {
+            Object typeVal = SCIMConstants.DEFAULT;
+            Object valueVal = SCIMConstants.DEFAULT;
+            if (valueSimpleAttribute != null && valueSimpleAttribute.getValue() != null) {
+                valueVal = valueSimpleAttribute.getValue();
+            }
+            String complexAttributeName = SCIMConstants.GroupSchemaConstants.ROLES + "_" + valueVal + "_" + typeVal;
+            complexAttribute.setName(complexAttributeName);
+            DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, complexAttribute);
+            setRoleV2(complexAttribute);
+        }
+    }
+
+    private SimpleAttribute getSimpleAttribute(String attributeName, String attributeValue,
+                                               SCIMAttributeSchema attributeSchema)
+            throws CharonException, BadRequestException {
+
+        return (SimpleAttribute) DefaultAttributeFactory.createAttribute(attributeSchema,
+                new SimpleAttribute(attributeName, attributeValue));
+    }
+
+    private void setRoleV2(ComplexAttribute rolePropertiesAttribute) throws CharonException, BadRequestException {
+
+        MultiValuedAttribute rolesAttribute;
+        if (this.attributeList.containsKey(SCIMConstants.GroupSchemaConstants.ROLES)) {
+            rolesAttribute = (MultiValuedAttribute) this.attributeList.get(SCIMConstants.GroupSchemaConstants.ROLES);
+            rolesAttribute.setAttributeValue(rolePropertiesAttribute);
+        } else {
+            rolesAttribute = new MultiValuedAttribute(SCIMConstants.GroupSchemaConstants.ROLES);
+            rolesAttribute.setAttributeValue(rolePropertiesAttribute);
+            rolesAttribute = (MultiValuedAttribute) DefaultAttributeFactory
+                    .createAttribute(SCIMSchemaDefinitions.SCIMGroupSchemaDefinition.ROLES_SCHEMA, rolesAttribute);
+            this.attributeList.put(SCIMConstants.GroupSchemaConstants.ROLES, rolesAttribute);
+        }
+    }
 }
