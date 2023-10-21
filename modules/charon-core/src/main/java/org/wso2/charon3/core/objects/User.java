@@ -927,10 +927,6 @@ public class User extends AbstractSCIMObject {
     public void setRoleV2(RoleV2 role) throws CharonException, BadRequestException {
 
         SimpleAttribute valueSimpleAttribute = null;
-        SimpleAttribute displaySimpleAttribute;
-        SimpleAttribute audienceValueSimpleAttribute;
-        SimpleAttribute audienceDisplaySimpleAttribute;
-        SimpleAttribute audienceTypeSimpleAttribute;
         String reference = role.getLocation();
         String value = role.getId();
         String display = role.getDisplayName();

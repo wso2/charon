@@ -100,24 +100,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getUsers() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.USERS)) {
-            return Collections.emptyList();
-        }
-        List<String> userList = new ArrayList<>();
-        MultiValuedAttribute users = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.USERS);
-        List<Attribute> subValuesList = users.getAttributeValues();
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null ||
-                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
-                continue;
-            }
-            userList.add((String) ((SimpleAttribute) (subAttributesList.get(
-                    SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
-        }
-        return userList;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.USERS,
+                SCIMConstants.CommonSchemaConstants.VALUE);
     }
 
     /**
@@ -127,27 +111,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getUsersWithDisplayName() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.USERS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute users = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.USERS);
-        List<Attribute> subValuesList = users.getAttributeValues();
-        if (subValuesList == null) {
-            return Collections.emptyList();
-        }
-        List<String> displayNames = new ArrayList<>();
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null ||
-                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                continue;
-            }
-            displayNames.add((String) ((SimpleAttribute) (subAttributesList
-                    .get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
-        }
-        return displayNames;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.USERS,
+                SCIMConstants.CommonSchemaConstants.DISPLAY);
     }
 
     /**
@@ -225,27 +190,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getGroups() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.GROUPS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute groups = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.GROUPS);
-        List<Attribute> subValuesList = groups.getAttributeValues();
-        if (subValuesList == null) {
-            return Collections.emptyList();
-        }
-        List<String> groupList = new ArrayList<>();
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null ||
-                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
-                continue;
-            }
-            groupList.add((String) ((SimpleAttribute) (subAttributesList.get(
-                    SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
-        }
-        return groupList;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.GROUPS,
+                SCIMConstants.CommonSchemaConstants.VALUE);
     }
 
     /**
@@ -255,29 +201,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getGroupsWithDisplayName() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.GROUPS)) {
-            return Collections.emptyList();
-        }
-        List<String> displayNames = new ArrayList<>();
-        MultiValuedAttribute groups = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.GROUPS);
-        List<Attribute> values = groups.getAttributeValues();
-        if (values == null) {
-            return displayNames;
-        }
-        List<Attribute> subValuesList = groups.getAttributeValues();
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null || !subAttributesList
-                    .containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                continue;
-            }
-            displayNames.add((String) ((SimpleAttribute) (subAttributesList
-                    .get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
-
-        }
-        return displayNames;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.GROUPS,
+                SCIMConstants.CommonSchemaConstants.DISPLAY);
     }
 
     /**
@@ -366,27 +291,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getPermissionValues() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.PERMISSIONS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute permissions = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.PERMISSIONS);
-        List<Attribute> subValuesList = permissions.getAttributeValues();
-        List<String> permissionValuesList = new ArrayList<>();
-        if (subValuesList == null) {
-            return Collections.emptyList();
-        }
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null ||
-                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
-                continue;
-            }
-            permissionValuesList.add((String) ((SimpleAttribute) (subAttributesList
-                    .get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
-        }
-        return permissionValuesList;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.PERMISSIONS,
+                SCIMConstants.CommonSchemaConstants.VALUE);
     }
 
     /**
@@ -396,28 +302,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getPermissionDisplayNames() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.PERMISSIONS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute permissions = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.PERMISSIONS);
-        List<Attribute> values = permissions.getAttributeValues();
-        List<String> permissionDisplayNames = new ArrayList<>();
-        if (values == null) {
-            return Collections.emptyList();
-        }
-        List<Attribute> subValuesList = permissions.getAttributeValues();
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null || !subAttributesList
-                    .containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                continue;
-            }
-            permissionDisplayNames.add((String) ((SimpleAttribute) (subAttributesList
-                    .get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
-        }
-        return permissionDisplayNames;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(SCIMConstants.RoleSchemaConstants.PERMISSIONS,
+                SCIMConstants.CommonSchemaConstants.DISPLAY);
     }
 
     /**
@@ -451,27 +337,9 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getAssociatedApplicationValues() {
 
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute associatedApps = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS);
-        List<Attribute> subValuesList = associatedApps.getAttributeValues();
-        List<String> assocAppValuesList = new ArrayList<>();
-        if (subValuesList == null) {
-            return Collections.emptyList();
-        }
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null ||
-                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE)) {
-                continue;
-            }
-            assocAppValuesList.add((String) ((SimpleAttribute) (subAttributesList
-                    .get(SCIMConstants.CommonSchemaConstants.VALUE))).getValue());
-        }
-        return assocAppValuesList;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(
+                SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS,
+                SCIMConstants.CommonSchemaConstants.VALUE);
     }
 
     /**
@@ -479,27 +347,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public List<String> getAssociatedApplicationDisplayNames() {
 
-        List<String> assocAppDisplayNames = new ArrayList<>();
-        if (!this.isAttributeExist(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS)) {
-            return Collections.emptyList();
-        }
-        MultiValuedAttribute associatedApps = (MultiValuedAttribute) this.attributeList
-                .get(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS);
-        List<Attribute> subValuesList = associatedApps.getAttributeValues();
-        if (subValuesList == null) {
-            return Collections.emptyList();
-        }
-        for (Attribute subValue : subValuesList) {
-            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
-            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
-            if (subAttributesList == null || !subAttributesList
-                    .containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
-                continue;
-            }
-            assocAppDisplayNames.add((String) ((SimpleAttribute) (subAttributesList
-                        .get(SCIMConstants.CommonSchemaConstants.DISPLAY))).getValue());
-        }
-        return assocAppDisplayNames;
+        return getSubAttributeValuesListInMultiValuedComplexAttribute(
+                SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS, SCIMConstants.CommonSchemaConstants.DISPLAY);
     }
 
     /**
@@ -544,11 +393,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public String getAudienceValue() {
 
-        SCIMAttributeSchema audienceDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE;
-        SCIMAttributeSchema audienceValueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_VALUE;
-        return getComplexAttribute(audienceDefinition).map(aud -> getSimpleAttribute(audienceValueDefinition, aud)
-                .map(rethrowFunction(SimpleAttribute::getStringValue))
-                .orElse(null)).orElse(null);
+        return getSubAttributeOfComplexAttribute(SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE,
+                SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_VALUE);
     }
 
     /**
@@ -556,11 +402,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public String getAudienceDisplayName() {
 
-        SCIMAttributeSchema audienceDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE;
-        SCIMAttributeSchema audienceDisplayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_DISPLAY;
-        return getComplexAttribute(audienceDefinition).map(aud -> getSimpleAttribute(audienceDisplayDefinition, aud)
-                .map(rethrowFunction(SimpleAttribute::getStringValue))
-                .orElse(null)).orElse(null);
+        return getSubAttributeOfComplexAttribute(SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE,
+                SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_DISPLAY);
     }
 
     /**
@@ -568,11 +411,8 @@ public class RoleV2 extends AbstractSCIMObject {
      */
     public String getAudienceType() {
 
-        SCIMAttributeSchema audienceDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE;
-        SCIMAttributeSchema audienceTypeDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_TYPE;
-        return getComplexAttribute(audienceDefinition).map(aud -> getSimpleAttribute(audienceTypeDefinition, aud)
-                .map(rethrowFunction(SimpleAttribute::getStringValue))
-                .orElse(null)).orElse(null);
+        return getSubAttributeOfComplexAttribute(SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE,
+                SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.AUDIENCE_TYPE);
     }
 
     /**
@@ -645,5 +485,43 @@ public class RoleV2 extends AbstractSCIMObject {
             createMetaAttribute();
             getMetaAttribute().setSubAttribute(systemRoleAttribute);
         }
+    }
+
+    private List<String> getSubAttributeValuesListInMultiValuedComplexAttribute(String multiValuedAttributeName,
+                                                                                String subAttributeName) {
+
+        if (!this.isAttributeExist(multiValuedAttributeName)) {
+            return Collections.emptyList();
+        }
+        MultiValuedAttribute multiValuedAttribute =
+                (MultiValuedAttribute) this.attributeList.get(multiValuedAttributeName);
+        List<Attribute> subValuesList = multiValuedAttribute.getAttributeValues();
+        if (subValuesList == null) {
+            return Collections.emptyList();
+        }
+        return getSubAttributeValues(subAttributeName, subValuesList);
+    }
+
+    private List<String> getSubAttributeValues(String subAttributeName, List<Attribute> subValuesList) {
+
+        List<String> subAttributeValues = new ArrayList<>();
+        for (Attribute subValue : subValuesList) {
+            ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
+            Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+            if (subAttributesList == null || !subAttributesList.containsKey(subAttributeName)) {
+                continue;
+            }
+            subAttributeValues.add((String) ((SimpleAttribute) (subAttributesList.get(subAttributeName))).getValue());
+        }
+        return subAttributeValues;
+    }
+
+    private String getSubAttributeOfComplexAttribute(SCIMAttributeSchema complexAttributeSchema,
+                                                     SCIMAttributeSchema subAttributeSchema) {
+
+        return getComplexAttribute(complexAttributeSchema).map(
+                complexAttribute -> getSimpleAttribute(subAttributeSchema, complexAttribute)
+                        .map(rethrowFunction(SimpleAttribute::getStringValue))
+                        .orElse(null)).orElse(null);
     }
 }
