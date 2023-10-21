@@ -109,7 +109,6 @@ public class SCIMConstants {
         public static final String AUDIENCE_DISPLAY = "audienceDisplay";
         public static final String AUDIENCE_TYPE = "audienceType";
 
-
         /*******Attributes descriptions of the attributes found in Common Schema.***************/
 
         public static final String ID_DESC = "Unique identifier for the SCIM Resource as defined by the Service " +
