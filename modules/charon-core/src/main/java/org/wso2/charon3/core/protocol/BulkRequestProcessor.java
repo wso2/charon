@@ -310,10 +310,9 @@ public class BulkRequestProcessor {
         String [] parts = path.split("[/]");
         if (parts[3] != null) {
             return parts[3];
-        } else {
-            throw new BadRequestException
-                    ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
         }
+        throw new BadRequestException
+                    ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
     }
 
     private BulkResponseContent createBulkResponseContent(SCIMResponse response, String method,
