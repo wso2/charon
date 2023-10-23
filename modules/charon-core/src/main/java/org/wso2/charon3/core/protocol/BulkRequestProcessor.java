@@ -306,6 +306,7 @@ public class BulkRequestProcessor {
     }
 
     private String extractIDFromV2Path(String path) throws BadRequestException {
+
         String [] parts = path.split("[/]");
         if (parts[3] != null) {
             return parts[3];
