@@ -882,6 +882,7 @@ public class JSONDecoder {
         List<BulkRequestContent> usersEndpointOperationList = new ArrayList<>();
         List<BulkRequestContent> groupsEndpointOperationList = new ArrayList<>();
         List<BulkRequestContent> rolesEndpointOperationList = new ArrayList<>();
+        List<BulkRequestContent> rolesV2EndpointOperationList = new ArrayList<>();
         int failOnErrorsAttribute;
         List<String> schemas = new ArrayList<>();
         Set<String> encounteredBulkIds = new HashSet<>();
@@ -930,7 +931,7 @@ public class JSONDecoder {
                         }
                         encounteredBulkIds.add(bulkId);
                         setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
-                                groupsEndpointOperationList, rolesEndpointOperationList);
+                                groupsEndpointOperationList, rolesEndpointOperationList, rolesV2EndpointOperationList);
                     } else {
                         String error = "JSON string could not be decoded properly.Required " +
                                 "attribute BULK_ID is missing in the request";
@@ -939,7 +940,7 @@ public class JSONDecoder {
                     }
                 } else {
                     setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
-                            groupsEndpointOperationList, rolesEndpointOperationList);
+                            groupsEndpointOperationList, rolesEndpointOperationList, rolesV2EndpointOperationList);
                 }
             }
             //extract [failOnErrors] attribute from Json string
@@ -949,6 +950,7 @@ public class JSONDecoder {
             bulkRequestDataObject.setUserOperationRequests(usersEndpointOperationList);
             bulkRequestDataObject.setGroupOperationRequests(groupsEndpointOperationList);
             bulkRequestDataObject.setRoleOperationRequests(rolesEndpointOperationList);
+            bulkRequestDataObject.setRoleV2OperationRequests(rolesV2EndpointOperationList);
 
         } catch (JSONException e) {
             if (logger.isDebugEnabled()) {
@@ -961,8 +963,10 @@ public class JSONDecoder {
     }
 
     private void setRequestData(String requestType, String requestMethod, String requestVersion, JSONObject member,
-            List<BulkRequestContent> usersEndpointOperationList, List<BulkRequestContent> groupsEndpointOperationList,
-            List<BulkRequestContent> rolesEndpointOperationList) {
+                                List<BulkRequestContent> usersEndpointOperationList,
+                                List<BulkRequestContent> groupsEndpointOperationList,
+                                List<BulkRequestContent> rolesEndpointOperationList,
+                                List<BulkRequestContent> rolesV2EndpointOperationList) {
 
         // Create user request list.
         if (requestType.contains(SCIMConstants.USER_ENDPOINT)) {
@@ -982,7 +986,11 @@ public class JSONDecoder {
         }
 
         // Create role request list.
-        if (requestType.contains(SCIMConstants.ROLE_ENDPOINT)) {
+        if (requestType.contains(SCIMConstants.ROLE_V2_ENDPOINT)) {
+            BulkRequestContent newRequestData =
+                    getBulkRequestContent(member, requestMethod, requestType, requestVersion);
+            rolesV2EndpointOperationList.add(newRequestData);
+        } else if (requestType.contains(SCIMConstants.ROLE_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
             rolesEndpointOperationList.add(newRequestData);

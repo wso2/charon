@@ -30,12 +30,14 @@ public class BulkRequestData {
     private List<BulkRequestContent> userOperationRequests;
     private List<BulkRequestContent> groupOperationRequests;
     private List<BulkRequestContent> roleOperationRequests;
+    private List<BulkRequestContent> roleV2OperationRequests;
 
     public BulkRequestData() {
 
         userOperationRequests = new ArrayList<>();
         groupOperationRequests = new ArrayList<>();
         roleOperationRequests = new ArrayList<>();
+        roleV2OperationRequests = new ArrayList<>();
         schemas = new ArrayList<>();
     }
 
@@ -71,6 +73,16 @@ public class BulkRequestData {
     public void setRoleOperationRequests(List<BulkRequestContent> roleOperationRequests) {
 
         this.roleOperationRequests = roleOperationRequests;
+    }
+
+    public List<BulkRequestContent> getRoleV2OperationRequests() {
+
+        return roleV2OperationRequests;
+    }
+
+    public void setRoleV2OperationRequests(List<BulkRequestContent> roleV2OperationRequests) {
+
+        this.roleV2OperationRequests = roleV2OperationRequests;
     }
 
     public List<String> getSchemas() {

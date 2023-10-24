@@ -23,6 +23,7 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.extensions.RoleManager;
+import org.wso2.charon3.core.extensions.RoleV2Manager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -48,6 +49,14 @@ public class BulkResourceManager extends AbstractResourceManager {
 
     public BulkResourceManager() {
         bulkRequestProcessor = new BulkRequestProcessor();
+    }
+
+    public SCIMResponse processBulkData(String data, UserManager userManager, RoleManager roleManager,
+                                        RoleV2Manager roleV2Manager) {
+
+        bulkRequestProcessor.setRoleManager(roleManager);
+        bulkRequestProcessor.setRoleV2Manager(roleV2Manager);
+        return processBulkData(data, userManager);
     }
 
     public SCIMResponse processBulkData(String data, UserManager userManager, RoleManager roleManager) {
