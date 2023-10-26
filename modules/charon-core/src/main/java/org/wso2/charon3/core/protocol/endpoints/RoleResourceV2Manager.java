@@ -737,6 +737,9 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
 
         Map<String, Attribute> attributeList = attributeHoldingSCIMObject.getAttributeList();
+        if (attributeList.isEmpty()) {
+            throw new BadRequestException(ResponseCodeConstants.DESC_BAD_REQUEST, ResponseCodeConstants.INVALID_SYNTAX);
+        }
 
         if (attributeList.containsKey(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME)) {
             patchOperation.setAttributeName(SCIMConstants.RoleSchemaConstants.DISPLAY_NAME);
