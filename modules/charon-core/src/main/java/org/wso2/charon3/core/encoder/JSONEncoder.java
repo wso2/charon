@@ -587,30 +587,29 @@ public class JSONEncoder {
                                        ArrayList<JSONObject> operationResponseList)
             throws JSONException {
 
-        JSONObject operationObject = new JSONObject();
+        int statusCode = responseContent.getScimResponse().getResponseStatus();
 
         JSONObject status = new JSONObject();
-        int statusCode = responseContent.getScimResponse().getResponseStatus();
         status.put(SCIMConstants.OperationalConstants.CODE, statusCode);
 
-
+        JSONObject operationObject = new JSONObject();
         operationObject.put(SCIMConstants.CommonSchemaConstants.LOCATION, responseContent.getLocation());
         operationObject.put(SCIMConstants.OperationalConstants.METHOD, responseContent.getMethod());
         operationObject.put(SCIMConstants.OperationalConstants.BULK_ID, responseContent.getBulkID());
         operationObject.put(SCIMConstants.OperationalConstants.STATUS, status);
 
-        //When indicating a response with an HTTP status other than a 200-series response,
+        // When indicating a response with an HTTP status other than a 200-series response,
         // the response body MUST be included.
-        if (statusCode != 200 && statusCode != 201 && statusCode != 204) {
+        //
+        // Addition: 2023/11/15
+        // We are now supporting bulk get as well. Hence, even with 200 responses, we can get a body. Hence, null
+        // checking the scim response and if not null adding the response as well.
+        // Keeping the old status code check for backward compatibility.
+        if ((statusCode != 200 && statusCode != 201 && statusCode != 204)
+                || responseContent.getScimResponse() != null) {
             operationObject.put(SCIMConstants.OperationalConstants.RESPONSE,
                     responseContent.getScimResponse().getResponseMessage());
         }
-
         operationResponseList.add(operationObject);
-
     }
 }
-
-
-
-

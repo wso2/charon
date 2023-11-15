@@ -126,6 +126,8 @@ public class SCIMConstants {
         public static final String VERSION_DESC = "The version of the resource being returned.";
         public static final String SYSTEM_ROLE_DESC = "Whether the returned role is a read only system role.";
 
+        public static final String ATTRIBUTES = "attributes";
+        public static final String EXCLUDE_ATTRIBUTES = "excludedAttributes";
     }
 
     /**
@@ -830,6 +832,7 @@ public class SCIMConstants {
         public static final String DELETE = "DELETE";
         public static final String PUT = "PUT";
         public static final String PATCH = "PATCH";
+        public static final String GET = "GET";
 
         public static final String COLON = ":";
         public static final String URL_SEPARATOR = "/";
