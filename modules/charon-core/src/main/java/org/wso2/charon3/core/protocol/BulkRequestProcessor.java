@@ -290,8 +290,58 @@ public class BulkRequestProcessor {
                 errorsCheck(response);
                 break;
             }
+
+            case SCIMConstants.OperationalConstants.GET: {
+                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
+                String attributes = getAttributesFromData(bulkRequestContent.getData());
+                String excludeAttributes = getExcludedAttributesFromData(bulkRequestContent.getData());
+
+                if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_V2_ENDPOINT)) {
+                    resourceId = extractIDFromV2Path(bulkRequestContent.getPath());
+                    response = resourceManager.getRole(resourceId, roleV2Manager, attributes, excludeAttributes);
+                } else if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
+                    response = resourceManager.getRole(resourceId, roleManager, attributes, excludeAttributes);
+                } else {
+                    response = resourceManager.get(resourceId, userManager, attributes, excludeAttributes);
+                }
+
+                bulkResponseContent = createBulkResponseContent(response, SCIMConstants.OperationalConstants.GET,
+                        bulkRequestContent);
+                errorsCheck(response);
+                break;
+            }
         }
         return bulkResponseContent;
+    }
+
+    private String getExcludedAttributesFromData(String data) throws BadRequestException {
+
+        String excludedAttributes = null;
+        try {
+            JSONObject dataJson = new JSONObject(data);
+            if (dataJson.has(SCIMConstants.CommonSchemaConstants.EXCLUDE_ATTRIBUTES)) {
+                excludedAttributes = dataJson.getString(SCIMConstants.CommonSchemaConstants.EXCLUDE_ATTRIBUTES);
+            }
+        } catch (JSONException e) {
+            throw new BadRequestException("Error while parsing the data field of the bulk request content",
+                    ResponseCodeConstants.INVALID_SYNTAX);
+        }
+        return excludedAttributes;
+    }
+
+    private String getAttributesFromData(String data) throws BadRequestException {
+
+        String attributes = null;
+        try {
+            JSONObject dataJson = new JSONObject(data);
+            if (dataJson.has(SCIMConstants.CommonSchemaConstants.ATTRIBUTES)) {
+                attributes = dataJson.getString(SCIMConstants.CommonSchemaConstants.ATTRIBUTES);
+            }
+        } catch (JSONException e) {
+            throw new BadRequestException("Error while parsing the data field of the bulk request content",
+                    ResponseCodeConstants.INVALID_SYNTAX);
+        }
+        return attributes;
     }
 
     private String extractIDFromPath(String path) throws BadRequestException {
