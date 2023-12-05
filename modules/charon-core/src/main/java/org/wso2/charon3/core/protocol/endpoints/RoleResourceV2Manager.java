@@ -46,6 +46,7 @@ import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.objects.plainobjects.RolesV2GetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -157,7 +158,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
     @Override
     public SCIMResponse listWithGETRole(RoleV2Manager roleManager, String filter, Integer startIndexInt,
-                                        Integer countInt, String sortBy, String sortOrder) {
+                                        Integer countInt, String sortBy, String sortOrder, String attributes,
+                                        String excludeAttributes) {
 
         try {
             if (roleManager == null) {
@@ -171,10 +173,12 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             // Build node for filtering.
             Node rootNode = buildNode(filter, schema);
             JSONEncoder encoder = getEncoder();
-
+            // Get the list of required attributes which must be given a value
+            List<String> requestedAttributes = getRequestedAttributes(
+                    (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
             RolesV2GetResponse rolesResponse = roleManager.listRolesWithGET(rootNode, startIndex, count, sortBy,
-                    sortOrder);
-            return processRoleList(rolesResponse, encoder, startIndex);
+                    sortOrder, requestedAttributes);
+            return processRoleList(rolesResponse, encoder, startIndex, attributes, excludeAttributes);
         } catch (CharonException | InternalErrorException | BadRequestException | NotImplementedException e) {
             return encodeSCIMException(e);
         } catch (IOException e) {
@@ -182,6 +186,18 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             CharonException charonException = new CharonException(error);
             return AbstractResourceManager.encodeSCIMException(charonException);
         }
+    }
+
+    private List<String> getRequestedAttributes(SCIMResourceTypeSchema schema, String requestedAttributes,
+                                                String requestedExcludingAttributes) throws CharonException {
+
+        ArrayList<AttributeSchema> requestedAttributeSchemas = ResourceManagerUtil.getOnlyRequiredAttributes(
+                (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), requestedAttributes, requestedExcludingAttributes);
+        List<String> requestedAttributesList = new ArrayList<>();
+        for (AttributeSchema attributeSchema : requestedAttributeSchemas) {
+            requestedAttributesList.add(attributeSchema.getName());
+        }
+        return requestedAttributesList;
     }
 
     @Override
@@ -222,8 +238,13 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             if (searchRequestObject.getSortOder() == null && searchRequestObject.getSortBy() != null) {
                 searchRequestObject.setSortOder(SCIMConstants.OperationalConstants.ASCENDING);
             }
+            String attributes = searchRequestObject.getAttributesAsString();
+            String excludeAttributes = searchRequestObject.getExcludedAttributesAsString();
 
-            RolesV2GetResponse rolesResponse = roleManager.listRolesWithPost(searchRequestObject);
+            List<String> requestedAttributes = getRequestedAttributes(
+                    (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+
+            RolesV2GetResponse rolesResponse = roleManager.listRolesWithPost(searchRequestObject, requestedAttributes);
 
             for (RoleV2 role : rolesResponse.getRoles()) {
                 ServerSideValidator.validateRetrievedSCIMObjectInList(role, schema,
@@ -415,7 +436,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
      * @throws CharonException     CharonException.
      * @throws BadRequestException BadRequestException.
      */
-    private SCIMResponse processRoleList(RolesV2GetResponse rolesResponse, JSONEncoder encoder, int startIndex)
+    private SCIMResponse processRoleList(RolesV2GetResponse rolesResponse, JSONEncoder encoder, int startIndex,
+                                         String attributes, String excludeAttributes)
             throws CharonException, BadRequestException {
 
         if (rolesResponse == null) {
@@ -425,8 +447,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             rolesResponse.setRoles(Collections.emptyList());
         }
         for (RoleV2 role : rolesResponse.getRoles()) {
-            ServerSideValidator.validateSCIMObjectForRequiredAttributes(role,
-                    SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
+            ServerSideValidator.validateRetrievedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA,
+                    attributes, excludeAttributes);
         }
         // Create a listed resource object out of the returned groups list.
         ListedResource listedResource = createListedResource(rolesResponse, startIndex);
