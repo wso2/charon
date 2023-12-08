@@ -79,17 +79,19 @@ public interface RoleV2Manager {
     /**
      * List roles with Get.
      *
-     * @param node       Node
-     * @param startIndex Start Index
-     * @param count      Count
-     * @param sortBy     Sort by
-     * @param sortOrder  Sort order
+     * @param node               Node
+     * @param startIndex         Start Index
+     * @param count              Count
+     * @param sortBy             Sort by
+     * @param sortOrder          Sort order
+     * @param requiredAttributes Required attributes
      * @return List of roles.
      * @throws CharonException         CharonException.
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    RolesV2GetResponse listRolesWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder)
+    RolesV2GetResponse listRolesWithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder,
+                                        List<String> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException;
 
     /**
@@ -110,13 +112,14 @@ public interface RoleV2Manager {
     /**
      * List roles with Post.
      *
-     * @param searchRequest Search request.
+     * @param searchRequest      Search request.
+     * @param requiredAttributes Required attributes.
      * @return List of roles.
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      * @throws CharonException         CharonException.
      */
-    RolesV2GetResponse listRolesWithPost(SearchRequest searchRequest)
+    RolesV2GetResponse listRolesWithPost(SearchRequest searchRequest, List<String> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
     /**

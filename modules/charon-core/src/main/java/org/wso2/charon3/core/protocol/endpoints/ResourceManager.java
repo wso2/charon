@@ -295,16 +295,18 @@ public interface ResourceManager {
     /**
      * GET method to list roles in roleV2 model.
      *
-     * @param roleManager RoleV2 manager.
-     * @param filter      Filter to be executed.
-     * @param startIndex  Starting index value of the filter.
-     * @param count       Number of required results.
-     * @param sortBy      SortBy.
-     * @param sortOrder   Sorting order.
+     * @param roleManager       RoleV2 manager.
+     * @param filter            Filter to be executed.
+     * @param startIndex        Starting index value of the filter.
+     * @param count             Number of required results.
+     * @param sortBy            SortBy.
+     * @param sortOrder         Sorting order.
+     * @param attributes        Requested attributes.
+     * @param excludeAttributes Requested exclude attributes.
      * @return SCIMResponse.
      */
     default SCIMResponse listWithGETRole(RoleV2Manager roleManager, String filter, Integer startIndex, Integer count,
-                                         String sortBy, String sortOrder) {
+                                         String sortBy, String sortOrder, String attributes, String excludeAttributes) {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());

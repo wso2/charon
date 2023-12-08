@@ -1120,7 +1120,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_VALUE_URI,
                         SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE_VALUE_DESC, false, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.ALWAYS,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         // A human-readable name of role's audience.
@@ -1128,7 +1128,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_DISPLAY_URI,
                         SCIMConstants.RoleSchemaConstants.DISPLAY, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE_DISPLAY_DESC, false, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.ALWAYS,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
         // Type of the role's audience (eg: application, organization).
@@ -1136,7 +1136,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_TYPE_URI,
                         SCIMConstants.RoleSchemaConstants.TYPE, SCIMDefinitions.DataType.STRING, false,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE_TYPE_DESC, false, false,
-                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.ALWAYS,
                         SCIMDefinitions.Uniqueness.NONE, new ArrayList<>(
                                 Arrays.asList(SCIMConstants.RoleSchemaConstants.APPLICATION,
                                         SCIMConstants.RoleSchemaConstants.ORGANIZATION)), null, null);
@@ -1157,7 +1157,7 @@ public class SCIMSchemaDefinitions {
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.AUDIENCE_URI,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE, SCIMDefinitions.DataType.COMPLEX, false,
                         SCIMConstants.RoleSchemaConstants.AUDIENCE_DESC, false, false,
-                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.ALWAYS,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
                         new ArrayList<>(Arrays.asList(AUDIENCE_VALUE, AUDIENCE_DISPLAY, AUDIENCE_TYPE)));
 
