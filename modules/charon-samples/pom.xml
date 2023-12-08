@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.wso2.charon</groupId>
         <artifactId>charon-parent</artifactId>
-        <version>4.0.16-SNAPSHOT</version>
+        <version>4.0.16</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
