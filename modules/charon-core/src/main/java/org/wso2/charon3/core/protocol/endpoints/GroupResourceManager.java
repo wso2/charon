@@ -16,6 +16,7 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -676,7 +677,8 @@ public class GroupResourceManager extends AbstractResourceManager {
         for (PatchOperation patchOperation : patchOperations) {
             String operation = patchOperation.getOperation();
             String path = patchOperation.getPath();
-            if (!(patchOperation.getValues() instanceof String)) {
+            if (!(SCIMConstants.OperationalConstants.ADD).equals(operation)
+                    && !(patchOperation.getValues() instanceof String)) {
                 JSONObject valuesJson = (JSONObject) patchOperation.getValues();
                 if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
                         ((path != null && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) ||
@@ -854,7 +856,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                     patchOperation.setValues(attributePrefixedJson);
                 } else if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.MEMBERS) &&
                         patchOperation.getValues() != null) {
-                    JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
+                    JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
                     JSONObject attributePrefixedJson = new JSONObject();
 
                     attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.MEMBERS, valuesPropertyJson);
