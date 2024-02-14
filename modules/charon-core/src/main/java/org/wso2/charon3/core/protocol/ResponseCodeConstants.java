@@ -74,6 +74,8 @@ public class ResponseCodeConstants {
 
     public static final int CODE_PAYLOAD_TOO_LARGE = 413;
     public static final String DESC_PAYLOAD_TOO_LARGE = "{\"maxOperations\": 1000,\"maxPayloadSize\": 1048576}";
+    public static final String ERROR_DESC_MAX_OPERATIONS_EXCEEDED = "Bulk operation count exceeds the maximum " +
+            "allowed limit.";
 
     public static final int CODE_INTERNAL_ERROR = 500;
     public static final String DESC_INTERNAL_ERROR = "An internal error.";
