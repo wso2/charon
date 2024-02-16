@@ -90,10 +90,10 @@ public class BulkResourceManager extends AbstractResourceManager {
                     bulkRequestDataObject.getRoleOperationRequests().size() +
                     bulkRequestDataObject.getRoleV2OperationRequests().size();
             if (totalOperationCount > maxOperationCount) {
-                throw new PayloadTooLargeException(String.format("%s Actual: %d, Max allowed: %d.",
-                        ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
-                        totalOperationCount,
-                        maxOperationCount));
+                throw new PayloadTooLargeException(
+                        String.format(ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
+                                totalOperationCount,
+                                maxOperationCount));
             }
 
             // Get bulk response data.
