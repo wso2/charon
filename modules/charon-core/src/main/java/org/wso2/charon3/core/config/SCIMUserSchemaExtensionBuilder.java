@@ -61,18 +61,24 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
      * @throws CharonException
      */
     public void buildUserSchemaExtension(String configFilePath) throws CharonException, InternalErrorException {
-
-        readConfiguration(configFilePath);
-        buildExtensionSchema();
+        File provisioningConfig = new File(configFilePath);
+        try (InputStream configFilePathInputStream = new FileInputStream(provisioningConfig)) {
+            buildUserSchemaExtension(configFilePathInputStream);
+        } catch (FileNotFoundException e) {
+            throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
+                    e);
+        } catch (JSONException e) {
+            throw new CharonException("Error while parsing " +
+                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
+        } catch (IOException e) {
+            throw new CharonException("Error while closing " +
+                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
+        }
     }
 
     public void buildUserSchemaExtension(InputStream inputStream) throws CharonException, InternalErrorException {
 
         readConfiguration(inputStream);
-        buildExtensionSchema();
-    }
-
-    private void buildExtensionSchema() throws InternalErrorException {
         for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig : extensionConfig.entrySet()) {
             // if there are no children its a simple attribute, build it
             if (!attributeSchemaConfig.getValue().hasChildren()) {
@@ -88,30 +94,6 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
          * root attribute
          */
         extensionSchema = attributeSchemas.get(extensionRootAttributeURI);
-    }
-
-    /*
-     * This method reads configuration file and stores in the memory as an
-     * configuration map
-     *
-     * @param configFilePath
-     * @throws CharonException
-     */
-    private void readConfiguration(String configFilePath) throws CharonException {
-
-        File provisioningConfig = new File(configFilePath);
-        try (InputStream inputStream = new FileInputStream(provisioningConfig)) {
-            readConfiguration(inputStream);
-        } catch (FileNotFoundException e) {
-            throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
-                    e);
-        } catch (JSONException e) {
-            throw new CharonException("Error while parsing " +
-                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
-        } catch (IOException e) {
-            throw new CharonException("Error while closing " +
-                    SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
-        }
     }
 
     public void readConfiguration(InputStream inputStream) throws CharonException {
