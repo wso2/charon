@@ -63,7 +63,16 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
     public void buildUserSchemaExtension(String configFilePath) throws CharonException, InternalErrorException {
 
         readConfiguration(configFilePath);
+        buildExtensionSchema();
+    }
 
+    public void buildUserSchemaExtension(InputStream inputStream) throws CharonException, InternalErrorException {
+
+        readConfiguration(inputStream);
+        buildExtensionSchema();
+    }
+
+    private void buildExtensionSchema() throws InternalErrorException {
         for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig : extensionConfig.entrySet()) {
             // if there are no children its a simple attribute, build it
             if (!attributeSchemaConfig.getValue().hasChildren()) {
@@ -92,26 +101,7 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
 
         File provisioningConfig = new File(configFilePath);
         try (InputStream inputStream = new FileInputStream(provisioningConfig)) {
-            //Scanner scanner = new Scanner(new FileInputStream(provisioningConfig));
-            Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
-            String jsonString = scanner.hasNext() ? scanner.next() : "";
-
-            JSONArray attributeConfigArray = new JSONArray(jsonString);
-
-            for (int index = 0; index < attributeConfigArray.length(); ++index) {
-                JSONObject rawAttributeConfig = attributeConfigArray.getJSONObject(index);
-                ExtensionAttributeSchemaConfig schemaAttributeConfig =
-                        new ExtensionAttributeSchemaConfig(rawAttributeConfig);
-                extensionConfig.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
-
-                /**
-                 * NOTE: Assume last config is the root config
-                 */
-                if (index == attributeConfigArray.length() - 1) {
-                    extensionRootAttributeURI = schemaAttributeConfig.getURI();
-                    extensionRootAttributeName = schemaAttributeConfig.getName();
-                }
-            }
+            readConfiguration(inputStream);
         } catch (FileNotFoundException e) {
             throw new CharonException(SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file not found!",
                     e);
@@ -121,6 +111,29 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
         } catch (IOException e) {
             throw new CharonException("Error while closing " +
                     SCIMConfigConstants.SCIM_SCHEMA_EXTENSION_CONFIG + " file!", e);
+        }
+    }
+
+    public void readConfiguration(InputStream inputStream) throws CharonException {
+        //Scanner scanner = new Scanner(new FileInputStream(provisioningConfig));
+        Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
+        String jsonString = scanner.hasNext() ? scanner.next() : "";
+
+        JSONArray attributeConfigArray = new JSONArray(jsonString);
+
+        for (int index = 0; index < attributeConfigArray.length(); ++index) {
+            JSONObject rawAttributeConfig = attributeConfigArray.getJSONObject(index);
+            ExtensionAttributeSchemaConfig schemaAttributeConfig =
+                    new ExtensionAttributeSchemaConfig(rawAttributeConfig);
+            extensionConfig.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
+
+            /**
+             * NOTE: Assume last config is the root config
+             */
+            if (index == attributeConfigArray.length() - 1) {
+                extensionRootAttributeURI = schemaAttributeConfig.getURI();
+                extensionRootAttributeName = schemaAttributeConfig.getName();
+            }
         }
     }
 
