@@ -24,6 +24,7 @@ import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
 import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.schema.AttributeSchema;
@@ -53,22 +54,44 @@ public interface UserManager {
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
 
     /**
-     * List users with Get.
+     * List users with Get using offset pagination.
      *
-     * @param node               Node
-     * @param startIndex         Start Index
-     * @param count              Count
-     * @param sortBy             Sort by
-     * @param sortOrder          Sort order
-     * @param domainName         Domain name
-     * @param requiredAttributes Required user attributes
-     * @return Users with requested attributes
-     * @throws CharonException         Error while listing users
-     * @throws NotImplementedException Operation note implemented
-     * @throws BadRequestException     Bad request
+     * @param node               Tree node built based on the filtering conditions.
+     * @param startIndex         Start Index.
+     * @param count              Count.
+     * @param sortBy             Sort by.
+     * @param sortOrder          Sort order.
+     * @param domainName         Domain name.
+     * @param requiredAttributes Required user attributes.
+     * @return Users with requested attributes.
+     * @throws CharonException         Error while listing users.
+     * @throws NotImplementedException Operation note implemented.
+     * @throws BadRequestException     Bad request.
      */
     default UsersGetResponse listUsersWithGET(Node node, Integer startIndex, Integer count, String sortBy,
-                        String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
+                                         String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
+            throws CharonException, NotImplementedException, BadRequestException {
+
+        return null;
+    }
+
+    /**
+     * List users with Get using cursor pagination.
+     *
+     * @param node               Tree node built based on the filtering conditions.
+     * @param cursor             Cursor value for pagination and the Pagination direction.
+     * @param count              Count.
+     * @param sortBy             Sort by.
+     * @param sortOrder          Sort order.
+     * @param domainName         Domain name.
+     * @param requiredAttributes Required user attributes.
+     * @return Users with requested attributes.
+     * @throws CharonException         Error while listing users.
+     * @throws NotImplementedException Operation note implemented.
+     * @throws BadRequestException     Bad request.
+     */
+    default UsersGetResponse listUsersWithGET(Node node, Cursor cursor, Integer count, String sortBy, String sortOrder,
+                                              String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
         return null;
@@ -86,7 +109,7 @@ public interface UserManager {
      */
     @Deprecated
     default UsersGetResponse listUsersWithGET(Node node, int startIndex, int count, String sortBy, String sortOrder,
-            String domainName, Map<String, Boolean> requiredAttributes)
+                                              String domainName, Map<String, Boolean> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
         return null;
@@ -188,7 +211,7 @@ public interface UserManager {
      *
      * @param oldGroup
      * @param newGroup
-     *
+     * 
      * @throws NotImplementedException
      * @throws BadRequestException
      * @throws CharonException

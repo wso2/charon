@@ -28,6 +28,7 @@ public class SCIMResponse {
     //If there are any HTTP header parameters to be set in response other than response code,
     protected Map<String, String> headerParamMap;
 
+
     /*
      * Constructor with three params
      *
