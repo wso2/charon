@@ -775,7 +775,7 @@ public class JSONDecoder {
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
                 operationList.add(patchOperation);
             }
-        } catch (JSONException e) {
+        } catch (JSONException | ClassCastException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("json error in decoding the request", e);
             }
