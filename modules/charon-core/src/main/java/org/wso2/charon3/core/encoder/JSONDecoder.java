@@ -754,9 +754,9 @@ public class JSONDecoder {
             //obtain the Operations values
             JSONArray operationJsonList = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.OPERATIONS);
 
-            //check if operationJsonList is null
+            // Check if operationJsonList is null.
             if (operationJsonList == null) {
-                //check if operations field present in lowercase
+                // Check if operations field present in lowercase.
                 if (decodedJsonObj.has(StringUtils.lowerCase(SCIMConstants.OperationalConstants.OPERATIONS))) {
                     throw new BadRequestException("Invalid JSON schema.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
