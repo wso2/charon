@@ -756,12 +756,10 @@ public class JSONDecoder {
 
             //check if operationJsonList is null
             if (operationJsonList == null) {
-
                 //check if operations field present in lowercase
                 if (decodedJsonObj.has(StringUtils.lowerCase(SCIMConstants.OperationalConstants.OPERATIONS))) {
                     throw new BadRequestException("Invalid JSON schema.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
-
                 throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
             }
 
