@@ -29,6 +29,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -115,7 +116,7 @@ public class FilterTreeManager {
                         tempTokenList.add(concatenatedString);
                         concatenatedString = "";
                     }
-                    tempTokenList.add(decodedValue);
+                    tempTokenList.add(decodedValue.toLowerCase(Locale.ENGLISH));
                 }
             } else if (input.ttype == '\"' || input.ttype == '\'') {
                 concatenatedString += " " + input.sval;
