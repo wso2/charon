@@ -131,6 +131,42 @@ public class ListedResource extends AbstractSCIMObject {
     }
 
     /**
+     * Setting the next cursor as an SCIM attribute.
+     *
+     * @param nextCursor  The base64 encoded JSON string, made up of the cursor value and the pagination direction.
+     */
+    public void setNextCursor(String nextCursor) {
+
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.NEXT_CURSOR)) {
+            SimpleAttribute nextCursorAttribute =
+                    new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.NEXT_CURSOR, nextCursor);
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.NEXT_CURSOR, nextCursorAttribute);
+        } else {
+            SimpleAttribute nextCursorAttribute = ((SimpleAttribute) attributeList
+                    .get(SCIMConstants.ListedResourceSchemaConstants.NEXT_CURSOR));
+            nextCursorAttribute.setValue(nextCursor);
+        }
+    }
+
+    /**
+     * Setting the previous cursor as an SCIM attribute.
+     *
+     * @param previousCursor  The base64 encoded JSON string, made up of the cursor value and the pagination direction.
+     */
+    public void setPreviousCursor(String previousCursor) {
+
+        if (!isAttributeExist(SCIMConstants.ListedResourceSchemaConstants.PREVIOUS_CURSOR)) {
+            SimpleAttribute prevCursorAttribute =
+                    new SimpleAttribute(SCIMConstants.ListedResourceSchemaConstants.PREVIOUS_CURSOR, previousCursor);
+            attributeList.put(SCIMConstants.ListedResourceSchemaConstants.PREVIOUS_CURSOR, prevCursorAttribute);
+        } else {
+            SimpleAttribute previousCursorAttribute = ((SimpleAttribute) attributeList
+                    .get(SCIMConstants.ListedResourceSchemaConstants.PREVIOUS_CURSOR));
+            previousCursorAttribute.setValue(previousCursor);
+        }
+    }
+
+    /**
      * set the listed resources
      *
      * @param valueWithAttributes

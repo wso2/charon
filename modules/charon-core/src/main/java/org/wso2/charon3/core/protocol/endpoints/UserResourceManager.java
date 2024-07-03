@@ -18,6 +18,7 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
@@ -33,6 +34,7 @@ import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
 import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -49,6 +51,8 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -297,7 +301,8 @@ public class UserResourceManager extends AbstractResourceManager {
                         .listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
                                 requiredAttributes);
 
-                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex);
+                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex,
+                        null, count);
             } else {
                 String error = "Provided user manager handler is null.";
                 // Log the error as well.
@@ -361,7 +366,75 @@ public class UserResourceManager extends AbstractResourceManager {
                 UsersGetResponse usersGetResponse = userManager
                         .listUsersWithGET(rootNode, startIndex, count, sortBy, sortOrder, domainName,
                                 requiredAttributes);
-                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex);
+
+                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, startIndex,
+                        null, count);
+            } else {
+                String error = "Provided user manager handler is null.";
+                // Log the error as well.
+                // Throw internal server error.
+                throw new InternalErrorException(error);
+            }
+        } catch (CharonException | NotFoundException | InternalErrorException | BadRequestException |
+                NotImplementedException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (IOException e) {
+            String error = "Error in tokenization of the input filter";
+            CharonException charonException = new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        }
+    }
+
+    /**
+     * Method to list users at the Users endpoint - Using cursor instead of offset.
+     * In the method, when the count is zero, the response will get zero results. When the count value is not
+     * specified (null) a default number of values for response will be returned. Any negative value to the count
+     * will return all the users.
+     *
+     * @param userManager       User manager.
+     * @param filter            Filter to be executed.
+     * @param cursorString      Cursor value for pagination.
+     * @param countInt          Number of required results.
+     * @param sortBy            SortBy.
+     * @param sortOrder         Sorting order.
+     * @param domainName        Domain name.
+     * @param attributes        Attributes in the request.
+     * @param excludeAttributes Exclude attributes.
+     * @return SCIM response.
+     */
+    @Override
+    public SCIMResponse listWithGET(UserManager userManager, String filter, String cursorString, Integer countInt,
+                                    String sortBy, String sortOrder, String domainName, String attributes,
+                                    String excludeAttributes) {
+
+        try {
+            Integer count = ResourceManagerUtil.processCount(countInt);
+            //For handling null cursor and decoding the cursor to get the value and direction.
+            Cursor cursor = ResourceManagerUtil.processCursor(cursorString);
+
+            // Resolve sorting order.
+            sortOrder = resolveSortOrder(sortOrder, sortBy);
+
+            // Unless configured returns core-user schema or else returns extended user schema).
+            SCIMResourceTypeSchema schema = getSchema(userManager);
+
+            // Build node for filtering.
+            Node rootNode = buildNode(filter, schema);
+
+            // Obtain the json encoder.
+            JSONEncoder encoder = getEncoder();
+
+            // Get the URIs of required attributes which must be given a value
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil
+                    .getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
+                            excludeAttributes);
+
+            // API user should pass a user manager to UserResourceEndpoint.
+            if (userManager != null) {
+                UsersGetResponse usersGetResponse = userManager
+                        .listUsersWithGET(rootNode, cursor, count, sortBy, sortOrder, domainName, requiredAttributes);
+                return processUserList(usersGetResponse, encoder, schema, attributes, excludeAttributes, null,
+                        cursor, count);
             } else {
                 String error = "Provided user manager handler is null.";
                 // Log the error as well.
@@ -424,20 +497,23 @@ public class UserResourceManager extends AbstractResourceManager {
     /**
      * Method to process a user list and return a SCIM response.
      *
-     * @param usersGetResponse  Filtered user list and total user count.
+     * @param usersGetResponse  UsersGetResponse type object with the users, total count and cursor values.
      * @param encoder           Json encoder
      * @param schema            Schema
      * @param attributes        Required attributes
      * @param excludeAttributes Exclude attributes
      * @param startIndex        Starting index
+     * @param cursor            Cursor for pagination and Pagination direction.
+     * @param limit             Page size.
      * @return SCIM response
      * @throws NotFoundException
      * @throws CharonException
      * @throws BadRequestException
      */
     private SCIMResponse processUserList(UsersGetResponse usersGetResponse, JSONEncoder encoder,
-            SCIMResourceTypeSchema schema, String attributes, String excludeAttributes, int startIndex)
-            throws NotFoundException, CharonException, BadRequestException {
+                                         SCIMResourceTypeSchema schema,
+                                         String attributes, String excludeAttributes, Integer startIndex, Cursor cursor,
+                                         Integer limit) throws NotFoundException, CharonException, BadRequestException {
 
         if (usersGetResponse == null) {
             usersGetResponse = new UsersGetResponse(0, Collections.emptyList());
@@ -450,7 +526,8 @@ public class UserResourceManager extends AbstractResourceManager {
             ServerSideValidator.validateRetrievedSCIMObjectInList(user, schema, attributes, excludeAttributes);
         }
         // Create a listed resource object out of the returned users list.
-        ListedResource listedResource = createListedResource(usersGetResponse, startIndex);
+        ListedResource listedResource = createListedResource(usersGetResponse, startIndex,
+             cursor != null ? cursor.getCursorValue() : null, limit);
         // Convert the listed resource into specific format.
         String encodedListedResource = encoder.encodeSCIMObject(listedResource);
         // If there are any http headers to be added in the response header.
@@ -481,7 +558,9 @@ public class UserResourceManager extends AbstractResourceManager {
             SearchRequest searchRequest = decoder.decodeSearchRequestBody(resourceString, schema);
 
             searchRequest.setCount(ResourceManagerUtil.processCount(searchRequest.getCountStr()));
-            searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
+            if (searchRequest.getCursor() == null) {
+                searchRequest.setStartIndex(ResourceManagerUtil.processStartIndex(searchRequest.getStartIndexStr()));
+            }
 
             //check whether provided sortOrder is valid or not
             if (searchRequest.getSortOder() != null) {
@@ -514,7 +593,11 @@ public class UserResourceManager extends AbstractResourceManager {
                 }
                 //create a listed resource object out of the returned users list.
                 ListedResource listedResource = createListedResource(
-                        usersGetResponse, searchRequest.getStartIndex());
+                        // If no cursor and no startIndex are provided, the startIndex will be set to 1.
+                        // If no count is provided, the count will be set to the server pagination limit.
+                        usersGetResponse, searchRequest.getStartIndex() > 0 ? searchRequest.getStartIndex() : null,
+                        searchRequest.getCursor() != null ? searchRequest.getCursor().getCursorValue() : null,
+                        searchRequest.getCount());           //cursor != null ? cursor.getCursorValue() : null
                 //convert the listed resource into specific format.
                 String encodedListedResource = encoder.encodeSCIMObject(listedResource);
                 //if there are any http headers to be added in the response header.
@@ -753,24 +836,77 @@ public class UserResourceManager extends AbstractResourceManager {
     /*
      * Creates the Listed Resource.
      *
-     * @param usersGetResponse
-     * @param startIndex
+     * @param users         List of users retrieved from the user store.
+     * @param startIndex    Offset.
+     * @param totalResults  Total results retrieved.
+     * @param cursor        Cursor value used for cursor pagination.
+     * @param direction     Direction of cursor pagination.
      * @return
      * @throws CharonException
      * @throws NotFoundException
      */
-    protected ListedResource createListedResource(UsersGetResponse usersGetResponse, int startIndex)
+    protected ListedResource createListedResource(UsersGetResponse usersGetResponse, Integer startIndex, String cursor,
+                                                  Integer limit)
             throws CharonException, NotFoundException {
+
         ListedResource listedResource = new ListedResource();
         listedResource.setSchema(SCIMConstants.LISTED_RESOURCE_CORE_SCHEMA_URI);
-        listedResource.setTotalResults(usersGetResponse.getTotalUsers());
-        listedResource.setStartIndex(startIndex);
         listedResource.setItemsPerPage(usersGetResponse.getUsers().size());
+        listedResource.setTotalResults(usersGetResponse.getTotalUsers());
         for (User user : usersGetResponse.getUsers()) {
             Map<String, Attribute> userAttributes = user.getAttributeList();
             listedResource.setResources(userAttributes);
         }
+        //Set startIndex if offset pagination is requested.
+        if (cursor == null) {
+            listedResource.setStartIndex(startIndex);
+        } else { //Set nextCursor and previousCursor if cursor pagination is requested.
+            String prevCursor = StringUtils.EMPTY;
+            String nextCursor = StringUtils.EMPTY;
+            if (!(usersGetResponse.getUsers().isEmpty())) {
+                //Setting the previous cursor.
+                prevCursor = encodePreviousCursor(usersGetResponse.getPrevCursor());
+                //Setting the next cursor.
+                int nextCursorLoc = usersGetResponse.getUsers().size() - 1;
+                if (nextCursorLoc != limit - 1) {
+                    nextCursor = StringUtils.EMPTY;
+                } else {
+                    nextCursor = encodeNextCursor(usersGetResponse.getNextCursor());
+                }
+            }
+            //If it's the very first page, then don't show a previous cursor.
+            if (cursor.isEmpty()) {
+                listedResource.setNextCursor(nextCursor);
+            } else {
+                listedResource.setPreviousCursor(prevCursor);
+                listedResource.setNextCursor(nextCursor);
+            }
+        }
         return listedResource;
+    }
+
+    private String encodePreviousCursor(String plainPreviousCursor) {
+
+        JSONObject previousCursorJSONObject = new JSONObject();
+        previousCursorJSONObject.put(SCIMConstants.ListedResourceSchemaConstants.DIRECTION,
+                SCIMConstants.ListedResourceSchemaConstants.PREVIOUS);
+        previousCursorJSONObject.put(SCIMConstants.ListedResourceSchemaConstants.VALUE,
+                plainPreviousCursor);
+        //Encoding the JSONObject (which has the cursor value and direction in Base64 as a String)
+        byte[] prevCursorBytes = previousCursorJSONObject.toString().getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().withoutPadding().encodeToString(prevCursorBytes);
+    }
+
+    private String encodeNextCursor(String plainNextCursor) {
+
+        JSONObject nextCursorJSONObject = new JSONObject();
+        nextCursorJSONObject.put(SCIMConstants.ListedResourceSchemaConstants.DIRECTION,
+                SCIMConstants.ListedResourceSchemaConstants.NEXT);
+        nextCursorJSONObject.put(SCIMConstants.ListedResourceSchemaConstants.VALUE,
+                plainNextCursor);
+        //Encoding the JSONObject (which has the cursor value and direction in Base64 as a String)
+        byte[] nextCursorBytes = nextCursorJSONObject.toString().getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().withoutPadding().encodeToString(nextCursorBytes);
     }
 
     private SCIMResourceTypeSchema getSchema(UserManager userManager) throws BadRequestException,
