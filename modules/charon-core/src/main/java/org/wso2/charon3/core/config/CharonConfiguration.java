@@ -40,6 +40,7 @@ public class CharonConfiguration implements Configuration {
 
     //default count value for pagination
     private int count;
+    private boolean cursorSupport;
 
     /*
      * set documentationURL
@@ -80,7 +81,7 @@ public class CharonConfiguration implements Configuration {
     }
 
     /**
-     * Set cursor pagination support
+     * Set pagination support
      * @param supported
      */
     public void setCursorPaginationSupport(boolean supported) {

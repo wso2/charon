@@ -49,6 +49,5 @@ public class SCIMConfigConstants {
     public static final String PAGINATION_DEFAULT_COUNT = "pagination-default-count";
     public static final String CURSOR = "cursor";
 
-
 }
 
