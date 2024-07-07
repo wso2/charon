@@ -37,7 +37,9 @@ import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.UserManager;
+import org.wso2.charon3.core.objects.ListedResource;
 import org.wso2.charon3.core.objects.User;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
 import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -55,8 +57,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
@@ -573,6 +577,62 @@ public class UserResourceManagerTest {
         SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, startIndexInt,
                 countInt, sortBy, sortOrder, domainName, attributes, excludeAttributes);
         Assert.assertEquals(outputScimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
+    }
+
+    @DataProvider(name = "dataForListWithGetCursor")
+    public Object[][] dataToGetListCursor() throws BadRequestException, CharonException, InternalErrorException {
+
+        User user = getNewUser();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        UsersGetResponse userResponse = new UsersGetResponse(1, "Adam_123", "Bob_456", users);
+        UsersGetResponse userResponse2 = new UsersGetResponse(1, users);
+
+        return new Object[][]{
+                {null, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9", 2, null, null, DOMAIN_NAME,
+                        "emails", null, userResponse},
+                {"userName sw A", "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9", 10, null, null,
+                        DOMAIN_NAME, "userName", null, userResponse2}
+        };
+    }
+
+    @Test(dataProvider = "dataForListWithGetCursor")
+    public void testListWithGetCursor(String filter, String cursorString,
+                                       Integer count, String sortBy, String sortOrder, String domainName,
+                                       String attributes, String excludeAttributes, UsersGetResponse usersResponse)
+            throws NotImplementedException, BadRequestException, CharonException {
+
+        Mockito.when(userManager.listUsersWithGET(any(), any(Cursor.class), anyInt(), anyString(), anyString(),
+                anyString(), anyMap())).thenReturn(usersResponse);
+        SCIMResponse outputScimResponse = userResourceManager.listWithGET(userManager, filter, cursorString,
+                count, sortBy, sortOrder, domainName, attributes, excludeAttributes);
+
+        Assert.assertEquals(outputScimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
+    }
+
+    @DataProvider(name = "dataForTestCreateListedResource")
+    public Object[][] dataToTestCreateListedResource()
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        User user = getNewUser();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        UsersGetResponse userResponse = new UsersGetResponse(1, "Adam_123", "Bob_456", users);
+        UsersGetResponse userResponse2 = new UsersGetResponse(1, users);
+        return new Object[][]{
+                {userResponse, null, "Jake_5", 5},
+                {userResponse2, 1, null, 5},
+                {userResponse, null, "", 100}
+        };
+    }
+
+    @Test(dataProvider = "dataForTestCreateListedResource")
+    public void testCreateListedResource(UsersGetResponse usersGetResponse, Integer startIndex, String cursor,
+                                         Integer limit) throws NotFoundException, CharonException {
+
+        ListedResource listedResource = userResourceManager.createListedResource(usersGetResponse, startIndex,
+                cursor, limit);
+        Assert.assertEquals(listedResource.getResources().size(), 1);
     }
 
     @DataProvider(name = "dataForTestCreateUserSuccess")

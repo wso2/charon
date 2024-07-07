@@ -418,6 +418,10 @@ public class JSONEncoder {
         changePasswordObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.SUPPORTED,
                 config.get(SCIMConfigConstants.CHNAGE_PASSWORD));
 
+        JSONObject paginationObject = new JSONObject();
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR,
+                config.get(SCIMConfigConstants.CURSOR));
+
         JSONArray authenticationSchemesArray = new JSONArray();
         ArrayList<Object[]> values = (ArrayList<Object[]>) config.get(SCIMConfigConstants.AUTHENTICATION_SCHEMES);
 
@@ -457,6 +461,8 @@ public class JSONEncoder {
                 etagObject);
         rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.AUTHENTICATION_SCHEMAS,
                 authenticationSchemesArray);
+        rootObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.PAGINATION,
+                paginationObject);
 
         return rootObject.toString();
 

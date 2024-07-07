@@ -23,6 +23,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -263,6 +264,67 @@ public class ResourceManagerUtilTest {
 
         Integer index = ResourceManagerUtil.processStartIndex(startIndex);
         Assert.assertEquals(index, expectedIndex);
+    }
+
+    @DataProvider(name = "dataForProcessCursor")
+    public Object[][] dataToProcessCursor() {
+
+        return new Object[][]{
+
+                {"eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9", "Achala_131", "PREVIOUS"},
+                {"", "" , "NEXT"},
+                {null, "", "NEXT"}
+        };
+    }
+
+    @Test(dataProvider = "dataForProcessCursor")
+    public void testProcessCursor(String cursorStr, String expectedCursor, String expectedDirection) {
+
+        Cursor cursor = ResourceManagerUtil.processCursor(cursorStr);
+        Assert.assertEquals(cursor.getCursorValue(), expectedCursor);
+        Assert.assertEquals(cursor.getDirection(), expectedDirection);
+    }
+
+    @DataProvider(name = "dataForProcessPagination")
+    public Object[][] dataToProcessPagination() {
+
+        return new Object[][]{
+
+                {null, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9", "cursor"},
+                {null, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9", "cursor"},
+                {0, null, "offset"},
+                {null, null, "offset"},
+                {10, null, "offset"},
+                {-5, null, "offset"},
+        };
+    }
+
+    @Test(dataProvider = "dataForProcessPagination")
+    public void testProcessPagination(Integer startIndex, String cursorString, String expectedResult)
+            throws CharonException {
+
+        String paginationType = ResourceManagerUtil.processPagination(startIndex, cursorString);
+        Assert.assertEquals(paginationType, expectedResult);
+    }
+
+    @DataProvider(name = "dataForProcessPaginationException")
+    public Object[][] dataToProcessPaginationException() {
+
+        return new Object[][]{
+
+                {0, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9"},
+                {10, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9"},
+                {-3, "eyJ2YWx1ZSI6IkFjaGFsYV8xMzEiLCJkaXJlY3Rpb24iOiJQUkVWSU9VUyJ9"},
+        };
+    }
+
+    @Test(dataProvider = "dataForProcessPaginationException", expectedExceptions = CharonException.class)
+    public void testProcessPaginationException(Integer startIndex, String cursorString)
+            throws CharonException {
+
+        ResourceManagerUtil.processPagination(startIndex, cursorString);
+        // This method is for testing of throwing CharonException when both cursor and offset are given,
+        // hence no assertion.
     }
 
     @DataProvider(name = "dataForProcessStartIndexString")

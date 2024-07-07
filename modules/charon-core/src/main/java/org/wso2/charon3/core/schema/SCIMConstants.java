@@ -72,6 +72,12 @@ public class SCIMConstants {
 
     public static final String DEFAULT = "default";
 
+    //Cursor Pagination types and other
+    public static final String OFFSET = "offset";
+    public static final String CURSOR = "cursor";
+    public static final String VALUE = "value";
+    public static final String DIRECTION = "direction";
+    public static final String NEXT = "NEXT";
 
     /**
      * Constants found in core-common schema.
@@ -139,6 +145,12 @@ public class SCIMConstants {
         public static final String RESOURCES = "Resources";
         public static final String ITEMS_PER_PAGE = "itemsPerPage";
         public static final String START_INDEX = "startIndex";
+        public static final String NEXT_CURSOR = "nextCursor";
+        public static final String PREVIOUS_CURSOR = "previousCursor";
+        public static final String PREVIOUS = "PREVIOUS";
+        public static final String NEXT = "NEXT";
+        public static final String DIRECTION = "direction";
+        public static final String VALUE = "value";
     }
 
     /**
@@ -678,6 +690,12 @@ public class SCIMConstants {
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:etag.supported";
         public static final String AUTHENTICATION_SCHEMAS_DOCUMENTATION_URI_URI =
                 "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:authenticationSchemes.documentationUri";
+        public static final String PAGINATION = "pagination";
+        public static final String PAGINATION_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:pagination";
+        public static final String CURSOR = "cursor";
+        public static final String CURSOR_URI =
+                "urn:ietf:params:scim:schemas:core:2.0:ServiceProviderConfig:pagination.cursor";
 
 
         /*******Attributes descriptions of the attributes found in Service Provider Config Schema.***************/
@@ -685,6 +703,8 @@ public class SCIMConstants {
         public static final String DOCUMENTATION_URI_DESC = "An HTTP-addressable URL pointing to the service " +
                 "provider's human-consumable help documentation.";
         public static final String PATCH_DESC = "A complex type that specifies PATCH configuration options.";
+        public static final String PAGINATION_DESC = "A complex type which specifies the pagination types available.";
+        public static final String CURSOR_DESC = "A boolean which specifies if cursor pagination is supported";
         public static final String BULK_DESC = "A complex type that specifies bulk configuration options.";
         public static final String FILTERS_DESC = "A complex type that specifies FILTER options.";
         public static final String CHANGE_PASSWORD_DESC = "A complex type that specifies configuration options " +
@@ -813,6 +833,7 @@ public class SCIMConstants {
         public static final String EXCLUDED_ATTRIBUTES = "excludedAttributes";
         public static final String COUNT = "count";
         public static final String START_INDEX = "startIndex";
+        public static final String CURSOR = "cursor";
         public static final String SORT_BY = "sortBy";
         public static final String SORT_ORDER = "sortOrder";
         public static final String FILTER = "filter";

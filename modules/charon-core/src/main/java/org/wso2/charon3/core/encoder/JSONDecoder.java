@@ -851,7 +851,13 @@ public class JSONDecoder {
             searchRequest.setExcludedAttributes(excludedAttributes);
             searchRequest.setSchema((String) schemas.get(0));
             searchRequest.setCountStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.COUNT));
-            searchRequest.setStartIndexStr(decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX));
+            if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX).equals("")) {
+                searchRequest.setStartIndexStr(
+                        decodedJsonObj.optString(SCIMConstants.OperationalConstants.START_INDEX));
+            }
+            if (decodedJsonObj.has(SCIMConstants.OperationalConstants.CURSOR)) {
+                searchRequest.setCursor(decodedJsonObj.optString(SCIMConstants.OperationalConstants.CURSOR));
+            }
             searchRequest.setDomainName(decodedJsonObj.optString(SCIMConstants.OperationalConstants.DOMAIN));
             searchRequest.setFilter(rootNode);
             if (!decodedJsonObj.optString(SCIMConstants.OperationalConstants.SORT_BY).equals("")) {
