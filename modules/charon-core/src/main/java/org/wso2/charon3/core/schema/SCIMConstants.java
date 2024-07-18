@@ -78,7 +78,7 @@ public class SCIMConstants {
     public static final String VALUE = "value";
     public static final String DIRECTION = "direction";
     public static final String NEXT = "NEXT";
-
+    public static final String PREVIOUS = "PREVIOUS";
     /**
      * Constants found in core-common schema.
      */

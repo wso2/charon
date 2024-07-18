@@ -484,18 +484,23 @@ public class ResourceManagerUtil {
      * @param cursor     Cursor value for pagination.
      * @return String as the cursor.
      */
-    public static Cursor processCursor(String cursor) {
+    public static Cursor processCursor(String cursor) throws BadRequestException {
 
         //When using cursor pagination and the cursor is "", it means it is the first request. Therefore, cursor = "".
         if (StringUtils.isEmpty(cursor)) {
             return new Cursor(StringUtils.EMPTY, SCIMConstants.NEXT);
         } else {
             //Decode the base 64 encoded string and create a JSON object containing the cursor and the direction.
-            Base64.Decoder decoder = Base64.getDecoder();
-            byte[] cursorBytes = decoder.decode(cursor.getBytes(StandardCharsets.UTF_8));
-            String cursorString = new String(cursorBytes, StandardCharsets.UTF_8);
-            JSONObject jsonCursor = new JSONObject(cursorString);
-            return new Cursor(jsonCursor.getString(SCIMConstants.VALUE), jsonCursor.getString(SCIMConstants.DIRECTION));
+            try {
+                Base64.Decoder decoder = Base64.getDecoder();
+                byte[] cursorBytes = decoder.decode(cursor.getBytes(StandardCharsets.UTF_8));
+                String cursorString = new String(cursorBytes, StandardCharsets.UTF_8);
+                JSONObject jsonCursor = new JSONObject(cursorString);
+                return new Cursor(jsonCursor.getString(SCIMConstants.VALUE),
+                        jsonCursor.getString(SCIMConstants.DIRECTION));
+            } catch (Exception e) {
+                throw new BadRequestException("Invalid cursor formatting","invalidCursor");
+            }
         }
     }
 
