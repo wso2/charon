@@ -278,7 +278,7 @@ public class ResourceManagerUtilTest {
     }
 
     @Test(dataProvider = "dataForProcessCursor")
-    public void testProcessCursor(String cursorStr, String expectedCursor, String expectedDirection) {
+    public void testProcessCursor(String cursorStr, String expectedCursor, String expectedDirection) throws BadRequestException {
 
         Cursor cursor = ResourceManagerUtil.processCursor(cursorStr);
         Assert.assertEquals(cursor.getCursorValue(), expectedCursor);
