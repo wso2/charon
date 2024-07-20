@@ -499,7 +499,7 @@ public class ResourceManagerUtil {
                 return new Cursor(jsonCursor.getString(SCIMConstants.VALUE),
                         jsonCursor.getString(SCIMConstants.DIRECTION));
             } catch (Exception e) {
-                throw new BadRequestException("Invalid cursor formatting","invalidCursor");
+                throw new BadRequestException("Invalid cursor formatting.","invalidCursor");
             }
         }
     }
