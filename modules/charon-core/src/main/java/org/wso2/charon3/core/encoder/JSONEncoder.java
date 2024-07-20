@@ -421,6 +421,16 @@ public class JSONEncoder {
         JSONObject paginationObject = new JSONObject();
         paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR,
                 config.get(SCIMConfigConstants.CURSOR));
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.INDEX,
+                config.get(SCIMConfigConstants.INDEX));
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_TIMEOUT,
+                config.get(SCIMConfigConstants.CURSOR_TIMEOUT));
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGINATION_METHOD,
+                config.get(SCIMConfigConstants.DEFAULT_PAGINATION_METHOD));
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGE_SIZE,
+                config.get(SCIMConfigConstants.DEFAULT_PAGE_SIZE));
+        paginationObject.put(SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAGE_SIZE,
+                config.get(SCIMConfigConstants.MAX_PAGE_SIZE));
 
         JSONArray authenticationSchemesArray = new JSONArray();
         ArrayList<Object[]> values = (ArrayList<Object[]>) config.get(SCIMConfigConstants.AUTHENTICATION_SCHEMES);

@@ -1351,6 +1351,51 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, null);
 
+        public static final SCIMAttributeSchema INDEX_PAGINATION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.INDEX_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.INDEX,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.INDEX_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema CURSOR_TIMEOUT_PAGINATION =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_TIMEOUT_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_TIMEOUT,
+                        SCIMDefinitions.DataType.BOOLEAN, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.CURSOR_TIMEOUT_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema DEFAULT_PAGINATION_METHOD =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGINATION_METHOD_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGINATION_METHOD,
+                        SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGINATION_METHOD_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema DEFAULT_PAGE_SIZE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGE_SIZE_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGE_SIZE,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.DEFAULT_PAGE_SIZE_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
+        public static final SCIMAttributeSchema MAX_PAGE_SIZE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAGE_SIZE_URI,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAGE_SIZE,
+                        SCIMDefinitions.DataType.INTEGER, false,
+                        SCIMConstants.ServiceProviderConfigSchemaConstants.MAX_PAGE_SIZE_DESC, true, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
         public static final SCIMAttributeSchema TYPE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.ServiceProviderConfigSchemaConstants
                                 .TYPE_URL,
@@ -1462,7 +1507,8 @@ public class SCIMSchemaDefinitions {
                         SCIMConstants.ServiceProviderConfigSchemaConstants.PAGINATION_DESC, true, false,
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null,
-                        new ArrayList<AttributeSchema>(Arrays.asList(CURSOR_PAGINATION)));
+                        new ArrayList<AttributeSchema>(Arrays.asList(CURSOR_PAGINATION, INDEX_PAGINATION,
+                                CURSOR_TIMEOUT_PAGINATION, DEFAULT_PAGINATION_METHOD, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)));
     }
 
     /**

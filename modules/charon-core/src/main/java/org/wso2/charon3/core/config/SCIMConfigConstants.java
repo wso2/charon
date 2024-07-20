@@ -48,6 +48,11 @@ public class SCIMConfigConstants {
     public static final String SCIM_SCHEMA_EXTENSION_CONFIG = "scim2-schema-extension.config";
     public static final String PAGINATION_DEFAULT_COUNT = "pagination-default-count";
     public static final String CURSOR = "cursor";
+    public static final String INDEX = "index";
+    public static final String CURSOR_TIMEOUT = "cursorTimeout";
+    public static final String DEFAULT_PAGINATION_METHOD = "defaultPaginationMethod";
+    public static final String DEFAULT_PAGE_SIZE = "defaultPageSize";
+    public static final String MAX_PAGE_SIZE = "maxPageSize";
 
 }
 
