@@ -92,13 +92,11 @@ public class BulkResourceManager extends AbstractResourceManager {
             if (totalOperationCount > maxOperationCount) {
                 if (logger.isDebugEnabled()) {
                     logger.debug(String.format(ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
-                            totalOperationCount,
-                            maxOperationCount));
+                            totalOperationCount, maxOperationCount));
                 }
                 throw new PayloadTooLargeException(
                         String.format(ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
-                                totalOperationCount,
-                                maxOperationCount));
+                                totalOperationCount, maxOperationCount));
             }
 
             // Get bulk response data.
