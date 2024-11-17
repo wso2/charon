@@ -276,7 +276,7 @@ public class ServerSideValidator extends AbstractValidator {
 
     private static boolean isValidLocale(String localeStr) {
 
-        if (localeStr == null || localeStr.isEmpty()) {
+        if (localeStr == null || StringUtils.isEmpty(localeStr)) {
             return false;
         }
 
