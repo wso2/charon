@@ -16,7 +16,14 @@
 
 package org.wso2.charon3.core.utils.codeutils;
 
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
+import org.wso2.charon3.core.objects.plainobjects.Cursor;
+import org.wso2.charon3.core.schema.SCIMConstants;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * this corresponds to the /.search request object
@@ -40,6 +47,7 @@ public class SearchRequest {
     private String sortBy;
     private String sortOder;
     private String domainName;
+    private Cursor cursor;
 
     public String getCountStr() {
         return countStr;
@@ -55,6 +63,28 @@ public class SearchRequest {
 
     public void setStartIndexStr(String startIndexStr) {
         this.startIndexStr = startIndexStr;
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(String cursor) {
+
+        Cursor tempCursor = new Cursor(null, null);
+        //When using cursor pagination and the cursor is null, it means it is the first request so cursor = "".
+        if (StringUtils.isEmpty(cursor)) {
+            tempCursor.setCursorValue(StringUtils.EMPTY);
+            tempCursor.setDirection(SCIMConstants.NEXT);
+        } else {
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] cursorBytes = decoder.decode(cursor.getBytes(StandardCharsets.UTF_8));
+            String cursorString = new String(cursorBytes, StandardCharsets.UTF_8);
+            JSONObject jsonCursor = new JSONObject(cursorString);
+            tempCursor.setCursorValue(jsonCursor.getString(SCIMConstants.VALUE));
+            tempCursor.setDirection(jsonCursor.getString(SCIMConstants.DIRECTION));
+        }
+        this.cursor = tempCursor;
     }
 
     public String getSchema() {
