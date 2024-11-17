@@ -17,8 +17,6 @@ package org.wso2.charon3.core.schema;
 
 import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.attributes.Attribute;
-import org.wso2.charon3.core.attributes.ComplexAttribute;
-import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -27,12 +25,16 @@ import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.objects.User;
-import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Server Side Validator.
@@ -257,7 +259,7 @@ public class ServerSideValidator extends AbstractValidator {
             String key = entry.getKey();
             Attribute value = entry.getValue();
 
-            if (value instanceof SimpleAttribute && StringUtils.equals(key,SCIMConstants.UserSchemaConstants.LOCALE)) {
+            if (value instanceof SimpleAttribute && StringUtils.equals(key, SCIMConstants.UserSchemaConstants.LOCALE)) {
                 String localeAttributeValue = ((SimpleAttribute) value).getValue().toString();
 
                 if (!isValidLocale(localeAttributeValue)) {
