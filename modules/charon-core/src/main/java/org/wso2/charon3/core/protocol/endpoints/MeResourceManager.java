@@ -16,7 +16,6 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
-import org.json.JSONObject;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -41,7 +40,6 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
