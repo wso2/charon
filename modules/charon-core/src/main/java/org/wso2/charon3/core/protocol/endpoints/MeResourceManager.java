@@ -349,24 +349,6 @@ public class MeResourceManager extends AbstractResourceManager {
                         copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
-
-                    // Convert the object to a JSON string if needed
-                    String jsonString = operation.getValues().toString();
-
-                    // Parse the JSON string using JSONObject
-                    JSONObject jsonObject = new JSONObject(jsonString);
-
-                    // Check if the "locale" key exists
-                    if (jsonObject.has("locale")) {
-                        String locale = jsonObject.getString("locale");
-                        System.out.println("Locale: " + locale);
-
-                        // Perform validation
-                        if (!isValidLocale(locale)) {
-                            throw new BadRequestException("Invalid locale value: ", ResponseCodeConstants.INVALID_SYNTAX);
-                        }
-                    }
-
                     if (newUser == null) {
                         newUser = (User) PatchOperationUtil.doPatchReplace
                                 (operation, getDecoder(), oldUser, copyOfOldUser, schema);
@@ -427,41 +409,6 @@ public class MeResourceManager extends AbstractResourceManager {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
             return encodeSCIMException(e1);
         }
-    }
-
-    public static boolean isValidLocale(String localeStr) {
-        if (localeStr == null || localeStr.isEmpty()) {
-            return false;
-        }
-
-        // Split the locale string into parts (language and country)
-        String[] parts = localeStr.split("[-_]");
-        if (parts.length != 2) {
-            return false; // Must have exactly two parts: language and country
-        }
-
-        String language = parts[0];
-        String country = parts[1];
-
-        // Validate language code: must be 2 lowercase letters
-        if (!language.matches("^[a-z]{2}$")) {
-            return false;
-        }
-
-        // Validate country code: must be 2 uppercase letters
-        if (!country.matches("^[A-Z]{2}$")) {
-            return false;
-        }
-
-        // Check if the locale is available in the system
-        for (Locale availableLocale : Locale.getAvailableLocales()) {
-            if (availableLocale.getLanguage().equals(language) &&
-                    availableLocale.getCountry().equals(country)) {
-                return true;
-            }
-        }
-
-        return false; // If no matching locale is found
     }
 
     public String getUserName(String scimObjectString) throws CharonException {
