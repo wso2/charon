@@ -267,16 +267,15 @@ public class ServerSideValidator extends AbstractValidator {
                             ("Provided locale value " + localeAttributeValue + " is invalid");
                 }
             }
-
         }
-
 
         // Check for schema list.
         validateSchemaList(validatedObject, resourceSchema);
         return validatedObject;
     }
 
-    public static boolean isValidLocale(String localeStr) {
+    private static boolean isValidLocale(String localeStr) {
+
         if (localeStr == null || localeStr.isEmpty()) {
             return false;
         }
