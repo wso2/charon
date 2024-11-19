@@ -1,16 +1,24 @@
-
 codecov:
   require_ci_to_pass: yes
   notify:
     wait_for_ci: yes
+  max_report_age: false
+
 coverage:
   status:
-    project:
-      default:
-        enabled: yes
-        threshold: null
-        target: auto
-    patch:
-      default:
-        target: 80%
-        threshold: 40%
+    project: off
+    patch: off
+
+flag_management:
+  default_rules:
+    carryforward: true
+  individual_flags:
+    - name: unit
+      statuses:
+        - type: project
+          target: auto
+          threshold: null
+        - type: patch
+          target: 80%
+          threshold: 40%
+
