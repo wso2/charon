@@ -15,6 +15,8 @@
  */
 package org.wso2.charon3.core.schema;
 
+import org.apache.commons.lang.StringUtils;
+import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.SimpleAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -30,6 +32,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -248,9 +252,53 @@ public class ServerSideValidator extends AbstractValidator {
             // Check for required attributes.
             validateSCIMObjectForRequiredAttributes(newObject, resourceSchema);
         }
+
+        Map<String, Attribute> attributes = validatedObject.getAttributeList();
+
+        for (Map.Entry<String, Attribute> entry : attributes.entrySet()) {
+            String key = entry.getKey();
+            Attribute value = entry.getValue();
+
+            if (value instanceof SimpleAttribute && StringUtils.equals(key, SCIMConstants.UserSchemaConstants.LOCALE)) {
+                String localeAttributeValue = ((SimpleAttribute) value).getValue().toString();
+
+                if (!isValidLocale(localeAttributeValue)) {
+                    throw new BadRequestException
+                            ("Provided locale value " + localeAttributeValue + " is invalid");
+                }
+            }
+        }
+
         // Check for schema list.
         validateSchemaList(validatedObject, resourceSchema);
         return validatedObject;
+    }
+
+    private static boolean isValidLocale(String localeStr) {
+
+        if (localeStr == null || StringUtils.isEmpty(localeStr)) {
+            return false;
+        }
+
+        // Split the locale string into parts (language and country)
+        String[] parts = localeStr.split("-");
+
+        if (parts.length != 2) {
+            return false; // Must have exactly two parts: language and country
+        }
+
+        String language = parts[0];
+        String country = parts[1];
+
+        // Check if the locale is available in the system
+        for (Locale availableLocale : Locale.getAvailableLocales()) {
+            if (availableLocale.getLanguage().equals(language) &&
+                    availableLocale.getCountry().equals(country)) {
+                return true;
+            }
+        }
+
+        return false; // If no matching locale is found
     }
 
     /*

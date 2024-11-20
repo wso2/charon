@@ -409,7 +409,6 @@ public class MeResourceManager extends AbstractResourceManager {
         }
     }
 
-
     public String getUserName(String scimObjectString) throws CharonException {
 
         try {
