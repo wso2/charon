@@ -36,7 +36,12 @@ public class CharonConfiguration implements Configuration {
     private int maxPayLoadSize;
     private int maxResults;
     private ArrayList<Object[]> authenticationSchemes = new ArrayList<Object[]>();
-
+    private boolean cursorSupport;
+    private boolean indexSupport;
+    private boolean cursorTimeout;
+    private String defaultPaginationMethod;
+    private int defaultPageSize;
+    private int maxPageSize;
     //default count value for pagination
     private int count;
 
@@ -76,6 +81,25 @@ public class CharonConfiguration implements Configuration {
     public void setFilterSupport(boolean supported, int maxResults) {
         this.filterSupport = supported;
         this.maxResults = maxResults;
+    }
+
+    /**
+     * Set pagination support
+     * @param indexSupport
+     * @param cursorSupport
+     * @param cursorTimeout
+     * @param defaultPaginationMethod
+     * @param defaultPageSize
+     * @param maxPageSize
+     */
+    public void setCursorPaginationSupport(boolean indexSupport, boolean cursorSupport, boolean cursorTimeout,
+                                           String defaultPaginationMethod, int defaultPageSize, int maxPageSize) {
+        this.indexSupport = indexSupport;
+        this.cursorSupport = cursorSupport;
+        this.cursorTimeout = cursorTimeout;
+        this.defaultPaginationMethod = defaultPaginationMethod;
+        this.defaultPageSize = defaultPageSize;
+        this.maxPageSize = maxPageSize;
     }
 
     /*
@@ -145,6 +169,12 @@ public class CharonConfiguration implements Configuration {
         configMap.put(SCIMConfigConstants.PATCH, patchSupport);
         configMap.put(SCIMConfigConstants.AUTHENTICATION_SCHEMES, authenticationSchemes);
         configMap.put(SCIMConfigConstants.PAGINATION_DEFAULT_COUNT, count);
+        configMap.put(SCIMConfigConstants.CURSOR, cursorSupport);
+        configMap.put(SCIMConfigConstants.INDEX, indexSupport);
+        configMap.put(SCIMConfigConstants.CURSOR_TIMEOUT, cursorTimeout);
+        configMap.put(SCIMConfigConstants.DEFAULT_PAGINATION_METHOD, defaultPaginationMethod);
+        configMap.put(SCIMConfigConstants.DEFAULT_PAGE_SIZE, defaultPageSize);
+        configMap.put(SCIMConfigConstants.MAX_PAGE_SIZE, maxPageSize);
         return  configMap;
     }
 
