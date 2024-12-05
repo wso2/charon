@@ -266,6 +266,8 @@ public class ServerSideValidator extends AbstractValidator {
                     throw new BadRequestException
                             ("Provided locale value " + localeAttributeValue + " is invalid");
                 }
+
+                break;
             }
         }
 
