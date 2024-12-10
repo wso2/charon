@@ -550,6 +550,10 @@ public class SCIMConstants {
         public static final String DISPLAY = "display";
         public static final String VALUE = "value";
         public static final String TYPE = "type";
+        public static final String PROPERTIES_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:properties";
+        public static final String PROPERTIES = "properties";
+        public static final String PROPERTY_NAME = "name";
 
         // Possible canonical values for audience type attribute.
         public static final String APPLICATION = "application";
@@ -583,6 +587,9 @@ public class SCIMConstants {
         public static final String TYPE_DESC = "A label indicating the type of resource, e.g. 'User' or 'Group'";
         public static final String AUDIENCE_TYPE_DESC =
                 "A label indicating the resource type of the role's usable audience.";
+        public static final String PROPERTY_NAME_DESC = "Name of the role property.";
+        public static final String PROPERTY_VALUE_DESC = "Value of the role property.";
+        public static final String PROPERTIES_DESC = "A list of properties of the role.";
 
         // URIs of sub and multivalued attributes.
         public static final String USERS_VALUE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:users.value";
@@ -612,6 +619,11 @@ public class SCIMConstants {
         public static final String AUDIENCE_DISPLAY_URI =
                 "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.display";
         public static final String AUDIENCE_TYPE_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role:audience.type";
+        public static final String PROPERTIES_NAME_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:properties.name";
+        public static final String PROPERTY_VALUE_URI =
+                "urn:ietf:params:scim:schemas:extension:2.0:Role:properties.value";
+
     }
 
     /**

@@ -1141,6 +1141,23 @@ public class SCIMSchemaDefinitions {
                                 Arrays.asList(SCIMConstants.RoleSchemaConstants.APPLICATION,
                                         SCIMConstants.RoleSchemaConstants.ORGANIZATION)), null, null);
 
+        // Name of the property of the role.
+        public static final SCIMAttributeSchema ROLE_V2_PROPERTY_NAME =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PROPERTIES_NAME_URI,
+                        SCIMConstants.RoleSchemaConstants.PROPERTY_NAME, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.PROPERTY_NAME_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.SERVER, null, null, null);
+
+        // Value of the property of the role.
+        public static final SCIMAttributeSchema ROLE_V2_PROPERTY_VALUE =
+                SCIMAttributeSchema.createSCIMAttributeSchema(
+                        SCIMConstants.RoleSchemaConstants.PROPERTY_VALUE_URI,
+                        SCIMConstants.RoleSchemaConstants.VALUE, SCIMDefinitions.DataType.STRING, false,
+                        SCIMConstants.RoleSchemaConstants.PROPERTY_VALUE_DESC, false, false,
+                        SCIMDefinitions.Mutability.IMMUTABLE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, null);
+
         // Attribute schemas of the attributes defined in role schema.
 
         // A human-readable name for the Role. REQUIRED.
@@ -1207,6 +1224,15 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
                         SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(
                                 Arrays.asList(ASC_APPLICATIONS_VALUE, ASC_APPLICATIONS_DISPLAY, ASC_APPLICATIONS_REF)));
+
+        // A list of properties of the Role.
+        public static final SCIMAttributeSchema ROLE_V2_PROPERTIES =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PROPERTIES_URI,
+                        SCIMConstants.RoleSchemaConstants.PROPERTIES, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.RoleSchemaConstants.PROPERTIES_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(
+                                Arrays.asList(ROLE_V2_PROPERTY_NAME, ROLE_V2_PROPERTY_VALUE)));
     }
 
     /**
@@ -1614,7 +1640,8 @@ public class SCIMSchemaDefinitions {
                     SCIMRoleSchemaDefinition.USERS,
                     SCIMRoleSchemaDefinition.GROUPS,
                     SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS,
-                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS);
+                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
 
     /*
      * **********SCIM defined Service Provider Config Resource Schema.****************************
