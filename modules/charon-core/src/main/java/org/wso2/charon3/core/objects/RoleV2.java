@@ -378,6 +378,34 @@ public class RoleV2 extends AbstractSCIMObject {
     }
 
     /**
+     * Set the role properties of the role.
+     *
+     * @param rolePropertiesList List of role properties.
+     */
+    public void setRoleProperties(List<MultiValuedComplexType> rolePropertiesList) {
+
+        SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTY_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTY_NAME;
+        addMultivaluedComplexAtribute(rolePropertiesList, complexDefinition, valueDefinition, displayDefinition,
+                null, null, null);
+    }
+
+    /**
+     * Get the role properties of the role.
+     *
+     * @return List of role properties.
+     */
+    public List<MultiValuedComplexType> getRoleProperties() {
+
+        SCIMAttributeSchema complexDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES;
+        SCIMAttributeSchema valueDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTY_VALUE;
+        SCIMAttributeSchema displayDefinition = SCIMSchemaDefinitions.SCIMRoleSchemaDefinition.ROLE_V2_PROPERTY_NAME;
+        return getMultivaluedComplexType(complexDefinition, valueDefinition, displayDefinition, null,
+                null, null).orElse(Collections.emptyList());
+    }
+
+    /**
      * Get the audience of the role.
      */
     public ComplexAttribute getAudience() {
