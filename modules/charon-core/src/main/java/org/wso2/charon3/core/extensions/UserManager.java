@@ -35,8 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This is the interface for usermanager extension.
- * An implementation can plugin their own user manager-(either LDAP based, DB based etc)
+ * This is the interface for user manager extension.
+ * An implementation can plug in their own user manager-(either LDAP based, DB based etc.)
  * by implementing this interface and mentioning it in configuration.
  */
 public interface UserManager {
@@ -260,6 +260,20 @@ public interface UserManager {
      * @throws BadRequestException
      */
     default List<Attribute> getEnterpriseUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+    /**
+     * Retrieve schema of the system user.
+     *
+     * @return List of attributes of system user schema.
+     * @throws CharonException          Charon exception.
+     * @throws NotImplementedException  Functionality no implemented exception.
+     * @throws BadRequestException      Bad request exception.
+     */
+    default List<Attribute> getSystemUserSchema() throws CharonException, NotImplementedException,
             BadRequestException {
 
         throw new NotImplementedException();

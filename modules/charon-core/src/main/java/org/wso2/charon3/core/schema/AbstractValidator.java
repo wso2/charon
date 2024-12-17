@@ -990,8 +990,13 @@ public abstract class AbstractValidator {
         List<AttributeSchema> subAttributeSchemaList = attributeSchema.getSubAttributeSchemas();
 
         if (subAttributeSchemaList != null) {
-            if (SCIMResourceSchemaManager.getInstance().getExtensionName() != null) {
-                if (attributeSchema.getName().equals(SCIMResourceSchemaManager.getInstance().getExtensionName())) {
+            String attributeName = attributeSchema.getName();
+            SCIMResourceSchemaManager schemaManager = SCIMResourceSchemaManager.getInstance();
+
+            if (attributeName != null) {
+                String extensionName = schemaManager.getExtensionName();
+                String systemSchemaExtensionName = schemaManager.getSystemSchemaExtensionName();
+                if (attributeName.equals(extensionName) || attributeName.equals(systemSchemaExtensionName)) {
                     checkIfReadOnlyAndImmutableExtensionAttributesModified(subAttributeSchemaList, newAttribute,
                             oldAttribute);
                 }

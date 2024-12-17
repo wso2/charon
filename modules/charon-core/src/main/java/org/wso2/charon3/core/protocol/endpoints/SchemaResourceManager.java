@@ -47,6 +47,9 @@ import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.EnterpriseUserSchemaConstants.ENTERPRISE_USER_DESC;
 import static org.wso2.charon3.core.schema.SCIMConstants.ResourceTypeSchemaConstants.USER_ACCOUNT;
+import static org.wso2.charon3.core.schema.SCIMConstants.SYSTEM_USER;
+import static org.wso2.charon3.core.schema.SCIMConstants.SYSTEM_USER_SCHEMA_URI;
+import static org.wso2.charon3.core.schema.SCIMConstants.SystemUserSchemaConstants.SYSTEM_USER_DESC;
 import static org.wso2.charon3.core.schema.SCIMConstants.USER;
 import static org.wso2.charon3.core.schema.SCIMConstants.USER_CORE_SCHEMA_URI;
 
@@ -81,6 +84,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
             List<Attribute> coreSchemaAttributes = userManager.getCoreSchema();
             List<Attribute> userSchemaAttributes = userManager.getUserSchema();
             List<Attribute> userEnterpriseSchemaAttributes = userManager.getEnterpriseUserSchema();
+            List<Attribute> userSystemSchemaAttributes = userManager.getSystemUserSchema();
             List<Attribute> userCustomSchemaAttributes = userManager.getCustomUserSchemaAttributes();
             String customUserSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
 
@@ -90,6 +94,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
                 schemas.put(CORE_SCHEMA_URI, coreSchemaAttributes);
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
+                schemas.put(SYSTEM_USER_SCHEMA_URI, userSystemSchemaAttributes);
                 if (StringUtils.isNotBlank(customUserSchemaURI)) {
                     schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
                 }
@@ -103,6 +108,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
             } else if (ENTERPRISE_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
+            } else if (SYSTEM_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
+                schemas.put(SYSTEM_USER_SCHEMA_URI, userSystemSchemaAttributes);
             } else if (StringUtils.isNotBlank(customUserSchemaURI) && customUserSchemaURI.equalsIgnoreCase(id)) {
                 schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
             } else {
@@ -155,6 +162,10 @@ public class SchemaResourceManager extends AbstractResourceManager {
             JSONObject enterpriseUserSchemaObject = buildEnterpriseUserSchema(schemas.get(ENTERPRISE_USER_SCHEMA_URI));
             rootObject.put(enterpriseUserSchemaObject);
         }
+        if (schemas.get(SYSTEM_USER_SCHEMA_URI) != null) {
+            JSONObject systemUserSchemaObject = buildSystemUserSchema(schemas.get(SYSTEM_USER_SCHEMA_URI));
+            rootObject.put(systemUserSchemaObject);
+        }
         String customSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
         if (StringUtils.isNotBlank(customSchemaURI) && schemas.get(customSchemaURI) != null) {
             JSONObject customUserSchemaObject = buildCustomUserSchema(customSchemaURI, schemas.get(customSchemaURI));
@@ -186,6 +197,31 @@ public class SchemaResourceManager extends AbstractResourceManager {
             return enterpriseUserSchemaObject;
         } catch (JSONException e) {
             throw new CharonException("Error while encoding enterprise user schema.", e);
+        }
+    }
+
+    /**
+     * Builds a JSON object containing system user schema attribute information.
+     *
+     * @param systemUserSchemaList Attribute list of SCIM system user schema
+     * @return JSON object of system user schema
+     * @throws CharonException
+     */
+    private JSONObject buildSystemUserSchema(List<Attribute> systemUserSchemaList) throws CharonException {
+
+        try {
+            JSONEncoder encoder = getEncoder();
+
+            JSONObject systemUserSchemaObject = new JSONObject();
+            systemUserSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, SYSTEM_USER_SCHEMA_URI);
+            systemUserSchemaObject.put(SCIMConstants.SystemUserSchemaConstants.NAME, SYSTEM_USER);
+            systemUserSchemaObject.put(SCIMConstants.SystemUserSchemaConstants.DESCRIPTION, SYSTEM_USER_DESC);
+
+            JSONArray systemUserAttributeArray = buildSchemaAttributeArray(systemUserSchemaList, encoder);
+            systemUserSchemaObject.put(ATTRIBUTES, systemUserAttributeArray);
+            return systemUserSchemaObject;
+        } catch (JSONException e) {
+            throw new CharonException("Error while encoding system user schema.", e);
         }
     }
 

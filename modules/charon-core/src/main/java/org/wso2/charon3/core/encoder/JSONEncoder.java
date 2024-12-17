@@ -467,13 +467,13 @@ public class JSONEncoder {
 
     }
 
-    /*
-     *  Build the user resource type json representation.
-     * @return
+    /**
+     * Build the user resource type json representation.
+     * @return json representation of user resource type.
      */
     public String buildUserResourceTypeJsonBody() throws JSONException {
-        JSONObject userResourceTypeObject = new JSONObject();
 
+        JSONObject userResourceTypeObject = new JSONObject();
         userResourceTypeObject.put(
                 SCIMConstants.CommonSchemaConstants.SCHEMAS, SCIMConstants.RESOURCE_TYPE_SCHEMA_URI);
         userResourceTypeObject.put(
@@ -498,6 +498,15 @@ public class JSONEncoder {
                     SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
                     SCIMResourceSchemaManager.getInstance().getExtensionRequired());
             schemaExtensions.put(extensionSchemaObject);
+
+            JSONObject systemSchemaObject = new JSONObject();
+            systemSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+                    SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionURI());
+            systemSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
+                    SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionRequired());
+            schemaExtensions.put(systemSchemaObject);
 
             // Add custom user schema as a schema extension.
             if (StringUtils.isNotBlank(SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI())) {
