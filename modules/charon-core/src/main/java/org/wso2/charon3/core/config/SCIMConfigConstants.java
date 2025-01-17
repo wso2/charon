@@ -33,6 +33,8 @@ public class SCIMConfigConstants {
     public static final String SUB_ATTRIBUTES = "subAttributes";
     public static final String CANONICAL_VALUES = "canonicalValues";
     public static final String REFERENCE_TYPES = "referenceTypes";
+    public static final String SUPPORTED_BY_DEFAULT = "supportedByDefault";
+    public static final String PROFILES = "profiles";
 
     public static final String PATCH = "patch";
     public static final String BULK = "bulk";
@@ -48,6 +50,9 @@ public class SCIMConfigConstants {
     public static final String SCIM_SCHEMA_EXTENSION_CONFIG = "scim2-schema-extension.config";
     public static final String PAGINATION_DEFAULT_COUNT = "pagination-default-count";
 
-
+    public static final String REQUIRED_CLAIM_PROPERTY = "Required";
+    public static final String SUPPORTED_BY_DEFAULT_CLAIM_PROPERTY = "SupportedByDefault";
+    public static final String READ_ONLY_CLAIM_PROPERTY = "ReadOnly";
+    public static final String PROFILES_CLAIM_PROPERTY_PREFIX = "Profiles.";
 }
 

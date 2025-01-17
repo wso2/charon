@@ -53,6 +53,7 @@ import static org.wso2.charon3.core.config.SCIMConfigConstants.MUTABILITY;
 import static org.wso2.charon3.core.config.SCIMConfigConstants.REQUIRED;
 import static org.wso2.charon3.core.config.SCIMConfigConstants.RETURNED;
 import static org.wso2.charon3.core.config.SCIMConfigConstants.SUB_ATTRIBUTES;
+import static org.wso2.charon3.core.config.SCIMConfigConstants.SUPPORTED_BY_DEFAULT;
 import static org.wso2.charon3.core.config.SCIMConfigConstants.UNIQUENESS;
 import static org.wso2.charon3.core.schema.SCIMConstants.CommonSchemaConstants.TYPE;
 import static org.wso2.charon3.core.schema.SCIMConstants.UserSchemaConstants.NAME;
@@ -230,10 +231,60 @@ public class JSONEncoder {
 
         Map<String, String> customAttributes = attribute.getAttributeProperties();
         for (Map.Entry<String, String> entry : customAttributes.entrySet()) {
+            if (StringUtils.startsWith(entry.getKey(), SCIMConfigConstants.PROFILES_CLAIM_PROPERTY_PREFIX)) {
+                addAttributeProfilesProperty(attributeSchema, entry.getKey(), entry.getValue());
+                continue;
+            }
             attributeSchema.put(entry.getKey(), entry.getValue());
         }
 
         return attributeSchema;
+    }
+
+    /**
+     * Helper method to insert profile-related properties into a nested "profiles" object in the main JSON.
+     *
+     * @param attributeScheme JSON object of the attribute scheme.
+     * @param propertyKey     Key of the property (e.g., "Profiles.console.SupportedByDefault").
+     * @param propertyValue   Value of the property.
+     */
+    private void addAttributeProfilesProperty(JSONObject attributeScheme, String propertyKey, String propertyValue) {
+
+        // Example key format: "Profiles.{profileName}.{propertyName}" - Profiles.console.SupportedByDefault.
+        String[] propertyKeyParts = propertyKey.split("\\.");
+        if (propertyKeyParts.length != 3) {
+            return;
+        }
+        String profileName = propertyKeyParts[1];
+        String profileProperty = propertyKeyParts[2];
+
+        if (!attributeScheme.has(SCIMConfigConstants.PROFILES)) {
+            attributeScheme.put(SCIMConfigConstants.PROFILES, new JSONObject());
+        }
+
+        JSONObject profilesObject = attributeScheme.getJSONObject(SCIMConfigConstants.PROFILES);
+        if (!profilesObject.has(profileName)) {
+            profilesObject.put(profileName, new JSONObject());
+        }
+
+        JSONObject profileObject = profilesObject.getJSONObject(profileName);
+        switch(profileProperty) {
+            case SCIMConfigConstants.SUPPORTED_BY_DEFAULT_CLAIM_PROPERTY:
+                profileObject.put(SUPPORTED_BY_DEFAULT, propertyValue);
+                break;
+            case SCIMConfigConstants.REQUIRED_CLAIM_PROPERTY:
+                profileObject.put(REQUIRED, propertyValue);
+                break;
+            case SCIMConfigConstants.READ_ONLY_CLAIM_PROPERTY:
+                if (Boolean.parseBoolean(propertyValue)) {
+                    profileObject.put(MUTABILITY, SCIMDefinitions.Mutability.READ_ONLY);
+                } else {
+                    profileObject.put(MUTABILITY, SCIMDefinitions.Mutability.READ_WRITE);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     /*
