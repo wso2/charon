@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.attributes;
 
+import org.json.JSONObject;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
@@ -59,6 +60,11 @@ public interface Attribute extends Serializable {
     }
 
     public default Map<String, String> getAttributeProperties() {
+
+        throw new UnsupportedOperationException();
+    }
+
+    public default Map<String, JSONObject> getAttributeJSONProperties() {
 
         throw new UnsupportedOperationException();
     }
