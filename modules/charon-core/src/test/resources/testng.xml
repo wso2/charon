@@ -26,6 +26,7 @@
             <class name="org.wso2.charon3.core.utils.ResourceManagerUtilTest"/>
             <class name="org.wso2.charon3.core.utils.SchemaUtilTest"/>
             <class name="org.wso2.charon3.core.utils.PatchOperationUtilTest"/>
+            <class name="org.wso2.charon3.core.encoder.JsonEncoderTest"/>
             <class name="org.wso2.charon3.core.schema.ServerSideValidatorTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.UserResourceManagerTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.MeResourceManagerTest"/>
