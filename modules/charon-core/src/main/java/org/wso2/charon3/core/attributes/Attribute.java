@@ -68,4 +68,9 @@ public interface Attribute extends Serializable {
 
         throw new UnsupportedOperationException();
     }
+
+    public default JSONObject getAttributeJSONProperty(String propertyName) {
+
+        throw new UnsupportedOperationException();
+    }
 }
