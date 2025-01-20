@@ -56,9 +56,9 @@ public class JsonEncoderTest {
 
         JSONObject testJsonObject = new JSONObject();
         testJsonObject.put("key1", "value1");
-        attribute.addAttributeJsonProperty("json1", testJsonObject);
-        attribute.addAttributeJsonProperty("json2", new JSONObject());
-        attribute.removeAttributeJsonProperty("json2");
+        attribute.addAttributeJSONProperty("json1", testJsonObject);
+        attribute.addAttributeJSONProperty("json2", new JSONObject());
+        attribute.removeAttributeJSONProperty("json2");
 
         JSONObject responseJson = jsonEncoder.encodeBasicAttributeSchema(attribute);
 
@@ -80,6 +80,6 @@ public class JsonEncoderTest {
 
         Assert.assertTrue(attribute.getAttributeJSONProperties().containsKey("json1"));
         Assert.assertFalse(attribute.getAttributeJSONProperties().containsKey("json2"));
-        Assert.assertEquals(attribute.getAttributeJsonProperty("json1"), testJsonObject);
+        Assert.assertEquals(attribute.getAttributeJSONProperty("json1"), testJsonObject);
     }
 }

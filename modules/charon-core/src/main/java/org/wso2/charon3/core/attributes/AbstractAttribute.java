@@ -153,17 +153,17 @@ public abstract class AbstractAttribute implements Attribute {
         return additionalAttributeJSONProperties;
     }
 
-    public JSONObject getAttributeJsonProperty(String propertyName) {
+    public JSONObject getAttributeJSONProperty(String propertyName) {
 
         return additionalAttributeJSONProperties.get(propertyName);
     }
 
-    public void addAttributeJsonProperty(String propertyName, JSONObject jsonObject) {
+    public void addAttributeJSONProperty(String propertyName, JSONObject jsonObject) {
 
         this.additionalAttributeJSONProperties.put(propertyName, jsonObject);
     }
 
-    public JSONObject removeAttributeJsonProperty(String propertyName) {
+    public JSONObject removeAttributeJSONProperty(String propertyName) {
 
         return additionalAttributeJSONProperties.remove(propertyName);
     }
