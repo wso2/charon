@@ -233,6 +233,11 @@ public class JSONEncoder {
             attributeSchema.put(entry.getKey(), entry.getValue());
         }
 
+        Map<String, JSONObject> customJSONProperties = attribute.getAttributeJSONProperties();
+        for (Map.Entry<String, JSONObject> entry: customJSONProperties.entrySet()) {
+            attributeSchema.put(entry.getKey(), entry.getValue());
+        }
+
         return attributeSchema;
     }
 
