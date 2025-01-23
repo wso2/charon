@@ -22,6 +22,7 @@ package org.wso2.charon3.core.schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
+import org.wso2.charon3.core.config.SCIMSystemSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -34,7 +35,7 @@ import java.util.List;
 
 /**
 * This is to check for extension schema for the user and buildTree a custom user schema with it.
-* Unless a extension is defined, core-user schema need to be returned.
+* Unless an extension is defined, core-user schema need to be returned.
 */
 public class SCIMResourceSchemaManager {
 
@@ -52,35 +53,49 @@ public class SCIMResourceSchemaManager {
      */
     public SCIMResourceTypeSchema getUserResourceSchema() {
 
-        AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-        if (schemaExtension != null) {
-            return SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    new ArrayList<String>(Arrays.asList(SCIMConstants.USER_CORE_SCHEMA_URI, schemaExtension.getURI())),
-                    SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES,
-                    schemaExtension);
+        AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema systemSchemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+
+        List<String> schemaURIs = new ArrayList<>();
+        schemaURIs.add(SCIMConstants.USER_CORE_SCHEMA_URI);
+
+        List<AttributeSchema> schemaDefinitions = new ArrayList<>(Arrays.asList(
+                SCIMSchemaDefinitions.ID,
+                SCIMSchemaDefinitions.EXTERNAL_ID,
+                SCIMSchemaDefinitions.META,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES
+        ));
+
+        if (Boolean.TRUE.equals(SCIMResourceSchemaManager.getInstance().isExtensionSet())) {
+            schemaURIs.add(enterpriseSchemaExtension.getURI());
+            schemaURIs.add(systemSchemaExtension.getURI());
+
+            schemaDefinitions.add(enterpriseSchemaExtension);
+            schemaDefinitions.add(systemSchemaExtension);
         }
-        return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
+
+        return SCIMResourceTypeSchema.createSCIMResourceSchema(
+                schemaURIs, schemaDefinitions.toArray(new AttributeSchema[0]));
     }
 
     /*
@@ -92,65 +107,76 @@ public class SCIMResourceSchemaManager {
             throws BadRequestException, NotImplementedException, CharonException {
 
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema systemSchemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
-        if (enterpriseSchemaExtension != null) {
-            List<String> schemas = new ArrayList<>();
-            schemas.add(SCIMConstants.USER_CORE_SCHEMA_URI);
+
+        List<String> schemas = new ArrayList<>();
+        schemas.add(SCIMConstants.USER_CORE_SCHEMA_URI);
+
+        List<AttributeSchema> schemaDefinitions = new ArrayList<>(Arrays.asList(
+                SCIMSchemaDefinitions.ID,
+                SCIMSchemaDefinitions.EXTERNAL_ID,
+                SCIMSchemaDefinitions.META,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
+                SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES
+        ));
+
+        if (Boolean.TRUE.equals(SCIMResourceSchemaManager.getInstance().isExtensionSet())) {
             schemas.add(enterpriseSchemaExtension.getURI());
-            if (customSchemaExtension != null) {
-                schemas.add(customSchemaExtension.getURI());
-            } else {
-                log.warn("Could not find Custom schema.");
-            }
-            return SCIMResourceTypeSchema.createSCIMResourceSchema(
-                    schemas,
-                    SCIMSchemaDefinitions.ID, SCIMSchemaDefinitions.EXTERNAL_ID, SCIMSchemaDefinitions.META,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USERNAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.DISPLAY_NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.NICK_NAME,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PROFILE_URL,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TITLE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.USER_TYPE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PREFERRED_LANGUAGE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.LOCALE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.TIME_ZONE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ACTIVE,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PASSWORD,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.EMAILS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHONE_NUMBERS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.IMS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.PHOTOS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ADDRESSES,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.GROUPS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ENTITLEMENTS,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.ROLES,
-                    SCIMSchemaDefinitions.SCIMUserSchemaDefinition.X509CERTIFICATES,
-                    enterpriseSchemaExtension, customSchemaExtension);
+            schemas.add(systemSchemaExtension.getURI());
+
+            schemaDefinitions.add(enterpriseSchemaExtension);
+            schemaDefinitions.add(systemSchemaExtension);
         }
-        return SCIMSchemaDefinitions.SCIM_USER_SCHEMA;
+
+        if (customSchemaExtension != null) {
+            schemas.add(customSchemaExtension.getURI());
+            schemaDefinitions.add(customSchemaExtension);
+        } else {
+            log.warn("Could not find custom schema.");
+        }
+
+        return SCIMResourceTypeSchema.createSCIMResourceSchema(
+                schemas, schemaDefinitions.toArray(new AttributeSchema[0]));
     }
 
-    /*
-     * check whether the extension is enabled
+    /**
+     * Check whether the extension is enabled.
      *
-     * @return
+     * @return true if extension is enabled.
      */
     public Boolean isExtensionSet() {
+
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
-        if (schemaExtension != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return schemaExtension != null;
     }
 
-    /*
-     * return the extension name
+    /**
+     * Return the extension name.
      *
-     * @return
+     * @return extension name
      */
     public String getExtensionName() {
+
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return null;
@@ -158,22 +184,37 @@ public class SCIMResourceSchemaManager {
         return schemaExtension.getName();
     }
 
-    /*
-     * return the extension name
+    /**
+     * Return the system schema extension name.
      *
-     * @return
+     * @return system schema extension name
+     */
+    public String getSystemSchemaExtensionName() {
+
+        AttributeSchema schemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return null;
+        }
+        return schemaExtension.getName();
+    }
+
+    /**
+     * Return the custom schema extension name.
+     *
+     * @return custom schema extension name
      */
     public String getCustomSchemaExtensionURI() {
 
         return SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
     }
 
-    /*
-     * return the extension uri
+    /**
+     * Return the extension uri.
      *
-     * @return
+     * @return extension uri
      */
     public String getExtensionURI() {
+
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return null;
@@ -181,10 +222,38 @@ public class SCIMResourceSchemaManager {
         return schemaExtension.getURI();
     }
 
-    /*
-     * return the extension's required property
+    /**
+     * Return the system schema extension uri.
      *
-     * @return
+     * @return system schema extension uri
+     */
+    public String getSystemSchemaExtensionURI() {
+
+        AttributeSchema schemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return null;
+        }
+        return schemaExtension.getURI();
+    }
+
+    /**
+     * Return the system schema extension's required property.
+     *
+     * @return extension's required property
+     */
+    public boolean getSystemSchemaExtensionRequired() {
+
+        AttributeSchema schemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return false;
+        }
+        return schemaExtension.getRequired();
+    }
+
+    /**
+     * Return the extension's required property.
+     *
+     * @return extension's required property
      */
     public boolean getExtensionRequired() {
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();

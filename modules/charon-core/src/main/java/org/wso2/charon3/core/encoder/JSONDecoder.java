@@ -536,11 +536,12 @@ public class JSONDecoder {
         List<AttributeSchema> subAttributeSchemas =
                 ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
         String userExtensionName = SCIMResourceSchemaManager.getInstance().getExtensionName();
+        String systemExtensionName = SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionName();
         String customExtensionName = SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI();
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
-            //obtain the user defined value for given key- attribute schema name
+            //obtain the user defined value for given key-attribute schema name
             Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
             SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
             if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
@@ -579,8 +580,9 @@ public class JSONDecoder {
                 //this case is only valid for the extension schema
                 //As according to the spec we have complex attribute inside complex attribute only for extension,
                 //we need to treat it separately
-            } else if ((complexAttributeSchema.getName().equals(userExtensionName)) ||
-                    (complexAttributeSchema.getName().equals(customExtensionName))) {
+            } else if ((complexAttributeSchema.getName().equals(userExtensionName))
+                    || (complexAttributeSchema.getName().equals(customExtensionName))
+                    || (complexAttributeSchema.getName().equals(systemExtensionName))) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
                     List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
@@ -655,7 +657,6 @@ public class JSONDecoder {
         complexAttribute.setSubAttributesList(subAttributesMap);
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(complexAttributeSchema, complexAttribute);
     }
-
 
     /*
      * To build a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes

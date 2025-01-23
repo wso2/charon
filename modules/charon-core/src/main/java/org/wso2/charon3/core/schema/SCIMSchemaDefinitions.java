@@ -134,7 +134,7 @@ public class SCIMSchemaDefinitions {
 
         //sub attributes of email attribute
 
-        //"Email addresses for the user.
+        //Email addresses for the user.
         public static final SCIMAttributeSchema EMAIL_VALUE =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.UserSchemaConstants.EMAILS_VALUE_URI,
                         SCIMConstants.CommonSchemaConstants.VALUE,
