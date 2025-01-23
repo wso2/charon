@@ -38,7 +38,7 @@ import java.util.Scanner;
 import static org.wso2.charon3.core.schema.SCIMConstants.SYSTEM_USER_SCHEMA_URI;
 
 /**
- * This class is to build the extension system schema though the config file.
+ * This class is to build the extension system schema through the config file.
  */
 public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
 
