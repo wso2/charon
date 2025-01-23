@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -46,8 +47,9 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
     private static final Map<String, ExtensionAttributeSchemaConfig> extensionConfig = new HashMap<>();
     private static final Map<String, AttributeSchema> attributeSchemas = new HashMap<>();
     private AttributeSchema extensionSchema = null;
-    String extensionRootAttributeName = null;
-    String extensionRootAttributeURI;
+    private String extensionRootAttributeName = null;
+    private static final String EXTENSION_ROOT_ATTRIBUTE_URI = SYSTEM_USER_SCHEMA_URI;
+    private static final String DELIMITER = "\\A";
 
     /**
      * Get the instance of the SCIMSystemSchemaExtensionBuilder.
@@ -57,14 +59,6 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
     public static SCIMSystemSchemaExtensionBuilder getInstance() {
 
         return instance;
-    }
-
-    /**
-     * Constructor of the SCIMSystemSchemaExtensionBuilder.
-     */
-    private SCIMSystemSchemaExtensionBuilder() {
-
-        extensionRootAttributeURI = SYSTEM_USER_SCHEMA_URI;
     }
 
     /**
@@ -118,7 +112,7 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
             }
         }
 
-        extensionSchema = attributeSchemas.get(extensionRootAttributeURI);
+        extensionSchema = attributeSchemas.get(EXTENSION_ROOT_ATTRIBUTE_URI);
     }
 
     /**
@@ -129,8 +123,11 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
      */
     public void readConfiguration(InputStream inputStream) throws CharonException {
 
-        Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
-        String jsonString = scanner.hasNext() ? scanner.next() : "";
+        if (inputStream == null) {
+            throw new CharonException("Input stream is null.");
+        }
+        Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name()).useDelimiter(DELIMITER);
+        String jsonString = scanner.hasNext() ? scanner.next() : StringUtils.EMPTY;
 
         JSONArray attributeConfigArray = new JSONArray(jsonString);
 
@@ -138,11 +135,11 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
             JSONObject rawAttributeConfig = attributeConfigArray.getJSONObject(index);
             ExtensionAttributeSchemaConfig schemaAttributeConfig =
                     new ExtensionAttributeSchemaConfig(rawAttributeConfig);
-            if (schemaAttributeConfig.getURI().startsWith(extensionRootAttributeURI)) {
+            if (schemaAttributeConfig.getURI().startsWith(EXTENSION_ROOT_ATTRIBUTE_URI)) {
                 extensionConfig.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
             }
 
-            if (extensionRootAttributeURI.equals(schemaAttributeConfig.getURI())) {
+            if (EXTENSION_ROOT_ATTRIBUTE_URI.equals(schemaAttributeConfig.getURI())) {
                 extensionRootAttributeName = schemaAttributeConfig.getName();
             }
         }
@@ -151,13 +148,12 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
     @Override
     public String getURI() {
 
-        return extensionRootAttributeURI;
+        return EXTENSION_ROOT_ATTRIBUTE_URI;
     }
 
     @Override
     protected boolean isRootConfig(ExtensionAttributeSchemaConfig config) {
 
-        return StringUtils.isNotBlank(extensionRootAttributeName)
-                && extensionRootAttributeName.equals(config.getName());
+        return StringUtils.equals(extensionRootAttributeName, config.getName());
     }
 }

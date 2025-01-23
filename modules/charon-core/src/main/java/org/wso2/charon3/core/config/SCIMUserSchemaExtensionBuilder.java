@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,7 +45,7 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
     private static Map<String, ExtensionAttributeSchemaConfig> extensionConfig = new HashMap<>();
     // Extension root attribute name.
     String extensionRootAttributeName = null;
-    String extensionRootAttributeURI;
+    String extensionRootAttributeURI = ENTERPRISE_USER_SCHEMA_URI;
     // built schema map
     private static Map<String, AttributeSchema> attributeSchemas = new HashMap<>();
     // extension root attribute schema
@@ -52,14 +53,6 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
 
     public static SCIMUserSchemaExtensionBuilder getInstance() {
         return configReader;
-    }
-
-    /**
-     * Constructor to initialize the SCIMUserSchemaExtensionBuilder.
-     */
-    public SCIMUserSchemaExtensionBuilder() {
-
-        this.extensionRootAttributeURI = ENTERPRISE_USER_SCHEMA_URI;
     }
 
     public AttributeSchema getExtensionSchema() {
@@ -104,7 +97,7 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
 
     public void readConfiguration(InputStream inputStream) throws CharonException {
 
-        Scanner scanner = new Scanner(inputStream, "utf-8").useDelimiter("\\A");
+        Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
         String jsonString = scanner.hasNext() ? scanner.next() : "";
 
         JSONArray attributeConfigArray = new JSONArray(jsonString);
