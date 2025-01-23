@@ -242,6 +242,7 @@ public class SCIMResourceSchemaManager {
      * @return extension's required property
      */
     public boolean getSystemSchemaExtensionRequired() {
+
         AttributeSchema schemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return false;
