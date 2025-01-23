@@ -68,16 +68,11 @@ public class SCIMSystemSchemaExtensionBuilderTest {
     }
 
     @Test
-    void testGetURI() throws NoSuchFieldException, IllegalAccessException {
-
-        Field uriField = SCIMSystemSchemaExtensionBuilder.class.getDeclaredField("extensionRootAttributeURI");
-        uriField.setAccessible(true);
-        String testURI = "testURI";
-        uriField.set(builder, testURI);
+    void testGetURI() {
 
         String result = builder.getURI();
         assertNotNull(result, "The getURI method should not return null.");
-        assertEquals(result, testURI, "The getURI method should return the correct URI.");
+        assertEquals(result, SYSTEM_USER_SCHEMA_URI, "The getURI method should return the correct URI.");
     }
 
     @Test
@@ -168,11 +163,11 @@ public class SCIMSystemSchemaExtensionBuilderTest {
         constructor.setAccessible(true);
         SCIMSystemSchemaExtensionBuilder newBuilderInstance = constructor.newInstance();
 
+        resetSingletonField("EXTENSION_ROOT_ATTRIBUTE_URI", SYSTEM_USER_SCHEMA_URI);
         resetSingletonField("instance", newBuilderInstance);
         resetSingletonField("extensionConfig", new HashMap<>());
         resetSingletonField("attributeSchemas", new HashMap<>());
 
-        setInstanceField("extensionRootAttributeURI", SYSTEM_USER_SCHEMA_URI);
         setInstanceField("extensionSchema", null);
         setInstanceField("extensionRootAttributeName", null);
     }
