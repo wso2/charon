@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2021, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2021-2025,  WSO2 LLC. (http://www.wso2.com).
  *
- * WSO2 Inc. licenses this file to you under the Apache License,
+ * WSO2 LLC. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,7 +65,8 @@ public class AttributeUtilTest {
                 {"referenceString", REFERENCE, String.class},
                 {"complexString", COMPLEX, String.class},
                 {null, STRING, null},
-                {JSONObject.NULL, STRING, String.class}
+                {JSONObject.NULL, STRING, String.class},
+                {"", INTEGER, String.class}
         };
     }
 
