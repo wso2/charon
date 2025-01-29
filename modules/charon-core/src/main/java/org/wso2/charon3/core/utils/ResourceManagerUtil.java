@@ -414,9 +414,9 @@ public class ResourceManagerUtil {
      */
     public static int processCount(String countStr) throws BadRequestException {
 
-        int count;
+        Integer count;
         if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
-            count = CharonConfiguration.getInstance().getCountValueForPagination();
+            count = null;
         } else {
             try {
                 count = Integer.parseInt(countStr);
@@ -425,11 +425,7 @@ public class ResourceManagerUtil {
             }
         }
 
-        if (count < 0) {
-            count = 0;
-        }
-
-        return count;
+        return processCount(count);
     }
 
     /**
@@ -442,7 +438,7 @@ public class ResourceManagerUtil {
     public static Integer processCount(Integer countInt) {
 
         if (countInt == null || countInt.toString().isEmpty()) {
-            return null;
+            return CharonConfiguration.getInstance().getCountValueForPagination();
         } else {
             // All the negative values are interpreted as zero according to the specification.
             if (countInt <= 0) {
