@@ -36,6 +36,7 @@ public class CharonConfiguration implements Configuration {
     private int maxPayLoadSize;
     private int maxResults;
     private ArrayList<Object[]> authenticationSchemes = new ArrayList<Object[]>();
+    private boolean cursorSupport;
 
     //default count value for pagination
     private int count;
@@ -76,6 +77,15 @@ public class CharonConfiguration implements Configuration {
     public void setFilterSupport(boolean supported, int maxResults) {
         this.filterSupport = supported;
         this.maxResults = maxResults;
+    }
+
+    /**
+     * Set cursor pagination support
+     * @param supported
+     */
+    public void setCursorPaginationSupport(boolean supported) {
+
+        this.cursorSupport = supported;
     }
 
     /*
@@ -145,6 +155,7 @@ public class CharonConfiguration implements Configuration {
         configMap.put(SCIMConfigConstants.PATCH, patchSupport);
         configMap.put(SCIMConfigConstants.AUTHENTICATION_SCHEMES, authenticationSchemes);
         configMap.put(SCIMConfigConstants.PAGINATION_DEFAULT_COUNT, count);
+        configMap.put(SCIMConfigConstants.CURSOR, cursorSupport);
         return  configMap;
     }
 
