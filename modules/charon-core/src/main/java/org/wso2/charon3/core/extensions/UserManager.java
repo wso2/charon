@@ -31,6 +31,7 @@ import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -304,5 +305,10 @@ public interface UserManager {
             BadRequestException {
 
         return null;
+    }
+
+    default Map<String, String> getSyncedUserAttributes() throws CharonException {
+
+        return new HashMap<>();
     }
  }
