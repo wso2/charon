@@ -716,8 +716,7 @@ public class UserResourceManager extends AbstractResourceManager {
 
                     int lastColonIndex = syncedAttribute.lastIndexOf(':');
                     String baseAttributeName = (lastColonIndex != -1)
-                            ? syncedAttribute.substring(0, lastColonIndex)
-                            : StringUtils.EMPTY;
+                            ? syncedAttribute.substring(0, lastColonIndex) : StringUtils.EMPTY;
                     String subAttributeName = (lastColonIndex != -1)
                             ? syncedAttribute.substring(lastColonIndex + 1)
                             : syncedAttribute;
