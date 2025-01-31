@@ -59,6 +59,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.COLON;
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.DOT_SEPARATOR;
+
 /**
  * REST API exposed by Charon-Core to perform operations on UserResource.
  * Any SCIM service provider can call this API perform relevant CRUD operations on USER ,
@@ -705,8 +708,10 @@ public class UserResourceManager extends AbstractResourceManager {
                     throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
+                if (syncedAttributes == null) {
+                    continue;
+                }
                 List<String> scimAttributes = determineScimAttributes(operation);
-
                 for (String scimAttribute : scimAttributes) {
                     String syncedAttribute = syncedAttributes.get(scimAttribute);
 
@@ -714,12 +719,11 @@ public class UserResourceManager extends AbstractResourceManager {
                         continue;
                     }
 
-                    int lastColonIndex = syncedAttribute.lastIndexOf(':');
+                    int lastColonIndex = syncedAttribute.lastIndexOf(COLON);
                     String baseAttributeName = (lastColonIndex != -1)
                             ? syncedAttribute.substring(0, lastColonIndex) : StringUtils.EMPTY;
                     String subAttributeName = (lastColonIndex != -1)
-                            ? syncedAttribute.substring(lastColonIndex + 1)
-                            : syncedAttribute;
+                            ? syncedAttribute.substring(lastColonIndex + 1) : syncedAttribute;
                     String[] subAttributes = subAttributeName.split("\\.");
 
                     switch (subAttributes.length) {
@@ -827,6 +831,9 @@ public class UserResourceManager extends AbstractResourceManager {
 
     private static List<String> determineScimAttributes(PatchOperation operation) {
 
+        if (operation == null) {
+            return Collections.emptyList();
+        }
         List<String> attributes = new ArrayList<>();
         String path = operation.getPath();
         Object values = operation.getValues();
@@ -847,9 +854,9 @@ public class UserResourceManager extends AbstractResourceManager {
         for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
             String key = it.next();
             Object value = jsonObject.get(key);
-            String separator = ".";
+            String separator = DOT_SEPARATOR;
             if (defaultScimSchemas().contains(basePath)) {
-                separator = ":";
+                separator = COLON;
             }
             String newPath = (basePath != null) ? basePath + separator + key : key;
 
