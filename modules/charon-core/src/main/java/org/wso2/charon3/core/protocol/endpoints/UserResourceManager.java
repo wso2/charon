@@ -699,7 +699,15 @@ public class UserResourceManager extends AbstractResourceManager {
                             copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
                         }
                     } catch (BadRequestException e) {
-                        if (determineScimAttributes(operation).stream().noneMatch(deletedSyncedAttributes::contains)) {
+                        /*
+                         * This condition is for the migrated users who have enterprise user attributes and system
+                         * schema attributes both mapped to a single local claim. In such cases, if both the scim
+                         * attributes are specified to be removed in the patch request, for the second attribute, there
+                         * will be an error thrown because it is already removed when processing the first attribute.
+                         */
+                        if (!ResponseCodeConstants.INVALID_PATH.equals(e.getScimType()) ||
+                                determineScimAttributes(operation).stream()
+                                        .noneMatch(deletedSyncedAttributes::contains)) {
                             throw e;
                         }
                     }
@@ -719,6 +727,12 @@ public class UserResourceManager extends AbstractResourceManager {
                     throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
+                /*
+                 * The following logic is for the migrated users who have enterprise user attributes and system schema
+                 * attributes both mapped to a single local claim. In such cases, if any operation is only sent for
+                 * one scim attributes, there will be conflicts for the final value because the other scim attribute's
+                 * value is not changed. Therefore, we are removing the other scim attribute from the user object.
+                 */
                 if (syncedAttributes == null) {
                     continue;
                 }
