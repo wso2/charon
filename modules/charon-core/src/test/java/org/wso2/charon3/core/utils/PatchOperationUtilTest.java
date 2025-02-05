@@ -18,6 +18,8 @@
 
 package org.wso2.charon3.core.utils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -39,6 +41,8 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -394,5 +398,88 @@ public class PatchOperationUtilTest {
         user.setAttribute(multiValuedAttributeEmail);
 
         return user;
+    }
+
+    @DataProvider(name = "scimAttributeData")
+    public Object[][] scimAttributeData() {
+        return new Object[][]{
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:emails", null),
+                        Collections.singletonList("urn:ietf:params:scim:schemas:core:2.0:User:emails")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:userName", "john_doe"),
+                        Collections.singletonList("urn:ietf:params:scim:schemas:core:2.0:User:userName")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:addresses",
+                        new JSONObject()
+                                .put("home", new JSONObject()
+                                        .put("details", new JSONObject()
+                                                .put("street", "123 Main St")
+                                                .put("zip", "12345")))
+                                .put("work", new JSONObject().put("street", "456 Work Rd"))),
+                        Arrays.asList(
+                                "urn:ietf:params:scim:schemas:core:2.0:User:addresses.home.details.street",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:addresses.home.details.zip",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:addresses.work.street")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User",
+                        new JSONObject()
+                                .put("department", "Engineering")
+                                .put("organization", new JSONObject().put("name", "WSO2"))),
+                        Arrays.asList(
+                                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department",
+                                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:organization.name")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:emails",
+                        new JSONArray()
+                                .put(new JSONObject().put("primary", true).put("value", "test@example.com"))
+                                .put(new JSONObject().put("value", "work@example.com"))),
+                        Arrays.asList(
+                                "urn:ietf:params:scim:schemas:core:2.0:User:emails.primary",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:emails.value",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:emails.value")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:numbers",
+                        new JSONArray()
+                                .put(new JSONObject().put("type", "mobile").put("number", "123456"))
+                                .put("invalid_entry")),
+                        Arrays.asList(
+                                "urn:ietf:params:scim:schemas:core:2.0:User:numbers.type",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:numbers.number",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:numbers")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User",
+                        new JSONArray()
+                                .put(new JSONObject().put("email", "test@example.com"))
+                                .put(new JSONObject().put("phone", "123-456-7890"))),
+                        Arrays.asList(
+                                "urn:ietf:params:scim:schemas:core:2.0:User:email",
+                                "urn:ietf:params:scim:schemas:core:2.0:User:phone")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:customAttributes",
+                        new JSONObject()),
+                        Collections.singletonList("urn:ietf:params:scim:schemas:core:2.0:User:customAttributes")
+                },
+                {createPatchOperation("urn:ietf:params:scim:schemas:core:2.0:User:emptyArray",
+                        new JSONArray()),
+                        Collections.singletonList("urn:ietf:params:scim:schemas:core:2.0:User:emptyArray")
+                }
+        };
+    }
+
+    @Test(dataProvider = "scimAttributeData")
+    public void testDetermineScimAttributes(PatchOperation operation, List<String> expectedAttributes) {
+
+        List<String> actualAttributes = PatchOperationUtil.determineScimAttributes(operation);
+        Assert.assertEqualsNoOrder(actualAttributes.toArray(), expectedAttributes.toArray(),
+                "The SCIM attributes do not match");
+    }
+
+
+    private static PatchOperation createPatchOperation(String path, Object values) {
+
+        PatchOperation operation = new PatchOperation();
+        operation.setPath(path);
+        operation.setValues(values);
+        return operation;
     }
 }
