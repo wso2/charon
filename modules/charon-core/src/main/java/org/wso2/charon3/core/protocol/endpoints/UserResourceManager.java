@@ -61,6 +61,7 @@ import java.util.Map;
 
 import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.COLON;
 import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.DOT_SEPARATOR;
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.OPEN_SQUARE_BRACKET;
 
 /**
  * REST API exposed by Charon-Core to perform operations on UserResource.
@@ -670,6 +671,7 @@ public class UserResourceManager extends AbstractResourceManager {
             User newUser = null;
 
             Map<String, String> syncedAttributes = userManager.getSyncedUserAttributes();
+            List<String> deletedSyncedAttributes = new ArrayList<>();
             for (PatchOperation operation : opList) {
 
                 if (operation.getOperation().equals(SCIMConstants.OperationalConstants.ADD)) {
@@ -685,14 +687,31 @@ public class UserResourceManager extends AbstractResourceManager {
 
                     }
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REMOVE)) {
-                    if (newUser == null) {
-                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, oldUser, copyOfOldUser, schema);
-                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                    try {
+                        if (newUser == null) {
+                            newUser = (User) PatchOperationUtil.doPatchRemove(operation, oldUser, copyOfOldUser,
+                                    schema);
+                            copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
 
-                    } else {
-                        newUser = (User) PatchOperationUtil.doPatchRemove(operation, newUser, copyOfOldUser, schema);
-                        copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                        } else {
+                            newUser = (User) PatchOperationUtil.doPatchRemove(operation, newUser, copyOfOldUser,
+                                    schema);
+                            copyOfOldUser = (User) CopyUtil.deepCopy(newUser);
+                        }
+                    } catch (BadRequestException e) {
+                        /*
+                         * This condition is for the migrated users who have enterprise user attributes and system
+                         * schema attributes both mapped to a single local claim. In such cases, if both the scim
+                         * attributes are specified to be removed in the patch request, for the second attribute, there
+                         * will be an error thrown because it is already removed when processing the first attribute.
+                         */
+                        if (!ResponseCodeConstants.INVALID_PATH.equals(e.getScimType()) ||
+                                determineScimAttributes(operation).stream()
+                                        .noneMatch(deletedSyncedAttributes::contains)) {
+                            throw e;
+                        }
                     }
+
                 } else if (operation.getOperation().equals(SCIMConstants.OperationalConstants.REPLACE)) {
                     if (newUser == null) {
                         newUser = (User) PatchOperationUtil.doPatchReplace
@@ -708,6 +727,12 @@ public class UserResourceManager extends AbstractResourceManager {
                     throw new BadRequestException("Unknown operation.", ResponseCodeConstants.INVALID_SYNTAX);
                 }
 
+                /*
+                 * The following logic is for the migrated users who have enterprise user attributes and system schema
+                 * attributes both mapped to a single local claim. In such cases, if any operation is only sent for
+                 * one scim attributes, there will be conflicts for the final value because the other scim attribute's
+                 * value is not changed. Therefore, we are removing the other scim attribute from the user object.
+                 */
                 if (syncedAttributes == null) {
                     continue;
                 }
@@ -729,9 +754,11 @@ public class UserResourceManager extends AbstractResourceManager {
                     switch (subAttributes.length) {
                         case 1:
                             newUser.deleteSubAttribute(baseAttributeName, subAttributes[0]);
+                            deletedSyncedAttributes.add(syncedAttribute);
                             break;
                         case 2:
                             newUser.deleteSubSubAttribute(baseAttributeName, subAttributes[0], subAttributes[1]);
+                            deletedSyncedAttributes.add(syncedAttribute);
                             break;
                         default:
                             break;
@@ -836,8 +863,12 @@ public class UserResourceManager extends AbstractResourceManager {
         }
         List<String> attributes = new ArrayList<>();
         String path = operation.getPath();
-        Object values = operation.getValues();
+        if (path != null) {
+            int bracketIndex = path.indexOf(OPEN_SQUARE_BRACKET);
+            path = (bracketIndex != -1) ? path.substring(0, bracketIndex) : path;
+        }
 
+        Object values = operation.getValues();
         if (values instanceof JSONObject) {
             extractScimAttributes((JSONObject) values, path, attributes);
         } else if (values instanceof JSONArray) {

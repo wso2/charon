@@ -863,6 +863,7 @@ public class SCIMConstants {
         public static final String COLON = ":";
         public static final String URL_SEPARATOR = "/";
         public static final String DOT_SEPARATOR = ".";
+        public static final String OPEN_SQUARE_BRACKET = "[";
 
     }
 }
