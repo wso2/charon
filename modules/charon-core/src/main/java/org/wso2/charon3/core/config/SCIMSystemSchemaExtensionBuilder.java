@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wso2.charon3.core.attributes.SCIMCustomAttribute;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.schema.AttributeSchema;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -115,6 +117,28 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
         extensionSchema = attributeSchemas.get(EXTENSION_ROOT_ATTRIBUTE_URI);
     }
 
+    public AttributeSchema buildSystemSchemaExtension(List<SCIMCustomAttribute> attributes) throws CharonException,
+            InternalErrorException {
+
+        // Variable attributeSchema is a scim spec defined object format that includes subattributes, etc.
+        Map<String, AttributeSchema> attributeSchemas = new HashMap<>();
+        Map<String, ExtensionAttributeSchemaConfig> attributeConfigs = new HashMap<>();
+
+        readConfiguration(attributes, attributeConfigs);
+        for (Map.Entry<String, ExtensionAttributeSchemaConfig> attributeSchemaConfig :
+                attributeConfigs.entrySet()) {
+            // If there are no children its a simple attribute, build it.
+            if (!attributeSchemaConfig.getValue().hasChildren()) {
+                buildSimpleAttributeSchema(attributeSchemaConfig.getValue(), attributeSchemas);
+            } else {
+                // Need to build child schemas first.
+                buildComplexAttributeSchema(attributeSchemaConfig.getValue(), attributeSchemas, attributeConfigs);
+            }
+        }
+        // Now get the extension schema.
+        return  attributeSchemas.get(EXTENSION_ROOT_ATTRIBUTE_URI);
+    }
+
     /**
      * Read the configuration from the input stream.
      *
@@ -155,5 +179,16 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
     protected boolean isRootConfig(ExtensionAttributeSchemaConfig config) {
 
         return StringUtils.equals(extensionRootAttributeName, config.getName());
+    }
+
+    private void readConfiguration(List<SCIMCustomAttribute> schemaConfigurations, Map<String,
+            ExtensionAttributeSchemaConfig> attributeConfigs) {
+
+        for (SCIMCustomAttribute schemaConfiguration : schemaConfigurations) {
+            ExtensionAttributeSchemaConfig schemaAttributeConfig =
+                    new ExtensionAttributeSchemaConfig
+                            (schemaConfiguration.getProperties());
+            attributeConfigs.put(schemaAttributeConfig.getURI(), schemaAttributeConfig);
+        }
     }
 }

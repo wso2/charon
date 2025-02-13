@@ -294,6 +294,19 @@ public interface UserManager {
     }
 
     /**
+     * Return System schema.
+     * @return System schema.
+     * @throws CharonException
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     */
+    default AttributeSchema getCustomAttributeSchemaInSystemExtension() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        return null;
+    }
+
+    /**
      * Returns list of attributes in custom schema.
      *
      * @return List of attributes in custom schema.
