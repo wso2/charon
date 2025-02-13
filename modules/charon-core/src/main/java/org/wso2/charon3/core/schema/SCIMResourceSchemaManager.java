@@ -114,14 +114,18 @@ public class SCIMResourceSchemaManager {
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema systemSchemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema customSystemAttributeSchema = userManager.getCustomAttributeSchemaInSystemExtension();
-        Map<String, AttributeSchema> subAttributesMap =
-                Optional.ofNullable(systemSchemaExtension.getSubAttributeSchemas())
-                .orElse(Collections.emptyList())
-                .stream()
-                .collect(Collectors.toMap(AttributeSchema::getURI, Function.identity()));
-        if (customSystemAttributeSchema != null) {
+        Map<String, AttributeSchema> systemSchemaSubAttributesMap =
+                Optional.ofNullable(systemSchemaExtension)
+                        .map(AttributeSchema::getSubAttributeSchemas)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .collect(Collectors.toMap(AttributeSchema::getURI, Function.identity()));
+
+        if (systemSchemaExtension == null && customSystemAttributeSchema != null) {
+            systemSchemaExtension = customSystemAttributeSchema;
+        } else if (customSystemAttributeSchema != null) {
             for (AttributeSchema attributeSchema : customSystemAttributeSchema.getSubAttributeSchemas()) {
-                if (!subAttributesMap.containsKey(attributeSchema.getURI())) {
+                if (!systemSchemaSubAttributesMap.containsKey(attributeSchema.getURI())) {
                     systemSchemaExtension.getSubAttributeSchemas().add(attributeSchema);
                 }
             }
