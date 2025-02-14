@@ -31,7 +31,12 @@ import org.wso2.charon3.core.extensions.UserManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
 * This is to check for extension schema for the user and buildTree a custom user schema with it.
@@ -108,6 +113,23 @@ public class SCIMResourceSchemaManager {
 
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema systemSchemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema customSystemAttributeSchema = userManager.getCustomAttributeSchemaInSystemExtension();
+        Map<String, AttributeSchema> systemSchemaSubAttributesMap =
+                Optional.ofNullable(systemSchemaExtension)
+                        .map(AttributeSchema::getSubAttributeSchemas)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .collect(Collectors.toMap(AttributeSchema::getURI, Function.identity()));
+
+        if (systemSchemaExtension == null && customSystemAttributeSchema != null) {
+            systemSchemaExtension = customSystemAttributeSchema;
+        } else if (customSystemAttributeSchema != null) {
+            for (AttributeSchema attributeSchema : customSystemAttributeSchema.getSubAttributeSchemas()) {
+                if (!systemSchemaSubAttributesMap.containsKey(attributeSchema.getURI())) {
+                    systemSchemaExtension.getSubAttributeSchemas().add(attributeSchema);
+                }
+            }
+        }
         AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
 
         List<String> schemas = new ArrayList<>();
