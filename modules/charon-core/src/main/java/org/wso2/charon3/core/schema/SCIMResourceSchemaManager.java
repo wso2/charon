@@ -119,7 +119,11 @@ public class SCIMResourceSchemaManager {
                         .map(AttributeSchema::getSubAttributeSchemas)
                         .orElse(Collections.emptyList())
                         .stream()
-                        .collect(Collectors.toMap(AttributeSchema::getURI, Function.identity()));
+                        .filter(attr -> attr.getURI() != null)
+                        .collect(Collectors.toMap(
+                                AttributeSchema::getURI,
+                                Function.identity(),
+                                (existing, replacement) -> existing));
 
         if (systemSchemaExtension == null && customSystemAttributeSchema != null) {
             systemSchemaExtension = customSystemAttributeSchema;
