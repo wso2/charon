@@ -1081,7 +1081,9 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1125,7 +1127,9 @@ public class UserResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
         Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1165,7 +1169,9 @@ public class UserResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
         Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(null);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1200,7 +1206,9 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
         Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(userOld);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(null);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1232,8 +1240,9 @@ public class UserResourceManagerTest {
                 .thenReturn(SCIM2_USER_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
+        Mockito.when(userManager.getUser(existingId, ResourceManagerUtil.getOnlyRequiredAttributesURIs(schema,
+                        SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenThrow(BadRequestException.class);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -1306,7 +1315,9 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1348,7 +1359,9 @@ public class UserResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT);
         Mockito.when(userManager.getUser(existingId,
-                ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+                ResourceManagerUtil.getOnlyRequiredAttributesURIs(
+                        schema, SCIMConstants.UserSchemaConstants.USER_NAME, null)))
+                .thenReturn(userOld);
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
         Mockito.when(userManager.updateUser(any(User.class), anyMap(), anyList())).thenReturn(validatedUser);
         SCIMResponse scimResponse = userResourceManager.updateWithPATCH(existingId, scimObjectString,
