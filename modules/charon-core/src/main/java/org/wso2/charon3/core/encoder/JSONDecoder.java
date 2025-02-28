@@ -754,6 +754,16 @@ public class JSONDecoder {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
             //obtain the Operations values
             JSONArray operationJsonList = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.OPERATIONS);
+
+            // Check if operationJsonList is null.
+            if (operationJsonList == null) {
+                // Check if operations field present in lowercase.
+                if (decodedJsonObj.has(StringUtils.lowerCase(SCIMConstants.OperationalConstants.OPERATIONS))) {
+                    throw new BadRequestException("Invalid JSON schema.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            }
+
             //for each operation, create a PatchOperation object and add the relevant values to it
             for (int count = 0; count < operationJsonList.length(); count++) {
                 JSONObject operation = (JSONObject) operationJsonList.get(count);
