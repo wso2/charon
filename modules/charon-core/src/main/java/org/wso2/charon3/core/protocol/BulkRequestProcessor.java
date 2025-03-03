@@ -37,9 +37,11 @@ import org.wso2.charon3.core.protocol.endpoints.RoleResourceV2Manager;
 import org.wso2.charon3.core.protocol.endpoints.UserResourceManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -289,12 +291,20 @@ public class BulkRequestProcessor {
             }
 
             case SCIMConstants.OperationalConstants.GET: {
-                String resourceId = extractIDFromPath(bulkRequestContent.getPath());
-                String attributes = getAttributesFromData(bulkRequestContent.getData());
-                String excludeAttributes = getExcludedAttributesFromData(bulkRequestContent.getData());
-
+                String resourceId = extractIDFromGetRequestPath(bulkRequestContent.getPath());
+                Map<String, String> queryParams = parseQueryParameters(bulkRequestContent.getPath());
+                String attributes = queryParams.get(SCIMConstants.CommonSchemaConstants.ATTRIBUTES);
+                String excludeAttributes = queryParams.get(SCIMConstants.CommonSchemaConstants.EXCLUDE_ATTRIBUTES);
+                if (StringUtils.isNotBlank(bulkRequestContent.getData())) {
+                    if (StringUtils.isBlank(attributes)) {
+                        attributes = getAttributesFromData(bulkRequestContent.getData());
+                    }
+                    if (StringUtils.isBlank(excludeAttributes)) {
+                        excludeAttributes = getExcludedAttributesFromData(bulkRequestContent.getData());
+                    }
+                }
                 if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_V2_ENDPOINT)) {
-                    resourceId = extractIDFromV2Path(bulkRequestContent.getPath());
+                    resourceId = extractIDFromV2GetRequestPath(bulkRequestContent.getPath());
                     response = resourceManager.getRole(resourceId, roleV2Manager, attributes, excludeAttributes);
                 } else if (bulkRequestContent.getPath().contains(SCIMConstants.ROLE_ENDPOINT)) {
                     response = resourceManager.getRole(resourceId, roleManager, attributes, excludeAttributes);
@@ -352,6 +362,32 @@ public class BulkRequestProcessor {
         }
     }
 
+    private String extractIDFromGetRequestPath(String path) throws BadRequestException {
+
+        String[] parts = path.split("[?]");
+        if (parts.length == 1) {
+            return extractIDFromPath(path);
+        }
+        if (parts[0] != null) {
+            return extractIDFromPath(parts[0]);
+        }
+        throw new BadRequestException
+                ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
+    }
+
+    private static Map<String, String> parseQueryParameters(String path) {
+
+        String[] parts = path.split("[?]");
+        if (parts.length < 2) {
+            return new HashMap<>();
+        }
+        return Arrays.stream(parts[1].split("&"))
+                .map(param -> param.split("="))
+                .collect(Collectors.toMap(
+                        pair -> pair[0],
+                        pair -> pair.length > 1 ? pair[1] : ""));
+    }
+
     private String extractIDFromV2Path(String path) throws BadRequestException {
 
         String [] parts = path.split("[/]");
@@ -360,6 +396,19 @@ public class BulkRequestProcessor {
         }
         throw new BadRequestException
                     ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
+    }
+
+    private String extractIDFromV2GetRequestPath(String path) throws BadRequestException {
+
+        String[] parts = path.split("[?]");
+        if (parts.length == 1) {
+            return extractIDFromV2Path(path);
+        }
+        if (parts[0] != null) {
+            return extractIDFromV2Path(parts[0]);
+        }
+        throw new BadRequestException
+                ("No resource Id is provided in path", ResponseCodeConstants.INVALID_VALUE);
     }
 
     private BulkResponseContent createBulkResponseContent(SCIMResponse response, String method,
