@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.encoder;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,8 +55,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BINARY;
 import static org.wso2.charon3.core.schema.SCIMDefinitions.DataType.BOOLEAN;
@@ -542,11 +545,12 @@ public class JSONDecoder {
         List<AttributeSchema> subAttributeSchemas =
                 ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
         String userExtensionName = SCIMResourceSchemaManager.getInstance().getExtensionName();
+        String systemExtensionName = SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionName();
         String customExtensionName = SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI();
 
         //iterate through the complex attribute schema and extract the sub attributes.
         for (AttributeSchema subAttributeSchema : subAttributeSchemas) {
-            //obtain the user defined value for given key- attribute schema name
+            //obtain the user defined value for given key-attribute schema name
             Object attributeValObj = jsonObject.opt(subAttributeSchema.getName());
             SCIMDefinitions.DataType subAttributeSchemaType = subAttributeSchema.getType();
             if (subAttributeSchemaType.equals(STRING) || subAttributeSchemaType.equals(BINARY) ||
@@ -585,8 +589,9 @@ public class JSONDecoder {
                 //this case is only valid for the extension schema
                 //As according to the spec we have complex attribute inside complex attribute only for extension,
                 //we need to treat it separately
-            } else if ((complexAttributeSchema.getName().equals(userExtensionName)) ||
-                    (complexAttributeSchema.getName().equals(customExtensionName))) {
+            } else if ((complexAttributeSchema.getName().equals(userExtensionName))
+                    || (complexAttributeSchema.getName().equals(customExtensionName))
+                    || (complexAttributeSchema.getName().equals(systemExtensionName))) {
                 if (subAttributeSchemaType.equals(COMPLEX)) {
                     //check for user defined extension's schema violation
                     List<AttributeSchema> subList = subAttributeSchema.getSubAttributeSchemas();
@@ -661,7 +666,6 @@ public class JSONDecoder {
         complexAttribute.setSubAttributesList(subAttributesMap);
         return (ComplexAttribute) DefaultAttributeFactory.createAttribute(complexAttributeSchema, complexAttribute);
     }
-
 
     /*
      * To build a complex type value of a Multi Valued Attribute. (eg. Email with value,type,primary as sub attributes
@@ -759,6 +763,16 @@ public class JSONDecoder {
             JSONObject decodedJsonObj = new JSONObject(new JSONTokener(scimResourceString));
             //obtain the Operations values
             JSONArray operationJsonList = (JSONArray) decodedJsonObj.opt(SCIMConstants.OperationalConstants.OPERATIONS);
+
+            // Check if operationJsonList is null.
+            if (operationJsonList == null) {
+                // Check if operations field present in lowercase.
+                if (decodedJsonObj.has(StringUtils.lowerCase(SCIMConstants.OperationalConstants.OPERATIONS))) {
+                    throw new BadRequestException("Invalid JSON schema.", ResponseCodeConstants.INVALID_SYNTAX);
+                }
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            }
+
             //for each operation, create a PatchOperation object and add the relevant values to it
             for (int count = 0; count < operationJsonList.length(); count++) {
                 JSONObject operation = (JSONObject) operationJsonList.get(count);
@@ -781,7 +795,7 @@ public class JSONDecoder {
                 patchOperation.setValues(operation.opt(SCIMConstants.OperationalConstants.VALUE));
                 operationList.add(patchOperation);
             }
-        } catch (JSONException e) {
+        } catch (JSONException | ClassCastException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("json error in decoding the request", e);
             }
@@ -888,8 +902,10 @@ public class JSONDecoder {
         List<BulkRequestContent> usersEndpointOperationList = new ArrayList<>();
         List<BulkRequestContent> groupsEndpointOperationList = new ArrayList<>();
         List<BulkRequestContent> rolesEndpointOperationList = new ArrayList<>();
+        List<BulkRequestContent> rolesV2EndpointOperationList = new ArrayList<>();
         int failOnErrorsAttribute;
         List<String> schemas = new ArrayList<>();
+        Set<String> encounteredBulkIds = new HashSet<>();
 
         JSONObject decodedObject;
         try {
@@ -926,11 +942,16 @@ public class JSONDecoder {
 
                 if (requestMethod.equals(SCIMConstants.OperationalConstants.POST)) {
 
-                    if (!member.optString(SCIMConstants.OperationalConstants.BULK_ID).equals("") &&
-                            member.optString(SCIMConstants.OperationalConstants.BULK_ID) != null) {
+                    String bulkId = member.optString(SCIMConstants.OperationalConstants.BULK_ID);
 
+                    if (StringUtils.isNotEmpty(bulkId)) {
+                        if (encounteredBulkIds.contains(bulkId)) {
+                            String error = "Duplicate bulkId found: " + bulkId;
+                            throw new BadRequestException(error, ResponseCodeConstants.INVALID_VALUE);
+                        }
+                        encounteredBulkIds.add(bulkId);
                         setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
-                                groupsEndpointOperationList, rolesEndpointOperationList);
+                                groupsEndpointOperationList, rolesEndpointOperationList, rolesV2EndpointOperationList);
                     } else {
                         String error = "JSON string could not be decoded properly.Required " +
                                 "attribute BULK_ID is missing in the request";
@@ -939,7 +960,7 @@ public class JSONDecoder {
                     }
                 } else {
                     setRequestData(requestType, requestMethod, requestVersion, member, usersEndpointOperationList,
-                            groupsEndpointOperationList, rolesEndpointOperationList);
+                            groupsEndpointOperationList, rolesEndpointOperationList, rolesV2EndpointOperationList);
                 }
             }
             //extract [failOnErrors] attribute from Json string
@@ -949,6 +970,7 @@ public class JSONDecoder {
             bulkRequestDataObject.setUserOperationRequests(usersEndpointOperationList);
             bulkRequestDataObject.setGroupOperationRequests(groupsEndpointOperationList);
             bulkRequestDataObject.setRoleOperationRequests(rolesEndpointOperationList);
+            bulkRequestDataObject.setRoleV2OperationRequests(rolesV2EndpointOperationList);
 
         } catch (JSONException e) {
             if (logger.isDebugEnabled()) {
@@ -961,8 +983,10 @@ public class JSONDecoder {
     }
 
     private void setRequestData(String requestType, String requestMethod, String requestVersion, JSONObject member,
-            List<BulkRequestContent> usersEndpointOperationList, List<BulkRequestContent> groupsEndpointOperationList,
-            List<BulkRequestContent> rolesEndpointOperationList) {
+                                List<BulkRequestContent> usersEndpointOperationList,
+                                List<BulkRequestContent> groupsEndpointOperationList,
+                                List<BulkRequestContent> rolesEndpointOperationList,
+                                List<BulkRequestContent> rolesV2EndpointOperationList) {
 
         // Create user request list.
         if (requestType.contains(SCIMConstants.USER_ENDPOINT)) {
@@ -982,7 +1006,11 @@ public class JSONDecoder {
         }
 
         // Create role request list.
-        if (requestType.contains(SCIMConstants.ROLE_ENDPOINT)) {
+        if (requestType.contains(SCIMConstants.ROLE_V2_ENDPOINT)) {
+            BulkRequestContent newRequestData =
+                    getBulkRequestContent(member, requestMethod, requestType, requestVersion);
+            rolesV2EndpointOperationList.add(newRequestData);
+        } else if (requestType.contains(SCIMConstants.ROLE_ENDPOINT)) {
             BulkRequestContent newRequestData =
                     getBulkRequestContent(member, requestMethod, requestType, requestVersion);
             rolesEndpointOperationList.add(newRequestData);

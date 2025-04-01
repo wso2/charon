@@ -21,6 +21,7 @@ import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
 import org.wso2.charon3.core.objects.Role;
+import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.AttributeUtil;
@@ -141,6 +142,35 @@ public class ServerSideValidator extends AbstractValidator {
      */
     public static void validateRetrievedSCIMRoleObject(Role scimObject, String requestedAttributes,
             String requestedExcludingAttributes) {
+
+        List<String> requestedExcludingAttributesList = null;
+        List<String> requestedAttributesList = null;
+        if (requestedExcludingAttributes != null) {
+            // Make a list from the comma separated requestedExcludingAttributes.
+            requestedExcludingAttributesList = Arrays.asList(requestedExcludingAttributes.split(","));
+        }
+        if (requestedAttributes != null) {
+            // Make a list from the comma separated requestedAttributes.
+            requestedAttributesList = Arrays.asList(requestedAttributes.split(","));
+        }
+        if (requestedAttributesList != null && requestedAttributesList.
+                stream().noneMatch(SCIMConstants.RoleSchemaConstants.PERMISSIONS::equalsIgnoreCase)) {
+            scimObject.setPermissions(new ArrayList<>());
+        } else if (requestedExcludingAttributesList != null && requestedExcludingAttributesList.
+                stream().anyMatch(SCIMConstants.RoleSchemaConstants.PERMISSIONS::equalsIgnoreCase)) {
+            scimObject.setPermissions(new ArrayList<>());
+        }
+    }
+
+    /**
+     * Validate Retrieved SCIM Role V2 Object.
+     *
+     * @param scimObject                   RoleV2 object.
+     * @param requestedAttributes          RequestedAttributes.
+     * @param requestedExcludingAttributes RequestedExcludingAttributes.
+     */
+    public static void validateRetrievedSCIMRoleV2Object(RoleV2 scimObject, String requestedAttributes,
+                                                         String requestedExcludingAttributes) {
 
         List<String> requestedExcludingAttributesList = null;
         List<String> requestedAttributesList = null;

@@ -51,9 +51,14 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.COLON;
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.DOT_SEPARATOR;
+import static org.wso2.charon3.core.schema.SCIMConstants.OperationalConstants.OPEN_SQUARE_BRACKET;
 
 /**
  * This provides the methods on the PATCH operation of any resource type.
@@ -3612,5 +3617,72 @@ public class PatchOperationUtil {
         } catch (CharonException e) {
             throw new CharonException("Error in performing the replace operation", e);
         }
+    }
+
+    public static List<String> determineScimAttributes(PatchOperation operation) {
+
+        if (operation == null) {
+            return Collections.emptyList();
+        }
+        List<String> attributes = new ArrayList<>();
+        String path = operation.getPath();
+        if (path != null) {
+            int bracketIndex = path.indexOf(OPEN_SQUARE_BRACKET);
+            path = (bracketIndex != -1) ? path.substring(0, bracketIndex) : path;
+        }
+
+        Object values = operation.getValues();
+        if (values instanceof JSONObject) {
+            extractScimAttributes((JSONObject) values, path, attributes);
+        } else if (values instanceof JSONArray) {
+            extractScimAttributes((JSONArray) values, path, attributes);
+        } else if (values != null) {
+            attributes.add(path);
+        }
+
+        return attributes.isEmpty() && path != null ? Collections.singletonList(path) : attributes;
+    }
+
+    private static void extractScimAttributes(JSONObject jsonObject, String basePath, List<String> attributes) {
+
+        for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+            String key = it.next();
+            Object value = jsonObject.get(key);
+            String separator = DOT_SEPARATOR;
+            if (defaultScimSchemas().contains(basePath)) {
+                separator = COLON;
+            }
+            String newPath = (basePath != null) ? basePath + separator + key : key;
+
+            if (value instanceof JSONObject) {
+                extractScimAttributes((JSONObject) value, newPath, attributes);
+            } else if (value instanceof JSONArray) {
+                extractScimAttributes((JSONArray) value, newPath, attributes);
+            } else {
+                attributes.add(newPath);
+            }
+        }
+    }
+
+    private static void extractScimAttributes(JSONArray jsonArray, String basePath, List<String> attributes) {
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof JSONObject) {
+                extractScimAttributes((JSONObject) value, basePath, attributes);
+            } else if (!(value instanceof JSONArray)) {
+                attributes.add(basePath);
+            }
+        }
+    }
+
+    private static List<String> defaultScimSchemas() {
+
+        return Arrays.asList(
+                SCIMConstants.CORE_SCHEMA_URI,
+                SCIMConstants.USER_CORE_SCHEMA_URI,
+                SCIMConstants.ENTERPRISE_USER_SCHEMA_URI,
+                SCIMConstants.SYSTEM_USER_SCHEMA_URI
+        );
     }
 }

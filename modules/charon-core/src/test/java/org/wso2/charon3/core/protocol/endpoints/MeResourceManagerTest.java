@@ -40,20 +40,29 @@ import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
+import org.wso2.charon3.core.schema.SCIMAttributeSchema;
 import org.wso2.charon3.core.schema.SCIMConstants;
+import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.ServerSideValidator;
 import org.wso2.charon3.core.utils.CopyUtil;
+import org.wso2.charon3.core.utils.PatchOperationUtil;
 import org.wso2.charon3.core.utils.ResourceManagerUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class of MeResourceManager.
@@ -334,7 +343,7 @@ public class MeResourceManagerTest {
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        Mockito.when(userManager.getMe(name, requiredAttributes)).thenReturn(user);
+        when(userManager.getMe(name, requiredAttributes)).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
@@ -379,7 +388,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
-        Mockito.when(userManager.getMe(name, requiredAttributes)).thenReturn(null);
+        when(userManager.getMe(name, requiredAttributes)).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
 
@@ -408,7 +417,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
-        Mockito.when(userManager.getMe(name, requiredAttributes))
+        when(userManager.getMe(name, requiredAttributes))
                 .thenThrow(CharonException.class);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
@@ -437,7 +446,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        Mockito.when(userManager.getMe(name, requiredAttributes)).thenThrow(BadRequestException.class);
+        when(userManager.getMe(name, requiredAttributes)).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.get(name, userManager, attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
@@ -460,7 +469,7 @@ public class MeResourceManagerTest {
         User user = getNewUser();
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
-        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
+        when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -498,7 +507,7 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
+        when(userManager.createMe(any(User.class), anyMap())).thenReturn(user);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 null, attributes, excludeAttributes);
@@ -524,7 +533,7 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
-        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenReturn(null);
+        when(userManager.createMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -550,7 +559,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
-        Mockito.when(userManager.createMe(any(User.class), anyMap())).thenThrow(BadRequestException.class);
+        when(userManager.createMe(any(User.class), anyMap())).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -575,7 +584,7 @@ public class MeResourceManagerTest {
                 .thenReturn(SCIM2_ME_ENDPOINT);
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
-        Mockito.when(userManager.createMe(any(User.class), anyMap()))
+        when(userManager.createMe(any(User.class), anyMap()))
                 .thenThrow(ConflictException.class);
 
         SCIMResponse scimResponse = meResourceManager.create(scimObjectString, userManager,
@@ -733,11 +742,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        Mockito.when(userManager.getMe(userName,
+        when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -785,11 +794,11 @@ public class MeResourceManagerTest {
                 .encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        Mockito.when(userManager.getMe(userName,
+        when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, null,
                 attributes, excludeAttributes);
@@ -830,11 +839,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
-        Mockito.when(userManager.getMe(userName,
+        when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -871,10 +880,10 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
-        Mockito.when(userManager.getMe(userName,
+        when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
                 attributes, excludeAttributes);
@@ -909,7 +918,7 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
-        Mockito.when(userManager.getMe(userName,
+        when(userManager.getMe(userName,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
@@ -949,11 +958,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -999,11 +1008,11 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1048,11 +1057,11 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 null, attributes, excludeAttributes);
@@ -1096,11 +1105,11 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(NotFoundException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new NotFoundException()));
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         User validatedUser = (User) ServerSideValidator.validateUpdatedSCIMObject(userOld, userNew, schema);
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(validatedUser);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1138,10 +1147,10 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(CharonException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new CharonException()));
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
 
-        Mockito.when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
+        when(userManager.updateMe(any(User.class), anyMap())).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 userManager, attributes, excludeAttributes);
@@ -1177,7 +1186,7 @@ public class MeResourceManagerTest {
         abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(BadRequestException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new BadRequestException()));
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenThrow(BadRequestException.class);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1215,7 +1224,7 @@ public class MeResourceManagerTest {
                 -> AbstractResourceManager.encodeSCIMException(any(InternalErrorException.class)))
                 .thenReturn(getEncodeSCIMExceptionObject(new InternalErrorException()));
 
-        Mockito.when(userManager.getMe(existingId,
+        when(userManager.getMe(existingId,
                 ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(null);
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
@@ -1262,4 +1271,190 @@ public class MeResourceManagerTest {
         Assert.assertNull(scimResponse);
     }
 
+    @DataProvider(name = "syncedAttributeCases")
+    public Object[][] provideSyncedAttributeCases() {
+
+        SCIMAttributeSchema countrySchema = createSCIMAttributeSchema(
+                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:country", "country");
+        SCIMAttributeSchema regionSchema = createSCIMAttributeSchema("urn:scim:wso2:schema:region", "region");
+        SCIMAttributeSchema addressStreetSchema = createSCIMAttributeSchema(
+                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:address.street",
+                "address.street");
+        SCIMAttributeSchema locationStreetSchema = createSCIMAttributeSchema(
+                "urn:scim:wso2:schema:location.street", "location.street");
+
+        User oldUserWithoutCountry = new User();
+        oldUserWithoutCountry.replaceUsername("testuser");
+        oldUserWithoutCountry.replaceUserType("employee");
+        oldUserWithoutCountry.replacePreferredLanguage("en");
+        oldUserWithoutCountry.replaceDisplayName("Test User");
+
+        Map<String, String> case1Attributes = new HashMap<>();
+        case1Attributes.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:country",
+                "urn:scim:wso2:schema:region");
+        case1Attributes.put("urn:scim:wso2:schema:region",
+                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:country");
+
+        List<Object[]> testCases = new ArrayList<>();
+
+        List<Map<String, String>> operations1 = new ArrayList<>();
+        Map<String, String> operation1 = new HashMap<>();
+        operation1.put("operationType", "add");
+        operation1.put("schemaPrefix", "enterprise");
+        operation1.put("attribute", "country");
+        operation1.put("value", "Sri Lanka");
+        operations1.add(operation1);
+        testCases.add(new Object[]{ case1Attributes, operations1, 1, 0, oldUserWithoutCountry });
+
+        List<Map<String, String>> operations2 = new ArrayList<>();
+        Map<String, String> operation2a = new HashMap<>();
+        operation2a.put("operationType", "add");
+        operation2a.put("schemaPrefix", "enterprise");
+        operation2a.put("attribute", "country");
+        operation2a.put("value", "Sri Lanka");
+        operations2.add(operation2a);
+
+        Map<String, String> operation2b = new HashMap<>();
+        operation2b.put("operationType", "add");
+        operation2b.put("schemaPrefix", "wso2");
+        operation2b.put("attribute", "region");
+        operation2b.put("value", "Sri Lanka");
+        operations2.add(operation2b);
+        testCases.add(new Object[]{ case1Attributes, operations2, 1, 0, oldUserWithoutCountry });
+
+        User oldUserWithBothAttributes = new User();
+        oldUserWithBothAttributes.replaceUsername("testuser");
+        oldUserWithBothAttributes.replaceSimpleAttribute(countrySchema, "Sri Lanka");
+        oldUserWithBothAttributes.replaceSimpleAttribute(regionSchema, "Sri Lanka");
+
+        List<Map<String, String>> operations3 = new ArrayList<>();
+        Map<String, String> operation3 = new HashMap<>();
+        operation3.put("operationType", "replace");
+        operation3.put("schemaPrefix", "enterprise");
+        operation3.put("attribute", "country");
+        operation3.put("value", "USA");
+        operations3.add(operation3);
+        testCases.add(new Object[]{ case1Attributes, operations3, 1, 0, oldUserWithBothAttributes });
+
+        Map<String, String> case4Attributes = new HashMap<>();
+        case4Attributes.put("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:address.street",
+                "urn:scim:wso2:schema:location.street");
+        case4Attributes.put("urn:scim:wso2:schema:location.street",
+                "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:address.street");
+
+        User oldUserWithSubAttribute = new User();
+        oldUserWithSubAttribute.replaceUsername("testuser");
+        oldUserWithSubAttribute.replaceSimpleAttribute(countrySchema, "Sri Lanka");
+        oldUserWithSubAttribute.replaceSimpleAttribute(regionSchema, "Asia");
+        oldUserWithSubAttribute.replaceSimpleAttribute(addressStreetSchema, "456 Old Street");
+        oldUserWithSubAttribute.replaceSimpleAttribute(locationStreetSchema, "456 Old Street");
+
+        List<Map<String, String>> operations4 = new ArrayList<>();
+        Map<String, String> operation4 = new HashMap<>();
+        operation4.put("operationType", "replace");
+        operation4.put("schemaPrefix", "enterprise");
+        operation4.put("attribute", "address.street");
+        operation4.put("value", "123 New Street");
+        operations4.add(operation4);
+        testCases.add(new Object[]{ case4Attributes, operations4, 0, 1, oldUserWithSubAttribute });
+
+        User oldUserWithRemovableAttribute = new User();
+        oldUserWithRemovableAttribute.replaceUsername("testuser");
+        oldUserWithRemovableAttribute.replaceSimpleAttribute(countrySchema, "Sri Lanka");
+        oldUserWithRemovableAttribute.replaceSimpleAttribute(regionSchema, "Sri Lanka");
+
+        List<Map<String, String>> operations5 = new ArrayList<>();
+        Map<String, String> operation5 = new HashMap<>();
+        operation5.put("operationType", "remove");
+        operation5.put("schemaPrefix", "enterprise");
+        operation5.put("attribute", "country");
+        operations5.add(operation5);
+
+        testCases.add(new Object[]{ case1Attributes, operations5, 1, 0, oldUserWithRemovableAttribute });
+
+        return testCases.toArray(new Object[0][]);
+    }
+
+    @Test(dataProvider = "syncedAttributeCases")
+    void testSyncedAttributesAreDeletedCorrectly(
+            Map<String, String> syncedAttributes,
+            List<Map<String, String>> operations,
+            int expectedDeleteSubAttributeCalls,
+            int expectedDeleteSubSubAttributeCalls,
+            User oldUser
+    ) throws Exception {
+
+        MockedStatic<ResourceManagerUtil> mockedResourceManagerUtil = Mockito.mockStatic(ResourceManagerUtil.class);
+        mockedResourceManagerUtil.when(() -> ResourceManagerUtil.getAllAttributeURIs(any())).thenReturn(null);
+        MockedStatic<PatchOperationUtil> mockedPatchOperationUtil = Mockito.mockStatic(PatchOperationUtil.class,
+                Mockito.CALLS_REAL_METHODS);
+
+        when(userManager.getSyncedUserAttributes()).thenReturn(syncedAttributes);
+        when(userManager.getMe(anyString(), any())).thenReturn(oldUser);
+
+        String validScimObjectString;
+        if (!operations.isEmpty()) {
+            validScimObjectString = generateValidScimObjectString(operations);
+        } else {
+            throw new IllegalArgumentException("Operations list cannot be empty");
+        }
+        User newUser = mock(User.class);
+        mockedPatchOperationUtil.when(() -> PatchOperationUtil.doPatchAdd(any(), any(), any(), any(), any()))
+                .thenReturn(newUser);
+        mockedPatchOperationUtil.when(() -> PatchOperationUtil.doPatchReplace(any(), any(), any(), any(), any()))
+                .thenReturn(newUser);
+        mockedPatchOperationUtil.when(() -> PatchOperationUtil.doPatchRemove(any(), any(), any(), any()))
+                .thenReturn(newUser);
+
+        when(userManager.getMe(anyString(), any())).thenReturn(oldUser);
+
+        meResourceManager.updateWithPATCH("12345", validScimObjectString, userManager, null, null);
+
+        verify(newUser, times(expectedDeleteSubAttributeCalls)).deleteSubAttribute(anyString(), anyString());
+        verify(newUser, times(expectedDeleteSubSubAttributeCalls))
+                .deleteSubSubAttribute(anyString(), anyString(), anyString());
+
+        mockedResourceManagerUtil.close();
+        mockedPatchOperationUtil.close();
+    }
+
+    private static String generateValidScimObjectString(List<Map<String, String>> operations) {
+        StringBuilder operationsJson = new StringBuilder("{ \"Operations\": [");
+
+        for (int i = 0; i < operations.size(); i++) {
+            Map<String, String> operation = operations.get(i);
+            String op = operation.get("operationType");
+            String schemaPrefix = operation.get("schemaPrefix");
+            String attribute = operation.get("attribute");
+            String value = operation.get("value");
+
+            String schema = schemaPrefix.equals("wso2")
+                    ? "urn:scim:wso2:schema" : "urn:ietf:params:scim:schemas:extension:" + schemaPrefix + ":2.0:User";
+
+            if (i > 0) {
+                operationsJson.append(", ");
+            }
+
+            if ("remove".equals(op)) {
+                operationsJson.append("{ \"op\": \"").append(op).append("\", \"path\": \"")
+                        .append(schema).append(":").append(attribute).append("\" }");
+            } else {
+                operationsJson.append("{ \"op\": \"").append(op).append("\", \"value\": { \"")
+                        .append(schema).append("\": { \"").append(attribute).append("\": ")
+                        .append(value == null ? "\"\"" : "\"" + value + "\"")
+                        .append(" } } } ");
+            }
+        }
+        operationsJson.append(" ] } ");
+        return operationsJson.toString();
+    }
+
+    private SCIMAttributeSchema createSCIMAttributeSchema(String uri, String name) {
+
+        return SCIMAttributeSchema.createSCIMAttributeSchema(
+                uri, name, SCIMDefinitions.DataType.STRING, false, "Description", false, false,
+                SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                SCIMDefinitions.Uniqueness.NONE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+        );
+    }
 }

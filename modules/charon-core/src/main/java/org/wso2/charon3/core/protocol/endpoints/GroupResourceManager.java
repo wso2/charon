@@ -15,6 +15,8 @@
  */
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -675,7 +677,8 @@ public class GroupResourceManager extends AbstractResourceManager {
         for (PatchOperation patchOperation : patchOperations) {
             String operation = patchOperation.getOperation();
             String path = patchOperation.getPath();
-            if (!(patchOperation.getValues() instanceof String)) {
+            if (!(SCIMConstants.OperationalConstants.ADD).equals(operation)
+                    && !(patchOperation.getValues() instanceof String)) {
                 JSONObject valuesJson = (JSONObject) patchOperation.getValues();
                 if (operation.equals(SCIMConstants.OperationalConstants.REPLACE) &&
                         ((path != null && path.equals(SCIMConstants.GroupSchemaConstants.MEMBERS)) ||
@@ -706,28 +709,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                                                               String excludeAttributes) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
+            Map<String, List<PatchOperation>> patchOperations = buildPatchOperationsMap(opList);
 
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             String groupName = getGroupName(userManager, existingGroupId);
@@ -767,6 +749,45 @@ public class GroupResourceManager extends AbstractResourceManager {
         }
     }
 
+    private Map<String, List<PatchOperation>> buildPatchOperationsMap(List<PatchOperation> opList)
+            throws BadRequestException {
+
+        Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
+
+        patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
+
+        for (PatchOperation patchOperation : opList) {
+            switch (patchOperation.getOperation()) {
+                case SCIMConstants.OperationalConstants.ADD:
+                    patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REMOVE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REPLACE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
+                    break;
+                default:
+                    throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
+                            ResponseCodeConstants.INVALID_SYNTAX);
+            }
+        }
+        return patchOperations;
+    }
+
+    private void updateWithPatchForAddRemoveOperations(String existingGroupId, List<PatchOperation> opList,
+                                                       UserManager userManager) throws BadRequestException,
+            NotImplementedException, NotFoundException, CharonException {
+
+        Map<String, List<PatchOperation>> patchOperations = buildPatchOperationsMap(opList);
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
+        String groupName = getGroupName(userManager, existingGroupId);
+        processGroupPatchOperations(patchOperations, schema);
+        userManager.patchGroup(existingGroupId, groupName, patchOperations);
+    }
+
     private String getGroupName(UserManager userManager, String groupId)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
 
@@ -777,7 +798,7 @@ public class GroupResourceManager extends AbstractResourceManager {
         if (group != null) {
             return group.getDisplayName();
         } else {
-            throw new CharonException("Group not found for ID: " + groupId);
+            throw new NotFoundException("Group not found for ID: " + groupId);
         }
     }
 
@@ -835,7 +856,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                     patchOperation.setValues(attributePrefixedJson);
                 } else if (patchOperation.getPath().equals(SCIMConstants.GroupSchemaConstants.MEMBERS) &&
                         patchOperation.getValues() != null) {
-                    JSONObject valuesPropertyJson = (JSONObject) patchOperation.getValues();
+                    JSONArray valuesPropertyJson = (JSONArray) patchOperation.getValues();
                     JSONObject attributePrefixedJson = new JSONObject();
 
                     attributePrefixedJson.put(SCIMConstants.GroupSchemaConstants.MEMBERS, valuesPropertyJson);
@@ -914,13 +935,21 @@ public class GroupResourceManager extends AbstractResourceManager {
     }
 
     private List<Map<String, String>> transformMembersAttributeToMap(MultiValuedAttribute multiValuedMembersAttribute)
-            throws CharonException {
+            throws CharonException, BadRequestException {
 
         List<Map<String, String>> memberList = new ArrayList<>();
         List<Attribute> subValuesList = multiValuedMembersAttribute.getAttributeValues();
         for (Attribute subValue : subValuesList) {
             ComplexAttribute complexAttribute = (ComplexAttribute) subValue;
             Map<String, Attribute> subAttributesList = complexAttribute.getSubAttributesList();
+
+            if (!subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.VALUE) ||
+                    !subAttributesList.containsKey(SCIMConstants.CommonSchemaConstants.DISPLAY)) {
+                throw new BadRequestException(ResponseCodeConstants.INVALID_SYNTAX);
+            } else if (StringUtils.isEmpty(((SimpleAttribute)
+                        subAttributesList.get(SCIMConstants.CommonSchemaConstants.VALUE)).getStringValue())) {
+                throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
+            }
 
             Map<String, String> member = new HashMap<>();
             member.put(SCIMConstants.CommonSchemaConstants.VALUE, ((SimpleAttribute)
@@ -953,16 +982,23 @@ public class GroupResourceManager extends AbstractResourceManager {
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
 
-            Group oldGroup = userManager.getGroup(existingGroupId, requestAttributes);
-            if (oldGroup == null) {
-                throw new NotFoundException("No group with the id : " + existingGroupId + " exists in the user store.");
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isDeleteAllUsersOperationFound(opList)) {
+                updateWithPatchForAddRemoveOperations(existingGroupId, opList, userManager);
+            } else {
+                Group oldGroup = userManager.getGroup(existingGroupId, requestAttributes);
+                if (oldGroup == null) {
+                    throw new NotFoundException("No group with the id : " + existingGroupId
+                            + " exists in the user store.");
+                }
+
+                // Make a copy of original group. This will be used to restore the original condition if failure occurs.
+                Group originalGroup = (Group) CopyUtil.deepCopy(oldGroup);
+                Group patchedGroup = doPatchGroup(oldGroup, schema, patchRequest);
+
+                userManager.updateGroup(originalGroup, patchedGroup);
             }
-
-            // Make a copy of original group. This will be used to restore to the original condition if failure occurs.
-            Group originalGroup = (Group) CopyUtil.deepCopy(oldGroup);
-            Group patchedGroup = doPatchGroup(oldGroup, schema, patchRequest);
-
-            userManager.updateGroup(originalGroup, patchedGroup);
 
             // Build the 204 response.
             Map<String, String> httpHeaders = new HashMap<>();

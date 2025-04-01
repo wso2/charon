@@ -17,12 +17,16 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.charon3.core.config.SCIMConfigConstants;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.exceptions.PayloadTooLargeException;
 import org.wso2.charon3.core.extensions.RoleManager;
+import org.wso2.charon3.core.extensions.RoleV2Manager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.objects.bulk.BulkRequestData;
 import org.wso2.charon3.core.objects.bulk.BulkResponseData;
@@ -50,6 +54,14 @@ public class BulkResourceManager extends AbstractResourceManager {
         bulkRequestProcessor = new BulkRequestProcessor();
     }
 
+    public SCIMResponse processBulkData(String data, UserManager userManager, RoleManager roleManager,
+                                        RoleV2Manager roleV2Manager) {
+
+        bulkRequestProcessor.setRoleManager(roleManager);
+        bulkRequestProcessor.setRoleV2Manager(roleV2Manager);
+        return processBulkData(data, userManager);
+    }
+
     public SCIMResponse processBulkData(String data, UserManager userManager, RoleManager roleManager) {
 
         bulkRequestProcessor.setRoleManager(roleManager);
@@ -71,6 +83,22 @@ public class BulkResourceManager extends AbstractResourceManager {
             bulkRequestProcessor.setFailOnError(bulkRequestDataObject.getFailOnErrors());
             bulkRequestProcessor.setUserManager(userManager);
 
+            int maxOperationCount =
+                    (Integer) CharonConfiguration.getInstance().getConfig().get(SCIMConfigConstants.MAX_OPERATIONS);
+            int totalOperationCount = bulkRequestDataObject.getUserOperationRequests().size() +
+                    bulkRequestDataObject.getGroupOperationRequests().size() +
+                    bulkRequestDataObject.getRoleOperationRequests().size() +
+                    bulkRequestDataObject.getRoleV2OperationRequests().size();
+            if (totalOperationCount > maxOperationCount) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug(String.format(ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
+                            totalOperationCount, maxOperationCount));
+                }
+                throw new PayloadTooLargeException(
+                        String.format(ResponseCodeConstants.ERROR_DESC_MAX_OPERATIONS_EXCEEDED,
+                                totalOperationCount, maxOperationCount));
+            }
+
             // Get bulk response data.
             bulkResponseData = bulkRequestProcessor.processBulkRequests(bulkRequestDataObject);
             //encode the BulkResponseData object
@@ -84,7 +112,7 @@ public class BulkResourceManager extends AbstractResourceManager {
             // Create the final response.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, finalEncodedResponse, responseHeaders);
 
-        } catch (CharonException | BadRequestException | InternalErrorException e) {
+        } catch (CharonException | BadRequestException | InternalErrorException | PayloadTooLargeException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }

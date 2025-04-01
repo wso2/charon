@@ -31,12 +31,13 @@ import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This is the interface for usermanager extension.
- * An implementation can plugin their own user manager-(either LDAP based, DB based etc)
+ * This is the interface for user manager extension.
+ * An implementation can plug in their own user manager-(either LDAP based, DB based etc.)
  * by implementing this interface and mentioning it in configuration.
  */
 public interface UserManager {
@@ -220,6 +221,24 @@ public interface UserManager {
         throw new NotImplementedException();
     }
 
+    /**
+     * Updates the group via PATCH.
+     *
+     * @param  groupId                 ID of the group.
+     * @param  currentGroupName        Current name of the group.
+     * @param  patchOperations         A map of patch operations.
+     *
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default void patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+
+        throw new NotImplementedException();
+    }
+
     public GroupsGetResponse listGroupsWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException;
 
@@ -248,6 +267,20 @@ public interface UserManager {
     }
 
     /**
+     * Retrieve schema of the system user.
+     *
+     * @return List of attributes of system user schema.
+     * @throws CharonException          Charon exception.
+     * @throws NotImplementedException  Functionality no implemented exception.
+     * @throws BadRequestException      Bad request exception.
+     */
+    default List<Attribute> getSystemUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+    /**
      * Return Custom schema.
      * @return Custom schema.
      * @throws CharonException
@@ -255,6 +288,19 @@ public interface UserManager {
      * @throws BadRequestException
      */
     default AttributeSchema getCustomUserSchemaExtension() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        return null;
+    }
+
+    /**
+     * Return System schema.
+     * @return System schema.
+     * @throws CharonException
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     */
+    default AttributeSchema getCustomAttributeSchemaInSystemExtension() throws CharonException, NotImplementedException,
             BadRequestException {
 
         return null;
@@ -272,5 +318,10 @@ public interface UserManager {
             BadRequestException {
 
         return null;
+    }
+
+    default Map<String, String> getSyncedUserAttributes() throws CharonException {
+
+        return new HashMap<>();
     }
  }

@@ -48,6 +48,16 @@ public class ResourceManagerUtil {
                                                                      String requestedExcludingAttributes)
             throws CharonException {
 
+        ArrayList<AttributeSchema> attributeSchemaArrayList  =
+                getOnlyRequiredAttributes(schema, requestedAttributes, requestedExcludingAttributes);
+        return convertSchemasToURIs(attributeSchemaArrayList);
+    }
+
+    public static ArrayList<AttributeSchema> getOnlyRequiredAttributes(SCIMResourceTypeSchema schema,
+                                                                       String requestedAttributes,
+                                                                       String requestedExcludingAttributes)
+            throws CharonException {
+
         ArrayList<AttributeSchema> attributeSchemaArrayList = (ArrayList<AttributeSchema>)
                 CopyUtil.deepCopy(schema.getAttributesList());
 
@@ -105,7 +115,7 @@ public class ResourceManagerUtil {
                     requestedAttributes, requestedExcludingAttributes,
                     requestedAttributesList, requestedExcludingAttributesList);
         }
-        return convertSchemasToURIs(attributeSchemaArrayList);
+        return attributeSchemaArrayList;
     }
 
     /*
@@ -404,9 +414,9 @@ public class ResourceManagerUtil {
      */
     public static int processCount(String countStr) throws BadRequestException {
 
-        int count;
+        Integer count;
         if (countStr == null || countStr.trim().isEmpty() || !countStr.matches("\\d+")) {
-            count = CharonConfiguration.getInstance().getCountValueForPagination();
+            count = null;
         } else {
             try {
                 count = Integer.parseInt(countStr);
@@ -415,11 +425,7 @@ public class ResourceManagerUtil {
             }
         }
 
-        if (count < 0) {
-            count = 0;
-        }
-
-        return count;
+        return processCount(count);
     }
 
     /**
@@ -432,7 +438,7 @@ public class ResourceManagerUtil {
     public static Integer processCount(Integer countInt) {
 
         if (countInt == null || countInt.toString().isEmpty()) {
-            return null;
+            return CharonConfiguration.getInstance().getCountValueForPagination();
         } else {
             // All the negative values are interpreted as zero according to the specification.
             if (countInt <= 0) {
