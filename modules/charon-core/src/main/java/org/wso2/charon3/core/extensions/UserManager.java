@@ -51,7 +51,7 @@ public interface UserManager {
             throws CharonException, BadRequestException, NotFoundException;
 
     public void deleteUser(String userId)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     /**
      * List users with Get.
@@ -102,7 +102,7 @@ public interface UserManager {
     }
 
     public UsersGetResponse listUsersWithPost(SearchRequest searchRequest, Map<String, Boolean> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException;
+            throws CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
@@ -134,7 +134,7 @@ public interface UserManager {
             throws CharonException, ConflictException, BadRequestException, ForbiddenException, NotImplementedException;
 
     public void deleteMe(String userName)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
@@ -215,8 +215,8 @@ public interface UserManager {
      * @throws NotImplementedException Functionality no implemented exception.
      */
     default Group patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations,
-                             Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+                             Map<String, Boolean> requiredAttributes) throws NotImplementedException,
+            BadRequestException, CharonException, NotFoundException, ForbiddenException {
 
         throw new NotImplementedException();
     }
@@ -234,7 +234,8 @@ public interface UserManager {
      * @throws NotImplementedException Functionality no implemented exception.
      */
     default void patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException,
+            ForbiddenException {
 
         throw new NotImplementedException();
     }
