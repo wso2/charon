@@ -1256,7 +1256,7 @@ public class MeResourceManagerTest {
     public Object[][] dataToTestGetUsernameErrorInGettingTheUsernameFromTheAnonymousRequest() {
 
         String scimObjectString = "{\n" +
-                "UserName: John,\n" +
+                "InvalidUserName: John,\n" +
                 "}";
         return new Object[][]{
                 {scimObjectString}
