@@ -954,32 +954,50 @@ public class GroupResourceManagerTest {
 
         List<PatchOperation> patchOperations;
         patchOperations = Collections.singletonList(
-                createPatchOperation(SCIMConstants.OperationalConstants.REMOVE, SCIMConstants.GroupSchemaConstants.MEMBERS, null)
+                createPatchOperation(SCIMConstants.OperationalConstants.REMOVE,
+                        SCIMConstants.GroupSchemaConstants.MEMBERS, null)
         );
-        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for remove members operation");
+        assertTrue(
+                invokeIsDeleteAllUsersOperationFound(patchOperations),
+                "Should return true for remove members operation"
+        );
 
         patchOperations = Collections.singletonList(
-                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject())
+                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE,
+                        SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject())
         );
-        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for replace members operation with path");
+        assertTrue(
+                invokeIsDeleteAllUsersOperationFound(patchOperations),
+                "Should return true for replace members operation with path"
+        );
 
         JSONObject values = new JSONObject();
         values.put(SCIMConstants.GroupSchemaConstants.MEMBERS, Collections.emptyList());
         patchOperations = Collections.singletonList(
                 createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "emails", values)
         );
-        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for replace operation with members in values");
+        assertTrue(
+                invokeIsDeleteAllUsersOperationFound(patchOperations),
+                "Should return true for replace operation with members in values"
+        );
 
         patchOperations = Arrays.asList(
-                createPatchOperation(SCIMConstants.OperationalConstants.ADD, SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject()),
+                createPatchOperation(SCIMConstants.OperationalConstants.ADD,
+                        SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject()),
                 createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "displayName", "New Group Name")
         );
-        assertFalse(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return false for no delete all users operation");
+        assertFalse(
+                invokeIsDeleteAllUsersOperationFound(patchOperations),
+                "Should return false for no delete all users operation"
+        );
 
         patchOperations = Collections.singletonList(
                 createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "displayName", "New Group Name")
         );
-        assertFalse(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return false for replace without members");
+        assertFalse(
+                invokeIsDeleteAllUsersOperationFound(patchOperations),
+                "Should return false for replace without members"
+        );
     }
 
     private PatchOperation createPatchOperation(String operation, String path, Object values) {
