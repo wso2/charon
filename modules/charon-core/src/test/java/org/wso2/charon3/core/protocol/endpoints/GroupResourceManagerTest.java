@@ -46,9 +46,13 @@ import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 import org.wso2.charon3.core.schema.ServerSideValidator;
 import org.wso2.charon3.core.utils.CopyUtil;
 import org.wso2.charon3.core.utils.ResourceManagerUtil;
+import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +62,8 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Test class of GroupResourceManager.
@@ -230,10 +236,10 @@ public class GroupResourceManagerTest {
         SCIMResponse scimResponse = groupResourceManager.get(id, userManager, attributes, excludeAttributes);
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
         if (attributes != null) {
-            Assert.assertTrue(obj.has(attributes));
+            assertTrue(obj.has(attributes));
         }
         if (excludeAttributes != null) {
-            Assert.assertFalse(obj.has(excludeAttributes));
+            assertFalse(obj.has(excludeAttributes));
         }
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_OK);
     }
@@ -254,10 +260,10 @@ public class GroupResourceManagerTest {
         Mockito.when(userManager.getGroup(id, requiredAttributes)).thenReturn(group);
         SCIMResponse scimResponse = groupResourceManager.get(id, userManager, "", "");
         JSONObject obj = new JSONObject(scimResponse.getResponseMessage());
-        Assert.assertFalse(obj.has("displayNames"));
-        Assert.assertFalse(obj.has("meta"));
-        Assert.assertFalse(obj.has("members"));
-        Assert.assertTrue(obj.has("id"));
+        assertFalse(obj.has("displayNames"));
+        assertFalse(obj.has("meta"));
+        assertFalse(obj.has("members"));
+        assertTrue(obj.has("id"));
     }
 
     @DataProvider(name = "dataForGetGroupExceptions")
@@ -941,5 +947,55 @@ public class GroupResourceManagerTest {
                 anyMap())).thenThrow(new BadRequestException());
         SCIMResponse scimResponse = groupResourceManager.listWithPOST(RESOURCE_STRING, userManager);
         Assert.assertEquals(scimResponse.getResponseStatus(), ResponseCodeConstants.CODE_BAD_REQUEST);
+    }
+
+    @Test
+    void testIsDeleteAllUsersOperationFound() throws Exception {
+
+        List<PatchOperation> patchOperations;
+        patchOperations = Collections.singletonList(
+                createPatchOperation(SCIMConstants.OperationalConstants.REMOVE, SCIMConstants.GroupSchemaConstants.MEMBERS, null)
+        );
+        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for remove members operation");
+
+        patchOperations = Collections.singletonList(
+                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject())
+        );
+        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for replace members operation with path");
+
+        JSONObject values = new JSONObject();
+        values.put(SCIMConstants.GroupSchemaConstants.MEMBERS, Collections.emptyList());
+        patchOperations = Collections.singletonList(
+                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "emails", values)
+        );
+        assertTrue(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return true for replace operation with members in values");
+
+        patchOperations = Arrays.asList(
+                createPatchOperation(SCIMConstants.OperationalConstants.ADD, SCIMConstants.GroupSchemaConstants.MEMBERS, new JSONObject()),
+                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "displayName", "New Group Name")
+        );
+        assertFalse(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return false for no delete all users operation");
+
+        patchOperations = Collections.singletonList(
+                createPatchOperation(SCIMConstants.OperationalConstants.REPLACE, "displayName", "New Group Name")
+        );
+        assertFalse(invokeIsDeleteAllUsersOperationFound(patchOperations), "Should return false for replace without members");
+    }
+
+    private PatchOperation createPatchOperation(String operation, String path, Object values) {
+
+        PatchOperation patchOperation = new PatchOperation();
+        patchOperation.setOperation(operation);
+        patchOperation.setPath(path);
+        patchOperation.setValues(values);
+        return patchOperation;
+    }
+
+    private boolean invokeIsDeleteAllUsersOperationFound(List<PatchOperation> patchOperations) throws Exception {
+
+        GroupResourceManager groupResourceManager = new GroupResourceManager();
+        Method method = GroupResourceManager.class.getDeclaredMethod("isDeleteAllUsersOperationFound", List.class);
+        method.setAccessible(true);
+        return (boolean) method.invoke(groupResourceManager, patchOperations);
     }
 }

@@ -687,9 +687,12 @@ public class GroupResourceManager extends AbstractResourceManager {
                 if (SCIMConstants.GroupSchemaConstants.MEMBERS.equals(path)) {
                     return true;
                 }
-                JSONObject valuesJson = (JSONObject) patchOperation.getValues();
-                if (valuesJson != null && valuesJson.has(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
-                    return true;
+                Object values = patchOperation.getValues();
+                if (values instanceof JSONObject) {
+                    JSONObject valuesJson = (JSONObject) patchOperation.getValues();
+                    if (valuesJson != null && valuesJson.has(SCIMConstants.GroupSchemaConstants.MEMBERS)) {
+                        return true;
+                    }
                 }
             }
         }
