@@ -19,6 +19,7 @@ package org.wso2.charon3.core.protocol.endpoints;
 
 import org.wso2.charon3.core.extensions.RoleManager;
 import org.wso2.charon3.core.extensions.RoleV2Manager;
+import org.wso2.charon3.core.extensions.RoleV3Manager;
 import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.protocol.ResponseCodeConstants;
 import org.wso2.charon3.core.protocol.SCIMResponse;
@@ -348,6 +349,166 @@ public interface ResourceManager {
      * @return SCIMResponse.
      */
     default SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    // RoleV3 resource management operations.
+
+    /**
+     * GET method to retrieve a specific role in roleV3 model.
+     *
+     * @param id                Resource id.
+     * @param roleManager       RoleV3 manager.
+     * @param attributes        Attributes in the response.
+     * @param excludeAttributes Exclude attributes in the response.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse getRole(String id, RoleV3Manager roleManager, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to create a new role in roleV3 model.
+     *
+     * @param postRequest Post request.
+     * @param roleManager RoleV3 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse createRole(String postRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * DELETE method to delete a specific role in roleV3 model.
+     *
+     * @param id          Resource id.
+     * @param roleManager RoleV3 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse deleteRole(String id, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * GET method to list roles in roleV3 model.
+     *
+     * @param roleManager       RoleV3 manager.
+     * @param filter            Filter to be executed.
+     * @param startIndex        Starting index value of the filter.
+     * @param count             Number of required results.
+     * @param sortBy            SortBy.
+     * @param sortOrder         Sorting order.
+     * @param attributes        Requested attributes.
+     * @param excludeAttributes Requested exclude attributes.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithGETRole(RoleV3Manager roleManager, String filter, Integer startIndex, Integer count,
+                                         String sortBy, String sortOrder, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * POST method to search roles in roleV3 model.
+     *
+     * @param searchRequest Search request.
+     * @param roleManager   RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithPOSTRole(String searchRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PUT method To update a role by giving entire attributes set.
+     *
+     * @param id          Resource id.
+     * @param putRequest  Put request.
+     * @param roleManager RoleV3 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPUTRole(String id, String putRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PATCH method to partially updates a role.
+     *
+     * @param id           Resource id.
+     * @param patchRequest Patch request.
+     * @param roleManager  RoleV2 manager.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PUT method to update a Role by giving the User list.
+     *
+     * @param id
+     * @param putRequest
+     * @param roleManager
+     * @return
+     */
+    default SCIMResponse updateUsersWithPUTRole(String id, String putRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PATCH method to update a user with roleV3 model.
+     *
+     * @param id
+     * @param patchRequest
+     * @param roleManager
+     * @return
+     */
+    default SCIMResponse updateUsersWithPATCHRole(String id, String patchRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PUT method tp update a Role by giving the Group list.
+     *
+     * @param id
+     * @param putRequest
+     * @param roleManager
+     * @return
+     */
+    default SCIMResponse updateGroupsWithPUTRole(String id, String putRequest, RoleV3Manager roleManager) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * PATCH method to update a groups with roleV3 model.
+     *
+     * @param id
+     * @param patchRequest
+     * @param roleManager
+     * @return
+     */
+    default SCIMResponse updateGroupsWithPATCHRole(String id, String patchRequest, RoleV3Manager roleManager) {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());

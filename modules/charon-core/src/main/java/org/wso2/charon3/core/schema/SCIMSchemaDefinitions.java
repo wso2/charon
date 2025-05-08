@@ -1643,6 +1643,44 @@ public class SCIMSchemaDefinitions {
                     SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
                     SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
 
+    /**
+     * RoleV3 Resource Schema.
+     */
+    public static final SCIMResourceTypeSchema SCIM_ROLE_V3_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<>(Collections.singletonList(SCIMConstants.ROLE_SCHEMA_URI)),
+                    ID,
+                    SCIMRoleSchemaDefinition.DISPLAY_NAME,
+                    SCIMRoleSchemaDefinition.AUDIENCE,
+                    SCIMRoleSchemaDefinition.USERS,
+                    SCIMRoleSchemaDefinition.GROUPS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS,
+                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+
+    /**
+     * RoleV3 Resource Schema for User.
+     */
+    public static final SCIMResourceTypeSchema SCIM_ROLE_V3_USER_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<>(Collections.singletonList(SCIMConstants.ROLE_SCHEMA_URI)),
+                    ID,
+                    SCIMRoleSchemaDefinition.USERS,
+                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+
+    /**
+     * RoleV3 Resource Schema for Groups.
+     */
+    public static final SCIMResourceTypeSchema SCIM_ROLE_V3_GROUPS_SCHEMA =
+            SCIMResourceTypeSchema.createSCIMResourceSchema(
+                    new ArrayList<>(Collections.singletonList(SCIMConstants.ROLE_SCHEMA_URI)),
+                    ID,
+                    SCIMRoleSchemaDefinition.GROUPS,
+                    SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
+                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+
+
     /*
      * **********SCIM defined Service Provider Config Resource Schema.****************************
      */

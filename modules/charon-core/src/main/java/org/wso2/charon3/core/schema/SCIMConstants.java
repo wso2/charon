@@ -65,6 +65,7 @@ public class SCIMConstants {
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String ROLE_ENDPOINT = "/Roles";
     public static final String ROLE_V2_ENDPOINT = "/v2/Roles";
+    public static final String ROLE_V3_ENDPOINT = "/v3/Roles";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
     public static final String RESOURCE_TYPE_ENDPOINT = "/ResourceTypes";
     public static final String SCHEMAS_ENDPOINT = "/Schemas";
