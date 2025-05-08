@@ -1216,6 +1216,15 @@ public class SCIMSchemaDefinitions {
                         SCIMDefinitions.Uniqueness.NONE, null, null,
                         new ArrayList<>(Arrays.asList(PERMISSIONS_VALUE, PERMISSIONS_DISPLAY, PERMISSIONS_REF)));
 
+        // A list of permissions of the Role.
+        public static final SCIMAttributeSchema ROLE_V3_PERMISSIONS =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PERMISSIONS_URI,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.RoleSchemaConstants.PERMISSIONS_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_WRITE, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null,
+                        new ArrayList<>(Arrays.asList(PERMISSIONS_VALUE, PERMISSIONS_DISPLAY, PERMISSIONS_REF)));
+
         // A list of associated applications of the Role.
         public static final SCIMAttributeSchema ASSOCIATED_APPLICATIONS =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.ASC_APPLICATIONS_URI,
@@ -1227,6 +1236,14 @@ public class SCIMSchemaDefinitions {
 
         // A list of properties of the Role.
         public static final SCIMAttributeSchema ROLE_V2_PROPERTIES =
+                SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PROPERTIES_URI,
+                        SCIMConstants.RoleSchemaConstants.PROPERTIES, SCIMDefinitions.DataType.COMPLEX, true,
+                        SCIMConstants.RoleSchemaConstants.PROPERTIES_DESC, false, false,
+                        SCIMDefinitions.Mutability.READ_ONLY, SCIMDefinitions.Returned.DEFAULT,
+                        SCIMDefinitions.Uniqueness.NONE, null, null, new ArrayList<>(
+                                Arrays.asList(ROLE_V2_PROPERTY_NAME, ROLE_V2_PROPERTY_VALUE)));
+
+        public static final SCIMAttributeSchema ROLE_V3_PROPERTIES =
                 SCIMAttributeSchema.createSCIMAttributeSchema(SCIMConstants.RoleSchemaConstants.PROPERTIES_URI,
                         SCIMConstants.RoleSchemaConstants.PROPERTIES, SCIMDefinitions.DataType.COMPLEX, true,
                         SCIMConstants.RoleSchemaConstants.PROPERTIES_DESC, false, false,
@@ -1654,9 +1671,9 @@ public class SCIMSchemaDefinitions {
                     SCIMRoleSchemaDefinition.AUDIENCE,
                     SCIMRoleSchemaDefinition.USERS,
                     SCIMRoleSchemaDefinition.GROUPS,
-                    SCIMRoleSchemaDefinition.ROLE_V2_PERMISSIONS,
+                    SCIMRoleSchemaDefinition.ROLE_V3_PERMISSIONS,
                     SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
-                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+                    SCIMRoleSchemaDefinition.ROLE_V3_PROPERTIES);
 
     /**
      * RoleV3 Resource Schema for User.
@@ -1667,7 +1684,7 @@ public class SCIMSchemaDefinitions {
                     ID,
                     SCIMRoleSchemaDefinition.USERS,
                     SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
-                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+                    SCIMRoleSchemaDefinition.ROLE_V3_PROPERTIES);
 
     /**
      * RoleV3 Resource Schema for Groups.
@@ -1678,7 +1695,7 @@ public class SCIMSchemaDefinitions {
                     ID,
                     SCIMRoleSchemaDefinition.GROUPS,
                     SCIMRoleSchemaDefinition.ASSOCIATED_APPLICATIONS,
-                    SCIMRoleSchemaDefinition.ROLE_V2_PROPERTIES);
+                    SCIMRoleSchemaDefinition.ROLE_V3_PROPERTIES);
 
 
     /*
