@@ -200,6 +200,8 @@ public class MeResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (BadRequestException e) {
             return encodeSCIMException(e);
+        } catch (ForbiddenException e) {
+            return encodeSCIMException(e);
         }
     }
 
