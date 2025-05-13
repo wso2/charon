@@ -127,7 +127,7 @@ public interface RoleV3Manager {
      *
      * @param roleId          ID of the role.
      * @param patchOperations A map of patch operations.
-     * @return Updated group.
+     * @return Updated role.
      * @throws CharonException         Charon exception.
      * @throws BadRequestException     Bad request exception.
      * @throws NotFoundException       Not found exception.
@@ -137,16 +137,66 @@ public interface RoleV3Manager {
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException;
 
+    /**
+     * Assign/De-assign users from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
     RoleV3 updateUsersRole(RoleV3 oldRole, RoleV3 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException;
 
+    /**
+     * Assign/De-assign users to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
     RoleV3 patchUsersRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException;
 
+    /**
+     * Assign/De-assign groups from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
     RoleV3 updateGroupsRole(RoleV3 oldRole, RoleV3 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException;
 
+    /**
+     * Assign-De-assign groups to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
     RoleV3 patchGroupsRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException;

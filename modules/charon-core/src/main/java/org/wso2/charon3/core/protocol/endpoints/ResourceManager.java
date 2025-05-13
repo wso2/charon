@@ -461,10 +461,10 @@ public interface ResourceManager {
     /**
      * PUT method to update a Role by giving the User list.
      *
-     * @param id
-     * @param putRequest
-     * @param roleManager
-     * @return
+     * @param id          Resource id.
+     * @param putRequest  Put request.
+     * @param roleManager RoleV3 manager.
+     * @return SCIMResponse.
      */
     default SCIMResponse updateUsersWithPUTRole(String id, String putRequest, RoleV3Manager roleManager) {
 
@@ -475,10 +475,10 @@ public interface ResourceManager {
     /**
      * PATCH method to update a user with roleV3 model.
      *
-     * @param id
-     * @param patchRequest
-     * @param roleManager
-     * @return
+     * @param id           Resource id.
+     * @param patchRequest Patch request.
+     * @param roleManager  RoleV3 manager.
+     * @return SCIMResponse.
      */
     default SCIMResponse updateUsersWithPATCHRole(String id, String patchRequest, RoleV3Manager roleManager) {
 
@@ -489,10 +489,10 @@ public interface ResourceManager {
     /**
      * PUT method tp update a Role by giving the Group list.
      *
-     * @param id
-     * @param putRequest
-     * @param roleManager
-     * @return
+     * @param id          Resource id.
+     * @param putRequest  Put request.
+     * @param roleManager RoleV3 manager.
+     * @return SCIMResponse.
      */
     default SCIMResponse updateGroupsWithPUTRole(String id, String putRequest, RoleV3Manager roleManager) {
 
@@ -503,10 +503,10 @@ public interface ResourceManager {
     /**
      * PATCH method to update a groups with roleV3 model.
      *
-     * @param id
-     * @param patchRequest
-     * @param roleManager
-     * @return
+     * @param id           Resource id.
+     * @param patchRequest Patch request.
+     * @param roleManager  RoleV3 manager.
+     * @return SCIMResponse.
      */
     default SCIMResponse updateGroupsWithPATCHRole(String id, String patchRequest, RoleV3Manager roleManager) {
 
