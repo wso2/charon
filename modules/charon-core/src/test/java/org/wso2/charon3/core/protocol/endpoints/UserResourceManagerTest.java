@@ -742,7 +742,8 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFails")
     public void testDeleteUserFails(String id, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
@@ -788,7 +789,8 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFailsWithCharonException")
     public void testDeleteUserCharonExceptionOnly(String id, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
@@ -1000,7 +1002,7 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForListWithPOST")
     public void testListWithPOST(String resourceString, List<User> tempList)
-            throws NotImplementedException, BadRequestException, CharonException {
+            throws NotImplementedException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
@@ -1011,7 +1013,8 @@ public class UserResourceManagerTest {
     }
 
     @Test
-    public void testListWithPOSTCharonException() throws NotImplementedException, BadRequestException, CharonException {
+    public void testListWithPOSTCharonException() throws NotImplementedException, BadRequestException,
+            CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
@@ -1026,7 +1029,7 @@ public class UserResourceManagerTest {
 
     @Test
     public void testListWithPOSTNotImplementedException()
-            throws NotImplementedException, BadRequestException, CharonException {
+            throws NotImplementedException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");
@@ -1041,7 +1044,7 @@ public class UserResourceManagerTest {
 
     @Test
     public void testListWithPOSTBadRequestException()
-            throws NotImplementedException, BadRequestException, CharonException {
+            throws NotImplementedException, BadRequestException, CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/.search");

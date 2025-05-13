@@ -628,7 +628,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFails")
     public void testDeleteUserFails(String userName, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException,
+            CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -667,7 +668,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFailsINCharonExceptionOnly")
     public void testDeleteUserCharonExceptionOnly(String userName, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException,
+            CharonException, ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
