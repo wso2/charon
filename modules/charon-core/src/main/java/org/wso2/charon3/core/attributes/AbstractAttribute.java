@@ -15,6 +15,7 @@
  */
 package org.wso2.charon3.core.attributes;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 
@@ -50,6 +51,7 @@ public abstract class AbstractAttribute implements Attribute {
     //A container to hold custom attribute properties.
     protected Map<String, String> additionalAttributeProperties = new HashMap<>();
     protected Map<String, JSONObject> additionalAttributeJSONProperties = new HashMap<>();
+    protected Map<String, JSONArray> additionalAttributeJSONPropertyArray = new HashMap<>();
 
     public String getURI() {
         return uri; }
@@ -166,5 +168,25 @@ public abstract class AbstractAttribute implements Attribute {
     public JSONObject removeAttributeJSONProperty(String propertyName) {
 
         return additionalAttributeJSONProperties.remove(propertyName);
+    }
+
+    public Map<String, JSONArray> getAttributeJSONPropertyArrays() {
+
+        return additionalAttributeJSONPropertyArray;
+    }
+
+    public JSONArray getAttributeJSONPropertyArray(String propertyName) {
+
+        return additionalAttributeJSONPropertyArray.get(propertyName);
+    }
+
+    public void addAttributeJSONPropertyArray(String propertyName, JSONArray jsonArray) {
+
+        this.additionalAttributeJSONPropertyArray.put(propertyName, jsonArray);
+    }
+
+    public JSONArray removeAttributeJSONPropertyArray(String propertyName) {
+
+        return additionalAttributeJSONPropertyArray.remove(propertyName);
     }
 }
