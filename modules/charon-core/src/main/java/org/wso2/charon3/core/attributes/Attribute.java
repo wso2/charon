@@ -77,22 +77,22 @@ public interface Attribute extends Serializable {
         throw new UnsupportedOperationException();
     }
 
-    public default Map<String, JSONArray> getAttributeJSONPropertyArrays() {
+    public default Map<String, JSONArray> getAttributeJSONArrays() {
 
         throw new UnsupportedOperationException();
     }
 
-    public default JSONArray getAttributeJSONPropertyArray(String propertyName) {
+    public default JSONArray getAttributeJSONArray(String propertyName) {
 
         throw new UnsupportedOperationException();
     }
 
-    public default void addAttributeJSONPropertyArray(String propertyName, JSONArray jsonArray) {
+    public default void addAttributeJSONArray(String propertyName, JSONArray jsonArray) {
 
         throw new UnsupportedOperationException();
     }
 
-    public default JSONArray removeAttributeJSONPropertyArray(String propertyName) {
+    public default JSONArray removeAttributeJSONArray(String propertyName) {
 
         throw new UnsupportedOperationException();
     }

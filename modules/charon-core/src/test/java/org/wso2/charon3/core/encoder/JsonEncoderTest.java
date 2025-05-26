@@ -61,11 +61,11 @@ public class JsonEncoderTest {
         attribute.addAttributeJSONProperty("json2", new JSONObject());
         attribute.removeAttributeJSONProperty("json2");
 
-        JSONArray testJsonArray = new JSONArray("[{\"key\":\"A\",\"value\":\"a\"},{\"key\":\"B\"," +
-                "\"value\":\"b\"}]");
-        attribute.addAttributeJSONPropertyArray("jsonArray1", testJsonArray);
-        attribute.addAttributeJSONPropertyArray("jsonArray2", testJsonArray);
-        attribute.removeAttributeJSONPropertyArray("jsonArray2");
+        JSONArray testJsonArray = new JSONArray("[{\"value\":\"CA\",\"displayValue\":\"Current Account\"}," +
+                "{\"value\":\"FD\",\"displayValue\":\"Fixed Deposit\"}]");
+        attribute.addAttributeJSONArray("jsonArray1", testJsonArray);
+        attribute.addAttributeJSONArray("jsonArray2", testJsonArray);
+        attribute.removeAttributeJSONArray("jsonArray2");
 
         JSONObject responseJson = jsonEncoder.encodeBasicAttributeSchema(attribute);
 
@@ -89,8 +89,8 @@ public class JsonEncoderTest {
         Assert.assertFalse(attribute.getAttributeJSONProperties().containsKey("json2"));
         Assert.assertEquals(attribute.getAttributeJSONProperty("json1"), testJsonObject);
 
-        Assert.assertTrue(attribute.getAttributeJSONPropertyArrays().containsKey("jsonArray1"));
-        Assert.assertFalse(attribute.getAttributeJSONPropertyArrays().containsKey("jsonArray2"));
-        Assert.assertEquals(attribute.getAttributeJSONPropertyArray("jsonArray1"), testJsonArray);
+        Assert.assertTrue(attribute.getAttributeJSONArrays().containsKey("jsonArray1"));
+        Assert.assertFalse(attribute.getAttributeJSONArrays().containsKey("jsonArray2"));
+        Assert.assertEquals(attribute.getAttributeJSONArray("jsonArray1"), testJsonArray);
     }
 }

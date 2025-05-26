@@ -53,7 +53,7 @@ public abstract class AbstractAttribute implements Attribute {
     //A container to hold custom attribute properties.
     protected Map<String, String> additionalAttributeProperties = new HashMap<>();
     protected Map<String, JSONObject> additionalAttributeJSONProperties = new HashMap<>();
-    protected Map<String, JSONArray> additionalAttributeJSONPropertyArray = new HashMap<>();
+    protected Map<String, JSONArray> additionalAttributeJSONArrays = new HashMap<>();
 
     public String getURI() {
         return uri; }
@@ -172,23 +172,23 @@ public abstract class AbstractAttribute implements Attribute {
         return additionalAttributeJSONProperties.remove(propertyName);
     }
 
-    public Map<String, JSONArray> getAttributeJSONPropertyArrays() {
+    public Map<String, JSONArray> getAttributeJSONArrays() {
 
-        return additionalAttributeJSONPropertyArray;
+        return additionalAttributeJSONArrays;
     }
 
-    public JSONArray getAttributeJSONPropertyArray(String propertyName) {
+    public JSONArray getAttributeJSONArray(String propertyName) {
 
-        return additionalAttributeJSONPropertyArray.get(propertyName);
+        return additionalAttributeJSONArrays.get(propertyName);
     }
 
-    public void addAttributeJSONPropertyArray(String propertyName, JSONArray jsonArray) {
+    public void addAttributeJSONArray(String propertyName, JSONArray jsonArray) {
 
-        this.additionalAttributeJSONPropertyArray.put(propertyName, jsonArray);
+        this.additionalAttributeJSONArrays.put(propertyName, jsonArray);
     }
 
-    public JSONArray removeAttributeJSONPropertyArray(String propertyName) {
+    public JSONArray removeAttributeJSONArray(String propertyName) {
 
-        return additionalAttributeJSONPropertyArray.remove(propertyName);
+        return additionalAttributeJSONArrays.remove(propertyName);
     }
 }
