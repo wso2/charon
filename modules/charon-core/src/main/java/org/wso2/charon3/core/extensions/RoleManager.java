@@ -135,4 +135,80 @@ public interface RoleManager {
 
         throw new NotImplementedException("patchRole method is not implemented");
     }
+
+    /**
+     * Assign/De-assign users from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
+    default Role updateUsersRole(Role oldRole, Role newRole)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("updateUsersRole method is not implemented");
+    }
+
+    /**
+     * Assign/De-assign users to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    default Role patchUsersRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
+            ForbiddenException {
+
+        throw new NotImplementedException("patchUsersRole method is not implemented");
+    }
+
+    /**
+     * Assign/De-assign groups from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
+    default Role updateGroupsRole(Role oldRole, Role newRole)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("updateGroupsRole method is not implemented");
+    }
+
+    /**
+     * Assign-De-assign groups to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    default Role patchGroupsRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
+            ForbiddenException {
+
+        throw new NotImplementedException("patchGroupsRole method is not implemented");
+    }
 }

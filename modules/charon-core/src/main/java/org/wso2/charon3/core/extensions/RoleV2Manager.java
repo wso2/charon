@@ -136,4 +136,132 @@ public interface RoleV2Manager {
     RoleV2 patchRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException;
+
+    /**
+     * Create a role via SCIM2 Role V3 API.
+     *
+     * @param role Role Object.
+     * @return Role.
+     * @throws CharonException         CharonException.
+     * @throws ConflictException       ConflictException.
+     * @throws NotImplementedException NotImplementedException.
+     * @throws BadRequestException     BadRequestException.
+     */
+    default RoleV2 createRoleMeta(RoleV2 role)
+            throws CharonException, ConflictException, NotImplementedException, BadRequestException {
+
+        throw new NotImplementedException("createRoleMeta method is not implemented.");
+    }
+
+    /**
+     * Update the role with SCIM2 ROle V3 API.
+     *
+     * @param oldRole Old role.
+     * @param newRole new role.
+     * @return Updated role.
+     * @throws NotImplementedException NotImplementedException.
+     * @throws BadRequestException     BadRequestException.
+     * @throws CharonException         CharonException.
+     * @throws ConflictException       ConflictException.
+     * @throws NotFoundException       NotFoundException.
+     */
+    default RoleV2 updateRoleMeta(RoleV2 oldRole, RoleV2 newRole)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("updateRoleMeta method is not implemented.");
+    }
+
+    /**
+     * Updates the role using the SCIM2 Role V3 API via a PATCH request.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated group.
+     * @throws CharonException         Charon exception.
+     * @throws BadRequestException     Bad request exception.
+     * @throws NotFoundException       Not found exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     */
+    default RoleV2 patchRoleMeta(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
+            ForbiddenException {
+
+        throw new NotImplementedException("patchRoleMeta method is not implemented.");
+    }
+
+    /**
+     * Assign/De-assign users from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
+    default RoleV2 updateUsersRole(RoleV2 oldRole, RoleV2 newRole)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("updateUsersRole method is not implementet.");
+    }
+
+    /**
+     * Assign/De-assign users to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    default RoleV2 patchUsersRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
+            ForbiddenException {
+
+        throw new NotImplementedException("patchUsersRole method is not implemented.");
+    }
+
+    /**
+     * Assign/De-assign groups from the role.
+     *
+     * @param oldRole Old role.
+     * @param newRole New role.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     */
+    default RoleV2 updateGroupsRole(RoleV2 oldRole, RoleV2 newRole)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
+
+        throw new NotImplementedException("updateGroupsRole method is not implemented.");
+    }
+
+    /**
+     * Assign-De-assign groups to role via PATCH.
+     *
+     * @param roleId          ID of the role.
+     * @param patchOperations A map of patch operations.
+     * @return Updated role.
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     * @throws CharonException
+     * @throws ConflictException
+     * @throws NotFoundException
+     * @throws ForbiddenException
+     */
+    default RoleV2 patchGroupsRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
+            ForbiddenException {
+
+        throw new NotImplementedException("patchGroupsRole method is not implemented.");
+    }
 }
