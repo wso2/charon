@@ -236,7 +236,7 @@ public class ResourceManagerUtilTest {
 
                 {20, 20},
                 {-1, 0},
-                {null, 0}
+                {null, null}
         };
     }
 
