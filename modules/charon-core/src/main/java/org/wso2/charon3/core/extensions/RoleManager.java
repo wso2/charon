@@ -48,7 +48,8 @@ public interface RoleManager {
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    Role createRole(Role role) throws CharonException, ConflictException, NotImplementedException, BadRequestException;
+    Role createRole(Role role) throws CharonException, ConflictException, NotImplementedException,
+            BadRequestException, ForbiddenException;
 
     /**
      * Get the role for the given ID.
@@ -73,7 +74,8 @@ public interface RoleManager {
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    void deleteRole(String id) throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+    void deleteRole(String id) throws NotFoundException, CharonException, NotImplementedException,
+            BadRequestException, ForbiddenException;
 
     /**
      * List roles with Get.
@@ -104,7 +106,8 @@ public interface RoleManager {
      * @throws NotFoundException       NotFoundException.
      */
     Role updateRole(Role oldRole, Role newRole)
-            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException;
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException,
+            NotFoundException, ForbiddenException;
 
     /**
      * List roles with Post.
