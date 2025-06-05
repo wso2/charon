@@ -108,8 +108,8 @@ public interface RoleV2Manager {
      * @throws NotFoundException       NotFoundException.
      */
     RoleV2 updateRole(RoleV2 oldRole, RoleV2 newRole)
-            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException
-            , ForbiddenException;
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException,
+            NotFoundException, ForbiddenException;
 
     /**
      * List roles with Post.
