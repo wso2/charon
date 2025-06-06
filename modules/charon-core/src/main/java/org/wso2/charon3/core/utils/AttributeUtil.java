@@ -18,6 +18,7 @@
 package org.wso2.charon3.core.utils;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONObject;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -73,13 +74,16 @@ public class AttributeUtil {
             case BOOLEAN:
                 return parseBoolean(attributeValue);
             case DECIMAL:
-                return Double.parseDouble(attributeStringValue);
+                if (NumberUtils.isNumber(attributeStringValue)) {
+                    return Double.parseDouble(attributeStringValue);
+                }
+                return StringUtils.EMPTY;
             case INTEGER:
                 // Return value as it is since the value is an empty string.
                 if (StringUtils.isEmpty(attributeStringValue)) {
                     return attributeValue;
                 }
-                return Integer.parseInt(attributeStringValue);
+                return parseInteger(attributeStringValue);
             case DATE_TIME:
                 return parseDateTime(attributeStringValue);
             case BINARY:
@@ -176,6 +180,20 @@ public class AttributeUtil {
             return ((Boolean) booleanValue);
         } catch (Exception e) {
             return Boolean.parseBoolean((String) booleanValue);
+        }
+    }
+
+    /*
+     * Converts the value to integer or return null
+     *
+     * @param integer
+     */
+    private static Object parseInteger(String integer) {
+
+        try {
+            return Integer.parseInt(integer);
+        } catch (Exception e) {
+            return StringUtils.EMPTY;
         }
     }
 
