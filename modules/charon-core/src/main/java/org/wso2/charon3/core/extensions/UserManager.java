@@ -216,7 +216,8 @@ public interface UserManager {
      */
     default Group patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations,
                              Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+            throws NotImplementedException, BadRequestException, CharonException,
+            NotFoundException, ForbiddenException {
 
         throw new NotImplementedException();
     }
@@ -234,7 +235,8 @@ public interface UserManager {
      * @throws NotImplementedException Functionality no implemented exception.
      */
     default void patchGroup(String groupId, String currentGroupName, Map<String, List<PatchOperation>> patchOperations)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+            throws NotImplementedException, BadRequestException, CharonException,
+            NotFoundException, ForbiddenException {
 
         throw new NotImplementedException();
     }

@@ -30,6 +30,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -747,7 +748,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                 String error = "Updated group resource is null.";
                 throw new CharonException(error);
             }
-        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException e) {
+        } catch (NotFoundException | BadRequestException | NotImplementedException |
+                 CharonException | ForbiddenException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
@@ -785,7 +787,7 @@ public class GroupResourceManager extends AbstractResourceManager {
 
     private void updateWithPatchForAddRemoveOperations(String existingGroupId, List<PatchOperation> opList,
                                                        UserManager userManager) throws BadRequestException,
-            NotImplementedException, NotFoundException, CharonException {
+            NotImplementedException, NotFoundException, CharonException, ForbiddenException {
 
         Map<String, List<PatchOperation>> patchOperations = buildPatchOperationsMap(opList);
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -1011,7 +1013,7 @@ public class GroupResourceManager extends AbstractResourceManager {
             httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
             return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, httpHeaders);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
-                InternalErrorException e) {
+                InternalErrorException | ForbiddenException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException ex = new CharonException("Error in performing the patch operation on group resource.", e);
