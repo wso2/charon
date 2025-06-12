@@ -51,6 +51,7 @@ public class DefaultAttributeFactoryTest {
                 {true, BOOLEAN, true},
                 {"", INTEGER, true},
                 {123, INTEGER, true},
+                {"", DECIMAL, true},
                 {12.23, DECIMAL, true},
                 {Instant.now(), DATE_TIME, true},
                 {new Byte[]{1, 2, 3}, SCIMDefinitions.DataType.BINARY, true},
