@@ -110,6 +110,10 @@ public class DefaultAttributeFactory {
             case BOOLEAN:
                 return attributeValue instanceof Boolean;
             case DECIMAL:
+                // Skipping the empty string check for decimal attributes since this is the value clear use case.
+                if (StringUtils.isEmpty(attributeValue.toString())) {
+                    return true;
+                }
                 return attributeValue instanceof Double;
             case INTEGER:
                 // Skipping the empty string check for integer attributes since this is the value clear use case.
