@@ -515,6 +515,16 @@ public class JSONEncoder {
                     SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionRequired());
             schemaExtensions.put(systemSchemaObject);
 
+            // Add agent schema as a schema extension.
+            JSONObject agentSchemaObject = new JSONObject();
+            agentSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA,
+                    SCIMResourceSchemaManager.getInstance().getAgentSchemaExtensionURI());
+            agentSchemaObject.put(
+                    SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED,
+                    SCIMResourceSchemaManager.getInstance().getAgentSchemaExtensionRequired());
+            schemaExtensions.put(agentSchemaObject);
+
             // Add custom user schema as a schema extension.
             if (StringUtils.isNotBlank(SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI())) {
                 JSONObject customSchemaObject = new JSONObject();

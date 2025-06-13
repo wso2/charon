@@ -33,6 +33,7 @@
             <class name="org.wso2.charon3.core.protocol.endpoints.GroupResourceManagerTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.RoleResourceV2ManagerTest"/>
             <class name="org.wso2.charon3.core.config.SCIMSystemSchemaExtensionBuilderTest"/>
+            <class name="org.wso2.charon3.core.config.SCIMAgentSchemaExtensionBuilderTest"/>
             <class name="org.wso2.charon3.core.schema.SCIMResourceSchemaManagerTest"/>
             <class name="org.wso2.charon3.core.config.encoder.JSONEncoderTest"/>
             <class name="org.wso2.charon3.core.attributes.DefaultAttributeFactoryTest"/>

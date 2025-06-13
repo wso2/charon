@@ -21,6 +21,7 @@ package org.wso2.charon3.core.schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.SCIMAgentSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMSystemSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
@@ -60,6 +61,7 @@ public class SCIMResourceSchemaManager {
 
         AttributeSchema enterpriseSchemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
         AttributeSchema systemSchemaExtension = SCIMSystemSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema agentSchemaExtension = SCIMAgentSchemaExtensionBuilder.getInstance().getExtensionSchema();
 
         List<String> schemaURIs = new ArrayList<>();
         schemaURIs.add(SCIMConstants.USER_CORE_SCHEMA_URI);
@@ -97,6 +99,12 @@ public class SCIMResourceSchemaManager {
 
             schemaDefinitions.add(enterpriseSchemaExtension);
             schemaDefinitions.add(systemSchemaExtension);
+
+            // add agent schema extension if it is not null
+            if (agentSchemaExtension != null) {
+                schemaURIs.add(agentSchemaExtension.getURI());
+                schemaDefinitions.add(agentSchemaExtension);
+            }
         }
 
         return SCIMResourceTypeSchema.createSCIMResourceSchema(
@@ -134,6 +142,25 @@ public class SCIMResourceSchemaManager {
                 }
             }
         }
+        AttributeSchema agentSchemaExtension = SCIMAgentSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        AttributeSchema customAgentAttributeSchema = userManager.getCustomAttributeSchemaInAgentExtension();
+        Map<String, AttributeSchema> agentSchemaSubAttributesMap =
+                Optional.ofNullable(agentSchemaExtension)
+                        .map(AttributeSchema::getSubAttributeSchemas)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .collect(Collectors.toMap(AttributeSchema::getURI, Function.identity()));
+
+        if (agentSchemaExtension == null && customAgentAttributeSchema != null) {
+            agentSchemaExtension = customAgentAttributeSchema;
+        } else if (customAgentAttributeSchema != null) {
+            for (AttributeSchema attributeSchema : customAgentAttributeSchema.getSubAttributeSchemas()) {
+                if (!agentSchemaSubAttributesMap.containsKey(attributeSchema.getURI())) {
+                    agentSchemaExtension.getSubAttributeSchemas().add(attributeSchema);
+                }
+            }
+        }
+
         AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
 
         List<String> schemas = new ArrayList<>();
@@ -172,6 +199,12 @@ public class SCIMResourceSchemaManager {
 
             schemaDefinitions.add(enterpriseSchemaExtension);
             schemaDefinitions.add(systemSchemaExtension);
+
+            // add agent schema extension if it is not null
+            if (agentSchemaExtension != null) {
+                schemas.add(agentSchemaExtension.getURI());
+                schemaDefinitions.add(agentSchemaExtension);
+            }
         }
 
         if (customSchemaExtension != null) {
@@ -283,6 +316,48 @@ public class SCIMResourceSchemaManager {
      */
     public boolean getExtensionRequired() {
         AttributeSchema schemaExtension = SCIMUserSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return false;
+        }
+        return schemaExtension.getRequired();
+    }
+
+    /**
+     * Return the agent schema extension name.
+     *
+     * @return agent schema extension name
+     */
+    public String getAgentSchemaExtensionName() {
+
+        AttributeSchema schemaExtension = SCIMAgentSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return null;
+        }
+        return schemaExtension.getName();
+    }
+
+    /**
+     * Return the agent schema extension uri.
+     *
+     * @return agent schema extension uri
+     */
+    public String getAgentSchemaExtensionURI() {
+
+        AttributeSchema schemaExtension = SCIMAgentSchemaExtensionBuilder.getInstance().getExtensionSchema();
+        if (schemaExtension == null) {
+            return null;
+        }
+        return schemaExtension.getURI();
+    }
+
+    /**
+     * Return the agent schema extension's required property.
+     *
+     * @return agent extension's required property
+     */
+    public boolean getAgentSchemaExtensionRequired() {
+
+        AttributeSchema schemaExtension = SCIMAgentSchemaExtensionBuilder.getInstance().getExtensionSchema();
         if (schemaExtension == null) {
             return false;
         }
