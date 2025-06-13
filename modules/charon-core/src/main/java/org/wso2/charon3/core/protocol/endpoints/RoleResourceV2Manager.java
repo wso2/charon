@@ -111,7 +111,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
 
-            RoleV2 role = decodeRole(postRequest);
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            RoleV2 role = decodeRole(postRequest, schema);
             ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
 
             RoleV2 createdRole = roleManager.createRole(role);
@@ -255,7 +256,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             JSONEncoder encoder = getEncoder();
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
-            RoleV2 role = decodeRole(putRequest);
+            RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
 
             // Retrieve the old object.
@@ -304,8 +305,8 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
         try {
             validateManager(roleManager);
-
-            RoleV2 role = decodeRole(postRequest);
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3Schema();
+            RoleV2 role = decodeRole(postRequest, schema);
             ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
 
             RoleV2 createdRole = roleManager.createRoleMeta(role);
@@ -322,9 +323,9 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
-            RoleV2 role = decodeRole(putRequest);
+            RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
 
             // Retrieve the old object.
@@ -376,7 +377,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             JSONEncoder encoder = getEncoder();
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3UserSchema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
-            RoleV2 role = decodeRole(putRequest);
+            RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
 
             // Retrieve the old object.
@@ -428,7 +429,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             JSONEncoder encoder = getEncoder();
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3GroupSchema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
-            RoleV2 role = decodeRole(putRequest);
+            RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
 
             // Retrieve the old object.
@@ -1079,11 +1080,10 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
     }
 
-    private RoleV2 decodeRole(String request)
+    private RoleV2 decodeRole(String request, SCIMResourceTypeSchema schema)
             throws BadRequestException, CharonException, InternalErrorException {
 
         JSONDecoder decoder = getDecoder();
-        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
         return decoder.decodeResource(request, schema, new RoleV2());
     }
 
