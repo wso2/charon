@@ -183,7 +183,7 @@ public class SCIMAgentSchemaExtensionBuilder extends ExtensionBuilder {
         }
         
     }
-    
+
     @Override
     public String getURI() {
 
