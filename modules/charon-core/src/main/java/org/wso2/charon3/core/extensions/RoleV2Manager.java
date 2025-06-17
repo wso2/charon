@@ -195,11 +195,11 @@ public interface RoleV2Manager {
      * @param oldRole Old role.
      * @param newRole New role.
      * @return Updated role.
-     * @throws NotImplementedException
-     * @throws BadRequestException
-     * @throws CharonException
-     * @throws ConflictException
-     * @throws NotFoundException
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws CharonException         CharonException
+     * @throws ConflictException       ConflictException
+     * @throws NotFoundException       NotFoundException
      */
     default RoleV2 updateUsersRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
@@ -213,12 +213,12 @@ public interface RoleV2Manager {
      * @param roleId          ID of the role.
      * @param patchOperations A map of patch operations.
      * @return Updated role.
-     * @throws NotImplementedException
-     * @throws BadRequestException
-     * @throws CharonException
-     * @throws ConflictException
-     * @throws NotFoundException
-     * @throws ForbiddenException
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws CharonException         CharonException
+     * @throws ConflictException       ConflictException
+     * @throws NotFoundException       NotFoundException
+     * @throws ForbiddenException      ForbiddenException
      */
     default RoleV2 patchUsersRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
@@ -233,11 +233,11 @@ public interface RoleV2Manager {
      * @param oldRole Old role.
      * @param newRole New role.
      * @return Updated role.
-     * @throws NotImplementedException
-     * @throws BadRequestException
-     * @throws CharonException
-     * @throws ConflictException
-     * @throws NotFoundException
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws CharonException         CharonException
+     * @throws ConflictException       ConflictException
+     * @throws NotFoundException       NotFoundException
      */
     default RoleV2 updateGroupsRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
@@ -251,12 +251,12 @@ public interface RoleV2Manager {
      * @param roleId          ID of the role.
      * @param patchOperations A map of patch operations.
      * @return Updated role.
-     * @throws NotImplementedException
-     * @throws BadRequestException
-     * @throws CharonException
-     * @throws ConflictException
-     * @throws NotFoundException
-     * @throws ForbiddenException
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws CharonException         CharonException
+     * @throws ConflictException       ConflictException
+     * @throws NotFoundException       NotFoundException
+     * @throws ForbiddenException      ForbiddenException
      */
     default RoleV2 patchGroupsRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
