@@ -273,6 +273,39 @@ public class SCIMResourceSchemaManagerTest {
         verify(userSchemaExtensionBuilder, times(3)).getExtensionSchema();
     }
 
+    @Test
+    public void testGetRoleResourceV3Schema() {
+
+        SCIMResourceSchemaManager manager = SCIMResourceSchemaManager.getInstance();
+        SCIMResourceTypeSchema schema = manager.getRoleResourceV3Schema();
+
+        assertNotNull(schema, "The getRoleResourceV3Schema method should return a non-null schema");
+        assertSame(schema, SCIMSchemaDefinitions.SCIM_ROLE_V3_SCHEMA,
+                "The getRoleResourceV3Schema method should return SCIM_ROLE_V3_SCHEMA");
+    }
+
+    @Test
+    public void testGetRoleResourceV3UserSchema() {
+
+        SCIMResourceSchemaManager manager = SCIMResourceSchemaManager.getInstance();
+        SCIMResourceTypeSchema schema = manager.getRoleResourceV3UserSchema();
+
+        assertNotNull(schema, "The getRoleResourceV3UserSchema method should return a non-null schema");
+        assertSame(schema, SCIMSchemaDefinitions.SCIM_ROLE_V3_USER_SCHEMA,
+                "The getRoleResourceV3UserSchema method should return SCIM_ROLE_V3_USER_SCHEMA");
+    }
+
+    @Test
+    public void testGetRoleResourceV3GroupSchema() {
+
+        SCIMResourceSchemaManager manager = SCIMResourceSchemaManager.getInstance();
+        SCIMResourceTypeSchema schema = manager.getRoleResourceV3GroupSchema();
+
+        assertNotNull(schema, "The getRoleResourceV3GroupSchema method should return a non-null schema");
+        assertSame(schema, SCIMSchemaDefinitions.SCIM_ROLE_V3_GROUPS_SCHEMA,
+                "The getRoleResourceV3GroupSchema method should return SCIM_ROLE_V3_GROUPS_SCHEMA");
+    }
+
     @BeforeClass
     public void initMocks() {
 
