@@ -249,6 +249,34 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     }
 
     @Override
+    public SCIMResponse getRoleV3(String id, RoleV2Manager roleManager, String attributes, String excludeAttributes) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requiredAttributes = ResourceManagerUtil
+                    .getOnlyRequiredAttributesURIs((SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes,
+                            excludeAttributes);
+
+            RoleV2 role = roleManager.getRoleV3(id, requiredAttributes);
+            if (role == null) {
+                String message = "Role id: " + id + " not found in the system.";
+                throw new NotFoundException(message);
+            }
+            ServerSideValidator.validateRetrievedSCIMObject(role, schema, attributes, excludeAttributes);
+            ServerSideValidator.validateRetrievedSCIMRoleV2Object(role, attributes, excludeAttributes);
+            String encodedRole = encoder.encodeSCIMObject(role);
+            Map<String, String> httpHeaders = new HashMap<>();
+            httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+            return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedRole, httpHeaders);
+        } catch (NotFoundException | BadRequestException | CharonException | NotImplementedException |
+                 InternalErrorException e) {
+            return encodeSCIMException(e);
+        }
+    }
+
+    @Override
     public SCIMResponse updateWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
 
         try {
@@ -524,6 +552,35 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
         return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
                 Collections.emptyMap());
+    }
+
+    @Override
+    public SCIMResponse listWithGETRoleV3(RoleV2Manager roleManager, String filter, Integer startIndexInt,
+                                        Integer countInt, String sortBy, String sortOrder, String attributes,
+                                        String excludeAttributes) {
+
+        try {
+            validateManager(roleManager);
+            Integer count = ResourceManagerUtil.processCount(countInt);
+            Integer startIndex = ResourceManagerUtil.processStartIndex(startIndexInt);
+            sortOrder = resolveSortOrder(sortOrder, sortBy);
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            // Build node for filtering.
+            Node rootNode = buildNode(filter, schema);
+            JSONEncoder encoder = getEncoder();
+            // Get the list of required attributes which must be given a value
+            List<String> requestedAttributes = getRequestedAttributes(
+                    (SCIMResourceTypeSchema) CopyUtil.deepCopy(schema), attributes, excludeAttributes);
+            RolesV2GetResponse rolesResponse = roleManager.listRolesV3WithGET(rootNode, startIndex, count, sortBy,
+                    sortOrder, requestedAttributes);
+            return processRoleList(rolesResponse, encoder, startIndex, attributes, excludeAttributes);
+        } catch (CharonException | InternalErrorException | BadRequestException | NotImplementedException e) {
+            return encodeSCIMException(e);
+        } catch (IOException e) {
+            String error = "Error in tokenization of the input filter.";
+            CharonException charonException = new CharonException(error);
+            return AbstractResourceManager.encodeSCIMException(charonException);
+        }
     }
 
     /**

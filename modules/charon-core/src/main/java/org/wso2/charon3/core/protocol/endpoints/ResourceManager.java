@@ -354,6 +354,41 @@ public interface ResourceManager {
     }
 
     /**
+     * GET method to list roles in roleV3 API.
+     *
+     * @param roleManager       RoleV2 manager.
+     * @param filter            Filter to be executed.
+     * @param startIndex        Starting index value of the filter.
+     * @param count             Number of required results.
+     * @param sortBy            SortBy.
+     * @param sortOrder         Sorting order.
+     * @param attributes        Requested attributes.
+     * @param excludeAttributes Requested exclude attributes.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse listWithGETRoleV3(RoleV2Manager roleManager, String filter, Integer startIndex, Integer count,
+                                         String sortBy, String sortOrder, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
+     * GET method to retrieve a specific role in roleV3 API.
+     *
+     * @param id                Resource id.
+     * @param roleManager       RoleV2 manager.
+     * @param attributes        Attributes in the response.
+     * @param excludeAttributes Exclude attributes in the response.
+     * @return SCIMResponse.
+     */
+    default SCIMResponse getRoleV3(String id, RoleV2Manager roleManager, String attributes, String excludeAttributes) {
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_NOT_IMPLEMENTED, ResponseCodeConstants.DESC_NOT_IMPLEMENTED,
+                Collections.emptyMap());
+    }
+
+    /**
      * POST method to create a new role in roleV2 model.
      *
      * @param postRequest Post request.
