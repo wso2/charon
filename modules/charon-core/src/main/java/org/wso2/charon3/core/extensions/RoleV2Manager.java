@@ -158,6 +158,17 @@ public interface RoleV2Manager {
         throw new NotImplementedException("listRolesV3WithGET method is not implemented.");
     }
 
+    /**
+     * Get the role for the given ID via SCIM2 Role V3 API.
+     *
+     * @param id                 Role ID.
+     * @param requiredAttributes Required Attributes.
+     * @return Role.
+     * @throws NotImplementedException NotImplementedException.
+     * @throws BadRequestException     BadRequestException.
+     * @throws CharonException         CharonException.
+     * @throws NotFoundException       NotFoundException.
+     */
     default RoleV2 getRoleV3(String id, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
 
