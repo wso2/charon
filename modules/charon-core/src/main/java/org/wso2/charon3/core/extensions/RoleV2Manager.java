@@ -151,8 +151,8 @@ public interface RoleV2Manager {
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    default  RolesV2GetResponse listRolesV3WithGET(Node node, Integer startIndex, Integer count, String sortBy, String sortOrder,
-                                        List<String> requiredAttributes)
+    default  RolesV2GetResponse listRolesV3WithGET(Node node, Integer startIndex, Integer count, String sortBy,
+                                                   String sortOrder, List<String> requiredAttributes)
             throws CharonException, NotImplementedException, BadRequestException {
 
         throw new NotImplementedException("listRolesV3WithGET method is not implemented.");
