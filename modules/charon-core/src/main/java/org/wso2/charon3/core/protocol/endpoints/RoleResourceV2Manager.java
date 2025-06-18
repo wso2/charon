@@ -357,7 +357,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 updatedRole;
 
             // Retrieve the old object.
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
             updatedRole = roleManager.updateRoleMeta(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
@@ -382,7 +382,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                 return updateWithPatchOperationsMeta(id, opList, roleManager, schema, encoder);
             }
 
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
@@ -409,7 +409,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 updatedRole;
 
             // Retrieve the old object.
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
             updatedRole = roleManager.updateUsersRole(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
@@ -434,7 +434,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                 return updateUsersWithPatchOperations(id, opList, roleManager, schema, encoder);
             }
 
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
@@ -461,7 +461,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 updatedRole;
 
             // Retrieve the old object.
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
             updatedRole = roleManager.updateGroupsRole(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
@@ -486,7 +486,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                 return updateGroupsWithPatchOperations(id, opList, roleManager, schema, encoder);
             }
 
-            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 oldRole = getOldRoleforV3Api(id, roleManager, requestAttributes);
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
@@ -1160,6 +1160,18 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
 
         return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedRole, httpHeaders);
+    }
+
+    private RoleV2 getOldRoleforV3Api(String id, RoleV2Manager roleManager, Map<String, Boolean> requestAttributes)
+            throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
+
+        RoleV2 oldRole = roleManager.getRoleV3(id, requestAttributes);
+        if (oldRole == null) {
+            String error = "No role exists with the given id: " + id;
+            throw new NotFoundException(error);
+        }
+
+        return oldRole;
     }
 
     private RoleV2 getOldRole(String id, RoleV2Manager roleManager, Map<String, Boolean> requestAttributes)
