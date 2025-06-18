@@ -10,6 +10,9 @@
 ## User stories
 > Summary of user stories addressed by this change>
 
+## Developer Checklist (Mandatory)
+- [ ] Complete the **Developer Checklist** in the related `product-is` issue to track any behavioral change or migration impact.
+
 ## Release note
 > Brief description of the new feature or bug fix as it will appear in the release notes
 
