@@ -281,6 +281,20 @@ public interface UserManager {
     }
 
     /**
+     * Retrieve schema of the agent user.
+     *
+     * @return List of attributes of agent user schema.
+     * @throws CharonException Charon exception.
+     * @throws NotImplementedException Functionality no implemented exception.
+     * @throws BadRequestException Bad request exception.
+     */
+    default List<Attribute> getAgentUserSchema() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        throw new NotImplementedException();
+    }
+
+    /**
      * Return Custom schema.
      * @return Custom schema.
      * @throws CharonException
@@ -301,6 +315,19 @@ public interface UserManager {
      * @throws BadRequestException
      */
     default AttributeSchema getCustomAttributeSchemaInSystemExtension() throws CharonException, NotImplementedException,
+            BadRequestException {
+
+        return null;
+    }
+
+    /**
+     * Return Agent schema.
+     * @return Agent schema.
+     * @throws CharonException
+     * @throws NotImplementedException
+     * @throws BadRequestException
+     */
+    default AttributeSchema getCustomAttributeSchemaInAgentExtension() throws CharonException, NotImplementedException,
             BadRequestException {
 
         return null;
