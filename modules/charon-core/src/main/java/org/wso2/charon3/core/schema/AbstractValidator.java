@@ -996,9 +996,7 @@ public abstract class AbstractValidator {
             if (attributeName != null) {
                 String extensionName = schemaManager.getExtensionName();
                 String systemSchemaExtensionName = schemaManager.getSystemSchemaExtensionName();
-                String agentSchemaExtensionName = schemaManager.getAgentSchemaExtensionName();
-                if (attributeName.equals(extensionName) || attributeName.equals(systemSchemaExtensionName) || 
-                    attributeName.equals(agentSchemaExtensionName)) {
+                if (attributeName.equals(extensionName) || attributeName.equals(systemSchemaExtensionName)) {
                     checkIfReadOnlyAndImmutableExtensionAttributesModified(subAttributeSchemaList, newAttribute,
                             oldAttribute);
                 }
