@@ -72,7 +72,6 @@ public class JSONEncoderTest {
         when(resourceSchemaManager.getSystemSchemaExtensionRequired()).thenReturn(true);
         when(resourceSchemaManager.getCustomSchemaExtensionURI()).thenReturn("customSchemaURI");
         when(resourceSchemaManager.getAgentSchemaExtensionURI()).thenReturn(AGENT_SCHEMA_URI);
-        when(resourceSchemaManager.getAgentSchemaExtensionRequired()).thenReturn(true);
 
         String jsonBody = jsonEncoder.buildUserResourceTypeJsonBody();
 
@@ -89,7 +88,7 @@ public class JSONEncoderTest {
 
         JSONArray schemaExtensions = jsonObject.getJSONArray(
                 SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS);
-        assertEquals(schemaExtensions.length(), 4, "There should be four schema extensions.");
+        assertEquals(schemaExtensions.length(), 3, "There should be three schema extensions.");
 
         JSONObject extensionSchema = schemaExtensions.getJSONObject(0);
         assertEquals(extensionSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
@@ -100,13 +99,8 @@ public class JSONEncoderTest {
         assertEquals(systemSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
                 SYSTEM_USER_SCHEMA_URI);
         assertTrue(systemSchema.getBoolean(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED));
-
-        JSONObject agentSchema = schemaExtensions.getJSONObject(2);
-        assertEquals(agentSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
-                AGENT_SCHEMA_URI);
-        assertTrue(systemSchema.getBoolean(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED));
-
-        JSONObject customSchema = schemaExtensions.getJSONObject(3);
+        
+        JSONObject customSchema = schemaExtensions.getJSONObject(2);
         assertEquals(customSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
                 "customSchemaURI");
         assertFalse(customSchema.getBoolean(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED));

@@ -546,7 +546,7 @@ public class JSONDecoder {
                 ((AttributeSchema) complexAttributeSchema).getSubAttributeSchemas();
         String userExtensionName = SCIMResourceSchemaManager.getInstance().getExtensionName();
         String systemExtensionName = SCIMResourceSchemaManager.getInstance().getSystemSchemaExtensionName();
-        String agentExtensionName = SCIMResourceSchemaManager.getInstance().getAgentSchemaExtensionName();
+        String agentExtensionName = SCIMResourceSchemaManager.getInstance().getAgentSchemaExtensionURI();
         String customExtensionName = SCIMResourceSchemaManager.getInstance().getCustomSchemaExtensionURI();
 
         //iterate through the complex attribute schema and extract the sub attributes.
