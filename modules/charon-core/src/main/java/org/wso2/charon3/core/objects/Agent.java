@@ -37,6 +37,7 @@ public class Agent extends User {
      * Initializes an Agent object with the agent schema.
      */
     public Agent() {
+    
         super();
     }
 

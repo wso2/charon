@@ -34,7 +34,7 @@ import static org.wso2.charon3.core.schema.SCIMConstants.AGENT_SCHEMA_URI;
  */
 public class SCIMAgentSchemaExtensionBuilder extends ExtensionBuilder {
 
-    private static final SCIMAgentSchemaExtensionBuilder instance = new SCIMAgentSchemaExtensionBuilder();
+    private static final SCIMAgentSchemaExtensionBuilder INSTANCE = new SCIMAgentSchemaExtensionBuilder();
     private static final String EXTENSION_ROOT_ATTRIBUTE_URI = AGENT_SCHEMA_URI;
 
     /**

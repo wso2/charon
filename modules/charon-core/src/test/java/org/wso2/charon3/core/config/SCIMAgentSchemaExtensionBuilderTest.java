@@ -58,6 +58,7 @@ public class SCIMAgentSchemaExtensionBuilderTest {
 
         @Test
         void testBuildAgentSchemaExtension() throws Exception {
+        
                 List<SCIMCustomAttribute> scimCustomAttributes = new java.util.ArrayList<>();
                 SCIMCustomAttribute scimCustomAttribute = new SCIMCustomAttribute();
                 Map<String, String> attributeCharacteristics = new HashMap<>();
@@ -87,6 +88,7 @@ public class SCIMAgentSchemaExtensionBuilderTest {
 
         @BeforeMethod
         void setUp() {
+        
                 builder = SCIMAgentSchemaExtensionBuilder.getInstance();
         }
 }

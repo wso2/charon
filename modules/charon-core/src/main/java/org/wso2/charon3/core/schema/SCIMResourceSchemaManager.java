@@ -310,8 +310,6 @@ public class SCIMResourceSchemaManager {
     public String getAgentSchemaExtensionURI() {
 
         return SCIMAgentSchemaExtensionBuilder.getInstance().getURI();
-        
-       
     }
 
     /*

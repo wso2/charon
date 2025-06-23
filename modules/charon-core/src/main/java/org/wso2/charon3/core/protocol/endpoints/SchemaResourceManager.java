@@ -240,8 +240,8 @@ public class SchemaResourceManager extends AbstractResourceManager {
     /**
      * Builds a JSON object containing agent user schema attribute information.
      *
-     * @param agentUserSchemaList Attribute list of SCIM agent user schema
-     * @return JSON object of agent user schema
+     * @param agentUserSchemaList Attribute list of SCIM agent user schema.
+     * @return JSON object of agent user schema.
      * @throws CharonException
      */
     private JSONObject buildAgentUserSchema(List<Attribute> agentUserSchemaList) throws CharonException {
