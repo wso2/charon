@@ -385,7 +385,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
 
             // Set the attributes and id from the old role to the new role.
-            setSystemAttributesAndTimestamp(oldRole, role);
+            setAttributesAndTimestamp(oldRole, role);
 
             updatedRole = roleManager.updateUsersRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
@@ -440,7 +440,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
 
             // Set the attributes and id from the old role to the new role.
-            setSystemAttributesAndTimestamp(oldRole, role);
+            setAttributesAndTimestamp(oldRole, role);
 
             updatedRole = roleManager.updateGroupsRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
@@ -1138,7 +1138,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
      * @throws BadRequestException BadRequestException.
      * @throws CharonException     CharonException.
      */
-    private void setSystemAttributesAndTimestamp(RoleV2 oldRole, RoleV2 newRole)
+    private void setAttributesAndTimestamp(RoleV2 oldRole, RoleV2 newRole)
             throws BadRequestException, CharonException {
 
         newRole.setAttribute(oldRole.getAttribute(SCIMConstants.CommonSchemaConstants.META));
