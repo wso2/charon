@@ -44,7 +44,7 @@ public class SCIMAgentSchemaExtensionBuilder extends ExtensionBuilder {
      */
     public static SCIMAgentSchemaExtensionBuilder getInstance() {
 
-        return instance;
+        return INSTANCE;
     }
 
     /**

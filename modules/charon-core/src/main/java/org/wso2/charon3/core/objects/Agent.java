@@ -24,8 +24,10 @@ import org.wso2.charon3.core.extensions.UserManager;
 import org.wso2.charon3.core.schema.SCIMConstants;
 
 /**
- * Represents the Agent object which extends the User object with agent-specific functionality.
- * An Agent is essentially a specialized User that represents agentic AI or automated entities
+ * Represents the Agent object which extends the User object with agent-specific
+ * functionality.
+ * An Agent is essentially a specialized User that represents agentic AI or
+ * automated entities
  * that can perform actions on behalf of the system or other users.
  */
 public class Agent extends User {
@@ -37,7 +39,7 @@ public class Agent extends User {
      * Initializes an Agent object with the agent schema.
      */
     public Agent() {
-    
+
         super();
     }
 
@@ -49,7 +51,7 @@ public class Agent extends User {
     public void setSchemas() {
         // First set the user schemas
         super.setSchemas();
-        
+
         // Add agent-specific schema
         setSchema(SCIMConstants.AGENT_SCHEMA_URI);
     }
@@ -59,16 +61,16 @@ public class Agent extends User {
      * This includes both user schema and agent-specific schema.
      *
      * @param userManager The UserManager instance to retrieve schema information
-     * @throws BadRequestException    If the request is invalid
+     * @throws BadRequestException     If the request is invalid
      * @throws NotImplementedException If the operation is not implemented
-     * @throws CharonException        If there's an error in Charon processing
+     * @throws CharonException         If there's an error in Charon processing
      */
     @Override
     public void setSchemas(UserManager userManager) throws BadRequestException,
             NotImplementedException, CharonException {
         // First set the user schemas
         super.setSchemas(userManager);
-        
+
         // Add agent-specific schema
         setSchema(SCIMConstants.AGENT_SCHEMA_URI);
     }
