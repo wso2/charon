@@ -61,6 +61,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -382,8 +383,11 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
             // Retrieve the old object.
             RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
-            RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
-            updatedRole = roleManager.updateUsersRole(oldRole, newRole);
+
+            // Set the attributes and id from the old role to the new role.
+            setSystemAttributesAndTimestamp(oldRole, role);
+
+            updatedRole = roleManager.updateUsersRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
                  | NotImplementedException e) {
@@ -434,8 +438,11 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
             // Retrieve the old object.
             RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
-            RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
-            updatedRole = roleManager.updateGroupsRole(oldRole, newRole);
+
+            // Set the attributes and id from the old role to the new role.
+            setSystemAttributesAndTimestamp(oldRole, role);
+
+            updatedRole = roleManager.updateGroupsRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
                  | NotImplementedException e) {
@@ -1120,7 +1127,22 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                             ResponseCodeConstants.INVALID_SYNTAX);
             }
         }
-
         return patchOperations;
+    }
+
+    /**
+     * Sets system attributes and timestamp for the new role.
+     *
+     * @param newRole New role to be created.
+     * @param oldRole Old role to copy system attributes from.
+     * @throws BadRequestException BadRequestException.
+     * @throws CharonException     CharonException.
+     */
+    private void setSystemAttributesAndTimestamp(RoleV2 oldRole, RoleV2 newRole)
+            throws BadRequestException, CharonException {
+
+        newRole.setAttribute(oldRole.getAttribute(SCIMConstants.CommonSchemaConstants.META));
+        newRole.setAttribute(oldRole.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
+        newRole.setLastModifiedInstant(Instant.now());
     }
 }
