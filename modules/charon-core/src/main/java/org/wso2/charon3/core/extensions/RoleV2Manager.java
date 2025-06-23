@@ -138,44 +138,6 @@ public interface RoleV2Manager {
             ForbiddenException;
 
     /**
-     * List roles with Get using SCIM2 Role V3 API.
-     *
-     * @param node               Node
-     * @param startIndex         Start Index
-     * @param count              Count
-     * @param sortBy             Sort by
-     * @param sortOrder          Sort order
-     * @param requiredAttributes Required attributes
-     * @return List of roles.
-     * @throws CharonException         CharonException.
-     * @throws NotImplementedException NotImplementedException.
-     * @throws BadRequestException     BadRequestException.
-     */
-    default  RolesV2GetResponse listRolesV3WithGET(Node node, Integer startIndex, Integer count, String sortBy,
-                                                   String sortOrder, List<String> requiredAttributes)
-            throws CharonException, NotImplementedException, BadRequestException {
-
-        throw new NotImplementedException("listRolesV3WithGET method is not implemented.");
-    }
-
-    /**
-     * Get the role for the given ID via SCIM2 Role V3 API.
-     *
-     * @param id                 Role ID.
-     * @param requiredAttributes Required Attributes.
-     * @return Role.
-     * @throws NotImplementedException NotImplementedException.
-     * @throws BadRequestException     BadRequestException.
-     * @throws CharonException         CharonException.
-     * @throws NotFoundException       NotFoundException.
-     */
-    default RoleV2 getRoleV3(String id, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
-
-        throw new NotImplementedException("getRoleV3 method is not implemented.");
-    }
-
-    /**
      * Create a role via SCIM2 Role V3 API.
      *
      * @param role Role Object.
