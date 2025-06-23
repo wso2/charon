@@ -305,9 +305,9 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
 
         try {
             validateManager(roleManager);
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3Schema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             RoleV2 role = decodeRole(postRequest, schema);
-            ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V3_SCHEMA);
+            ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
 
             RoleV2 createdRole = roleManager.createRoleMeta(role);
             return buildSCIMResponse(createdRole, SCIMConstants.ROLE_V3_ENDPOINT);
@@ -323,7 +323,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3Schema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
             RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
@@ -375,7 +375,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3UserSchema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
             RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
@@ -397,7 +397,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3UserSchema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
 
             List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
@@ -427,7 +427,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3GroupSchema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
             RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
@@ -449,7 +449,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         try {
             validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV3GroupSchema();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
 
             List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
@@ -682,28 +682,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                                                    JSONEncoder encoder) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
             RoleV2 updatedRole = roleManager.patchRole(existingRoleId, patchOperations);
@@ -715,8 +694,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     }
 
     /**
-     * Updates the role based on the operations defined in the patch request. The updated role information is sent
-     * back in the response.
+     * Updates the role metadata such as name and permissions based on the operations defined in the patch request.
      *
      * @param existingRoleId SCIM2 ID of the existing role.
      * @param opList         List of patch operations.
@@ -729,28 +707,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                                                    JSONEncoder encoder) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
             RoleV2 updatedRole = roleManager.patchRoleMeta(existingRoleId, patchOperations);
@@ -999,33 +956,22 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         return memberList;
     }
 
+    /**
+     * Updates the users of a role based on the operations defined in the patch request.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @param encoder        JSON Encoder.
+     * @return SCIM Response.
+     */
     private SCIMResponse updateUsersWithPatchOperations(String existingRoleId, List<PatchOperation> opList,
                                                         RoleV2Manager roleManager, SCIMResourceTypeSchema schema,
                                                         JSONEncoder encoder) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
             RoleV2 updatedRole = roleManager.patchUsersRole(existingRoleId, patchOperations);
@@ -1036,33 +982,21 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Updates the groups of a role based on the operations defined in the patch request.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @return SCIM Response.
+     */
     private SCIMResponse updateGroupsWithPatchOperations(String existingRoleId, List<PatchOperation> opList,
                                                          RoleV2Manager roleManager, SCIMResourceTypeSchema schema,
                                                          JSONEncoder encoder) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
             RoleV2 updatedRole = roleManager.patchGroupsRole(existingRoleId, patchOperations);
@@ -1073,6 +1007,12 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Validates the provided role manager.
+     *
+     * @param roleManager RoleV2Manager instance to validate.
+     * @throws InternalErrorException If the role manager is null.
+     */
     private void validateManager(RoleV2Manager roleManager) throws InternalErrorException {
 
         if (roleManager == null) {
@@ -1080,6 +1020,16 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
     }
 
+    /**
+     * Decodes the role from the request.
+     *
+     * @param request Request string containing the role information.
+     * @param schema  SCIM resource type schema for roles.
+     * @return Decoded RoleV2 object.
+     * @throws BadRequestException    BadRequestException.
+     * @throws CharonException        CharonException.
+     * @throws InternalErrorException InternalErrorException.
+     */
     private RoleV2 decodeRole(String request, SCIMResourceTypeSchema schema)
             throws BadRequestException, CharonException, InternalErrorException {
 
@@ -1087,6 +1037,16 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         return decoder.decodeResource(request, schema, new RoleV2());
     }
 
+    /**
+     * Builds a SCIM response for the newly created role.
+     *
+     * @param createdRole Newly created RoleV2 object.
+     * @param endpointUrl Endpoint URL for the role resource.
+     * @return SCIMResponse containing the created role and HTTP headers.
+     * @throws InternalErrorException InternalErrorException.
+     * @throws CharonException        CharonException.
+     * @throws NotFoundException      NotFoundException.
+     */
     private SCIMResponse buildSCIMResponse(RoleV2 createdRole, String endpointUrl) throws InternalErrorException,
             CharonException, NotFoundException {
 
@@ -1105,6 +1065,18 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedRole, httpHeaders);
     }
 
+    /**
+     * Retrieves the old role object based on the provided ID.
+     *
+     * @param id                ID of the role to retrieve.
+     * @param roleManager       RoleV2Manager instance to manage roles.
+     * @param requestAttributes Map of request attributes.
+     * @return Old RoleV2 object.
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws NotFoundException       NotFoundException
+     * @throws CharonException         CharonException
+     */
     private RoleV2 getOldRole(String id, RoleV2Manager roleManager, Map<String, Boolean> requestAttributes)
             throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
 
@@ -1115,5 +1087,40 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
         }
 
         return oldRole;
+    }
+
+    /**
+     * Groups the patch operations by their type (ADD, REMOVE, REPLACE).
+     *
+     * @param opList List of patch operations.
+     * @return Map of patch operations grouped by type.
+     * @throws BadRequestException If an unknown operation is found.
+     */
+    private Map<String, List<PatchOperation>> groupPatchOperationsByType(List<PatchOperation> opList)
+            throws BadRequestException {
+
+        Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
+        patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
+
+        for (PatchOperation patchOperation : opList) {
+            switch (patchOperation.getOperation()) {
+                case SCIMConstants.OperationalConstants.ADD:
+                    patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REMOVE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REPLACE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
+                    break;
+                default:
+                    throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
+                            ResponseCodeConstants.INVALID_SYNTAX);
+            }
+        }
+
+        return patchOperations;
     }
 }

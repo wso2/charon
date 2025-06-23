@@ -317,21 +317,6 @@ public class SCIMResourceSchemaManager {
         return SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA;
     }
 
-    public SCIMResourceTypeSchema getRoleResourceV3Schema() {
-
-        return SCIMSchemaDefinitions.SCIM_ROLE_V3_SCHEMA;
-    }
-
-    public SCIMResourceTypeSchema getRoleResourceV3UserSchema() {
-
-        return SCIMSchemaDefinitions.SCIM_ROLE_V3_USER_SCHEMA;
-    }
-
-    public SCIMResourceTypeSchema getRoleResourceV3GroupSchema() {
-
-        return SCIMSchemaDefinitions.SCIM_ROLE_V3_GROUPS_SCHEMA;
-    }
-
     public SCIMResourceTypeSchema getResourceTypeResourceSchema() {
 
         return SCIMSchemaDefinitions.SCIM_RESOURCE_TYPE_SCHEMA;
