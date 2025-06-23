@@ -423,7 +423,7 @@ public interface ResourceManager {
     }
 
     /**
-     * PUT method tp update a Role by giving the Group list.
+     * PUT method to update a Role by giving the Group list.
      *
      * @param id          Resource id.
      * @param putRequest  Put request.

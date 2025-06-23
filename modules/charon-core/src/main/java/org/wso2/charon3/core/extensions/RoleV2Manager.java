@@ -204,7 +204,7 @@ public interface RoleV2Manager {
     default RoleV2 updateUsersRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
 
-        throw new NotImplementedException("updateUsersRole method is not implementet.");
+        throw new NotImplementedException("updateUsersRole method is not implemented.");
     }
 
     /**
