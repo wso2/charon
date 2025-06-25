@@ -387,7 +387,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             // Set the attributes and id from the old role to the new role.
             setAttributesAndTimestamp(oldRole, role);
 
-            updatedRole = roleManager.updateUsersRole(oldRole, role);
+            updatedRole = roleManager.updateUsersOfRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
                  | NotImplementedException e) {
@@ -414,7 +414,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
-            RoleV2 updatedRole = roleManager.updateUsersRole(originalRole, patchedRole);
+            RoleV2 updatedRole = roleManager.updateUsersOfRole(originalRole, patchedRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
                  | InternalErrorException e) {
@@ -442,7 +442,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             // Set the attributes and id from the old role to the new role.
             setAttributesAndTimestamp(oldRole, role);
 
-            updatedRole = roleManager.updateGroupsRole(oldRole, role);
+            updatedRole = roleManager.updateGroupsOfRole(oldRole, role);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
                  | NotImplementedException e) {
@@ -469,7 +469,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
-            RoleV2 updatedRole = roleManager.updateGroupsRole(originalRole, patchedRole);
+            RoleV2 updatedRole = roleManager.updateGroupsOfRole(originalRole, patchedRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
                  | InternalErrorException e) {
@@ -981,7 +981,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
-            RoleV2 updatedRole = roleManager.patchUsersRole(existingRoleId, patchOperations);
+            RoleV2 updatedRole = roleManager.patchUsersOfRole(existingRoleId, patchOperations);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
                  CharonException | InternalErrorException | ForbiddenException e) {
@@ -1006,7 +1006,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
-            RoleV2 updatedRole = roleManager.patchGroupsRole(existingRoleId, patchOperations);
+            RoleV2 updatedRole = roleManager.patchGroupsOfRole(existingRoleId, patchOperations);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
                  CharonException | InternalErrorException | ForbiddenException e) {

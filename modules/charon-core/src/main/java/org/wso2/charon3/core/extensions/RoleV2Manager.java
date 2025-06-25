@@ -201,7 +201,7 @@ public interface RoleV2Manager {
      * @throws ConflictException       ConflictException
      * @throws NotFoundException       NotFoundException
      */
-    default RoleV2 updateUsersRole(RoleV2 oldRole, RoleV2 newRole)
+    default RoleV2 updateUsersOfRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
 
         throw new NotImplementedException("updateUsersRole method is not implemented.");
@@ -220,7 +220,7 @@ public interface RoleV2Manager {
      * @throws NotFoundException       NotFoundException
      * @throws ForbiddenException      ForbiddenException
      */
-    default RoleV2 patchUsersRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+    default RoleV2 patchUsersOfRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException {
 
@@ -239,7 +239,7 @@ public interface RoleV2Manager {
      * @throws ConflictException       ConflictException
      * @throws NotFoundException       NotFoundException
      */
-    default RoleV2 updateGroupsRole(RoleV2 oldRole, RoleV2 newRole)
+    default RoleV2 updateGroupsOfRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
 
         throw new NotImplementedException("updateGroupsRole method is not implemented.");
@@ -258,7 +258,7 @@ public interface RoleV2Manager {
      * @throws NotFoundException       NotFoundException
      * @throws ForbiddenException      ForbiddenException
      */
-    default RoleV2 patchGroupsRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
+    default RoleV2 patchGroupsOfRole(String roleId, Map<String, List<PatchOperation>> patchOperations)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException {
 
