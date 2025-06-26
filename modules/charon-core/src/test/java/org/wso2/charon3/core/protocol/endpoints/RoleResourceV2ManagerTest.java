@@ -37,6 +37,7 @@ import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
+import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -270,6 +271,112 @@ public class RoleResourceV2ManagerTest {
                     "Last modified should be before method call end");
         } catch (InvocationTargetException e) {
             Assert.fail("Unexpected exception in setAttributesAndTimestamp: " + e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void testGroupPatchOperationsByType() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, BadRequestException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+
+        // Get the private method using reflection
+        Method groupPatchOperationsByTypeMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "groupPatchOperationsByType", java.util.List.class);
+        groupPatchOperationsByTypeMethod.setAccessible(true);
+
+        // Create test patch operations for all operation types
+        java.util.List<PatchOperation> opList = new java.util.ArrayList<>();
+
+        // Create ADD operation
+        PatchOperation addOp = new PatchOperation();
+        addOp.setOperation(SCIMConstants.OperationalConstants.ADD);
+        addOp.setPath("users");
+        addOp.setValues("user123");
+        opList.add(addOp);
+
+        // Create another ADD operation
+        PatchOperation addOp2 = new PatchOperation();
+        addOp2.setOperation(SCIMConstants.OperationalConstants.ADD);
+        addOp2.setPath("permissions");
+        addOp2.setValues("permission456");
+        opList.add(addOp2);
+
+        // Create REMOVE operation
+        PatchOperation removeOp = new PatchOperation();
+        removeOp.setOperation(SCIMConstants.OperationalConstants.REMOVE);
+        removeOp.setPath("users");
+        removeOp.setValues("user789");
+        opList.add(removeOp);
+
+        // Create REPLACE operation
+        PatchOperation replaceOp = new PatchOperation();
+        replaceOp.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+        replaceOp.setPath("displayName");
+        replaceOp.setValues("NewRoleName");
+        opList.add(replaceOp);
+
+        try {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, java.util.List<PatchOperation>> result =
+                    (java.util.Map<String, java.util.List<PatchOperation>>)
+                            groupPatchOperationsByTypeMethod.invoke(roleResourceV2Manager, opList);
+
+            // Verify the result contains all three operation types
+            Assert.assertNotNull(result);
+            Assert.assertTrue(result.containsKey(SCIMConstants.OperationalConstants.ADD));
+            Assert.assertTrue(result.containsKey(SCIMConstants.OperationalConstants.REMOVE));
+            Assert.assertTrue(result.containsKey(SCIMConstants.OperationalConstants.REPLACE));
+
+            // Verify ADD operations (should have 2)
+            java.util.List<PatchOperation> addOps =
+                    result.get(SCIMConstants.OperationalConstants.ADD);
+            Assert.assertEquals(addOps.size(), 2);
+            Assert.assertTrue(addOps.contains(addOp));
+            Assert.assertTrue(addOps.contains(addOp2));
+
+            // Verify REMOVE operations (should have 1)
+            java.util.List<PatchOperation> removeOps =
+                    result.get(SCIMConstants.OperationalConstants.REMOVE);
+            Assert.assertEquals(removeOps.size(), 1);
+            Assert.assertTrue(removeOps.contains(removeOp));
+
+            // Verify REPLACE operations (should have 1)
+            java.util.List<PatchOperation> replaceOps =
+                    result.get(SCIMConstants.OperationalConstants.REPLACE);
+            Assert.assertEquals(replaceOps.size(), 1);
+            Assert.assertTrue(replaceOps.contains(replaceOp));
+
+        } catch (InvocationTargetException e) {
+            Assert.fail("Unexpected exception in groupPatchOperationsByType: " + e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void testGroupPatchOperationsByTypeWithInvalidOperation() throws NoSuchMethodException,
+            IllegalAccessException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method groupPatchOperationsByTypeMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "groupPatchOperationsByType", java.util.List.class);
+        groupPatchOperationsByTypeMethod.setAccessible(true);
+
+        // Create test patch operation with invalid operation type
+        java.util.List<PatchOperation> opList = new java.util.ArrayList<>();
+
+        PatchOperation invalidOp = new PatchOperation();
+        invalidOp.setOperation("invalid_operation");
+        invalidOp.setPath("test");
+        invalidOp.setValues("value");
+        opList.add(invalidOp);
+
+        try {
+            groupPatchOperationsByTypeMethod.invoke(roleResourceV2Manager, opList);
+            Assert.fail("Expected BadRequestException was not thrown for invalid operation type");
+        } catch (InvocationTargetException e) {
+            // Verify the exception type is BadRequestException
+            Assert.assertTrue(e.getCause() instanceof BadRequestException, "Exception is not a BadRequestException: " 
+                    + e.getCause().getClass().getName());
         }
     }
 }
