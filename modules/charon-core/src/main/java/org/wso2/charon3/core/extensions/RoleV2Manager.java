@@ -155,7 +155,8 @@ public interface RoleV2Manager {
     }
 
     /**
-     * Update the role with SCIM2 ROle V3 API.
+     * Update the role metadata information.
+     * This method will not assign or de-assign users or groups to the role.
      *
      * @param oldRole Old role.
      * @param newRole new role.
@@ -173,7 +174,8 @@ public interface RoleV2Manager {
     }
 
     /**
-     * Updates the role using the SCIM2 Role V3 API via a PATCH request.
+     * Updates the role metadata via PATCH.
+     * This method will not assign or de-assign users or groups to the role.
      *
      * @param roleId          ID of the role.
      * @param patchOperations A map of patch operations.
