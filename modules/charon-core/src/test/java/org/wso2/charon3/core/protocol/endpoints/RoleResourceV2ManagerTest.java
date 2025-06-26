@@ -42,6 +42,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -377,6 +378,109 @@ public class RoleResourceV2ManagerTest {
             // Verify the exception type is BadRequestException
             Assert.assertTrue(e.getCause() instanceof BadRequestException, "Exception is not a BadRequestException: " 
                     + e.getCause().getClass().getName());
+        }
+    }
+
+    @Test
+    public void testBuildSCIMResponse() throws NoSuchMethodException, IllegalAccessException,
+            InternalErrorException, CharonException, NotFoundException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method buildSCIMResponseMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "buildSCIMResponse", RoleV2.class, String.class);
+        buildSCIMResponseMethod.setAccessible(true);
+
+        RoleV2 mockRole = new RoleV2();
+        String roleId = "test-role-123";
+
+        try {
+            mockRole.setId(roleId);
+            mockRole.setDisplayName("Test Role");
+        } catch (BadRequestException e) {
+            Assert.fail("Failed to set up mock role: " + e.getMessage());
+        }
+
+        String endpointUrl = SCIMConstants.ROLE_V2_ENDPOINT;
+        String roleEndpointBaseUrl = "https://example.com/scim/v2/Roles";
+        Map<String, String> endpointURLMap = new HashMap<>();
+        endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, roleEndpointBaseUrl);
+
+        try {
+            Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                    "setEndpointURLMap", Map.class);
+            setEndpointURLMapMethod.invoke(null, endpointURLMap);
+        } catch (Exception e) {
+            Assert.fail("Failed to set endpoint URL map: " + e.getMessage());
+        }
+
+        try {
+            SCIMResponse response = (SCIMResponse) buildSCIMResponseMethod.invoke(
+                    roleResourceV2Manager, mockRole, endpointUrl);
+
+            Assert.assertEquals(response.getResponseStatus(), ResponseCodeConstants.CODE_CREATED,
+                    "Response status should be 201 CREATED");
+            // Verify response body is not null (the encoded role)
+            Assert.assertNotNull(response.getResponseMessage(),
+                    "Response message (encoded role) should not be null");
+            // Verify headers contain expected values
+            Map<String, String> headers = response.getHeaderParamMap();
+            Assert.assertNotNull(headers, "Headers map should not be null");
+            // Verify Content-Type header
+            Assert.assertEquals(headers.get(SCIMConstants.CONTENT_TYPE_HEADER),
+                    SCIMConstants.APPLICATION_JSON,
+                    "Content-Type header should be application/json");
+            // Verify Location header
+            String expectedLocation = "https://example.com/scim/v2/Roles/" + roleId;
+            Assert.assertEquals(headers.get(SCIMConstants.LOCATION_HEADER), expectedLocation,
+                    "Location header should match expected URL");
+        } catch (InvocationTargetException e) {
+            if (e.getCause() != null) {
+                Assert.fail("Unexpected exception: " + e.getCause().getClass()
+                    .getName() + " - " + e.getCause().getMessage());
+            } else {
+                Assert.fail("Unexpected exception with null cause in InvocationTargetException");
+            }
+        }
+    }
+
+    @Test
+    public void testBuildSCIMResponseWithNullRole() throws NoSuchMethodException, IllegalAccessException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method buildSCIMResponseMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "buildSCIMResponse", RoleV2.class, String.class);
+        buildSCIMResponseMethod.setAccessible(true);
+
+        Map<String, String> endpointURLMap = new HashMap<>();
+        endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, "https://example.com/scim/v2/Roles");
+
+        try {
+            Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                    "setEndpointURLMap", Map.class);
+            setEndpointURLMapMethod.invoke(null, endpointURLMap);
+        } catch (Exception e) {
+            // It's ok if this fails, since testing the null role case
+            // which should throw an exception before URL building
+        }
+
+        try {
+            // Invoke the method with a null role, which should throw an exception
+            buildSCIMResponseMethod.invoke(roleResourceV2Manager, null, SCIMConstants.ROLE_V2_ENDPOINT);
+            Assert.fail("Expected InternalErrorException was not thrown for null role");
+        } catch (InvocationTargetException e) {
+            // Verify the exception type is InternalErrorException
+            Assert.assertTrue(e.getCause() instanceof InternalErrorException,
+                    "Exception is not an InternalErrorException: " +
+                    (e.getCause() != null ? e.getCause().getClass().getName() : "null"));
+
+            // Verify the exception message
+            InternalErrorException exception = (InternalErrorException) e.getCause();
+            String actualMessage = exception.getDetail();
+            if (actualMessage == null) {
+                actualMessage = exception.getMessage();
+            }
+            Assert.assertEquals(actualMessage, "Newly created Role resource is null.",
+                    "Exception message doesn't match expected message");
         }
     }
 }
