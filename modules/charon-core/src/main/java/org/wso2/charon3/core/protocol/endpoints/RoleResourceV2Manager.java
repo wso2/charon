@@ -1131,7 +1131,15 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     }
 
     /**
-     * Sets system attributes and timestamp for the new role.
+     * Sets system attributes (such as ID and meta information) and updates the timestamp
+     * for the new role resource.
+     * <p>
+     * This method is used in granular SCIM endpoints related to attributes like users and groups,
+     * where full resource validation is not required. Instead of invoking schema validation to
+     * ensure all required attributes are present, this method directly sets the necessary
+     * system-level attributes by copying them from an existing role and updating the
+     * modification timestamp.
+     * </p>
      *
      * @param newRole New role to be created.
      * @param oldRole Old role to copy system attributes from.
