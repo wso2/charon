@@ -354,7 +354,8 @@ public interface ResourceManager {
     }
 
     /**
-     * POST method to create a new role in roleV2 model.
+     * Handles the POST request to create a new role.
+     * This method allows assigning only role metadata during creation; users and groups cannot be assigned.
      *
      * @param postRequest Post request.
      * @param roleManager RoleV2 manager.
@@ -368,7 +369,7 @@ public interface ResourceManager {
 
     /**
      * PUT method to update only the metadata of a role.
-     * This method is not intended to assign users or groups to a role.
+     * Users and Groups cannot be assigned to role using this method.
      *
      * @param id          Resource id.
      * @param putRequest  Put request.
@@ -383,7 +384,7 @@ public interface ResourceManager {
 
     /**
      * PATCH method to partially updates a role metadata.
-     * This method is not intended to assign users or groups to a role.
+     * Users and Groups cannot be assigned to role using this method.
      *
      * @param id           Resource id.
      * @param patchRequest Patch request.
