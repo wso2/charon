@@ -52,6 +52,7 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -641,5 +642,51 @@ public class RoleResourceV2ManagerTest {
         } catch (Exception e) {
             Assert.fail("Test failed unexpectedly: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void testUpdateUsersWithPatchOperations() throws Exception {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method updateUsersWithPatchOperationsMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "updateUsersWithPatchOperations",
+                String.class, List.class, RoleV2Manager.class,
+                SCIMResourceTypeSchema.class, JSONEncoder.class);
+        updateUsersWithPatchOperationsMethod.setAccessible(true);
+
+        String roleId = "test-role-123";
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+        List<PatchOperation> patchOperations = new ArrayList<>();
+        PatchOperation addOperation = new PatchOperation();
+        addOperation.setOperation(SCIMConstants.OperationalConstants.ADD);
+        addOperation.setPath(SCIMConstants.RoleSchemaConstants.USERS);
+
+        JSONArray usersArray = new JSONArray();
+        JSONObject userObject = new JSONObject();
+        userObject.put(SCIMConstants.CommonSchemaConstants.VALUE, "user-123");
+        userObject.put(SCIMConstants.CommonSchemaConstants.DISPLAY, "Test User");
+        usersArray.put(userObject);
+        addOperation.setValues(usersArray);
+        patchOperations.add(addOperation);
+
+        RoleV2Manager mockRoleManager = Mockito.mock(RoleV2Manager.class);
+        RoleV2 mockUpdatedRole = new RoleV2();
+        mockUpdatedRole.setId(roleId);
+
+        Map<String, String> endpointURLMap = new HashMap<>();
+        endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, "https://example.com/scim/v2/Roles");
+        Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                "setEndpointURLMap", Map.class);
+        setEndpointURLMapMethod.setAccessible(true);
+        setEndpointURLMapMethod.invoke(null, endpointURLMap);
+        when(mockRoleManager.patchUsersOfRole(eq(roleId), any(Map.class))).thenReturn(mockUpdatedRole);
+
+        SCIMResponse response = (SCIMResponse) updateUsersWithPatchOperationsMethod.invoke(
+                roleResourceV2Manager, roleId, patchOperations,
+                mockRoleManager, schema, new JSONEncoder());
+
+        Assert.assertNotNull(response);
+        Assert.assertEquals(ResponseCodeConstants.CODE_OK, response.getResponseStatus());
+        verify(mockRoleManager).patchUsersOfRole(eq(roleId), any(Map.class));
     }
 }
