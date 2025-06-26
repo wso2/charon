@@ -367,7 +367,8 @@ public interface ResourceManager {
     }
 
     /**
-     * PUT method To update a role by giving entire attributes set.
+     * PUT method to update only the metadata of a role.
+     * This method is not intended to assign users or groups to a role.
      *
      * @param id          Resource id.
      * @param putRequest  Put request.
@@ -381,7 +382,8 @@ public interface ResourceManager {
     }
 
     /**
-     * PATCH method to partially updates a role.
+     * PATCH method to partially updates a role metadata.
+     * This method is not intended to assign users or groups to a role.
      *
      * @param id           Resource id.
      * @param patchRequest Patch request.
@@ -399,7 +401,7 @@ public interface ResourceManager {
      *
      * @param id          Resource id.
      * @param putRequest  Put request.
-     * @param roleManager RoleV3 manager.
+     * @param roleManager RoleV2 manager.
      * @return SCIMResponse.
      */
     default SCIMResponse updateUsersWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
@@ -413,7 +415,7 @@ public interface ResourceManager {
      *
      * @param id           Resource id.
      * @param patchRequest Patch request.
-     * @param roleManager  RoleV3 manager.
+     * @param roleManager  RoleV2 manager.
      * @return SCIMResponse.
      */
     default SCIMResponse updateUsersWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
@@ -427,7 +429,7 @@ public interface ResourceManager {
      *
      * @param id          Resource id.
      * @param putRequest  Put request.
-     * @param roleManager RoleV3 manager.
+     * @param roleManager RoleV2 manager.
      * @return SCIMResponse.
      */
     default SCIMResponse updateGroupsWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
@@ -437,11 +439,11 @@ public interface ResourceManager {
     }
 
     /**
-     * PATCH method to update a groups with roleV3 model.
+     * PATCH method to update a groups with roleV2 model.
      *
      * @param id           Resource id.
      * @param patchRequest Patch request.
-     * @param roleManager  RoleV3 manager.
+     * @param roleManager  RoleV2 manager.
      * @return SCIMResponse.
      */
     default SCIMResponse updateGroupsWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
