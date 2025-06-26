@@ -138,7 +138,8 @@ public interface RoleV2Manager {
             ForbiddenException;
 
     /**
-     * Create a role via SCIM2 Role V3 API.
+     * Create a role with only metadata information.
+     * Users and Groups will not be assigned during the role creation.
      *
      * @param role Role Object.
      * @return Role.
