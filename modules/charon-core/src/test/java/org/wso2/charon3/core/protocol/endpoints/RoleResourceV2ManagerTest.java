@@ -750,4 +750,36 @@ public class RoleResourceV2ManagerTest {
                     (cause != null ? cause.getClass().getName() + " - " + cause.getMessage() : "null"));
         }
     }
+
+    @Test
+    public void testCreateRoleMeta() throws Exception {
+
+        String postRequest = "{"
+                + "\"schemas\":[\"urn:ietf:params:scim:schemas:core:2.0:Role\"],"
+                + "\"displayName\":\"MetaRole\""
+                + "}";
+        
+        RoleResourceV2Manager manager = new RoleResourceV2Manager();
+        RoleV2Manager mockRoleManager = Mockito.mock(RoleV2Manager.class);
+        RoleV2 createdRole = new RoleV2();
+        createdRole.setId("meta-role-1");
+        createdRole.setDisplayName("MetaRole");
+        createdRole.setSchemas();
+        Mockito.when(mockRoleManager.createRoleMeta(any(RoleV2.class))).thenReturn(createdRole);
+    
+        Map<String, String> endpointURLMap = new HashMap<>();
+        endpointURLMap.put(SCIMConstants.ROLE_V3_ENDPOINT, "https://example.com/scim/v3/Roles");
+        Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                "setEndpointURLMap", Map.class);
+        setEndpointURLMapMethod.setAccessible(true);
+        setEndpointURLMapMethod.invoke(null, endpointURLMap);
+
+        SCIMResponse response = manager.createRoleMeta(postRequest, mockRoleManager);
+    
+        Assert.assertNotNull(response);
+        Assert.assertEquals(ResponseCodeConstants.CODE_CREATED, response.getResponseStatus());
+        Assert.assertTrue(response.getResponseMessage().contains("MetaRole"));
+        Assert.assertTrue(response.getHeaderParamMap().get(SCIMConstants.LOCATION_HEADER).contains("meta-role-1"));
+        Mockito.verify(mockRoleManager).createRoleMeta(any(RoleV2.class));
+    }
 }
