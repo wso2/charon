@@ -689,4 +689,65 @@ public class RoleResourceV2ManagerTest {
         Assert.assertEquals(ResponseCodeConstants.CODE_OK, response.getResponseStatus());
         verify(mockRoleManager).patchUsersOfRole(eq(roleId), any(Map.class));
     }
+
+    @Test
+    public void testUpdateWithPatchOperationsMeta() throws Exception {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method updateWithPatchOperationsMetaMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "updateWithPatchOperationsMeta",
+                String.class, List.class, RoleV2Manager.class,
+                SCIMResourceTypeSchema.class, JSONEncoder.class);
+        updateWithPatchOperationsMetaMethod.setAccessible(true);
+        
+        String roleId = "role-meta-123";
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+        List<PatchOperation> patchOperations = new ArrayList<>();
+        PatchOperation patchOp = new PatchOperation();
+        patchOp.setOperation(SCIMConstants.OperationalConstants.REPLACE);
+        patchOp.setPath("displayName");
+        patchOp.setValues("Updated Role Name");
+        patchOperations.add(patchOp);
+        
+        RoleV2Manager mockRoleManager = Mockito.mock(RoleV2Manager.class);
+        RoleV2 mockUpdatedRole = new RoleV2();
+        mockUpdatedRole.setId(roleId);
+        mockUpdatedRole.setDisplayName("Updated Role Name");
+        when(mockRoleManager.patchRoleMeta(eq(roleId), any(Map.class))).thenReturn(mockUpdatedRole);
+        
+        Map<String, String> endpointURLMap = new HashMap<>();
+        endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, "https://example.com/scim/v2/Roles");
+        Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                "setEndpointURLMap", Map.class);
+        setEndpointURLMapMethod.setAccessible(true);
+        setEndpointURLMapMethod.invoke(null, endpointURLMap);
+        
+        try {
+            SCIMResponse response = (SCIMResponse) updateWithPatchOperationsMetaMethod.invoke(
+                    roleResourceV2Manager, 
+                    roleId, 
+                    patchOperations,
+                    mockRoleManager, 
+                    schema, 
+                    new JSONEncoder());
+            
+            Assert.assertNotNull(response, "Response should not be null");
+            Assert.assertEquals(ResponseCodeConstants.CODE_OK, response.getResponseStatus(), 
+                    "Response status should be 200 OK");
+            Assert.assertNotNull(response.getResponseMessage(), "Response message should not be null");
+            
+            // Verify mock interactions - use patchRoleMeta instead of patchRole
+            verify(mockRoleManager).patchRoleMeta(eq(roleId), any(Map.class));
+            
+            // Verify headers
+            Map<String, String> headers = response.getHeaderParamMap();
+            Assert.assertEquals(SCIMConstants.APPLICATION_JSON, 
+                    headers.get(SCIMConstants.CONTENT_TYPE_HEADER));
+            Assert.assertTrue(headers.get(SCIMConstants.LOCATION_HEADER).contains(roleId));
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            Assert.fail("Unexpected exception: " + 
+                    (cause != null ? cause.getClass().getName() + " - " + cause.getMessage() : "null"));
+        }
+    }
 }
