@@ -18,12 +18,15 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
+import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
@@ -41,8 +44,10 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -481,6 +486,160 @@ public class RoleResourceV2ManagerTest {
             }
             Assert.assertEquals(actualMessage, "Newly created Role resource is null.",
                     "Exception message doesn't match expected message");
+        }
+    }
+
+    @Test
+    public void testUpdateGroupsWithPatchOperations() throws NoSuchMethodException,
+            NotFoundException, BadRequestException, CharonException, NotImplementedException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method updateGroupsWithPatchOperationsMethod =
+                RoleResourceV2Manager.class.getDeclaredMethod(
+                    "updateGroupsWithPatchOperations",
+                    String.class,
+                    List.class,
+                    RoleV2Manager.class,
+                    SCIMResourceTypeSchema.class,
+                    JSONEncoder.class);
+        updateGroupsWithPatchOperationsMethod.setAccessible(true);
+
+        // Create test data
+        String roleId = "test-role-123";
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+        List<PatchOperation> patchOperations = new ArrayList<>();
+
+        // Add a group to the role
+        PatchOperation addOp = new PatchOperation();
+        addOp.setOperation(SCIMConstants.OperationalConstants.ADD);
+        addOp.setPath(SCIMConstants.RoleSchemaConstants.GROUPS);
+
+        // Create a JSONArray instead of ArrayList for the values
+        JSONArray groupsArray = new JSONArray();
+        JSONObject groupValue = new JSONObject();
+        groupValue.put(SCIMConstants.CommonSchemaConstants.VALUE, "group123");
+        groupValue.put(SCIMConstants.CommonSchemaConstants.DISPLAY, "Test Group");
+        groupsArray.put(groupValue);
+
+        // Set the JSONArray as the values
+        addOp.setValues(groupsArray);
+        patchOperations.add(addOp);
+
+        RoleV2Manager mockRoleManager = Mockito.mock(RoleV2Manager.class);
+        RoleV2 mockUpdatedRole = new RoleV2();
+        try {
+            mockUpdatedRole.setId(roleId);
+            mockUpdatedRole.setDisplayName("Test Role");
+            when(mockRoleManager.patchGroupsOfRole(
+                    eq(roleId), any())).thenReturn(mockUpdatedRole);
+
+            Map<String, String> endpointURLMap = new HashMap<>();
+            endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, "https://example.com/scim/v2/Roles");
+            Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                    "setEndpointURLMap", Map.class);
+            setEndpointURLMapMethod.invoke(null, endpointURLMap);
+            SCIMResponse response = (SCIMResponse) updateGroupsWithPatchOperationsMethod.invoke(
+                    roleResourceV2Manager,
+                    roleId,
+                    patchOperations,
+                    mockRoleManager,
+                    schema,
+                    new JSONEncoder());
+
+            // Verify response
+            Assert.assertNotNull(response, "Response should not be null");
+            Assert.assertEquals(response.getResponseStatus(), ResponseCodeConstants.CODE_OK,
+                    "Response status should be 200 OK");
+
+            // Verify the response contains the updated role data
+            Assert.assertNotNull(response.getResponseMessage(),
+                    "Response message should not be null");
+
+            // Verify headers
+            Map<String, String> headers = response.getHeaderParamMap();
+            Assert.assertNotNull(headers, "Headers map should not be null");
+            Assert.assertEquals(headers.get(SCIMConstants.CONTENT_TYPE_HEADER),
+                    SCIMConstants.APPLICATION_JSON,
+                    "Content-Type header should be application/json");
+
+            // Verify the location header contains the role ID
+            Assert.assertTrue(headers.get(SCIMConstants.LOCATION_HEADER).contains(roleId),
+                    "Location header should contain role ID");
+
+            // Verify the role manager's patchGroupsOfRole method was called correctly
+            Mockito.verify(mockRoleManager).patchGroupsOfRole(eq(roleId), any());
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            Assert.fail("Unexpected exception: " +
+                    (cause != null ? cause.getClass().getName() + " - " + cause.getMessage() : "null"));
+        } catch (Exception e) {
+            Assert.fail("Test setup failed: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdateGroupsWithPatchOperationsWithNotFoundException() throws NoSuchMethodException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+
+        Method updateGroupsWithPatchOperationsMethod =
+                RoleResourceV2Manager.class.getDeclaredMethod(
+                    "updateGroupsWithPatchOperations",
+                    String.class,
+                    List.class,
+                    RoleV2Manager.class,
+                    SCIMResourceTypeSchema.class,
+                    JSONEncoder.class);
+        updateGroupsWithPatchOperationsMethod.setAccessible(true);
+        String roleId = "non-existent-role";
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+        List<PatchOperation> patchOperations = new ArrayList<>();
+        PatchOperation addOp = new PatchOperation();
+        addOp.setOperation(SCIMConstants.OperationalConstants.ADD);
+        addOp.setPath(SCIMConstants.RoleSchemaConstants.GROUPS);
+
+        // Create a JSONArray instead of ArrayList
+        JSONArray groupArray = new JSONArray();
+        JSONObject groupValue = new JSONObject();
+        groupValue.put(SCIMConstants.CommonSchemaConstants.VALUE, "group123");
+        groupArray.put(groupValue);
+        addOp.setValues(groupArray);
+
+        patchOperations.add(addOp);
+        RoleV2Manager mockRoleManager = Mockito.mock(RoleV2Manager.class);
+
+        try {
+            when(mockRoleManager.patchGroupsOfRole(eq(roleId), any()))
+                .thenThrow(new NotFoundException("Role with ID " + roleId + " not found"));
+
+            // Setup endpoint URL map to avoid NPE
+            Map<String, String> endpointURLMap = new HashMap<>();
+            endpointURLMap.put(SCIMConstants.ROLE_V2_ENDPOINT, "https://example.com/scim/v2/Roles");
+            Method setEndpointURLMapMethod = AbstractResourceManager.class.getDeclaredMethod(
+                    "setEndpointURLMap", Map.class);
+            setEndpointURLMapMethod.invoke(null, endpointURLMap);
+
+            SCIMResponse response = (SCIMResponse) updateGroupsWithPatchOperationsMethod.invoke(
+                    roleResourceV2Manager,
+                    roleId,
+                    patchOperations,
+                    mockRoleManager,
+                    schema,
+                    new JSONEncoder());
+
+            // Verify it's a not found response
+            Assert.assertNotNull(response, "Response should not be null");
+            Assert.assertEquals(response.getResponseStatus(), ResponseCodeConstants.CODE_RESOURCE_NOT_FOUND,
+                    "Response status should be 404 Not Found");
+            // Verify error message
+            Assert.assertTrue(response.getResponseMessage().contains(roleId),
+                    "Error message should contain the role ID");
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            Assert.fail("Unexpected exception: " +
+                    (cause != null ? cause.getClass().getName() + " - " + cause.getMessage() : "null"));
+        } catch (Exception e) {
+            Assert.fail("Test failed unexpectedly: " + e.getMessage());
         }
     }
 }
