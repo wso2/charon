@@ -18,17 +18,22 @@
 
 package org.wso2.charon3.core.protocol.endpoints;
 
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.attributes.MultiValuedAttribute;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
 import org.wso2.charon3.core.extensions.RoleV2Manager;
 import org.wso2.charon3.core.objects.RoleV2;
+import org.wso2.charon3.core.protocol.ResponseCodeConstants;
+import org.wso2.charon3.core.protocol.SCIMResponse;
 import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
@@ -38,13 +43,51 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 /**
  * Test class for RoleResourceV2Manager.
  */
 public class RoleResourceV2ManagerTest {
+
+    @Mock
+    private RoleV2Manager roleV2Manager;
+
+    @BeforeMethod
+    public void setup() {
+
+        openMocks(this);
+    }
+
+    @Test
+    public void testCreateRoleWhileWorkflowEnabled() throws ConflictException, NotImplementedException,
+            BadRequestException, CharonException {
+
+        String postRequest = "{\n" +
+                "  \"schemas\": [\n" +
+                "    \"urn:ietf:params:scim:schemas:extension:role:2.0:Role\"\n" +
+                "  ],\n" +
+                "  \"displayName\": \"Admin\",\n" +
+                "  \"users\": [\n" +
+                "    { \"value\": \"user-123\", \"display\": \"John Doe\" }\n" +
+                "  ],\n" +
+                "  \"groups\": [\n" +
+                "    { \"value\": \"group-456\", \"display\": \"Developers\" }\n" +
+                "  ],\n" +
+                "  \"permissions\": [\n" +
+                "    { \"value\": \"perm-789\", \"display\": \"Read\" }\n" +
+                "  ]\n" +
+                "}";
+        CharonException charonException = new CharonException();
+        charonException.setStatus(ResponseCodeConstants.CODE_ACCEPTED);
+        when(roleV2Manager.createRole(any())).thenThrow(charonException);
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        SCIMResponse scimResponse = roleResourceV2Manager.createRole(postRequest, roleV2Manager);
+        assert scimResponse.getResponseStatus() == ResponseCodeConstants.CODE_ACCEPTED;
+    }
 
     @Test
     public void testValidateManagerWithNullCase() throws NoSuchMethodException, IllegalAccessException {
