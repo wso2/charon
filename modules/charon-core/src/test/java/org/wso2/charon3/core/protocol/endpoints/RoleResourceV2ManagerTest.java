@@ -227,4 +227,49 @@ public class RoleResourceV2ManagerTest {
             Assert.fail("Unexpected exception for existing role ID: " + e.getCause().getMessage());
         }
     }
+
+    @Test
+    public void testSetAttributesAndTimestamp() throws NoSuchMethodException, IllegalAccessException,
+            BadRequestException, CharonException {
+
+        RoleResourceV2Manager roleResourceV2Manager = new RoleResourceV2Manager();
+        Method setAttributesAndTimestampMethod = RoleResourceV2Manager.class.getDeclaredMethod(
+                "setAttributesAndTimestamp", RoleV2.class, RoleV2.class);
+        setAttributesAndTimestampMethod.setAccessible(true);
+
+        // Create old role with META and ID attributes properly set
+        RoleV2 oldRole = new RoleV2();
+        oldRole.setId("test-role-123");
+        oldRole.setDisplayName("Old Role");
+        oldRole.setCreatedInstant(java.time.Instant.now().minusSeconds(3600)); // 1 hour ago
+
+        // Create new role without META and ID attributes
+        RoleV2 newRole = new RoleV2();
+        newRole.setDisplayName("New Role");
+
+        // Record the time before the method call to verify timestamp is updated
+        java.time.Instant beforeMethodCall = java.time.Instant.now();
+
+        try {
+            setAttributesAndTimestampMethod.invoke(roleResourceV2Manager, oldRole, newRole);
+
+            // Verify that ID attribute was copied from old to new role
+            Assert.assertEquals("test-role-123", newRole.getId());
+
+            // Verify that META attribute was copied (check if meta attribute exists)
+            Assert.assertTrue(newRole.isAttributeExist(SCIMConstants.CommonSchemaConstants.META));
+
+            // Verify that lastModified timestamp was updated to current time
+            java.time.Instant afterMethodCall = java.time.Instant.now();
+            java.time.Instant lastModified = newRole.getLastModifiedInstant();
+
+            Assert.assertNotNull(lastModified, "Last modified timestamp should not be null");
+            Assert.assertTrue(lastModified.isAfter(beforeMethodCall) || lastModified.equals(beforeMethodCall),
+                    "Last modified should be after method call start");
+            Assert.assertTrue(lastModified.isBefore(afterMethodCall) || lastModified.equals(afterMethodCall),
+                    "Last modified should be before method call end");
+        } catch (InvocationTargetException e) {
+            Assert.fail("Unexpected exception in setAttributesAndTimestamp: " + e.getCause().getMessage());
+        }
+    }
 }
