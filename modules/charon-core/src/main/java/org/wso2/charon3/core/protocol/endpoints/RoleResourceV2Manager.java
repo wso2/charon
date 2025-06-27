@@ -61,6 +61,7 @@ import org.wso2.charon3.core.utils.codeutils.PatchOperation;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -109,31 +110,14 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     public SCIMResponse createRole(String postRequest, RoleV2Manager roleManager) {
 
         try {
-            if (roleManager == null) {
-                String error = "Provided role manager is null.";
-                throw new InternalErrorException(error);
-            }
-            JSONEncoder encoder = getEncoder();
-            JSONDecoder decoder = getDecoder();
-            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            validateManager(roleManager);
 
-            RoleV2 role = decoder.decodeResource(postRequest, schema, new RoleV2());
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            RoleV2 role = decodeRole(postRequest, schema);
             ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
 
             RoleV2 createdRole = roleManager.createRole(role);
-            String encodedRole;
-            Map<String, String> httpHeaders = new HashMap<>();
-            if (createdRole != null) {
-                encodedRole = encoder.encodeSCIMObject(createdRole);
-                httpHeaders.put(SCIMConstants.LOCATION_HEADER,
-                        getResourceEndpointURL(SCIMConstants.ROLE_V2_ENDPOINT) + "/" + createdRole.getId());
-                httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
-            } else {
-                String message = "Newly created Role resource is null.";
-                throw new InternalErrorException(message);
-            }
-            return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedRole, httpHeaders);
-
+            return buildSCIMResponse(createdRole, SCIMConstants.ROLE_V2_ENDPOINT);
         } catch (InternalErrorException | BadRequestException | ConflictException | CharonException | NotFoundException
                  | NotImplementedException e) {
             if (e.getStatus() == ResponseCodeConstants.CODE_ACCEPTED) {
@@ -269,23 +253,15 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     public SCIMResponse updateWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
 
         try {
-            if (roleManager == null) {
-                String error = "Provided role manager is null.";
-                throw new InternalErrorException(error);
-            }
+            validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
-            JSONDecoder decoder = getDecoder();
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
-            RoleV2 role = decoder.decodeResource(putRequest, schema, new RoleV2());
+            RoleV2 role = decodeRole(putRequest, schema);
             RoleV2 updatedRole;
 
             // Retrieve the old object.
-            RoleV2 oldRole = roleManager.getRole(id, requestAttributes);
-            if (oldRole == null) {
-                String error = "No role exists with the given id: " + id;
-                throw new NotFoundException(error);
-            }
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
             RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
             updatedRole = roleManager.updateRole(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
@@ -299,10 +275,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
     public SCIMResponse updateWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
 
         try {
-            if (roleManager == null) {
-                String error = "Provided role manager handler is null.";
-                throw new InternalErrorException(error);
-            }
+            validateManager(roleManager);
             JSONEncoder encoder = getEncoder();
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
@@ -313,14 +286,190 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                 return updateWithPatchOperations(id, opList, roleManager, schema, encoder);
             }
 
-            RoleV2 oldRole = roleManager.getRole(id, requestAttributes);
-            if (oldRole == null) {
-                throw new NotFoundException("No role with the id : " + id + " exists in the system.");
-            }
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
             // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
             RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
             RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
             RoleV2 updatedRole = roleManager.updateRole(originalRole, patchedRole);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
+                 | InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            CharonException ex = new CharonException("Error in performing the patch operation on role resource.", e);
+            return AbstractResourceManager.encodeSCIMException(ex);
+        }
+    }
+
+    @Override
+    public SCIMResponse createRoleMeta(String postRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            RoleV2 role = decodeRole(postRequest, schema);
+            ServerSideValidator.validateCreatedSCIMObject(role, SCIMSchemaDefinitions.SCIM_ROLE_V2_SCHEMA);
+
+            RoleV2 createdRole = roleManager.createRoleMeta(role);
+            return buildSCIMResponse(createdRole, SCIMConstants.ROLE_V3_ENDPOINT);
+        } catch (InternalErrorException | BadRequestException | ConflictException | CharonException | NotFoundException
+                 | NotImplementedException e) {
+            return encodeSCIMException(e);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateWithPUTRoleMeta(String id, String putRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+            RoleV2 role = decodeRole(putRequest, schema);
+            RoleV2 updatedRole;
+
+            // Retrieve the old object.
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            RoleV2 newRole = (RoleV2) ServerSideValidator.validateUpdatedSCIMObject(oldRole, role, schema);
+            updatedRole = roleManager.updateRoleMeta(oldRole, newRole);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
+                 | NotImplementedException e) {
+            return encodeSCIMException(e);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateWithPATCHRoleMeta(String id, String patchRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isUpdateAllUsersOperationFound(opList)) {
+                return updateWithPatchOperationsMeta(id, opList, roleManager, schema, encoder);
+            }
+
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
+            RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
+            RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
+            RoleV2 updatedRole = roleManager.updateRoleMeta(originalRole, patchedRole);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
+                 | InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            CharonException ex = new CharonException("Error in performing the patch operation on role resource.", e);
+            return AbstractResourceManager.encodeSCIMException(ex);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateUsersWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+            RoleV2 role = decodeRole(putRequest, schema);
+            RoleV2 updatedRole;
+
+            // Retrieve the old object.
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+
+            // Set the attributes and id from the old role to the new role.
+            setAttributesAndTimestamp(oldRole, role);
+
+            updatedRole = roleManager.updateUsersOfRole(oldRole, role);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
+                 | NotImplementedException e) {
+            return encodeSCIMException(e);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateUsersWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isUpdateAllUsersOperationFound(opList)) {
+                return updateUsersWithPatchOperations(id, opList, roleManager, schema, encoder);
+            }
+
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
+            RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
+            RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
+            RoleV2 updatedRole = roleManager.updateUsersOfRole(originalRole, patchedRole);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
+                 | InternalErrorException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (RuntimeException e) {
+            CharonException ex = new CharonException("Error in performing the patch operation on role resource.", e);
+            return AbstractResourceManager.encodeSCIMException(ex);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateGroupsWithPUTRole(String id, String putRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+            RoleV2 role = decodeRole(putRequest, schema);
+            RoleV2 updatedRole;
+
+            // Retrieve the old object.
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+
+            // Set the attributes and id from the old role to the new role.
+            setAttributesAndTimestamp(oldRole, role);
+
+            updatedRole = roleManager.updateGroupsOfRole(oldRole, role);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
+                 | NotImplementedException e) {
+            return encodeSCIMException(e);
+        }
+    }
+
+    @Override
+    public SCIMResponse updateGroupsWithPATCHRole(String id, String patchRequest, RoleV2Manager roleManager) {
+
+        try {
+            validateManager(roleManager);
+            JSONEncoder encoder = getEncoder();
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            Map<String, Boolean> requestAttributes = ResourceManagerUtil.getAllAttributeURIs(schema);
+
+            List<PatchOperation> opList = getDecoder().decodeRequest(patchRequest);
+
+            if (!isUpdateAllUsersOperationFound(opList)) {
+                return updateGroupsWithPatchOperations(id, opList, roleManager, schema, encoder);
+            }
+
+            RoleV2 oldRole = getOldRole(id, roleManager, requestAttributes);
+            // Make a copy of original role. This will be used to restore to the original condition if failure occurs.
+            RoleV2 originalRole = (RoleV2) CopyUtil.deepCopy(oldRole);
+            RoleV2 patchedRole = doPatchRole(oldRole, schema, patchRequest);
+            RoleV2 updatedRole = roleManager.updateGroupsOfRole(originalRole, patchedRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
                  | InternalErrorException e) {
@@ -540,31 +689,35 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
                                                    JSONEncoder encoder) {
 
         try {
-            Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
-            patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
-            patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
-
-            for (PatchOperation patchOperation : opList) {
-                switch (patchOperation.getOperation()) {
-                    case SCIMConstants.OperationalConstants.ADD:
-                        patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REMOVE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
-                        break;
-                    case SCIMConstants.OperationalConstants.REPLACE:
-                        patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
-                        break;
-                    default:
-                        throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
-                                ResponseCodeConstants.INVALID_SYNTAX);
-                }
-            }
-
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
             // Process the Role patch operation and update the patch operation object with required values.
             processRolePatchOperations(patchOperations, schema);
             RoleV2 updatedRole = roleManager.patchRole(existingRoleId, patchOperations);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
+                 CharonException | InternalErrorException | ForbiddenException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
+    /**
+     * Updates the role metadata such as name and permissions based on the operations defined in the patch request.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @return SCIM Response.
+     */
+    private SCIMResponse updateWithPatchOperationsMeta(String existingRoleId, List<PatchOperation> opList,
+                                                   RoleV2Manager roleManager, SCIMResourceTypeSchema schema,
+                                                   JSONEncoder encoder) {
+
+        try {
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
+            // Process the Role patch operation and update the patch operation object with required values.
+            processRolePatchOperations(patchOperations, schema);
+            RoleV2 updatedRole = roleManager.patchRoleMeta(existingRoleId, patchOperations);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
                  CharonException | InternalErrorException | ForbiddenException e) {
@@ -808,5 +961,196 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             memberList.add(member);
         }
         return memberList;
+    }
+
+    /**
+     * Updates the users of a role based on the operations defined in the patch request.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @param encoder        JSON Encoder.
+     * @return SCIM Response.
+     */
+    private SCIMResponse updateUsersWithPatchOperations(String existingRoleId, List<PatchOperation> opList,
+                                                        RoleV2Manager roleManager, SCIMResourceTypeSchema schema,
+                                                        JSONEncoder encoder) {
+
+        try {
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
+            // Process the Role patch operation and update the patch operation object with required values.
+            processRolePatchOperations(patchOperations, schema);
+            RoleV2 updatedRole = roleManager.patchUsersOfRole(existingRoleId, patchOperations);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
+                 CharonException | InternalErrorException | ForbiddenException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
+    /**
+     * Updates the groups of a role based on the operations defined in the patch request.
+     *
+     * @param existingRoleId SCIM2 ID of the existing role.
+     * @param opList         List of patch operations.
+     * @param roleManager    Role Manager.
+     * @param schema         SCIM resource schema.
+     * @return SCIM Response.
+     */
+    private SCIMResponse updateGroupsWithPatchOperations(String existingRoleId, List<PatchOperation> opList,
+                                                         RoleV2Manager roleManager, SCIMResourceTypeSchema schema,
+                                                         JSONEncoder encoder) {
+
+        try {
+            Map<String, List<PatchOperation>> patchOperations = groupPatchOperationsByType(opList);
+            // Process the Role patch operation and update the patch operation object with required values.
+            processRolePatchOperations(patchOperations, schema);
+            RoleV2 updatedRole = roleManager.patchGroupsOfRole(existingRoleId, patchOperations);
+            return getScimResponse(encoder, updatedRole);
+        } catch (NotFoundException | BadRequestException | NotImplementedException | ConflictException |
+                 CharonException | InternalErrorException | ForbiddenException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        }
+    }
+
+    /**
+     * Validates the provided role manager.
+     *
+     * @param roleManager RoleV2Manager instance to validate.
+     * @throws InternalErrorException If the role manager is null.
+     */
+    private void validateManager(RoleV2Manager roleManager) throws InternalErrorException {
+
+        if (roleManager == null) {
+            throw new InternalErrorException("Provided role manager is null.");
+        }
+    }
+
+    /**
+     * Decodes the role from the request.
+     *
+     * @param request Request string containing the role information.
+     * @param schema  SCIM resource type schema for roles.
+     * @return Decoded RoleV2 object.
+     * @throws BadRequestException    BadRequestException.
+     * @throws CharonException        CharonException.
+     * @throws InternalErrorException InternalErrorException.
+     */
+    private RoleV2 decodeRole(String request, SCIMResourceTypeSchema schema)
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        JSONDecoder decoder = getDecoder();
+        return decoder.decodeResource(request, schema, new RoleV2());
+    }
+
+    /**
+     * Builds a SCIM response for the newly created role.
+     *
+     * @param createdRole Newly created RoleV2 object.
+     * @param endpointUrl Endpoint URL for the role resource.
+     * @return SCIMResponse containing the created role and HTTP headers.
+     * @throws InternalErrorException InternalErrorException.
+     * @throws CharonException        CharonException.
+     * @throws NotFoundException      NotFoundException.
+     */
+    private SCIMResponse buildSCIMResponse(RoleV2 createdRole, String endpointUrl) throws InternalErrorException,
+            CharonException, NotFoundException {
+
+        if (createdRole == null) {
+            throw new InternalErrorException("Newly created Role resource is null.");
+        }
+
+        JSONEncoder encoder = getEncoder();
+        Map<String, String> httpHeaders = new HashMap<>();
+        String encodedRole = encoder.encodeSCIMObject(createdRole);
+
+        httpHeaders.put(SCIMConstants.LOCATION_HEADER,
+                getResourceEndpointURL(endpointUrl) + "/" + createdRole.getId());
+        httpHeaders.put(SCIMConstants.CONTENT_TYPE_HEADER, SCIMConstants.APPLICATION_JSON);
+
+        return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedRole, httpHeaders);
+    }
+
+    /**
+     * Retrieves the old role object based on the provided ID.
+     *
+     * @param id                ID of the role to retrieve.
+     * @param roleManager       RoleV2Manager instance to manage roles.
+     * @param requestAttributes Map of request attributes.
+     * @return Old RoleV2 object.
+     * @throws NotImplementedException NotImplementedException
+     * @throws BadRequestException     BadRequestException
+     * @throws NotFoundException       NotFoundException
+     * @throws CharonException         CharonException
+     */
+    private RoleV2 getOldRole(String id, RoleV2Manager roleManager, Map<String, Boolean> requestAttributes)
+            throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
+
+        RoleV2 oldRole = roleManager.getRole(id, requestAttributes);
+        if (oldRole == null) {
+            String error = "No role exists with the given id: " + id;
+            throw new NotFoundException(error);
+        }
+
+        return oldRole;
+    }
+
+    /**
+     * Groups the patch operations by their type (ADD, REMOVE, REPLACE).
+     *
+     * @param opList List of patch operations.
+     * @return Map of patch operations grouped by type.
+     * @throws BadRequestException If an unknown operation is found.
+     */
+    private Map<String, List<PatchOperation>> groupPatchOperationsByType(List<PatchOperation> opList)
+            throws BadRequestException {
+
+        Map<String, List<PatchOperation>> patchOperations = new HashMap<>();
+        patchOperations.put(SCIMConstants.OperationalConstants.ADD, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REMOVE, new ArrayList<>());
+        patchOperations.put(SCIMConstants.OperationalConstants.REPLACE, new ArrayList<>());
+
+        for (PatchOperation patchOperation : opList) {
+            switch (patchOperation.getOperation()) {
+                case SCIMConstants.OperationalConstants.ADD:
+                    patchOperations.get(SCIMConstants.OperationalConstants.ADD).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REMOVE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REMOVE).add(patchOperation);
+                    break;
+                case SCIMConstants.OperationalConstants.REPLACE:
+                    patchOperations.get(SCIMConstants.OperationalConstants.REPLACE).add(patchOperation);
+                    break;
+                default:
+                    throw new BadRequestException("Unknown operation: " + patchOperation.getOperation(),
+                            ResponseCodeConstants.INVALID_SYNTAX);
+            }
+        }
+        return patchOperations;
+    }
+
+    /**
+     * Sets system attributes (such as ID and meta information) and updates the timestamp
+     * for the new role resource.
+     * <p>
+     * This method is used in granular SCIM endpoints related to attributes like users and groups,
+     * where full resource validation is not required. Instead of invoking schema validation to
+     * ensure all required attributes are present, this method directly sets the necessary
+     * system-level attributes by copying them from an existing role and updating the
+     * modification timestamp.
+     * </p>
+     *
+     * @param newRole New role to be created.
+     * @param oldRole Old role to copy system attributes from.
+     * @throws BadRequestException BadRequestException.
+     * @throws CharonException     CharonException.
+     */
+    private void setAttributesAndTimestamp(RoleV2 oldRole, RoleV2 newRole)
+            throws BadRequestException, CharonException {
+
+        newRole.setAttribute(oldRole.getAttribute(SCIMConstants.CommonSchemaConstants.META));
+        newRole.setAttribute(oldRole.getAttribute(SCIMConstants.CommonSchemaConstants.ID));
+        newRole.setLastModifiedInstant(Instant.now());
     }
 }
