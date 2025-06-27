@@ -227,7 +227,7 @@ public interface RoleV2Manager {
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException,
             ForbiddenException {
 
-        throw new NotImplementedException("patchUsersRole method is not implemented.");
+        throw new NotImplementedException("patchUsersOfRole method is not implemented.");
     }
 
     /**
