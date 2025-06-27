@@ -245,7 +245,7 @@ public interface RoleV2Manager {
     default RoleV2 updateGroupsOfRole(RoleV2 oldRole, RoleV2 newRole)
             throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException {
 
-        throw new NotImplementedException("updateGroupsRole method is not implemented.");
+        throw new NotImplementedException("updateGroupsOfRole method is not implemented.");
     }
 
     /**
