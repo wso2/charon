@@ -33,6 +33,7 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Agent;
 import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.User;
@@ -40,6 +41,7 @@ import org.wso2.charon3.core.protocol.endpoints.AbstractResourceManager;
 import org.wso2.charon3.core.utils.CopyUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +82,8 @@ public class ServerSideValidatorTest  {
 
                 {createNewUser(), createSCIMResourceTypeSchemaUser()},
                 {createNewGroup(), createSCIMResourceTypeSchemaGroup()},
-                {createNewRole(), createSCIMResourceTypeSchemaRole()}
+                {createNewRole(), createSCIMResourceTypeSchemaRole()},
+                {createNewAgent(), createSCIMResourceTypeSchemaAgent()}
         };
     }
 
@@ -100,6 +103,9 @@ public class ServerSideValidatorTest  {
         abstractResourceManager.when(()
                 -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Roles");
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.AGENT_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Agents");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
         Assert.assertTrue(true, "validateCreatedSCIMObject is successful");
@@ -112,7 +118,8 @@ public class ServerSideValidatorTest  {
         return new Object[][]{
 
                 {createNewUser(), createSCIMResourceTypeSchemaGroup()},
-                {createNewGroup(), createSCIMResourceTypeSchemaUser()}
+                {createNewGroup(), createSCIMResourceTypeSchemaUser()},
+                {createNewAgent(), createSCIMResourceTypeSchemaUser()}
         };
     }
 
@@ -133,6 +140,9 @@ public class ServerSideValidatorTest  {
         abstractResourceManager.when(() ->
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.ROLE_ENDPOINT))
                 .thenReturn("https://localhost:9443/scim2/Roles");
+        abstractResourceManager.when(()
+                -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.AGENT_ENDPOINT))
+                .thenReturn("https://localhost:9443/scim2/Agents");
 
         ServerSideValidator.validateCreatedSCIMObject(scimObject, resourceSchema);
     }
@@ -487,6 +497,35 @@ public class ServerSideValidatorTest  {
         return role;
     }
 
+    private Agent createNewAgent() throws InstantiationException, IllegalAccessException {
+
+        Agent agent = new Agent();
+        agent.setSchema(SCIMConstants.AGENT_SCHEMA_URI);
+        agent.setSchema("urn:ietf:params:scim:schemas:core:2.0:User");
+
+        SimpleAttribute simpleAttribute = new SimpleAttribute("userName", "agentUser1");
+        simpleAttribute.setMutability(SCIMDefinitions.Mutability.READ_WRITE);
+        simpleAttribute.setRequired(true);
+        simpleAttribute.setReturned(DEFAULT);
+        simpleAttribute.setType(STRING);
+        agent.setAttribute(simpleAttribute);
+
+        ComplexAttribute complexAttributeMeta = new ComplexAttribute("meta");
+        complexAttributeMeta.setReturned(DEFAULT);
+        complexAttributeMeta.setType(STRING);
+        agent.setAttribute(complexAttributeMeta);
+
+        // Add agent-specific attributes if needed
+        SimpleAttribute agentDescriptionAttribute = new SimpleAttribute("agentDescription", "AI Assistant");
+        agentDescriptionAttribute.setMutability(SCIMDefinitions.Mutability.READ_WRITE);
+        agentDescriptionAttribute.setRequired(false);
+        agentDescriptionAttribute.setReturned(DEFAULT);
+        agentDescriptionAttribute.setType(STRING);
+        agent.setAttribute(agentDescriptionAttribute);
+
+        return agent;
+    }
+
     private SCIMResourceTypeSchema createSCIMResourceTypeSchemaUser() {
 
         List<String> schemasList = new ArrayList<>();
@@ -667,6 +706,67 @@ public class ServerSideValidatorTest  {
                 schemasList1, attributeSchemaCustom, attributeSchemaEmail);
 
         return scimResourceTypeSchema1;
+    }
+
+    private SCIMResourceTypeSchema createSCIMResourceTypeSchemaAgent() {
+
+            List<String> schemasListAgent = new ArrayList<>();
+            schemasListAgent.add(SCIMConstants.AGENT_SCHEMA_URI);
+            schemasListAgent.add("urn:ietf:params:scim:schemas:core:2.0:User");
+            // schemasListAgent.add("urn:ietf:params:scim:schemas:core:2.0:User");
+
+            // Core SCIM attributes that Agent inherits from User
+
+            // Core attributes
+            AttributeSchema idAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            "urn:ietf:params:scim:schemas:core:2.0:id", "id", STRING,
+                            false, "Unique identifier for the SCIM Resource as defined by the Service Provider", false,
+                            true,
+                            READ_ONLY, ALWAYS, SERVER, null, null, null);
+
+            AttributeSchema userNameAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            "urn:ietf:params:scim:schemas:core:2.0:User:userName", "userName", STRING,
+                            false,
+                            "A service provider's unique identifier for the user.",
+                            true, false, READ_WRITE, DEFAULT, SERVER, null, null, null);
+
+            // User attributes that Agents inherit
+            AttributeSchema displayNameAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            "urn:ietf:params:scim:schemas:core:2.0:User:displayName", "displayName", STRING,
+                            false, "The name of the Agent, suitable for display to end-users", false, false,
+                            READ_WRITE, DEFAULT, NONE, null, null, null);
+
+            // Agent-specific extension attributes
+            AttributeSchema agentDescriptionAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            SCIMConstants.AGENT_SCHEMA_URI + ":agentDescription", "agentDescription", STRING,
+                            false, "A human-readable description of the Agent", false, false,
+                            READ_WRITE, DEFAULT, NONE, null, null, null);
+
+            AttributeSchema agentTypeAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            SCIMConstants.AGENT_SCHEMA_URI + ":agentType", "agentType", STRING,
+                            false, "The type of agent (e.g., AI Assistant, Bot, Service)", false, false,
+                            READ_WRITE, DEFAULT, NONE,
+                            new ArrayList<String>(Arrays.asList("AI_ASSISTANT", "BOT", "SERVICE", "OTHER")), null,
+                            null);
+
+            AttributeSchema agentVersionAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            SCIMConstants.AGENT_SCHEMA_URI + ":agentVersion", "agentVersion", STRING,
+                            false, "The version of the Agent", false, false,
+                            READ_WRITE, DEFAULT, NONE, null, null, null);
+
+            AttributeSchema agentCapabilitiesAttribute = SCIMAttributeSchema.createSCIMAttributeSchema(
+                            SCIMConstants.AGENT_SCHEMA_URI + ":capabilities", "capabilities", STRING,
+                            true, "List of capabilities that the Agent supports", false, false,
+                            READ_WRITE, DEFAULT, NONE, null, null, null);
+
+            SCIMResourceTypeSchema agentResourceSchema = SCIMResourceTypeSchema.createSCIMResourceSchema(
+                            schemasListAgent,
+                            idAttribute, userNameAttribute,
+                            displayNameAttribute,
+                            agentDescriptionAttribute, agentTypeAttribute, agentVersionAttribute,
+                            agentCapabilitiesAttribute);
+
+            return agentResourceSchema;
     }
 
 }

@@ -21,6 +21,7 @@ package org.wso2.charon3.core.schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.charon3.core.config.SCIMAgentSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMSystemSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
@@ -134,6 +135,7 @@ public class SCIMResourceSchemaManager {
                 }
             }
         }
+
         AttributeSchema customSchemaExtension = userManager.getCustomUserSchemaExtension();
 
         List<String> schemas = new ArrayList<>();
@@ -179,6 +181,17 @@ public class SCIMResourceSchemaManager {
             schemaDefinitions.add(customSchemaExtension);
         } else {
             log.warn("Could not find custom schema.");
+        }
+
+
+        // Retrieve agent schema extension and add it to schemas if it is not null
+        AttributeSchema agentSchemaExtension = userManager.getCustomAttributeSchemaInAgentExtension();
+
+        if (agentSchemaExtension != null) {
+            schemas.add(agentSchemaExtension.getURI());
+            schemaDefinitions.add(agentSchemaExtension);
+        } else {
+            log.debug("Agent schema was not loaded.");
         }
 
         return SCIMResourceTypeSchema.createSCIMResourceSchema(
@@ -287,6 +300,16 @@ public class SCIMResourceSchemaManager {
             return false;
         }
         return schemaExtension.getRequired();
+    }
+
+    /**
+     * Return the agent schema extension uri.
+     *
+     * @return agent schema extension uri
+     */
+    public String getAgentSchemaExtensionURI() {
+
+        return SCIMAgentSchemaExtensionBuilder.getInstance().getURI();
     }
 
     /*

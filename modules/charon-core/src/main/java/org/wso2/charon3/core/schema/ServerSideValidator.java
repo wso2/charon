@@ -20,6 +20,7 @@ import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.objects.AbstractSCIMObject;
+import org.wso2.charon3.core.objects.Agent;
 import org.wso2.charon3.core.objects.Role;
 import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.objects.User;
@@ -66,7 +67,12 @@ public class ServerSideValidator extends AbstractValidator {
             scimObject.setLastModifiedInstant(AttributeUtil.parseDateTime(AttributeUtil.formatDateTime(now)));
         }
         //set location and resourceType
-        if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
+        if (scimObject instanceof Agent) {
+            scimObject.setResourceType(SCIMConstants.AGENT);
+            String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
+                    SCIMConstants.AGENT_ENDPOINT), scimObject.getId());
+            scimObject.setLocation(location);
+        } else if (resourceSchema.isSchemaAvailable(SCIMConstants.USER_CORE_SCHEMA_URI)) {
             String location = createLocationHeader(AbstractResourceManager.getResourceEndpointURL(
                     SCIMConstants.USER_ENDPOINT), scimObject.getId());
             scimObject.setLocation(location);

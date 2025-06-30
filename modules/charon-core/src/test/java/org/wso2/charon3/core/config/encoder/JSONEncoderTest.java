@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+import static org.wso2.charon3.core.schema.SCIMConstants.AGENT_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.SYSTEM_USER_SCHEMA_URI;
 
@@ -70,6 +71,7 @@ public class JSONEncoderTest {
         when(resourceSchemaManager.getSystemSchemaExtensionURI()).thenReturn(SYSTEM_USER_SCHEMA_URI);
         when(resourceSchemaManager.getSystemSchemaExtensionRequired()).thenReturn(true);
         when(resourceSchemaManager.getCustomSchemaExtensionURI()).thenReturn("customSchemaURI");
+        when(resourceSchemaManager.getAgentSchemaExtensionURI()).thenReturn(AGENT_SCHEMA_URI);
 
         String jsonBody = jsonEncoder.buildUserResourceTypeJsonBody();
 
@@ -97,7 +99,7 @@ public class JSONEncoderTest {
         assertEquals(systemSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
                 SYSTEM_USER_SCHEMA_URI);
         assertTrue(systemSchema.getBoolean(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_REQUIRED));
-
+        
         JSONObject customSchema = schemaExtensions.getJSONObject(2);
         assertEquals(customSchema.getString(SCIMConstants.ResourceTypeSchemaConstants.SCHEMA_EXTENSIONS_SCHEMA),
                 "customSchemaURI");
