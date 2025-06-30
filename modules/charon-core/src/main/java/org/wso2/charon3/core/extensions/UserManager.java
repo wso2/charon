@@ -291,7 +291,7 @@ public interface UserManager {
     default List<Attribute> getAgentUserSchema() throws CharonException, NotImplementedException,
             BadRequestException {
 
-        throw new NotImplementedException();
+        return null;
     }
 
     /**
