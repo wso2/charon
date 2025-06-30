@@ -23,6 +23,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.wso2.charon3.core.config.SCIMAgentSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMCustomSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMSystemSchemaExtensionBuilder;
 import org.wso2.charon3.core.config.SCIMUserSchemaExtensionBuilder;
@@ -45,8 +46,11 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
+import static org.wso2.charon3.core.schema.SCIMConstants.AGENT_SCHEMA_URI;
+import static org.wso2.charon3.core.schema.SCIMConstants.CUSTOM_EXTENSION_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.ENTERPRISE_USER_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.SYSTEM_USER_SCHEMA_URI;
+import static org.wso2.charon3.core.schema.SCIMConstants.USER_CORE_SCHEMA_URI;
 
 public class SCIMResourceSchemaManagerTest {
 
@@ -54,11 +58,14 @@ public class SCIMResourceSchemaManagerTest {
     private static MockedStatic<SCIMUserSchemaExtensionBuilder> userSchemaBuilderMock;
     private static MockedStatic<SCIMSystemSchemaExtensionBuilder> systemSchemaBuilderMock;
     private static MockedStatic<SCIMCustomSchemaExtensionBuilder> customSchemaBuilderMock;
+    private static MockedStatic<SCIMAgentSchemaExtensionBuilder> agentSchemaBuilderMock;
     private SCIMUserSchemaExtensionBuilder userSchemaExtensionBuilder;
     private SCIMSystemSchemaExtensionBuilder systemSchemaExtensionBuilder;
     private SCIMCustomSchemaExtensionBuilder customSchemaExtensionBuilder;
+    private SCIMAgentSchemaExtensionBuilder agentSchemaExtensionBuilder;
     private AttributeSchema userSchemaExtension;
     private AttributeSchema systemSchemaExtension;
+    private AttributeSchema agentSchemaExtension;
 
     @BeforeMethod
     public void setUp() {
@@ -121,10 +128,51 @@ public class SCIMResourceSchemaManagerTest {
         assertTrue(schemaURIs.contains(ENTERPRISE_USER_SCHEMA_URI), "User extension URI should be present.");
         assertTrue(schemaURIs.contains(SYSTEM_USER_SCHEMA_URI), "System extension URI should be present.");
         assertTrue(schemaURIs.contains("customExtensionURI"), "Custom extension URI should be present.");
+        assertFalse(schemaURIs.contains(AGENT_SCHEMA_URI),
+                "Agent schema URI should not be present in user resource schema.");
 
         verify(userSchemaExtensionBuilder, times(2)).getExtensionSchema();
         verify(systemSchemaExtensionBuilder).getExtensionSchema();
         verify(userManager).getCustomUserSchemaExtension();
+    }
+
+    @Test
+    public void testGetUserResourceSchemaWithUserManagerAndAgentSchema()
+            throws BadRequestException, NotImplementedException, CharonException {
+
+        UserManager userManager = mock(UserManager.class);
+        AttributeSchema customSchemaExtension = mock(AttributeSchema.class);
+        AttributeSchema agentSchemaExtension = mock(AttributeSchema.class);
+
+        when(userManager.getCustomUserSchemaExtension()).thenReturn(customSchemaExtension);
+        when(customSchemaExtension.getURI()).thenReturn(CUSTOM_EXTENSION_SCHEMA_URI);
+
+        when(userManager.getCustomAttributeSchemaInAgentExtension()).thenReturn(agentSchemaExtension);
+        when(agentSchemaExtension.getURI()).thenReturn(AGENT_SCHEMA_URI);
+
+        // Also mock system and user schema extensions as in other tests
+        when(userSchemaExtensionBuilder.getExtensionSchema()).thenReturn(userSchemaExtension);
+        when(systemSchemaExtensionBuilder.getExtensionSchema()).thenReturn(systemSchemaExtension);
+        when(userSchemaExtension.getURI()).thenReturn(ENTERPRISE_USER_SCHEMA_URI);
+        when(systemSchemaExtension.getURI()).thenReturn(SYSTEM_USER_SCHEMA_URI);
+
+        SCIMResourceTypeSchema schema = manager.getUserResourceSchema(userManager);
+
+        assertNotNull(schema, "The getUserResourceSchema(UserManager) method should return a non-null schema.");
+
+        List<String> schemaURIs = schema.getSchemasList();
+        assertTrue(schemaURIs.contains(USER_CORE_SCHEMA_URI), "Core schema URI should be present.");
+        assertTrue(schemaURIs.contains(ENTERPRISE_USER_SCHEMA_URI), "User extension URI should be present.");
+        assertTrue(schemaURIs.contains(SYSTEM_USER_SCHEMA_URI), "System extension URI should be present.");
+        assertTrue(schemaURIs.contains(CUSTOM_EXTENSION_SCHEMA_URI), "Custom extension URI should be present.");
+        assertTrue(schemaURIs.contains(AGENT_SCHEMA_URI),
+                "Agent schema URI should be present in user resource schema.");
+
+        verify(userSchemaExtensionBuilder, times(2)).getExtensionSchema();
+        verify(systemSchemaExtensionBuilder).getExtensionSchema();
+        verify(userManager).getCustomUserSchemaExtension();
+        verify(userManager).getCustomAttributeSchemaInAgentExtension();
+        verify(agentSchemaExtension).getURI();
     }
 
     @Test
@@ -273,16 +321,35 @@ public class SCIMResourceSchemaManagerTest {
         verify(userSchemaExtensionBuilder, times(3)).getExtensionSchema();
     }
 
+    @Test
+    public void testGetAgentSchemaExtensionURI() {
+
+        agentSchemaBuilderMock.when(SCIMAgentSchemaExtensionBuilder::getInstance)
+                .thenReturn(agentSchemaExtensionBuilder);
+        when(agentSchemaExtensionBuilder.getURI()).thenReturn(AGENT_SCHEMA_URI);
+
+        String agentSchemaURI = manager.getAgentSchemaExtensionURI();
+
+        assertEquals(agentSchemaURI, AGENT_SCHEMA_URI,
+                "The getAgentSchemaExtensionURI method should return the correct URI.");
+        verify(agentSchemaExtensionBuilder).getURI();
+
+    }
+
     @BeforeClass
     public void initMocks() {
 
         userSchemaBuilderMock = mockStatic(SCIMUserSchemaExtensionBuilder.class);
         systemSchemaBuilderMock = mockStatic(SCIMSystemSchemaExtensionBuilder.class);
+        agentSchemaBuilderMock = mockStatic(SCIMAgentSchemaExtensionBuilder.class);
 
         userSchemaExtensionBuilder = mock(SCIMUserSchemaExtensionBuilder.class);
         systemSchemaExtensionBuilder = mock(SCIMSystemSchemaExtensionBuilder.class);
+        agentSchemaExtensionBuilder = mock(SCIMAgentSchemaExtensionBuilder.class);
+
         userSchemaExtension = mock(AttributeSchema.class);
         systemSchemaExtension = mock(AttributeSchema.class);
+        agentSchemaExtension = mock(AttributeSchema.class);
     }
 
     @AfterClass
@@ -290,5 +357,6 @@ public class SCIMResourceSchemaManagerTest {
 
         userSchemaBuilderMock.close();
         systemSchemaBuilderMock.close();
+        agentSchemaBuilderMock.close();
     }
 }
