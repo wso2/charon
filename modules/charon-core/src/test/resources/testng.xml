@@ -38,6 +38,7 @@
             <class name="org.wso2.charon3.core.config.encoder.JSONEncoderTest"/>
             <class name="org.wso2.charon3.core.attributes.DefaultAttributeFactoryTest"/>
             <class name="org.wso2.charon3.core.protocol.endpoints.RoleResourceV2ManagerTest"/>
+            <class name="org.wso2.charon3.core.objects.AgentTest"/>
         </classes>
     </test>
 </suite>

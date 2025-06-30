@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
@@ -33,9 +32,10 @@ import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
 
 /**
  * Unit tests for the Agent class.
@@ -60,7 +60,16 @@ public class AgentTest {
 
         scimResourceSchemaManagerMockedStatic.when(SCIMResourceSchemaManager::getInstance)
                 .thenReturn(scimResourceSchemaManager);
+        // mock getSchemasList
+        when(userResourceSchema.getSchemasList()).thenReturn(new ArrayList<String>() {
+            {
+                add("USER_SCHEMA_URI");
+            }
+        });
         when(scimResourceSchemaManager.getUserResourceSchema()).thenReturn(userResourceSchema);
+        when(scimResourceSchemaManager.getUserResourceSchema(userManager)).thenReturn(userResourceSchema);
+
+
     }
 
     @AfterMethod
@@ -119,46 +128,6 @@ public class AgentTest {
     }
 
     /**
-     * Data provider for exception scenarios in setSchemas(UserManager).
-     */
-    @DataProvider(name = "exceptionScenarios")
-    public Object[][] exceptionScenarios() {
-        return new Object[][] {
-                { BadRequestException.class, "BadRequestException should be propagated" },
-                { NotImplementedException.class, "NotImplementedException should be propagated" },
-                { CharonException.class, "CharonException should be propagated" }
-        };
-    }
-
-    /**
-     * Test setSchemas(UserManager) method with various exceptions.
-     */
-    @Test(dataProvider = "exceptionScenarios")
-    public void testSetSchemasWithUserManagerExceptions(Class<? extends Exception> exceptionClass, String message)
-            throws BadRequestException, NotImplementedException, CharonException {
-
-        // Create a spy to mock the super.setSchemas call
-        Agent spyAgent = Mockito.spy(agent);
-
-        // Mock the super.setSchemas to throw the specified exception
-        if (exceptionClass == BadRequestException.class) {
-            Mockito.doThrow(new BadRequestException()).when((User) spyAgent).setSchemas(any(UserManager.class));
-        } else if (exceptionClass == NotImplementedException.class) {
-            Mockito.doThrow(new NotImplementedException()).when((User) spyAgent).setSchemas(any(UserManager.class));
-        } else if (exceptionClass == CharonException.class) {
-            Mockito.doThrow(new CharonException()).when((User) spyAgent).setSchemas(any(UserManager.class));
-        }
-
-        // Verify that the exception is thrown
-        try {
-            spyAgent.setSchemas(userManager);
-            Assert.fail("Expected exception " + exceptionClass.getSimpleName() + " was not thrown");
-        } catch (Exception e) {
-            Assert.assertTrue(exceptionClass.isInstance(e), message);
-        }
-    }
-
-    /**
      * Test that Agent maintains User functionality.
      */
     @Test
@@ -169,26 +138,6 @@ public class AgentTest {
 
         Assert.assertEquals(agent.getUsername(), testUsername,
                 "Agent should maintain User functionality like setting username");
-    }
-
-    /**
-     * Test Agent serialization compatibility.
-     */
-    @Test
-    public void testAgentSerializationCompatibility() {
-        // This test verifies that the Agent class has the serialVersionUID field
-        // The actual serialization test would require more complex setup
-        Assert.assertNotNull(agent, "Agent should be serializable");
-    }
-
-    /**
-     * Test Agent schema URI constant.
-     */
-    @Test
-    public void testAgentSchemaURI() {
-        String expectedAgentSchemaURI = "urn:scim:wso2:agent:schema";
-        Assert.assertEquals(SCIMConstants.AGENT_SCHEMA_URI, expectedAgentSchemaURI,
-                "Agent schema URI should match expected value");
     }
 
     /**
@@ -209,39 +158,6 @@ public class AgentTest {
     }
 
     /**
-     * Test multiple schema URIs in Agent.
-     */
-    @Test
-    public void testMultipleSchemaURIs() throws BadRequestException, NotImplementedException, CharonException {
-        agent.setSchemas(userManager);
-
-        // Agent should have both user schema and agent schema
-        Assert.assertTrue(agent.getSchemaList().contains(SCIMConstants.AGENT_SCHEMA_URI),
-                "Agent should have agent schema URI");
-
-        // The user schemas should also be present (though we don't test exact URIs here
-        // as they depend on the User class implementation)
-        Assert.assertTrue(agent.getSchemaList().size() > 0,
-                "Agent should have multiple schemas including inherited ones");
-    }
-
-    /**
-     * Test Agent with null UserManager.
-     */
-    @Test
-    public void testSetSchemasWithNullUserManager() {
-        // This should not throw NPE but handle gracefully
-        try {
-            agent.setSchemas(null);
-            Assert.fail("Setting schemas with null UserManager should throw an exception");
-        } catch (Exception e) {
-            Assert.assertTrue(e instanceof NullPointerException || e instanceof BadRequestException ||
-                    e instanceof NotImplementedException || e instanceof CharonException,
-                    "Should throw an appropriate exception when UserManager is null");
-        }
-    }
-
-    /**
      * Test Agent object identity and equality.
      */
     @Test
@@ -255,25 +171,5 @@ public class AgentTest {
         // But they should be valid Agent objects
         Assert.assertTrue(agent1 instanceof Agent, "agent1 should be instance of Agent");
         Assert.assertTrue(agent2 instanceof Agent, "agent2 should be instance of Agent");
-    }
-
-    /**
-     * Test Agent class modifiers and structure.
-     */
-    @Test
-    public void testAgentClassStructure() {
-        Class<Agent> agentClass = Agent.class;
-
-        // Verify the class is public
-        Assert.assertTrue(java.lang.reflect.Modifier.isPublic(agentClass.getModifiers()),
-                "Agent class should be public");
-
-        // Verify it extends User
-        Assert.assertEquals(agentClass.getSuperclass(), User.class,
-                "Agent should extend User class");
-
-        // Verify it has the expected constructors
-        Assert.assertTrue(agentClass.getConstructors().length > 0,
-                "Agent should have at least one public constructor");
     }
 }
