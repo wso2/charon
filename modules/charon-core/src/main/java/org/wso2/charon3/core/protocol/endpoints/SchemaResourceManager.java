@@ -39,6 +39,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.wso2.charon3.core.schema.SCIMConstants.AGENT;
+import static org.wso2.charon3.core.schema.SCIMConstants.AGENT_SCHEMA_URI;
+import static org.wso2.charon3.core.schema.SCIMConstants.AgentSchemaConstants.AGENT_DESC;
 import static org.wso2.charon3.core.schema.SCIMConstants.CORE;
 import static org.wso2.charon3.core.schema.SCIMConstants.CORE_SCHEMA_URI;
 import static org.wso2.charon3.core.schema.SCIMConstants.CUSTOM_USER;
@@ -85,6 +88,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
             List<Attribute> userSchemaAttributes = userManager.getUserSchema();
             List<Attribute> userEnterpriseSchemaAttributes = userManager.getEnterpriseUserSchema();
             List<Attribute> userSystemSchemaAttributes = userManager.getSystemUserSchema();
+            List<Attribute> userAgentSchemaAttributes = userManager.getAgentUserSchema();
             List<Attribute> userCustomSchemaAttributes = userManager.getCustomUserSchemaAttributes();
             String customUserSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
 
@@ -95,6 +99,7 @@ public class SchemaResourceManager extends AbstractResourceManager {
                 schemas.put(USER_CORE_SCHEMA_URI, userSchemaAttributes);
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
                 schemas.put(SYSTEM_USER_SCHEMA_URI, userSystemSchemaAttributes);
+                schemas.put(AGENT_SCHEMA_URI, userAgentSchemaAttributes);
                 if (StringUtils.isNotBlank(customUserSchemaURI)) {
                     schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
                 }
@@ -110,11 +115,14 @@ public class SchemaResourceManager extends AbstractResourceManager {
                 schemas.put(ENTERPRISE_USER_SCHEMA_URI, userEnterpriseSchemaAttributes);
             } else if (SYSTEM_USER_SCHEMA_URI.equalsIgnoreCase(id)) {
                 schemas.put(SYSTEM_USER_SCHEMA_URI, userSystemSchemaAttributes);
+            } else if (AGENT_SCHEMA_URI.equalsIgnoreCase(id)) {
+                schemas.put(AGENT_SCHEMA_URI, userAgentSchemaAttributes);
             } else if (StringUtils.isNotBlank(customUserSchemaURI) && customUserSchemaURI.equalsIgnoreCase(id)) {
                 schemas.put(customUserSchemaURI, userCustomSchemaAttributes);
             } else {
                 // https://tools.ietf.org/html/rfc7643#section-8.7
-                throw new NotImplementedException("only user, enterprise and custom schema are supported");
+                throw new NotImplementedException("only user, enterprise, system, "
+                        + "agent, and custom schema are supported");
             }
 
             return buildSchemasResponse(schemas);
@@ -165,6 +173,10 @@ public class SchemaResourceManager extends AbstractResourceManager {
         if (schemas.get(SYSTEM_USER_SCHEMA_URI) != null) {
             JSONObject systemUserSchemaObject = buildSystemUserSchema(schemas.get(SYSTEM_USER_SCHEMA_URI));
             rootObject.put(systemUserSchemaObject);
+        }
+        if (schemas.get(AGENT_SCHEMA_URI) != null) {
+            JSONObject agentUserSchemaObject = buildAgentUserSchema(schemas.get(AGENT_SCHEMA_URI));
+            rootObject.put(agentUserSchemaObject);
         }
         String customSchemaURI = SCIMCustomSchemaExtensionBuilder.getInstance().getURI();
         if (StringUtils.isNotBlank(customSchemaURI) && schemas.get(customSchemaURI) != null) {
@@ -222,6 +234,31 @@ public class SchemaResourceManager extends AbstractResourceManager {
             return systemUserSchemaObject;
         } catch (JSONException e) {
             throw new CharonException("Error while encoding system user schema.", e);
+        }
+    }
+
+    /**
+     * Builds a JSON object containing agent user schema attribute information.
+     *
+     * @param agentUserSchemaList Attribute list of SCIM agent user schema.
+     * @return JSON object of agent user schema.
+     * @throws CharonException If there's an error in Charon processing.
+     */
+    private JSONObject buildAgentUserSchema(List<Attribute> agentUserSchemaList) throws CharonException {
+
+        try {
+            JSONEncoder encoder = getEncoder();
+
+            JSONObject agentUserSchemaObject = new JSONObject();
+            agentUserSchemaObject.put(SCIMConstants.CommonSchemaConstants.ID, AGENT_SCHEMA_URI);
+            agentUserSchemaObject.put(SCIMConstants.AgentSchemaConstants.NAME, AGENT);
+            agentUserSchemaObject.put(SCIMConstants.AgentSchemaConstants.DESCRIPTION, AGENT_DESC);
+
+            JSONArray agentUserAttributeArray = buildSchemaAttributeArray(agentUserSchemaList, encoder);
+            agentUserSchemaObject.put(ATTRIBUTES, agentUserAttributeArray);
+            return agentUserSchemaObject;
+        } catch (JSONException e) {
+            throw new CharonException("Error while encoding agent user schema.", e);
         }
     }
 

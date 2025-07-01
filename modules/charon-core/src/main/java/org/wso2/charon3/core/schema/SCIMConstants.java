@@ -30,6 +30,7 @@ public class SCIMConstants {
     @Deprecated
     public static final String CUSTOM_USER_SCHEMA_URI = "urn:scim:wso2:schema";
     public static final String SYSTEM_USER_SCHEMA_URI = "urn:scim:wso2:schema";
+    public static final String AGENT_SCHEMA_URI = "urn:scim:wso2:agent:schema";
     public static final String CUSTOM_EXTENSION_SCHEMA_URI = "urn:scim:schemas:extension:custom:User";
     public static final String GROUP_CORE_SCHEMA_URI = "urn:ietf:params:scim:schemas:core:2.0:Group";
     public static final String ROLE_SCHEMA_URI = "urn:ietf:params:scim:schemas:extension:2.0:Role";
@@ -57,6 +58,7 @@ public class SCIMConstants {
     public static final String ROLE = "Role";
     public static final String ENTERPRISE_USER = "EnterpriseUser";
     public static final String SYSTEM_USER = "SystemUser";
+    public static final String AGENT = "Agent";
     public static final String CUSTOM_USER = "CustomUser";
     public static final String RESOURCE_TYPE = "ResourceType";
 
@@ -64,6 +66,7 @@ public class SCIMConstants {
     public static final String USER_ENDPOINT = "/Users";
     public static final String GROUP_ENDPOINT = "/Groups";
     public static final String ROLE_ENDPOINT = "/Roles";
+    public static final String AGENT_ENDPOINT = "/Agents";
     public static final String ROLE_V2_ENDPOINT = "/v2/Roles";
     public static final String ROLE_V3_ENDPOINT = "/v3/Roles";
     public static final String SERVICE_PROVIDER_CONFIG_ENDPOINT = "/ServiceProviderConfig";
@@ -798,6 +801,16 @@ public class SCIMConstants {
         public static final String NAME = "name";
         public static final String DESCRIPTION = "description";
         public static final String CUSTOM_USER_DESC = "Custom User";
+    }
+
+    /**
+     * Constants found in agent schema.
+     */
+    public static class AgentSchemaConstants {
+
+        public static final String NAME = "name";
+        public static final String DESCRIPTION = "description";
+        public static final String AGENT_DESC = "Agent";
     }
 
     /**
