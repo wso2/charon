@@ -847,8 +847,14 @@ public class JSONDecoder {
                     decodedJsonObj.opt(SCIMConstants.OperationalConstants.ATTRIBUTES);
             JSONArray excludedAttributesValues = (JSONArray)
                     decodedJsonObj.opt(SCIMConstants.OperationalConstants.EXCLUDED_ATTRIBUTES);
-            JSONArray schemas = (JSONArray)
-                    decodedJsonObj.opt(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+            JSONArray schemas = decodedJsonObj.optJSONArray(SCIMConstants.CommonSchemaConstants.SCHEMAS);
+
+            if (schemas == null) {
+                throw new BadRequestException(
+                    "Attribute 'schemas' is missing or is not a valid JSON array.", 
+                    ResponseCodeConstants.INVALID_VALUE
+                );
+            }
 
             if (schemas.length() != 1) {
                 throw new BadRequestException("Schema is invalid", ResponseCodeConstants.INVALID_VALUE);
