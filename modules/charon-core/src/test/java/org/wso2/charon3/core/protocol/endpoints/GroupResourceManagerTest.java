@@ -32,6 +32,7 @@ import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -786,7 +787,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCH")
     public void testUpdateWithPATCH(String existingId, String patchRequest, String attributes,
                                     String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException,
+            NotFoundException, ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;
@@ -817,7 +819,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHOverride")
     public void testUpdateWithPATCHOverride(String existingId, String patchRequest,
                                             Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException,
+            NotFoundException, ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;

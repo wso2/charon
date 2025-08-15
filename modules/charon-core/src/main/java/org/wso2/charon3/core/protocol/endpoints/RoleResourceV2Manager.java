@@ -119,7 +119,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 createdRole = roleManager.createRole(role);
             return buildSCIMResponse(createdRole, SCIMConstants.ROLE_V2_ENDPOINT);
         } catch (InternalErrorException | BadRequestException | ConflictException | CharonException | NotFoundException
-                 | NotImplementedException e) {
+                 | NotImplementedException | ForbiddenException e) {
             if (e.getStatus() == ResponseCodeConstants.CODE_ACCEPTED) {
                 return new SCIMResponse(ResponseCodeConstants.CODE_ACCEPTED, null, null);
             }
@@ -138,7 +138,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             roleManager.deleteRole(id);
             return new SCIMResponse(ResponseCodeConstants.CODE_NO_CONTENT, null, null);
         } catch (InternalErrorException | CharonException | NotFoundException | NotImplementedException
-                 | BadRequestException e) {
+                 | BadRequestException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -266,7 +266,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             updatedRole = roleManager.updateRole(oldRole, newRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | CharonException | ConflictException | InternalErrorException
-                 | NotImplementedException e) {
+                 | NotImplementedException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -293,7 +293,7 @@ public class RoleResourceV2Manager extends AbstractResourceManager {
             RoleV2 updatedRole = roleManager.updateRole(originalRole, patchedRole);
             return getScimResponse(encoder, updatedRole);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException | ConflictException
-                 | InternalErrorException e) {
+                 | InternalErrorException | ForbiddenException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException ex = new CharonException("Error in performing the patch operation on role resource.", e);

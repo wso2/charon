@@ -742,7 +742,8 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFails")
     public void testDeleteUserFails(String id, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
@@ -788,7 +789,8 @@ public class UserResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFailsWithCharonException")
     public void testDeleteUserCharonExceptionOnly(String id, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_USER_ENDPOINT + "/" + USER_ID);
@@ -827,7 +829,8 @@ public class UserResourceManagerTest {
     public void testUpdateWithPUTSuccess(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewUserObject,
                                          Object scimOldUserObject, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException,
+            ForbiddenException {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
@@ -872,7 +875,8 @@ public class UserResourceManagerTest {
     public void testUpdateWithPUTProvidedUserManagerHandlerIsNull(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewUserObject, Object scimOldUserObject,
                                                                   int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
@@ -909,7 +913,8 @@ public class UserResourceManagerTest {
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewUserObject, Object scimOldUserObject,
                                                                   int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) scimNewUserObject;
         User userOld = (User) scimOldUserObject;
@@ -943,7 +948,8 @@ public class UserResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateWithPUTCharonException")
     public void testUpdateWithPUTUpdatedUserResourceIsNull(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimOldUserObject, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userOld = (User) scimOldUserObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
