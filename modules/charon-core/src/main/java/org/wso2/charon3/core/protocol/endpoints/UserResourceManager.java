@@ -607,7 +607,7 @@ public class UserResourceManager extends AbstractResourceManager {
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
         } catch (NotFoundException | ForbiddenException | NotImplementedException | InternalErrorException |
-                 CharonException | BadRequestException e) {
+                 CharonException | BadRequestException | ConflictException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         }
     }
@@ -785,7 +785,7 @@ public class UserResourceManager extends AbstractResourceManager {
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
-                 InternalErrorException | ForbiddenException e) {
+                 InternalErrorException | ForbiddenException | ConflictException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);

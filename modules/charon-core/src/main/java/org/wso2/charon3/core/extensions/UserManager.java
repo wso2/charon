@@ -105,7 +105,8 @@ public interface UserManager {
             throws CharonException, NotImplementedException, BadRequestException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException,
+            ConflictException;
 
     /**
      * Identify user claims to be updated and update the user in user store.
@@ -121,7 +122,7 @@ public interface UserManager {
      */
     default User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes,
                             List<String> allSimpleMultiValuedAttributes)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException, ConflictException {
 
         throw new NotImplementedException(
                 "Updating simple multi-valued attributes independently from simple attributes is not supported");
@@ -137,7 +138,8 @@ public interface UserManager {
             throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException,
+            ConflictException;
 
 
    /* ****************Group manipulation operations.********************/
