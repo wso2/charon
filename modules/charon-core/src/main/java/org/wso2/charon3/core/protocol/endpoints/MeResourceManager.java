@@ -282,6 +282,8 @@ public class MeResourceManager extends AbstractResourceManager {
             return encodeSCIMException(e);
         } catch (BadRequestException e) {
             return encodeSCIMException(e);
+        } catch (ConflictException e) {
+            return encodeSCIMException(e);
         } catch (CharonException e) {
             return encodeSCIMException(e);
         } catch (InternalErrorException e) {
@@ -460,6 +462,8 @@ public class MeResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return encodeSCIMException(e);
         } catch (BadRequestException e) {
+            return encodeSCIMException(e);
+        } catch (ConflictException e) {
             return encodeSCIMException(e);
         } catch (NotImplementedException e) {
             return encodeSCIMException(e);

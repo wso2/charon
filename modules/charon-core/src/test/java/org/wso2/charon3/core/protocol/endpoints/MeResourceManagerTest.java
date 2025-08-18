@@ -732,7 +732,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTSuccess(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
                                          Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
+            throws BadRequestException, NotFoundException, CharonException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -781,7 +781,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTProvidedUserManagerHandlerIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser, Object objectOLDUser,
                                                                   int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -827,7 +827,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
                                                                   Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -869,7 +869,7 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateWithPUTCharonException")
     public void testUpdateWithPUTUpdatedUserResourceIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectOLDUser, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException, ConflictException {
 
         User userOld = (User) objectOLDUser;
 
@@ -927,6 +927,37 @@ public class MeResourceManagerTest {
 
     }
 
+    @DataProvider(name = "dataForTestUpdateWithPUTConflictException")
+    public Object[][] dataForTestUpdateWithPUTConflictException()
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        JSONDecoder decoder = new JSONDecoder();
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING, schema, new User());
+        String userName = userOld.getUserName();
+        return new Object[][]{
+                {userName, NEW_USER_SCIM_OBJECT_STRING_UPDATE, "userName", null, userOld,
+                        ResponseCodeConstants.CODE_CONFLICT}
+        };
+    }
+
+    @Test(dataProvider = "dataForTestUpdateWithPUTConflictException")
+    public void testUpdateWithPUTConflictException(String userName, String scimObjectString, String
+            attributes, String excludeAttributes, User userOld, int expectedScimResponseStatus)
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_ME_ENDPOINT);
+        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
+                .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
+        when(userManager.getMe(userName, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        when(userManager.updateMe(any(User.class), anyMap())).thenThrow(ConflictException.class);
+        SCIMResponse scimResponse = meResourceManager.updateWithPUT(userName, scimObjectString, userManager,
+                attributes, excludeAttributes);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
+    }
+
     @DataProvider(name = "dataForUpdateWithPATCH")
     public Object[][] dataToUpdateWithPATCH() throws BadRequestException, CharonException, InternalErrorException {
 
@@ -948,7 +979,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCH(String existingId, String scimObjectString,
                                     String attributes, String excludeAttributes, Object objectNEWUser,
                                     Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -998,7 +1029,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHReplace(String existingId, String scimObjectString,
                                            String attributes, String excludeAttributes, Object objectNEWUser,
                                            Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1044,7 +1075,7 @@ public class MeResourceManagerTest {
                                                                     Object objectNEWUser,
                                                                     Object objectOLDUser,
                                                                     int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1092,7 +1123,7 @@ public class MeResourceManagerTest {
                                                                        Object objectNEWUser,
                                                                        Object objectOLDUser,
                                                                        int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1136,7 +1167,7 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHUpdatedUserResourceIsNull(String existingId, String scimObjectString,
                                                              String attributes, String excludeAttributes,
                                                              Object objectOLDUser, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException, ConflictException {
 
         User userOld = (User) objectOLDUser;
 
@@ -1229,6 +1260,37 @@ public class MeResourceManagerTest {
 
         SCIMResponse scimResponse = meResourceManager.updateWithPATCH(existingId, scimObjectString,
                 null, attributes, excludeAttributes);
+        Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
+    }
+
+    @DataProvider(name = "dataForTestUpdateWithPATCHConflictException")
+    public Object[][] dataForTestUpdateWithPATCHConflictException()
+            throws BadRequestException, CharonException, InternalErrorException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        JSONDecoder decoder = new JSONDecoder();
+        User userOld = decoder.decodeResource(NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH, schema, new User());
+        String userName = userOld.getUserName();
+        return new Object[][]{
+                {userName, NEW_USER_SCIM_OBJECT_STRING_FOR_PATCH_UPDATE, "userName", null, userOld,
+                        ResponseCodeConstants.CODE_CONFLICT}
+        };
+    }
+
+    @Test(dataProvider = "dataForTestUpdateWithPATCHConflictException")
+    public void testUpdateWithPATCHConflictException(String userName, String scimObjectString, String
+            attributes, String excludeAttributes, User userOld, int expectedScimResponseStatus)
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException, ConflictException {
+
+        SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getUserResourceSchema();
+        abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
+                .thenReturn(SCIM2_ME_ENDPOINT);
+        abstractResourceManager.when(() -> AbstractResourceManager.encodeSCIMException(any(ConflictException.class)))
+                .thenReturn(getEncodeSCIMExceptionObject(new ConflictException()));
+        when(userManager.getMe(userName, ResourceManagerUtil.getAllAttributeURIs(schema))).thenReturn(userOld);
+        when(userManager.updateMe(any(User.class), anyMap())).thenThrow(ConflictException.class);
+        SCIMResponse scimResponse = meResourceManager.updateWithPATCH(userName, scimObjectString, userManager,
+                attributes, excludeAttributes);
         Assert.assertEquals(scimResponse.getResponseStatus(), expectedScimResponseStatus);
     }
 

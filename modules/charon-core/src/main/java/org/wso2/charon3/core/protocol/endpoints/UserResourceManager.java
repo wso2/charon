@@ -617,6 +617,8 @@ public class UserResourceManager extends AbstractResourceManager {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
             return AbstractResourceManager.encodeSCIMException(e);
+        } catch (ConflictException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
         } catch (CharonException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (InternalErrorException e) {
@@ -801,6 +803,8 @@ public class UserResourceManager extends AbstractResourceManager {
         } catch (NotFoundException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (BadRequestException e) {
+            return AbstractResourceManager.encodeSCIMException(e);
+        } catch (ConflictException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (NotImplementedException e) {
             return AbstractResourceManager.encodeSCIMException(e);
