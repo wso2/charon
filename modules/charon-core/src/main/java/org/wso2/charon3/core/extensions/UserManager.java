@@ -51,7 +51,7 @@ public interface UserManager {
             throws CharonException, BadRequestException, NotFoundException;
 
     public void deleteUser(String userId)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     /**
      * List users with Get.
@@ -105,7 +105,7 @@ public interface UserManager {
             throws CharonException, NotImplementedException, BadRequestException;
 
     public User updateUser(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException;
 
     /**
      * Identify user claims to be updated and update the user in user store.
@@ -134,22 +134,22 @@ public interface UserManager {
             throws CharonException, ConflictException, BadRequestException, ForbiddenException, NotImplementedException;
 
     public void deleteMe(String userName)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     public User updateMe(User updatedUser, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, CharonException, BadRequestException, NotFoundException;
+            throws NotImplementedException, CharonException, BadRequestException, NotFoundException, ForbiddenException;
 
 
    /* ****************Group manipulation operations.********************/
 
     public Group createGroup(Group group, Map<String, Boolean> requiredAttributes)
-            throws CharonException, ConflictException, NotImplementedException, BadRequestException;
+            throws CharonException, ConflictException, NotImplementedException, BadRequestException, ForbiddenException;
 
     public Group getGroup(String id, Map<String, Boolean> requiredAttributes)
             throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
 
     public void deleteGroup(String id)
-            throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+            throws NotFoundException, CharonException, NotImplementedException, BadRequestException, ForbiddenException;
 
     default GroupsGetResponse listGroupsWithGET(Node node, Integer startIndex, Integer count, String sortBy,
                                String sortOrder, String domainName, Map<String, Boolean> requiredAttributes)
@@ -181,7 +181,7 @@ public interface UserManager {
     }
 
     public Group updateGroup(Group oldGroup, Group newGroup, Map<String, Boolean> requiredAttributes)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException;
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException, ForbiddenException;
 
     /**
      *
@@ -196,7 +196,8 @@ public interface UserManager {
      * @throws NotFoundException
      */
     default void updateGroup(Group oldGroup, Group newGroup)
-            throws NotImplementedException, BadRequestException, CharonException, NotFoundException {
+            throws NotImplementedException, BadRequestException, CharonException, NotFoundException,
+            ForbiddenException {
 
         throw new NotImplementedException();
     }
