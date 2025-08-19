@@ -178,17 +178,8 @@ public class GroupResourceManager extends AbstractResourceManager {
             //put the uri of the Group object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_CREATED, encodedGroup, httpHeaders);
 
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (ConflictException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (InternalErrorException | BadRequestException | ConflictException | CharonException |
+                 NotFoundException | NotImplementedException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -214,15 +205,8 @@ public class GroupResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (InternalErrorException | CharonException | NotFoundException | NotImplementedException |
+                 BadRequestException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -598,15 +582,8 @@ public class GroupResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedGroup, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (NotFoundException | CharonException | InternalErrorException | NotImplementedException |
+                 BadRequestException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -665,7 +642,7 @@ public class GroupResourceManager extends AbstractResourceManager {
                 throw new CharonException(error);
             }
         } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
-                InternalErrorException e) {
+                InternalErrorException | ForbiddenException e) {
             return AbstractResourceManager.encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on group resource.", e);
