@@ -30,6 +30,7 @@ import org.wso2.charon3.core.encoder.JSONEncoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -72,7 +73,7 @@ public class RoleResourceV2ManagerTest {
 
     @Test
     public void testCreateRoleWhileWorkflowEnabled() throws ConflictException, NotImplementedException,
-            BadRequestException, CharonException {
+            BadRequestException, CharonException, ForbiddenException {
 
         String postRequest = "{\n" +
                 "  \"schemas\": [\n" +

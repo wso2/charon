@@ -628,7 +628,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFails")
     public void testDeleteUserFails(String userName, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -667,7 +668,8 @@ public class MeResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteUserFailsINCharonExceptionOnly")
     public void testDeleteUserCharonExceptionOnly(String userName, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_ME_ENDPOINT);
@@ -732,7 +734,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTSuccess(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
                                          Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, NotFoundException, CharonException, NotImplementedException {
+            throws BadRequestException, NotFoundException, CharonException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -781,7 +784,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTProvidedUserManagerHandlerIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser, Object objectOLDUser,
                                                                   int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -827,7 +831,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPUTNoUserExistsWithTheGivenUserName(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectNEWUser,
                                                                   Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -869,7 +874,8 @@ public class MeResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateWithPUTCharonException")
     public void testUpdateWithPUTUpdatedUserResourceIsNull(String userName, String scimObjectString, String
             attributes, String excludeAttributes, Object objectOLDUser, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userOld = (User) objectOLDUser;
 
@@ -948,7 +954,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCH(String existingId, String scimObjectString,
                                     String attributes, String excludeAttributes, Object objectNEWUser,
                                     Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -998,7 +1005,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHReplace(String existingId, String scimObjectString,
                                            String attributes, String excludeAttributes, Object objectNEWUser,
                                            Object objectOLDUser, int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1044,7 +1052,8 @@ public class MeResourceManagerTest {
                                                                     Object objectNEWUser,
                                                                     Object objectOLDUser,
                                                                     int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1092,7 +1101,8 @@ public class MeResourceManagerTest {
                                                                        Object objectNEWUser,
                                                                        Object objectOLDUser,
                                                                        int expectedScimResponseStatus)
-            throws BadRequestException, CharonException, NotFoundException, NotImplementedException {
+            throws BadRequestException, CharonException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userNew = (User) objectNEWUser;
         User userOld = (User) objectOLDUser;
@@ -1136,7 +1146,8 @@ public class MeResourceManagerTest {
     public void testUpdateWithPATCHUpdatedUserResourceIsNull(String existingId, String scimObjectString,
                                                              String attributes, String excludeAttributes,
                                                              Object objectOLDUser, int expectedScimResponseStatus)
-            throws CharonException, BadRequestException, NotFoundException, NotImplementedException {
+            throws CharonException, BadRequestException, NotFoundException, NotImplementedException,
+            ForbiddenException {
 
         User userOld = (User) objectOLDUser;
 
