@@ -32,6 +32,7 @@ import org.wso2.charon3.core.exceptions.AbstractCharonException;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
+import org.wso2.charon3.core.exceptions.ForbiddenException;
 import org.wso2.charon3.core.exceptions.InternalErrorException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
 import org.wso2.charon3.core.exceptions.NotImplementedException;
@@ -323,7 +324,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateGroupSuccess")
     public void testCreateGroupSuccess(String scimObjectString, String attributes,
                                        String excludeAttributes, Object objectGroup)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         Group group = (Group) objectGroup;
 
@@ -350,7 +352,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateGroupNewlyCreatedGroupResourceIsNull")
     public void testCreateGroupNewlyCreatedGroupResourceIsNull(String scimObjectString,
                                                                String attributes, String excludeAttributes)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
@@ -374,7 +377,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateGroupBadRequestException")
     public void testCreateGroupBadRequestException(String scimObjectString, String attributes,
                                                    String excludeAttributes)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
@@ -396,7 +400,8 @@ public class GroupResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateGroupConflictException")
     public void testCreateGroupConflictException(String scimObjectString, String attributes, String excludeAttributes)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
@@ -418,7 +423,8 @@ public class GroupResourceManagerTest {
 
     @Test(dataProvider = "dataForTestCreateGroupCharonException")
     public void testCreateGroupCharonException(String scimObjectString, String attributes, String excludeAttributes)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() -> AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
                 .thenReturn(SCIM2_GROUP_ENDPOINT);
@@ -441,7 +447,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestCreateGroupNotImplementedException")
     public void testCreateGroupNotImplementedException(String scimObjectString, String attributes,
                                                        String excludeAttributes)
-            throws ConflictException, NotImplementedException, BadRequestException, CharonException {
+            throws ConflictException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() ->
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
@@ -483,7 +490,8 @@ public class GroupResourceManagerTest {
 
     @Test(dataProvider = "dataForTestDeleteGroupFails")
     public void testDeleteGroupFails(String id, int expectedScimResponseStatus)
-            throws NotFoundException, NotImplementedException, BadRequestException, CharonException {
+            throws NotFoundException, NotImplementedException, BadRequestException, CharonException,
+            ForbiddenException {
 
         abstractResourceManager.when(() ->
                 AbstractResourceManager.getResourceEndpointURL(SCIMConstants.USER_ENDPOINT))
@@ -511,7 +519,7 @@ public class GroupResourceManagerTest {
     @Test
     public void testDeleteGroupCharonExceptionOnly()
             throws NotFoundException, NotImplementedException, BadRequestException,
-            CharonException, InternalErrorException {
+            CharonException, InternalErrorException, ForbiddenException {
 
         Group group = getNewGroup();
         String id = group.getId();
@@ -541,7 +549,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTSuccess")
     public void testUpdateGroupWithPUTSuccess(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException,
+            ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;
@@ -580,7 +589,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTProvidedUserManagerHandlerIsNull")
     public void testUpdateGroupWithPUTProvidedUserManagerHandlerIsNull(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException,
+            ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;
@@ -618,7 +628,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTUpdatedGroupResourceIsNull")
     public void testUpdateGroupWithPUTUpdatedGroupResourceIsNull(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimOldGroupObject)
-            throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
+            throws NotImplementedException, BadRequestException, NotFoundException, CharonException,
+            ForbiddenException {
 
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -652,7 +663,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTNotFoundException")
     public void testUpdateGroupWithPUTNoUserExistsWithTheGivenUserName(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException, NotFoundException,
+            ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;
@@ -686,7 +698,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTCharonException")
     public void testUpdateWithPUTCharonException(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimOldGroupObject)
-            throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
+            throws NotImplementedException, BadRequestException, NotFoundException, CharonException,
+            ForbiddenException {
 
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -718,7 +731,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTBadRequestException")
     public void testUpdateGroupWithPUTBadRequestException(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimOldGroupObject)
-            throws CharonException, NotImplementedException, BadRequestException, NotFoundException {
+            throws CharonException, NotImplementedException, BadRequestException, NotFoundException,
+            ForbiddenException {
 
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -750,7 +764,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForTestUpdateGroupWithPUTNotImplementedException")
     public void testUpdateGroupWithPUTNotImplementedException(String id, String scimObjectString, String
             attributes, String excludeAttributes, Object scimOldGroupObject)
-            throws NotImplementedException, BadRequestException, NotFoundException, CharonException {
+            throws NotImplementedException, BadRequestException, NotFoundException, CharonException,
+            ForbiddenException {
 
         Group groupOld = (Group) scimOldGroupObject;
         SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getGroupResourceSchema();
@@ -786,7 +801,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCH")
     public void testUpdateWithPATCH(String existingId, String patchRequest, String attributes,
                                     String excludeAttributes, Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException,
+            NotFoundException, ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;
@@ -817,7 +833,8 @@ public class GroupResourceManagerTest {
     @Test(dataProvider = "dataForUpdateWithPATCHOverride")
     public void testUpdateWithPATCHOverride(String existingId, String patchRequest,
                                             Object scimNewGroupObject, Object scimOldGroupObject)
-            throws BadRequestException, CharonException, NotImplementedException, NotFoundException {
+            throws BadRequestException, CharonException, NotImplementedException,
+            NotFoundException, ForbiddenException {
 
         Group groupNew = (Group) scimNewGroupObject;
         Group groupOld = (Group) scimOldGroupObject;

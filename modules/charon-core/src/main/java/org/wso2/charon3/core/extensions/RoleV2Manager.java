@@ -49,7 +49,7 @@ public interface RoleV2Manager {
      * @throws BadRequestException     BadRequestException.
      */
     RoleV2 createRole(RoleV2 role)
-            throws CharonException, ConflictException, NotImplementedException, BadRequestException;
+            throws CharonException, ConflictException, NotImplementedException, BadRequestException, ForbiddenException;
 
     /**
      * Get the role for the given ID.
@@ -74,7 +74,8 @@ public interface RoleV2Manager {
      * @throws NotImplementedException NotImplementedException.
      * @throws BadRequestException     BadRequestException.
      */
-    void deleteRole(String id) throws NotFoundException, CharonException, NotImplementedException, BadRequestException;
+    void deleteRole(String id) throws NotFoundException, CharonException, NotImplementedException, BadRequestException,
+            ForbiddenException;
 
     /**
      * List roles with Get.
@@ -107,7 +108,8 @@ public interface RoleV2Manager {
      * @throws NotFoundException       NotFoundException.
      */
     RoleV2 updateRole(RoleV2 oldRole, RoleV2 newRole)
-            throws NotImplementedException, BadRequestException, CharonException, ConflictException, NotFoundException;
+            throws NotImplementedException, BadRequestException, CharonException, ConflictException,
+            NotFoundException, ForbiddenException;
 
     /**
      * List roles with Post.

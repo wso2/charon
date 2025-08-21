@@ -190,15 +190,8 @@ public class MeResourceManager extends AbstractResourceManager {
                 //throw internal server error.
                 throw new InternalErrorException(error);
             }
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
+        } catch (NotFoundException | CharonException | InternalErrorException | NotImplementedException |
+                 BadRequestException | ForbiddenException e) {
             return encodeSCIMException(e);
         }
     }
@@ -278,15 +271,8 @@ public class MeResourceManager extends AbstractResourceManager {
             //put the uri of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
+        } catch (NotFoundException | BadRequestException | CharonException | InternalErrorException |
+                 NotImplementedException | ForbiddenException | ConflictException e) {
             return encodeSCIMException(e);
         }
     }
@@ -457,15 +443,8 @@ public class MeResourceManager extends AbstractResourceManager {
             //put the URI of the User object in the response header parameter.
             return new SCIMResponse(ResponseCodeConstants.CODE_OK, encodedUser, httpHeaders);
 
-        } catch (NotFoundException e) {
-            return encodeSCIMException(e);
-        } catch (BadRequestException e) {
-            return encodeSCIMException(e);
-        } catch (NotImplementedException e) {
-            return encodeSCIMException(e);
-        } catch (CharonException e) {
-            return encodeSCIMException(e);
-        } catch (InternalErrorException e) {
+        } catch (NotFoundException | BadRequestException | NotImplementedException | CharonException |
+                 InternalErrorException | ForbiddenException | ConflictException e) {
             return encodeSCIMException(e);
         } catch (RuntimeException e) {
             CharonException e1 = new CharonException("Error in performing the patch operation on user resource.", e);
