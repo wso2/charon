@@ -16,6 +16,7 @@
 
 package org.wso2.charon3.core.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
@@ -557,6 +558,9 @@ public class ResourceManagerUtil {
     public static RoleV2 decodeRoleV2FromEncodedString(String encodedString) throws CharonException {
 
         try {
+            if (StringUtils.isBlank(encodedString)) {
+                throw new BadRequestException("Encoded string is null or empty.");
+            }
             SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
             return DECODER.decodeResource(encodedString, schema, new RoleV2());
         } catch (BadRequestException | CharonException | InternalErrorException e) {
