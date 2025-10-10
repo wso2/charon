@@ -17,10 +17,14 @@
 package org.wso2.charon3.core.utils;
 
 import org.wso2.charon3.core.config.CharonConfiguration;
+import org.wso2.charon3.core.encoder.JSONDecoder;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
+import org.wso2.charon3.core.exceptions.InternalErrorException;
+import org.wso2.charon3.core.objects.RoleV2;
 import org.wso2.charon3.core.schema.AttributeSchema;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
+import org.wso2.charon3.core.schema.SCIMResourceSchemaManager;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
 import java.util.ArrayList;
@@ -32,6 +36,8 @@ import java.util.Map;
  * This class will act as a support class for endpoints.
  */
 public class ResourceManagerUtil {
+
+    private static final JSONDecoder DECODER = new JSONDecoder();
 
     /*
      * this method is to get the uri list of the attributes which need to retrieved from the databases.
@@ -539,5 +545,22 @@ public class ResourceManagerUtil {
             }
         }
         return simpleMultiValuedAttributes;
+    }
+
+    /**
+     * Decode a RoleV2 object from an encoded string.
+     *
+     * @param encodedString Encoded string.
+     * @return Decoded RoleV2 object.
+     * @throws CharonException Error when decoding the RoleV2 object.
+     */
+    public static RoleV2 decodeRoleV2FromEncodedString(String encodedString) throws CharonException {
+
+        try {
+            SCIMResourceTypeSchema schema = SCIMResourceSchemaManager.getInstance().getRoleResourceV2Schema();
+            return DECODER.decodeResource(encodedString, schema, new RoleV2());
+        } catch (BadRequestException | CharonException | InternalErrorException e) {
+            throw new CharonException("Error in decoding the role V2 from the encoded string.", e);
+        }
     }
 }
