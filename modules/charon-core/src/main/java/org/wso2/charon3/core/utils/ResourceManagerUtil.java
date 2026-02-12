@@ -16,10 +16,12 @@
 
 package org.wso2.charon3.core.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.charon3.core.config.CharonConfiguration;
 import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.schema.AttributeSchema;
+import org.wso2.charon3.core.schema.SCIMConstants;
 import org.wso2.charon3.core.schema.SCIMDefinitions;
 import org.wso2.charon3.core.schema.SCIMResourceTypeSchema;
 
@@ -539,5 +541,46 @@ public class ResourceManagerUtil {
             }
         }
         return simpleMultiValuedAttributes;
+    }
+
+    /**
+     * This method is to include the roles attribute in the required attributes list for group resource
+     * if it is not excluded by the user.
+     *
+     * @param requiredAttributes  The required attributes list.
+     * @param excludeAttributes The comma separated excluded attributes list which is passed by the user in the request.
+     * @param includedAttributes The comma separated included attributes list which is passed by the user in the
+     *                           request.
+     */
+    public static void includeRolesUnlessExcluded(Map<String, Boolean> requiredAttributes, String excludeAttributes,
+                                                  String includedAttributes) {
+
+        /* If the included attributes parameter is not empty, check whether it contains the roles attribute.
+           If not, return without including the roles attribute. */
+        if (StringUtils.isNotEmpty(includedAttributes)) {
+            String[] includedAttributesArray = includedAttributes.split(",");
+            if (Arrays.stream(includedAttributesArray)
+                    .noneMatch(SCIMConstants.GroupSchemaConstants.ROLES::equalsIgnoreCase)) {
+                return;
+            }
+        }
+        if (requiredAttributes == null) {
+            return;
+        }
+
+        /* If the excluded attributes parameter is empty or does not contain the roles attribute, include the roles
+           attribute in the required attributes list. */
+        if (StringUtils.isEmpty(excludeAttributes)) {
+            requiredAttributes.put(SCIMConstants.GroupSchemaConstants.ROLES_URI, true);
+            return;
+        }
+
+        /* If the excluded attributes parameter is not empty, check whether it contains the roles attribute. If not,
+           include the roles attribute in the required attributes list. */
+        String[] excludeAttributesArray = excludeAttributes.split(",");
+        if (Arrays.stream(excludeAttributesArray)
+                .noneMatch(SCIMConstants.GroupSchemaConstants.ROLES::equalsIgnoreCase)) {
+            requiredAttributes.put(SCIMConstants.GroupSchemaConstants.ROLES_URI, true);
+        }
     }
 }
