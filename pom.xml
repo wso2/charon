@@ -128,8 +128,8 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>${mockito.version}</version>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -240,6 +240,27 @@
                         </instructions>
                     </configuration>
                 </plugin>
+                 <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <configuration>
+                        <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+                        <effort>Max</effort>
+                        <threshold>Low</threshold>
+                        <failOnError>true</failOnError>
+                        <maxHeap>1024</maxHeap>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>analyze-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
@@ -329,6 +350,20 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>findbugs</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -410,12 +445,12 @@
         <compiler.plugin.version>3.8.1</compiler.plugin.version>
 
         <war.plugin.version>3.2.3</war.plugin.version>
-        <bundle.plugin.version>4.2.0</bundle.plugin.version>
+        <bundle.plugin.version>5.1.9</bundle.plugin.version>
 
         <maven.buildnumber.plugin.version>1.4</maven.buildnumber.plugin.version>
 
-        <src.java.version>1.8</src.java.version>
-        <target.java.version>1.8</target.java.version>
+        <src.java.version>21</src.java.version>
+        <target.java.version>21</target.java.version>
 
         <msf4j.version>2.7.3</msf4j.version>
         <fasterxml.jackson.core.version>2.12.6.1</fasterxml.jackson.core.version>
@@ -423,7 +458,7 @@
         <commons-lang.wso2.osgi.version.range>[2.6.0, 3.0.0)</commons-lang.wso2.osgi.version.range>
 
         <slf4j.version>1.7.26</slf4j.version>
-        <maven.findbugsplugin.version>3.0.4</maven.findbugsplugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
 
         <!-- Pax Logging Version -->
@@ -431,8 +466,8 @@
 
         <log4j.api.version>2.12.0</log4j.api.version>
         <testng.version>6.9.10</testng.version>
-        <jacoco.version>0.8.6</jacoco.version>
-        <mockito.version>3.10.0</mockito.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <mockito-core.version>5.3.1</mockito-core.version>
 
         <sonar.projectKey>wso2_charon</sonar.projectKey>
         <sonar.moduleKey>${artifactId}</sonar.moduleKey>

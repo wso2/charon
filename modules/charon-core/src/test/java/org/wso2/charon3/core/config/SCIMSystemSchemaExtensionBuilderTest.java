@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -163,26 +162,32 @@ public class SCIMSystemSchemaExtensionBuilderTest {
         constructor.setAccessible(true);
         SCIMSystemSchemaExtensionBuilder newBuilderInstance = constructor.newInstance();
 
-        resetSingletonField("EXTENSION_ROOT_ATTRIBUTE_URI", SYSTEM_USER_SCHEMA_URI);
-        resetSingletonField("instance", newBuilderInstance);
-        resetSingletonField("extensionConfig", new HashMap<>());
-        resetSingletonField("attributeSchemas", new HashMap<>());
+        setStaticField("instance", newBuilderInstance);
+        clearStaticMapField("extensionConfig");
+        clearStaticMapField("attributeSchemas");
 
         setInstanceField("extensionSchema", null);
         setInstanceField("extensionRootAttributeName", null);
     }
 
-    private void resetSingletonField(String fieldName, Object newValue) throws NoSuchFieldException,
-            IllegalAccessException {
+    @SuppressWarnings("unchecked")
+    private void clearStaticMapField(String fieldName) throws NoSuchFieldException, IllegalAccessException {
 
         Field field = SCIMSystemSchemaExtensionBuilder.class.getDeclaredField(fieldName);
         field.setAccessible(true);
+        ((Map<?, ?>) field.get(null)).clear();
+    }
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~java.lang.reflect.Modifier.FINAL);
+    private void setStaticField(String fieldName, Object newValue) throws NoSuchFieldException,
+            IllegalAccessException {
 
-        field.set(null, newValue);
+        Field unsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+        unsafeField.setAccessible(true);
+        sun.misc.Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+
+        Field field = SCIMSystemSchemaExtensionBuilder.class.getDeclaredField(fieldName);
+        long offset = unsafe.staticFieldOffset(field);
+        unsafe.putObject(SCIMSystemSchemaExtensionBuilder.class, offset, newValue);
     }
 
     private void setInstanceField(String fieldName, Object value) throws NoSuchFieldException,
