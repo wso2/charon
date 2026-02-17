@@ -30,22 +30,14 @@
         <Bug pattern="MS_EXPOSE_REP" />
     </Match>
 
-    <!-- Exclude singleton non-private constructor warnings -->
-    <Match>
-        <Bug pattern="SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR" />
-    </Match>
-
-    <!-- Exclude constructor throw warnings -->
     <Match>
         <Bug pattern="CT_CONSTRUCTOR_THROW" />
     </Match>
 
-    <!-- Exclude reflection accessibility warnings for decoder classes -->
     <Match>
         <Bug pattern="REFLC_REFLECTION_MAY_INCREASE_ACCESSIBILITY_OF_CLASS" />
     </Match>
 
-    <!-- Exclude field not initialized warning for encoder in BulkResourceManager -->
     <Match>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
     </Match>
