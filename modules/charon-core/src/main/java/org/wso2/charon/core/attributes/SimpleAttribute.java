@@ -22,7 +22,6 @@ import org.wso2.charon.core.protocol.ResponseCodeConstants;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions;
 import org.wso2.charon.core.schema.SCIMSchemaDefinitions.DataType;
 
-import javax.xml.bind.DatatypeConverter;
 import java.util.Date;
 import java.util.Map;
 
