@@ -51,6 +51,10 @@ public class SCIMUserSchemaExtensionBuilder extends ExtensionBuilder {
     // extension root attribute schema
     private AttributeSchema extensionSchema = null;
 
+    private SCIMUserSchemaExtensionBuilder() {
+
+    }
+
     public static SCIMUserSchemaExtensionBuilder getInstance() {
         return configReader;
     }

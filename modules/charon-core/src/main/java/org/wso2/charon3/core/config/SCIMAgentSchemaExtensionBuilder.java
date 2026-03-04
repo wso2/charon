@@ -37,6 +37,10 @@ public class SCIMAgentSchemaExtensionBuilder extends ExtensionBuilder {
     private static final SCIMAgentSchemaExtensionBuilder INSTANCE = new SCIMAgentSchemaExtensionBuilder();
     private static final String EXTENSION_ROOT_ATTRIBUTE_URI = AGENT_SCHEMA_URI;
 
+    private SCIMAgentSchemaExtensionBuilder() {
+
+    }
+
     /**
      * Get the instance of the SCIMAgentSchemaExtensionBuilder.
      *

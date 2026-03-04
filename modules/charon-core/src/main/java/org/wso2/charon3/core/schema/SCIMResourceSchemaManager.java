@@ -48,6 +48,10 @@ public class SCIMResourceSchemaManager {
     private static SCIMResourceSchemaManager manager = new SCIMResourceSchemaManager();
     private static final Logger log = LoggerFactory.getLogger(SCIMResourceSchemaManager.class);
 
+    private SCIMResourceSchemaManager() {
+
+    }
+
     public static SCIMResourceSchemaManager getInstance() {
         return manager;
     }
