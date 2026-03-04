@@ -40,9 +40,6 @@ public class CharonConfiguration implements Configuration {
     //default count value for pagination
     private int count;
 
-    private CharonConfiguration() {
-    }
-
     /*
      * set documentationURL
      * @param documentationURL
