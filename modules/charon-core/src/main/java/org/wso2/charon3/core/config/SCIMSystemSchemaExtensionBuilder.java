@@ -53,10 +53,6 @@ public class SCIMSystemSchemaExtensionBuilder extends ExtensionBuilder {
     private static final String EXTENSION_ROOT_ATTRIBUTE_URI = SYSTEM_USER_SCHEMA_URI;
     private static final String DELIMITER = "\\A";
 
-    private SCIMSystemSchemaExtensionBuilder() {
-
-    }
-
     /**
      * Get the instance of the SCIMSystemSchemaExtensionBuilder.
      *
