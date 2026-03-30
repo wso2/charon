@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2016-2026, WSO2 LLC. (http://www.wso2.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -738,7 +738,7 @@ public class UserResourceManager extends AbstractResourceManager {
                             deletedSyncedAttributes.add(syncedAttribute);
                             break;
                         case 2:
-                            newUser.deleteSubSubAttribute(baseAttributeName, subAttributes[0], subAttributes[1]);
+                            newUser.deleteSubSubAttribute(subAttributes[1], subAttributes[0], baseAttributeName);
                             deletedSyncedAttributes.add(syncedAttribute);
                             break;
                         default:
