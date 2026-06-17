@@ -104,9 +104,9 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons.lang.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
             </dependency>
             <!-- Pax Logging -->
             <dependency>
@@ -458,8 +458,8 @@
 
         <msf4j.version>2.7.3</msf4j.version>
         <fasterxml.jackson.core.version>2.12.6.1</fasterxml.jackson.core.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <commons-lang.wso2.osgi.version.range>[2.6.0, 3.0.0)</commons-lang.wso2.osgi.version.range>
+        <commons.lang3.version>3.18.0</commons.lang3.version>
+        <commons-lang3.wso2.osgi.version.range>[3.18.0, 4.0.0)</commons-lang3.wso2.osgi.version.range>
 
         <slf4j.version>1.7.26</slf4j.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>

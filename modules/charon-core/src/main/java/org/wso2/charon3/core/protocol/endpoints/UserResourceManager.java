@@ -17,7 +17,7 @@
 package org.wso2.charon3.core.protocol.endpoints;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.charon3.core.attributes.Attribute;
