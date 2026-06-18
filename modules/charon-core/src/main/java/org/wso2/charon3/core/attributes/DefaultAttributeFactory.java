@@ -89,6 +89,7 @@ public class DefaultAttributeFactory {
                 throw new BadRequestException(ResponseCodeConstants.INVALID_VALUE);
             }
         }
+        simpleAttribute.setType(attributeSchema.getType());
         return simpleAttribute;
     }
 
